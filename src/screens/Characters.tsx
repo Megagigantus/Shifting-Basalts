@@ -15,12 +15,23 @@ import {
 import { proficiencyBonus } from '../rules/proficiency'
 import { useCharacters } from '../useCharacters'
 import { CharacterForm } from './CharacterForm'
+import { StatTracks } from './StatTracks'
+import { rankProgress, STAT_TRACKS } from '../rules/statTracks'
+
+/** e.g. "Max HP 2 · Speed 1", for tracks with at least one rank. */
+function trackSummary(c: Character): string {
+  return STAT_TRACKS.map((t) => ({ name: t.name, rank: rankProgress(c.trackDevotions[t.id] ?? 0).rank }))
+    .filter((t) => t.rank > 0)
+    .map((t) => `${t.name} ${t.rank}`)
+    .join(' · ')
+}
 
 const className = (id: string) => classes.find((c) => c.id === id)?.name ?? id
 
 export function Characters() {
   const { characters, error: loadError } = useCharacters()
   const [editing, setEditing] = useState<'new' | string | null>(null)
+  const [tracksFor, setTracksFor] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   async function create(profile: CharacterProfile) {
@@ -121,12 +132,17 @@ export function Characters() {
                   {c.bankedQuantumBasalts} Quantum Basalts · {c.bankedDevotions} Devotions banked ·
                   deepest floor {c.deepestFloor || 'none yet'}
                 </span>
+                {trackSummary(c) && <span className="hint">Stat tracks: {trackSummary(c)}</span>}
                 {c.lockoutDays > 0 && (
                   <span className="warning">Locked out: {c.lockoutDays} days</span>
                 )}
+                {tracksFor === c.id && <StatTracks character={c} onClose={() => setTracksFor(null)} />}
               </div>
-              {editing === null && (
+              {editing === null && tracksFor !== c.id && (
                 <div className="row-actions">
+                  <button type="button" onClick={() => setTracksFor(c.id)}>
+                    Stat tracks
+                  </button>
                   {c.lockoutDays > 0 && (
                     <button type="button" onClick={() => clearLockout(c)}>
                       Clear lockout

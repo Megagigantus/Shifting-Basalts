@@ -25,6 +25,8 @@ export interface DungeonLayer {
   bankedQuantumBasalts: number
   /** Devotions earned but not yet spent on stat tracks. */
   bankedDevotions: number
+  /** Stat track id -> Devotions invested in it. Ranks come from rules/statTracks.ts. */
+  trackDevotions: Record<string, number>
   deepestFloor: number
   /** Days left on a death lockout; the DM clears it by hand. 0 = free to enter. */
   lockoutDays: number
@@ -67,6 +69,7 @@ export function emptyDungeonLayer(): DungeonLayer {
   return {
     bankedQuantumBasalts: 0,
     bankedDevotions: 0,
+    trackDevotions: {},
     deepestFloor: 0,
     lockoutDays: 0,
     upgrades: {},
