@@ -3,8 +3,18 @@
 import { useState } from 'react'
 import type { Character } from '../model/character'
 import type { RunResult, RunState } from '../model/run'
-import { floorInfo, LAST_FLOOR, lootKeptPercent, PRESSURES } from '../rules/run'
-import { canExtract, clearRoom, defeatBoss, descend, extract, isBossRoom, markDead, pass } from '../rules/runFlow'
+import { floorInfo, LAST_FLOOR, PRESSURES } from '../rules/run'
+import {
+  canExtract,
+  clearRoom,
+  defeatBoss,
+  descend,
+  extract,
+  isBossRoom,
+  lootKeptIfExtracting,
+  markDead,
+  pass,
+} from '../rules/runFlow'
 import { cancelRun, saveRunState } from '../runStore'
 
 const ROOM_LABELS = { combat: 'Combat', elite: 'Elite', reprieve: 'Reprieve', boss: 'Boss' }
@@ -74,6 +84,8 @@ export function RunTracker({ state, characters, onEnded }: Props) {
           <div className="hint">
             Hazard class {floor.hazard} · party level {run.partyLevel} · rewards ×{run.entryMultiplier}
             {run.pressureBonusPercent > 0 && ` · Pressures +${run.pressureBonusPercent}%`}
+            {(run.extraPressuresBonusPercent ?? 0) > 0 && ` · Extra Pressures +${run.extraPressuresBonusPercent}%`}
+            {(run.deepPocketsPercent ?? 0) > 0 && ` · Deep Pockets +${run.deepPocketsPercent}% loot kept`}
           </div>
           {run.pressures.length > 0 && (
             <div className="hint">
@@ -88,7 +100,7 @@ export function RunTracker({ state, characters, onEnded }: Props) {
       </div>
 
       <p className="hint">
-        Loot kept if the party extracts now: {canExtract(state) ? `${lootKeptPercent(run.lastBossFloor)}%` : 'extraction opens after a boss'}
+        Loot kept if the party extracts now: {canExtract(state) ? `${lootKeptIfExtracting(state)}%` : 'extraction opens after a boss'}
       </p>
 
       <div className="run-actions">
@@ -103,10 +115,10 @@ export function RunTracker({ state, characters, onEnded }: Props) {
               type="button"
               disabled={busy}
               onClick={() =>
-                act(extract, `Extract now? The party keeps ${lootKeptPercent(run.lastBossFloor)}% of its loot and the run ends.`)
+                act(extract, `Extract now? The party keeps ${lootKeptIfExtracting(state)}% of its loot and the run ends.`)
               }
             >
-              Extract (keep {lootKeptPercent(run.lastBossFloor)}%)
+              Extract (keep {lootKeptIfExtracting(state)}%)
             </button>
           </>
         ) : bossRoom ? (
@@ -145,7 +157,9 @@ export function RunTracker({ state, characters, onEnded }: Props) {
                 {p.name}
                 {!p.alive && (
                   <div className="warning">
-                    Fell on floor {p.diedOnFloor} · locked out {p.lockoutDays} days ({p.lockoutRolls?.join(' + ')})
+                    Fell on floor {p.diedOnFloor} · locked out {p.lockoutDays} days (rolled{' '}
+                    {p.lockoutRolls?.join(' + ')}
+                    {(p.quickReturnDays ?? 0) > 0 && `, Quick Return −${p.quickReturnDays}, minimum 1`})
                   </div>
                 )}
               </td>

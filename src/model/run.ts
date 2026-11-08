@@ -23,6 +23,10 @@ export interface Run {
   entryMultiplier: number
   pressures: string[]
   pressureBonusPercent: number
+  /** +5% per Extra Pressures owner in the party, captured at run start. */
+  extraPressuresBonusPercent?: number
+  /** Extra loot share kept from Deep Pockets (highest rank in the party). */
+  deepPocketsPercent?: number
   floor: number
   /** The room being played: 1..rooms on the floor, then rooms + 1 is the boss. */
   room: number
@@ -45,6 +49,10 @@ export interface RunPlayer {
   quantumBasaltsPassed: number
   passes: number
   devotions: number
+  /** This player's Extra Loot bonus on boss Quantum Basalts, captured at run start. */
+  extraLootBonusPercent?: number
+  /** Days this player's Quick Return takes off a death lockout. */
+  quickReturnDays?: number
   diedOnFloor: number | null
   lockoutDays: number | null
   lockoutRolls: number[] | null

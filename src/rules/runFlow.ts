@@ -16,6 +16,13 @@ import {
   rollLockoutDays,
   withPressureBonus,
 } from './run'
+import {
+  deepPocketsPercent,
+  extraLootBonusPercent,
+  extraPressuresBonusPercent,
+  quickReturnDays,
+  shortenedLockout,
+} from './upgrades'
 
 type Roll = (sides: number) => number
 
@@ -41,6 +48,8 @@ export function newRunState(id: string, joinCode: string, party: Character[], pr
       entryMultiplier: entryMultiplier(level),
       pressures,
       pressureBonusPercent: pressureBonusPercent(pressures),
+      extraPressuresBonusPercent: extraPressuresBonusPercent(party),
+      deepPocketsPercent: deepPocketsPercent(party),
       floor: 1,
       room: 1,
       awaitingChoice: false,
@@ -56,6 +65,8 @@ export function newRunState(id: string, joinCode: string, party: Character[], pr
       quantumBasaltsPassed: 0,
       passes: 0,
       devotions: 0,
+      extraLootBonusPercent: extraLootBonusPercent(c),
+      quickReturnDays: quickReturnDays(c),
       diedOnFloor: null,
       lockoutDays: null,
       lockoutRolls: null,
@@ -120,9 +131,25 @@ export function extract(state: RunState): RunState {
       ...state.run,
       status: 'extracted',
       awaitingChoice: false,
-      lootKeptPercent: lootKeptPercent(state.run.lastBossFloor),
+      lootKeptPercent: lootKeptIfExtracting(state),
     },
   }
+}
+
+/** Loot share kept if the party extracts now, including Deep Pockets (capped at 100%). */
+export function lootKeptIfExtracting({ run }: RunState): number {
+  const base = lootKeptPercent(run.lastBossFloor)
+  if (base === 0) return 0
+  return Math.min(100, base + (run.deepPocketsPercent ?? 0))
+}
+
+/** A player's total bonus on boss Quantum Basalts: Pressures + Extra Pressures owners + their Extra Loot. */
+export function rewardBonusPercent(state: RunState, player: RunPlayer): number {
+  return (
+    state.run.pressureBonusPercent +
+    (state.run.extraPressuresBonusPercent ?? 0) +
+    (player.extraLootBonusPercent ?? 0)
+  )
 }
 
 /** A player passes a draft for Quantum Basalts that survive even death. */
@@ -151,7 +178,13 @@ export function markDead(state: RunState, characterId: string, roll?: Roll): Run
     if (p.characterId !== characterId) return p
     if (!p.alive) throw new Error(`${p.name} has already fallen.`)
     const lockout = rollLockoutDays(floor, roll)
-    return { ...p, alive: false, diedOnFloor: floor, lockoutDays: lockout.days, lockoutRolls: lockout.rolls }
+    return {
+      ...p,
+      alive: false,
+      diedOnFloor: floor,
+      lockoutDays: shortenedLockout(lockout.days, p.quickReturnDays ?? 0),
+      lockoutRolls: lockout.rolls,
+    }
   })
   const wiped = players.every((p) => !p.alive)
   return {
@@ -173,7 +206,7 @@ export function runResults(state: RunState): RunResult[] {
       name: p.name,
       survived: p.alive,
       quantumBasaltsGained:
-        (keepsEarned ? withPressureBonus(p.quantumBasaltsEarned, run.pressureBonusPercent) : 0) +
+        (keepsEarned ? withPressureBonus(p.quantumBasaltsEarned, rewardBonusPercent(state, p)) : 0) +
         p.quantumBasaltsPassed,
       devotions: p.devotions,
       deepestFloor: p.diedOnFloor ?? run.floor,

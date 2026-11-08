@@ -171,6 +171,61 @@ describe('death', () => {
   })
 })
 
+describe('upgrades in a run', () => {
+  const withUpgrades = (id: string, level: number, upgrades: Record<string, number>) => ({
+    ...char(id, level),
+    upgrades,
+  })
+
+  it('stacks Pressures, Extra Pressures owners and Extra Loot, rounding up once', () => {
+    // Bible example: 40 Basalts with +25% Pressures and Extra Loot rank 2 (+20%) pays 58.
+    const party = [withUpgrades('a', 5, { 'extra-loot': 2 }), withUpgrades('b', 5, {})]
+    let state = newRunState('r', 'X', party, ['brittle-ground', 'closing-ring']) // +25%
+    for (let f = 1; f <= 4; f++) {
+      state = clearFloor(state)
+      if (f < 4) state = descend(state)
+    }
+    expect(state.players[0].quantumBasaltsEarned).toBe(40)
+    const [a, b] = runResults(extract(state))
+    expect(a.quantumBasaltsGained).toBe(58)
+    expect(b.quantumBasaltsGained).toBe(50) // 40 x 1.25
+  })
+
+  it('every Extra Pressures owner adds 5% for the whole party', () => {
+    const party = [withUpgrades('a', 5, { 'extra-pressures': 1 }), withUpgrades('b', 5, { 'extra-pressures': 2 })]
+    const state = extract(clearFloor(newRunState('r', 'X', party, [])))
+    expect(state.run.extraPressuresBonusPercent).toBe(10)
+    expect(runResults(state).map((r) => r.quantumBasaltsGained)).toEqual([6, 6]) // ceil(5 x 1.10)
+  })
+
+  it('Extra Loot never boosts passed Basalts', () => {
+    const party = [withUpgrades('a', 5, { 'extra-loot': 3 })]
+    let state = newRunState('r', 'X', party, [])
+    state = pass(pass(state, 'a'), 'a')
+    state = extract(clearFloor(state))
+    expect(runResults(state)[0].quantumBasaltsGained).toBe(7 + 2) // ceil(5 x 1.30) + 2 passes
+  })
+
+  it('Deep Pockets uses the highest rank and caps loot kept at 100%', () => {
+    const party = [withUpgrades('a', 5, { 'deep-pockets': 1 }), withUpgrades('b', 5, { 'deep-pockets': 3 })]
+    let state = clearFloor(newRunState('r', 'X', party, []))
+    expect(extract(state).run.lootKeptPercent).toBe(40) // 25 + 15
+    for (let f = 2; f <= 4; f++) state = clearFloor(descend(state))
+    expect(extract(state).run.lootKeptPercent).toBe(95) // 80 + 15
+  })
+
+  it('Quick Return shortens a lockout, never below 1 day', () => {
+    const party = [withUpgrades('a', 5, { 'quick-return': 3 }), withUpgrades('b', 5, {})]
+    let state = descend(clearFloor(newRunState('r', 'X', party, [])))
+    state = markDead(state, 'a', twos) // rolled 2 + 2 = 4, minus 3
+    expect(state.players[0].lockoutDays).toBe(1)
+    expect(state.players[0].lockoutRolls).toEqual([2, 2])
+    const ones = () => 1
+    const other = markDead(descend(clearFloor(newRunState('r', 'X', party, []))), 'a', ones) // 2 - 3
+    expect(other.players[0].lockoutDays).toBe(1)
+  })
+})
+
 describe('join codes', () => {
   it('are 4 easy-to-read characters', () => {
     const code = makeJoinCode()
