@@ -1,0 +1,30 @@
+[
+  {
+    "id": "super-normal",
+    "name": "Super Normal",
+    "boons": ["critical-delight", "crits-are-for-suckers"],
+    "effect": "You lose Critical Delight's non-crit penalty and never critically fail an attack roll: a natural 1 still misses if it doesn't meet AC, but triggers no fumble effects. Your crit range is 18 to 20, non-crits deal +50% damage, and crits deal triple damage plus PB d20.",
+    "status": "locked"
+  },
+  {
+    "id": "still-water",
+    "name": "Still Water",
+    "boons": ["a-fine-steels-glint", "stand-off"],
+    "effect": "Entering either stance activates both, and you can still counter while in stance. In stance, you take half damage from all sources and can make up to 3 Stand Off counters per round. Each successful counter deflects the attack onto a nearby enemy and adds 1 turn of stored damage (up to PB) to your guaranteed teleporting strike.",
+    "status": "locked"
+  },
+  {
+    "id": "elemains-fancy-criticals",
+    "name": "Elemain's Fancy Criticals",
+    "boons": ["elemains-flight-of-fancy", "critical-delight"],
+    "effect": "Your ricochets use your Critical Delight crit range (10 to 20) instead of only a natural 20, and each ricochet crit builds and benefits from Critical Delight's multiplier.",
+    "status": "locked"
+  },
+  {
+    "id": "shooting-gallery",
+    "name": "Shooting Gallery",
+    "boons": ["elemains-flight-of-fancy", "traverts-echoes"],
+    "effect": "Each ricochet triggers a Level 3 Travert's Echo (three pulses for 25% of the ricochet's damage in a 10 ft ring around each target hit), and any kill from a ricochet or its echoes banks an echo.",
+    "status": "locked"
+  }
+]

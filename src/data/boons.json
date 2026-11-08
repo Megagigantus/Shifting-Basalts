@@ -1,0 +1,200 @@
+[
+  {
+    "id": "traverts-echoes",
+    "name": "Travert's Echoes",
+    "tags": ["Echo"],
+    "kind": "normal",
+    "levels": [
+      "A physical attack hit echoes 25% of its damage in a 10 ft ring or a 10 ft directional rectangle.",
+      "Echoes twice.",
+      "Echoes 3 times. If an echo kills an enemy, bank an echo to release whenever you want."
+    ],
+    "evolvesTo": "chain-of-echoes",
+    "combinesWith": ["shooting-gallery"],
+    "status": "locked"
+  },
+  {
+    "id": "reapers-sprint",
+    "name": "Reaper's Sprint",
+    "tags": ["Reaper"],
+    "kind": "normal",
+    "levels": [
+      "On a kill, teleport up to 30 ft to a space behind another enemy. Your next hit has advantage and crits.",
+      "As Level 1, and killing the second enemy lets you jump to a third.",
+      "Adds another jump. Full of the Reaper's energy, you unleash a guaranteed hit for triple crit damage."
+    ],
+    "evolvesTo": "nothing-personal",
+    "status": "locked"
+  },
+  {
+    "id": "spellslingers-delight",
+    "name": "Spellslinger's Delight",
+    "tags": ["Spell"],
+    "kind": "normal",
+    "levels": [
+      "When a leveled spell hits, cast a cantrip for free.",
+      "A second known cantrip is also cast for free.",
+      "The second cantrip is cast at 3 targets for free."
+    ],
+    "evolvesTo": "and-you-get-a-spell",
+    "status": "locked"
+  },
+  {
+    "id": "critical-delight",
+    "name": "Critical Delight",
+    "tags": ["Crit"],
+    "kind": "normal",
+    "levels": [
+      "Crit range 17 to 20, but non-crits deal 75% damage.",
+      "Crit range 15 to 20.",
+      "Crit range 10 to 20. Crits deal double, non-crits fall to 10%, and each crit adds another multiplier until you fail to crit or your turn ends."
+    ],
+    "combinesWith": ["super-normal", "elemains-fancy-criticals"],
+    "status": "locked"
+  },
+  {
+    "id": "crits-are-for-suckers",
+    "name": "Crits Are for Suckers",
+    "tags": ["Crit"],
+    "kind": "normal",
+    "levels": [
+      "You can't crit, but damage increases by 25%.",
+      "Damage +35%.",
+      "Damage +50%."
+    ],
+    "combinesWith": ["super-normal"],
+    "status": "locked"
+  },
+  {
+    "id": "a-fine-steels-glint",
+    "name": "A Fine Steel's Glint",
+    "tags": ["Stance"],
+    "kind": "normal",
+    "levels": [
+      "As a bonus action, sheathe your weapon and anchor in place. You can't attack, but you have resistance to bludgeoning, piercing and slashing damage, and each turn you hold the stance adds one weapon damage die to your strike (up to PB).",
+      "You have resistance to all damage, and your strike carries you 10 ft forward from your spot.",
+      "You instantly teleport to the target enemy and hit, guaranteed."
+    ],
+    "evolvesTo": "samurais-wake",
+    "combinesWith": ["still-water"],
+    "status": "locked"
+  },
+  {
+    "id": "stand-off",
+    "name": "Stand Off",
+    "tags": ["Stance"],
+    "kind": "normal",
+    "levels": [
+      "When you approach a group of 2 or more enemies, enter stand off. When one attacks you, roll a challenge against it, up to a number of times per round equal to this boon's level. Win and the attack misses and you roll a counterattack; lose and you exit stand off and the attack resolves normally.",
+      "You can shrug off one hit and stay in stand off.",
+      "When you counter, you deflect the attack onto a nearby enemy."
+    ],
+    "combinesWith": ["still-water"],
+    "status": "locked"
+  },
+  {
+    "id": "elemains-flight-of-fancy",
+    "name": "Elemain's Flight of Fancy",
+    "tags": ["Volley"],
+    "kind": "normal",
+    "levels": [
+      "A fired or thrown projectile ricochets once for 50% damage.",
+      "2 ricochets.",
+      "3 ricochets. Each ricochet rolls a d20 and crits only on a 20."
+    ],
+    "evolvesTo": "elemains-retribution",
+    "combinesWith": ["elemains-fancy-criticals", "shooting-gallery"],
+    "status": "locked"
+  },
+  {
+    "id": "overhealing",
+    "name": "Overhealing",
+    "tags": ["Guard"],
+    "kind": "normal",
+    "levels": [
+      "Healing beyond max HP becomes temp HP.",
+      "Overhealed targets gain resistance.",
+      "The healer gains temp HP equal to half the amount overhealed."
+    ],
+    "evolvesTo": "overflowing-cup",
+    "status": "locked"
+  },
+  {
+    "id": "hardened-hide",
+    "name": "Hardened Hide",
+    "tags": ["Guard"],
+    "kind": "normal",
+    "levels": [
+      "Reduce damage taken by PB.",
+      "Attackers who hit you take PB damage.",
+      "Enemies within 10 ft have disadvantage attacking anyone but you."
+    ],
+    "evolvesTo": "titans-hide",
+    "status": "locked"
+  },
+  {
+    "id": "cleansing-nova",
+    "name": "Cleansing Nova",
+    "tags": ["Guard"],
+    "kind": "normal",
+    "levels": [
+      "Your heals end one condition on the target.",
+      "Heals pulse 10 ft, granting allies PB temp HP.",
+      "Enemies in the pulse take radiant damage equal to half the healing."
+    ],
+    "evolvesTo": "hex-unwoven",
+    "status": "locked"
+  },
+  {
+    "id": "riposte-step",
+    "name": "Riposte Step",
+    "tags": ["Guard"],
+    "kind": "normal",
+    "levels": [
+      "When an attack misses you, move 5 ft without provoking, and your next attack against that attacker has advantage.",
+      "While Dodging, a miss lets you counterattack as a reaction.",
+      "Once per round, the counterattack is free and has advantage."
+    ],
+    "evolvesTo": "mirror-step",
+    "status": "locked"
+  },
+  {
+    "id": "a-healthy-dose-of-pain",
+    "name": "A Healthy Dose of Pain",
+    "tags": ["Payoff"],
+    "kind": "payoff",
+    "payoffTrack": "max-hp",
+    "levels": [
+      "Once per turn, a hit adds damage equal to the HP your Max HP track grants.",
+      "The bonus also applies to reaction attacks.",
+      "When you take damage, your next hit also adds the damage you took."
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "avalanche-stride",
+    "name": "Avalanche Stride",
+    "tags": ["Payoff"],
+    "kind": "payoff",
+    "payoffTrack": "speed",
+    "levels": [
+      "Once per turn, a hit deals +1 damage for every 5 ft you moved this turn.",
+      "The bonus also applies to your first ranged attack after moving.",
+      "A hit after moving 20 ft or more knocks the target prone."
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "spillover",
+    "name": "Spillover",
+    "tags": ["Payoff"],
+    "kind": "payoff",
+    "payoffTrack": "healing-received",
+    "levels": [
+      "Overhealing bursts as radiant damage on adjacent enemies.",
+      "The burst becomes a 10 ft radius.",
+      "Allies in the burst regain HP equal to half the damage it deals."
+    ],
+    "status": "locked"
+  }
+]

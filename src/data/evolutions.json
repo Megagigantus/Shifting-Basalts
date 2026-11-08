@@ -1,0 +1,65 @@
+[
+  {
+    "id": "chain-of-echoes",
+    "name": "Chain of Echoes",
+    "from": "traverts-echoes",
+    "effect": "Keeps Level 3. If echoes hit the same enemy 4 times in one turn, you rise 10 ft and slam down, causing a 30 ft echo for 50% damage. The slam adds an echo to the next echo that hits an enemy other than the big echo's main target.",
+    "status": "locked"
+  },
+  {
+    "id": "nothing-personal",
+    "name": "Nothing Personal",
+    "from": "reapers-sprint",
+    "effect": "Hitting an enemy from behind lets you teleport behind another enemy for a free attack at 50% damage. On a hit it repeats, up to PB times, until you miss or kill. A kill during the chain earns the Reaper's favor: his scythe lands on the first attack of your next hit for significant damage.",
+    "status": "locked"
+  },
+  {
+    "id": "and-you-get-a-spell",
+    "name": "And You Get a Spell!",
+    "from": "spellslingers-delight",
+    "effect": "When a single-target spell hits, cast it for free at another target. If that hits, you also get your three-target cantrip cast. Spells of 6th level or higher can be copied only once per room.",
+    "status": "locked"
+  },
+  {
+    "id": "samurais-wake",
+    "name": "Samurai's Wake",
+    "from": "a-fine-steels-glint",
+    "effect": "You get the Level 3 teleport, and enemies in the line from you to the target take lightning damage. You then turn and teleport back to your starting position, hitting the target again.",
+    "status": "locked"
+  },
+  {
+    "id": "elemains-retribution",
+    "name": "Elemain's Retribution",
+    "from": "elemains-flight-of-fancy",
+    "effect": "Ricochets 3 + PB times. Crits split into two projectiles, and splits don't ricochet. Ricochets can return to the same target, dealing 25% less damage for each repeated hit, compounding (50%, then about 38%, 28%, 21% and so on). Built for groups, but still useful against a single target.",
+    "status": "locked"
+  },
+  {
+    "id": "overflowing-cup",
+    "name": "Overflowing Cup",
+    "from": "overhealing",
+    "effect": "Temp HP from Overhealing stacks with other temp HP instead of replacing it.",
+    "status": "proposed"
+  },
+  {
+    "id": "titans-hide",
+    "name": "Titan's Hide",
+    "from": "hardened-hide",
+    "effect": "Once per room, as a bonus action, gain resistance to all damage until the start of your next turn, and enemies within 10 ft can only attack you.",
+    "status": "proposed"
+  },
+  {
+    "id": "hex-unwoven",
+    "name": "Hex Unwoven",
+    "from": "cleansing-nova",
+    "effect": "Your heals also end curses and remove one level of Exhaustion, and the pulse reaches 20 ft.",
+    "status": "proposed"
+  },
+  {
+    "id": "mirror-step",
+    "name": "Mirror Step",
+    "from": "riposte-step",
+    "effect": "You no longer need to Dodge: when an attack misses you, teleport up to 10 ft and counterattack for +PB damage.",
+    "status": "proposed"
+  }
+]
