@@ -1,0 +1,64 @@
+{
+  "_source": "docs/design-bible.md: Boon system rules > Stat tracks, and Boon catalogue > Stat tracks. Costs and caps are proposed.",
+  "tracks": [
+    {
+      "id": "max-hp",
+      "name": "Max HP",
+      "perRank": "+2 max HP",
+      "effect": { "every": 1, "amount": 2, "unit": "max HP" },
+      "status": "locked"
+    },
+    {
+      "id": "spell-slot-recovery",
+      "name": "Spell slot recovery",
+      "perRank": "1 recovery point per room clear, spent to recover spell slots",
+      "effect": { "every": 1, "amount": 1, "unit": "recovery points per room clear" },
+      "status": "locked"
+    },
+    {
+      "id": "opening-temp-hp",
+      "name": "Opening temp HP",
+      "perRank": "+2 temp HP at the start of each room",
+      "effect": { "every": 1, "amount": 2, "unit": "temp HP at the start of each room" },
+      "status": "proposed"
+    },
+    {
+      "id": "flat-damage",
+      "name": "Flat damage",
+      "perRank": "+1 to one damage roll per turn",
+      "effect": { "every": 1, "amount": 1, "unit": "to one damage roll per turn" },
+      "status": "proposed"
+    },
+    {
+      "id": "healing-received",
+      "name": "Healing received",
+      "perRank": "+1 HP to every heal you receive",
+      "effect": { "every": 1, "amount": 1, "unit": "HP to every heal you receive" },
+      "status": "proposed"
+    },
+    {
+      "id": "speed",
+      "name": "Speed",
+      "perRank": "+5 ft for every 4 ranks",
+      "effect": { "every": 4, "amount": 5, "unit": "ft speed" },
+      "status": "proposed"
+    },
+    {
+      "id": "fortune-dice",
+      "name": "Fortune Dice",
+      "perRank": "1 reroll die for every 5 ranks, refreshed each run",
+      "effect": { "every": 5, "amount": 1, "unit": "Fortune Dice each run" },
+      "status": "proposed"
+    }
+  ],
+  "rankCosts": [
+    { "fromRank": 1, "toRank": 5, "devotions": 3 },
+    { "fromRank": 6, "toRank": 10, "devotions": 5 },
+    { "fromRank": 11, "toRank": 20, "devotions": 8 }
+  ],
+  "tierCaps": [
+    { "minLevel": 5, "maxLevel": 10, "maxRank": 5 },
+    { "minLevel": 11, "maxLevel": 16, "maxRank": 10 },
+    { "minLevel": 17, "maxLevel": 20, "maxRank": 20 }
+  ]
+}
