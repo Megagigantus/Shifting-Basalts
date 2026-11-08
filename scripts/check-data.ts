@@ -3,6 +3,7 @@
 // Exits with an error if anything is wrong, so it can also guard builds.
 import { readFileSync } from 'node:fs'
 import type { Boon, Combination, Evolution, HiddenBoon } from '../src/data/types.ts'
+import { withGeneratedBlock } from './rules-generated.ts'
 
 const TAGS = [
   'Core', 'Echo', 'Reaper', 'Spell', 'Crit', 'Stance', 'Volley', 'Shadow',
@@ -126,6 +127,12 @@ for (const h of hiddenBoons) {
   } else if (h.kind !== 'gift') {
     fail(`${where}: kind must be "class" or "gift"`)
   }
+}
+
+// firestore.rules carries a generated copy of upgrade prices and track caps.
+const rulesText = readFileSync(new URL('../firestore.rules', import.meta.url), 'utf8').replace(/\r\n/g, '\n')
+if (withGeneratedBlock(rulesText) !== rulesText) {
+  fail('firestore.rules is out of date with upgrades.json or stat-tracks.json. Run: npm run sync-rules')
 }
 
 if (errors.length) {
