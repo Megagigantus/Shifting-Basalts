@@ -1,11 +1,74 @@
 rules_version = '2';
 
-// Locked down: nobody can read or write anything yet.
-// Real rules (DM full access, players blocked from dmOnly) come in Phase 2.
+// Invite-only access.
+// - Everyone signs in with Google.
+// - invites/{email} lists who may use the app. The document ID is the
+//   lowercase email; the "role" field is "dm" or "player".
+// - Signed-in accounts that aren't on the list get nothing at all.
+// - Players can read shared data but never anything under dmOnly.
+// - Anything not matched below is denied.
+// Tested by tests/firestore.rules.test.ts (npm run test:rules).
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if false;
+
+    function signedIn() {
+      return request.auth != null
+        && request.auth.token.email_verified == true;
+    }
+
+    function myEmail() {
+      return request.auth.token.email.lower();
+    }
+
+    function myInvitePath() {
+      return /databases/$(database)/documents/invites/$(myEmail());
+    }
+
+    function isInvited() {
+      return signedIn() && exists(myInvitePath());
+    }
+
+    function isDM() {
+      return isInvited() && get(myInvitePath()).data.role == 'dm';
+    }
+
+    // The invite list. Only the DM manages it. Anyone signed in can check
+    // their own invite, which is how the app tells "not invited" apart.
+    match /invites/{inviteEmail} {
+      allow read: if isDM() || (signedIn() && inviteEmail == myEmail());
+      allow create, update: if isDM()
+        && inviteEmail == inviteEmail.lower()
+        && request.resource.data.role in ['dm', 'player'];
+      // The DM can't delete their own invite and lock themselves out.
+      allow delete: if isDM() && inviteEmail != myEmail();
+    }
+
+    // Saved characters. Players get write access in Phase 2.
+    match /characters/{characterId} {
+      allow read: if isInvited();
+      allow write: if isDM();
+    }
+
+    match /runs/{runId} {
+      allow read: if isInvited();
+      allow write: if isDM();
+
+      // Each player's state within a run.
+      match /players/{characterId} {
+        allow read: if isInvited();
+        allow write: if isDM();
+      }
+
+      // Hidden information: enemy stats, hidden condition, unsprung tricks.
+      // DM only, always.
+      match /dmOnly/{docId} {
+        allow read, write: if isDM();
+      }
+    }
+
+    match /runHistory/{runId} {
+      allow read: if isInvited();
+      allow write: if isDM();
     }
   }
 }
