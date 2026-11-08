@@ -64,6 +64,23 @@ export interface Evolution {
   status: Status
 }
 
+/**
+ * A hidden boon: sits in its own extra slot and never levels, evolves or combines.
+ * class = earned by a class's signature condition; gift = one of Thils's hidden
+ * gifts, offered when a room's secret condition is met.
+ */
+export interface HiddenBoon {
+  id: string
+  name: string
+  kind: 'class' | 'gift'
+  /** Class hidden boons only: class id from classes.json. */
+  classId?: string
+  /** Class hidden boons only: what earns it. */
+  condition?: string
+  effect: string
+  status: Status
+}
+
 export interface Combination {
   id: string
   name: string

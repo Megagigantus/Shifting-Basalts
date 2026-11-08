@@ -2,7 +2,7 @@
 // Run with: npm run check-data
 // Exits with an error if anything is wrong, so it can also guard builds.
 import { readFileSync } from 'node:fs'
-import type { Boon, Combination, Evolution } from '../src/data/types.ts'
+import type { Boon, Combination, Evolution, HiddenBoon } from '../src/data/types.ts'
 
 const TAGS = [
   'Core', 'Echo', 'Reaper', 'Spell', 'Crit', 'Stance', 'Volley', 'Shadow',
@@ -30,6 +30,8 @@ function load<T>(file: string): T[] {
 const boons = load<Boon>('boons.json')
 const evolutions = load<Evolution>('evolutions.json')
 const combinations = load<Combination>('combinations.json')
+const hiddenBoons = load<HiddenBoon>('hidden-boons.json')
+const classIds = load<{ id: string }>('classes.json').map((c) => c.id)
 
 const errors: string[] = []
 const fail = (msg: string) => errors.push(msg)
@@ -40,6 +42,7 @@ for (const [file, items] of [
   ['boons.json', boons],
   ['evolutions.json', evolutions],
   ['combinations.json', combinations],
+  ['hidden-boons.json', hiddenBoons],
 ] as const) {
   for (const item of items) {
     if (!item.id || !/^[a-z0-9-]+$/.test(item.id)) {
@@ -114,6 +117,17 @@ for (const c of combinations) {
   }
 }
 
+for (const h of hiddenBoons) {
+  const where = `hidden-boons.json "${h.id}"`
+  if (!h.effect) fail(`${where}: has no effect text`)
+  if (h.kind === 'class') {
+    if (!classIds.includes(h.classId ?? '')) fail(`${where}: unknown classId "${h.classId}"`)
+    if (!h.condition) fail(`${where}: class hidden boons need a condition`)
+  } else if (h.kind !== 'gift') {
+    fail(`${where}: kind must be "class" or "gift"`)
+  }
+}
+
 if (errors.length) {
   console.error(`Found ${errors.length} problem(s) in the data files:\n`)
   for (const e of errors) console.error(`  - ${e}`)
@@ -121,5 +135,5 @@ if (errors.length) {
 }
 
 console.log(
-  `Data OK: ${boons.length} boons, ${evolutions.length} evolutions, ${combinations.length} combinations.`,
+  `Data OK: ${boons.length} boons, ${evolutions.length} evolutions, ${combinations.length} combinations, ${hiddenBoons.length} hidden boons.`,
 )

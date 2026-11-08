@@ -2,29 +2,211 @@
   {
     "id": "super-normal",
     "name": "Super Normal",
-    "boons": ["critical-delight", "crits-are-for-suckers"],
+    "boons": [
+      "critical-delight",
+      "crits-are-for-suckers"
+    ],
     "effect": "You lose Critical Delight's non-crit penalty and never critically fail an attack roll: a natural 1 still misses if it doesn't meet AC, but triggers no fumble effects. Your crit range is 18 to 20, non-crits deal +50% damage, and crits deal triple damage plus PB d20.",
     "status": "locked"
   },
   {
     "id": "still-water",
     "name": "Still Water",
-    "boons": ["a-fine-steels-glint", "stand-off"],
+    "boons": [
+      "a-fine-steels-glint",
+      "stand-off"
+    ],
     "effect": "Entering either stance activates both, and you can still counter while in stance. In stance, you take half damage from all sources and can make up to 3 Stand Off counters per round. Each successful counter deflects the attack onto a nearby enemy and adds 1 turn of stored damage (up to PB) to your guaranteed teleporting strike.",
     "status": "locked"
   },
   {
     "id": "elemains-fancy-criticals",
     "name": "Elemain's Fancy Criticals",
-    "boons": ["elemains-flight-of-fancy", "critical-delight"],
+    "boons": [
+      "elemains-flight-of-fancy",
+      "critical-delight"
+    ],
     "effect": "Your ricochets use your Critical Delight crit range (10 to 20) instead of only a natural 20, and each ricochet crit builds and benefits from Critical Delight's multiplier.",
     "status": "locked"
   },
   {
     "id": "shooting-gallery",
     "name": "Shooting Gallery",
-    "boons": ["elemains-flight-of-fancy", "traverts-echoes"],
+    "boons": [
+      "elemains-flight-of-fancy",
+      "traverts-echoes"
+    ],
     "effect": "Each ricochet triggers a Level 3 Travert's Echo (three pulses for 25% of the ricochet's damage in a 10 ft ring around each target hit), and any kill from a ricochet or its echoes banks an echo.",
+    "status": "locked"
+  },
+  {
+    "id": "dragnet",
+    "name": "Dragnet",
+    "boons": [
+      "corrows-lure",
+      "elemental-residue"
+    ],
+    "effect": "Pulled creatures trigger every puddle they're dragged through.",
+    "status": "locked"
+  },
+  {
+    "id": "rush-hour",
+    "name": "Rush Hour",
+    "boons": [
+      "the-express",
+      "traverts-echoes"
+    ],
+    "effect": "Your echoes gain The Express's hit bonus.",
+    "status": "locked"
+  },
+  {
+    "id": "immovable-object",
+    "name": "Immovable Object",
+    "boons": [
+      "hardened-hide",
+      "stand-off"
+    ],
+    "effect": "While in stand off, your damage reduction doubles, and counters deal extra damage equal to the damage you reduced this round.",
+    "status": "locked"
+  },
+  {
+    "id": "blood-and-glory",
+    "name": "Blood and Glory",
+    "boons": [
+      "breakers-last-stand",
+      "critical-delight"
+    ],
+    "effect": "While Bloodied, Critical Delight's non-crit penalty doesn't apply.",
+    "status": "locked"
+  },
+  {
+    "id": "pack-leader",
+    "name": "Pack Leader",
+    "boons": [
+      "collectors-menagerie",
+      "twin-flame"
+    ],
+    "effect": "Buff spells you cast on yourself also affect your summon or companion.",
+    "status": "locked"
+  },
+  {
+    "id": "contract-kill",
+    "name": "Contract Kill",
+    "boons": [
+      "zolics-nine-eyes",
+      "first-strike"
+    ],
+    "effect": "Your first hit on a boss each room grants 3 Eyes.",
+    "status": "locked"
+  },
+  {
+    "id": "ghost-reaper",
+    "name": "Ghost Reaper",
+    "boons": [
+      "fading-veil",
+      "reapers-sprint"
+    ],
+    "effect": "Every Reaper's Sprint teleport leaves you hidden.",
+    "status": "locked"
+  },
+  {
+    "id": "seismic-waltz",
+    "name": "Seismic Waltz",
+    "boons": [
+      "resounding-blow",
+      "echoing-step"
+    ],
+    "effect": "Moving 20 ft detonates any pending Resounding Blows on enemies within 30 ft for 50% damage instead of 40%, and each detonation triggers Echoing Step's 10 ft splash.",
+    "status": "locked"
+  },
+  {
+    "id": "the-ferrymans-toll",
+    "name": "The Ferryman's Toll",
+    "boons": [
+      "last-rites",
+      "harvest"
+    ],
+    "effect": "Your execution threshold rises by PB HP for every Soul you hold (up to 10 × PB HP), and executing a creature grants 2 Souls instead of 1.",
+    "status": "locked"
+  },
+  {
+    "id": "dead-to-rights",
+    "name": "Dead to Rights",
+    "boons": [
+      "marked-quarry",
+      "weak-point"
+    ],
+    "effect": "Marking a quarry also applies Weak Point with the same bonus action. Your +2d6 mark damage ignores resistance and doubles to +4d6 on a crit, which now triggers on 18 to 20.",
+    "status": "locked"
+  },
+  {
+    "id": "blender",
+    "name": "Blender",
+    "boons": [
+      "thousand-cuts",
+      "second-hand"
+    ],
+    "effect": "Each hit from your bonus action attacks counts as 2 hits toward Thousand Cuts. Against a prone creature, the Stun threshold drops from 4 hits to 3.",
+    "status": "locked"
+  },
+  {
+    "id": "martyrs-engine",
+    "name": "Martyr's Engine",
+    "boons": [
+      "bleed-out",
+      "red-mist"
+    ],
+    "effect": "Spending HP on Bleed Out triggers all of Red Mist's Bloodied effects even if you aren't Bloodied. At 0 HP during Red Mist's extra turn, Bleed Out's Level 3 auto-crit costs no HP and works on every attack that turn.",
+    "status": "locked"
+  },
+  {
+    "id": "loaded-dice",
+    "name": "Loaded Dice",
+    "boons": [
+      "lucky-break",
+      "ostras-coin"
+    ],
+    "effect": "When you score a crit or spend a Lucky Break use, Ostra's Coin flips and lands on your called side, triggering both the heal and the necrotic damage.",
+    "status": "locked"
+  },
+  {
+    "id": "living-bastion",
+    "name": "Living Bastion",
+    "boons": [
+      "iron-root",
+      "battle-standard"
+    ],
+    "effect": "Using Iron Root plants your Battle Standard in your space for free, with no once-per-room limit, and the standard can't be damaged or knocked over while you stay rooted.",
+    "status": "locked"
+  },
+  {
+    "id": "pack-swap",
+    "name": "Pack Swap",
+    "boons": [
+      "pack-tactics",
+      "swap-places"
+    ],
+    "effect": "Swapping places with your companion deals 2 × PB force damage to every enemy adjacent to either space and gives your companion a free opportunity attack.",
+    "status": "locked"
+  },
+  {
+    "id": "tempest-volley",
+    "name": "Tempest Volley",
+    "boons": [
+      "elemental-quiver",
+      "scatter-volley"
+    ],
+    "effect": "Scatter Volley can be used once per turn instead of twice per room (up to 3 creatures), and every creature hit suffers both of your chosen Elemental Quiver effects.",
+    "status": "locked"
+  },
+  {
+    "id": "hemomancer",
+    "name": "Hemomancer",
+    "boons": [
+      "bleed-out",
+      "cleansing-nova"
+    ],
+    "effect": "Spending HP for Bleed Out releases a 10 ft Cleansing Nova pulse that heals allies for the HP spent and deals that much radiant damage to enemies in it.",
     "status": "locked"
   }
 ]
