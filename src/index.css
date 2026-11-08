@@ -18,3 +18,21 @@ body {
   opacity: 0.7;
   font-size: 0.9rem;
 }
+
+button {
+  font: inherit;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #6b665c;
+  background: #2b2a30;
+  color: inherit;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #36353c;
+}
+
+.error {
+  color: #f08a7a;
+}

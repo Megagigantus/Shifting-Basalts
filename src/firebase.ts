@@ -1,7 +1,9 @@
 // Connects the app to Firebase using the values in .env.local.
-// If those values are missing, `firebaseApp` is null and the app still runs,
+// If those values are missing, everything here is null and the app still runs,
 // so you can work on screens before the Firebase project exists.
 import { initializeApp, type FirebaseApp } from 'firebase/app'
+import { getAuth, type Auth } from 'firebase/auth'
+import { getFirestore, type Firestore } from 'firebase/firestore'
 
 const config = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -17,3 +19,6 @@ export const firebaseConfigured = Boolean(config.apiKey && config.projectId)
 export const firebaseApp: FirebaseApp | null = firebaseConfigured
   ? initializeApp(config)
   : null
+
+export const auth: Auth | null = firebaseApp ? getAuth(firebaseApp) : null
+export const db: Firestore | null = firebaseApp ? getFirestore(firebaseApp) : null
