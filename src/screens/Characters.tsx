@@ -1,50 +1,33 @@
 // DM screen: the character roster. Characters are saved in the
 // "characters" collection and stay in sync live.
-import { useEffect, useState } from 'react'
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  onSnapshot,
-  serverTimestamp,
-  updateDoc,
-} from 'firebase/firestore'
+import { useState } from 'react'
+import { addDoc, collection, deleteDoc, doc, serverTimestamp, updateDoc } from 'firebase/firestore'
 import { db } from '../firebase'
 import classes from '../data/classes.json'
-import { CASTER_TYPES, emptyProfile, type Character, type CharacterProfile } from '../model/character'
+import {
+  CASTER_TYPES,
+  emptyDungeonLayer,
+  emptyProfile,
+  profileOf,
+  type Character,
+  type CharacterProfile,
+} from '../model/character'
 import { proficiencyBonus } from '../rules/proficiency'
+import { useCharacters } from '../useCharacters'
 import { CharacterForm } from './CharacterForm'
 
 const className = (id: string) => classes.find((c) => c.id === id)?.name ?? id
 
-/** Pull only the profile fields out of a saved character, for the edit form. */
-function profileOf({ id: _id, ...profile }: Character): CharacterProfile {
-  return profile
-}
-
 export function Characters() {
-  const [characters, setCharacters] = useState<Character[] | null>(null)
+  const { characters, error: loadError } = useCharacters()
   const [editing, setEditing] = useState<'new' | string | null>(null)
   const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (!db) return
-    return onSnapshot(
-      collection(db, 'characters'),
-      (snapshot) => {
-        const list = snapshot.docs.map((d) => ({ ...emptyProfile(), ...d.data(), id: d.id }) as Character)
-        list.sort((a, b) => a.name.localeCompare(b.name))
-        setCharacters(list)
-      },
-      () => setError('Could not load characters.'),
-    )
-  }, [])
 
   async function create(profile: CharacterProfile) {
     if (!db) return
     await addDoc(collection(db, 'characters'), {
       ...profile,
+      ...emptyDungeonLayer(),
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     })
@@ -53,14 +36,26 @@ export function Characters() {
 
   async function update(id: string, profile: CharacterProfile) {
     if (!db) return
+    // Only profile fields: runs own the dungeon layer.
     await updateDoc(doc(db, 'characters', id), { ...profile, updatedAt: serverTimestamp() })
     setEditing(null)
+  }
+
+  async function clearLockout(character: Character) {
+    if (!db) return
+    if (!window.confirm(`Clear ${character.name}'s lockout so they can enter the Basalts again?`)) return
+    setError(null)
+    try {
+      await updateDoc(doc(db, 'characters', character.id), { lockoutDays: 0, updatedAt: serverTimestamp() })
+    } catch {
+      setError(`Could not clear ${character.name}'s lockout.`)
+    }
   }
 
   async function remove(character: Character) {
     if (!db) return
     const sure = window.confirm(
-      `Delete ${character.name}? This removes their saved profile and can't be undone.`,
+      `Delete ${character.name}? This removes their saved profile and dungeon progress, and can't be undone.`,
     )
     if (!sure) return
     setError(null)
@@ -91,7 +86,7 @@ export function Characters() {
         />
       )}
 
-      {characters === null && !error && <p>Loading…</p>}
+      {characters === null && !loadError && <p>Loading…</p>}
       {characters?.length === 0 && editing !== 'new' && (
         <p className="hint">No characters yet. Add one to get started.</p>
       )}
@@ -122,9 +117,21 @@ export function Characters() {
                   {' · '}
                   {c.playerEmail || 'no player assigned'}
                 </span>
+                <span className="hint">
+                  {c.bankedQuantumBasalts} Quantum Basalts · {c.bankedDevotions} Devotions banked ·
+                  deepest floor {c.deepestFloor || 'none yet'}
+                </span>
+                {c.lockoutDays > 0 && (
+                  <span className="warning">Locked out: {c.lockoutDays} days</span>
+                )}
               </div>
               {editing === null && (
                 <div className="row-actions">
+                  {c.lockoutDays > 0 && (
+                    <button type="button" onClick={() => clearLockout(c)}>
+                      Clear lockout
+                    </button>
+                  )}
                   <button type="button" onClick={() => setEditing(c.id)}>
                     Edit
                   </button>
@@ -138,7 +145,7 @@ export function Characters() {
         )}
       </ul>
 
-      {error && <p className="error">{error}</p>}
+      {(error || loadError) && <p className="error">{error || loadError}</p>}
     </section>
   )
 }

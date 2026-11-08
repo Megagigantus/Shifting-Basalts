@@ -4,6 +4,7 @@ import { auth, firebaseConfigured } from './firebase'
 import { useAccess } from './useAccess'
 import { InviteList } from './screens/InviteList'
 import { Characters } from './screens/Characters'
+import { RunPanel } from './screens/RunPanel'
 
 function App() {
   const access = useAccess()
@@ -65,6 +66,7 @@ function App() {
           {signOutButton}
           {access.role === 'dm' ? (
             <>
+              <RunPanel />
               <Characters />
               <InviteList myEmail={access.user.email ?? ''} />
             </>

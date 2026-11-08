@@ -1,10 +1,10 @@
 // A saved character: the lean profile from the design bible's
-// "App requirements > Characters" section. The dungeon layer (boons, stat
-// tracks, upgrades, Quantum Basalts...) is added in later steps.
+// "App requirements > Characters" section, plus the permanent dungeon layer.
 
 export type CasterType = 'none' | 'half' | 'full' | 'pact'
 export type AttackStyle = 'melee' | 'ranged' | 'spells'
 
+/** What the player confirms at run setup. Edited in the character form. */
 export interface CharacterProfile {
   name: string
   /** Lowercase Google email of the player who owns this character, or "" if unassigned. */
@@ -20,7 +20,19 @@ export interface CharacterProfile {
   attackStyle: AttackStyle
 }
 
-export interface Character extends CharacterProfile {
+/** What persists between runs. Changed by runs and upgrades, not the profile form. */
+export interface DungeonLayer {
+  bankedQuantumBasalts: number
+  /** Devotions earned but not yet spent on stat tracks. */
+  bankedDevotions: number
+  deepestFloor: number
+  /** Days left on a death lockout; the DM clears it by hand. 0 = free to enter. */
+  lockoutDays: number
+  /** Upgrade id -> rank owned. */
+  upgrades: Record<string, number>
+}
+
+export interface Character extends CharacterProfile, DungeonLayer {
   id: string
 }
 
@@ -48,5 +60,30 @@ export function emptyProfile(): CharacterProfile {
     slotLevels: [],
     hasSummon: false,
     attackStyle: 'melee',
+  }
+}
+
+export function emptyDungeonLayer(): DungeonLayer {
+  return {
+    bankedQuantumBasalts: 0,
+    bankedDevotions: 0,
+    deepestFloor: 0,
+    lockoutDays: 0,
+    upgrades: {},
+  }
+}
+
+/** Just the profile fields of a character, for the edit form. */
+export function profileOf(c: Character): CharacterProfile {
+  return {
+    name: c.name,
+    playerEmail: c.playerEmail,
+    classId: c.classId,
+    subclass: c.subclass,
+    level: c.level,
+    casterType: c.casterType,
+    slotLevels: c.slotLevels,
+    hasSummon: c.hasSummon,
+    attackStyle: c.attackStyle,
   }
 }

@@ -9,7 +9,7 @@ body {
 }
 
 .placeholder {
-  max-width: 40rem;
+  max-width: 52rem;
   margin: 4rem auto;
   padding: 0 1rem;
 }
@@ -196,4 +196,118 @@ select {
 button:disabled {
   opacity: 0.5;
   cursor: default;
+}
+
+.warning {
+  color: #f0b46a;
+  font-size: 0.9rem;
+}
+
+.start-run h3 {
+  margin: 1rem 0 0.5rem;
+}
+
+.choice-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.choice-list label.checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.choice-list input {
+  margin-top: 0.3rem;
+}
+
+label.disabled {
+  opacity: 0.55;
+}
+
+.summary {
+  margin: 1rem 0;
+  font-weight: 600;
+}
+
+.run-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.run-where {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.join-code {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.join-code strong {
+  font-size: 1.4rem;
+  letter-spacing: 0.15em;
+}
+
+.run-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.party-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.5rem 0 1rem;
+}
+
+.party-table th,
+.party-table td {
+  text-align: left;
+  padding: 0.45rem 0.4rem;
+  border-bottom: 1px solid #2f2e34;
+  vertical-align: top;
+}
+
+.party-table th {
+  font-size: 0.85rem;
+  opacity: 0.7;
+  font-weight: 500;
+}
+
+.party-table tr.fallen td {
+  opacity: 0.75;
+}
+
+.run-log ol {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.run-footer {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+button.quiet {
+  border-color: transparent;
+  background: transparent;
+  opacity: 0.7;
+}
+
+@media (max-width: 600px) {
+  .party-table {
+    display: block;
+    overflow-x: auto;
+  }
 }

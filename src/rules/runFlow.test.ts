@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { emptyProfile, type Character } from '../model/character'
+import { emptyDungeonLayer, emptyProfile, type Character } from '../model/character'
 import type { RunState } from '../model/run'
 import {
   canExtract,
@@ -15,7 +15,13 @@ import {
   runResults,
 } from './runFlow'
 
-const char = (id: string, level: number): Character => ({ ...emptyProfile(), id, name: id, level })
+const char = (id: string, level: number): Character => ({
+  ...emptyProfile(),
+  ...emptyDungeonLayer(),
+  id,
+  name: id,
+  level,
+})
 const twos = () => 2
 
 function start(levels = [9, 10, 11, 12], pressures: string[] = []): RunState {
