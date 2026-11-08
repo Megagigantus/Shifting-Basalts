@@ -16,10 +16,11 @@ const EXTRA_PRESSURES = 'extra-pressures'
 
 interface Props {
   characters: Character[]
+  onStarted: () => void
   onCancel: () => void
 }
 
-export function StartRun({ characters, onCancel }: Props) {
+export function StartRun({ characters, onStarted, onCancel }: Props) {
   const [picked, setPicked] = useState<string[]>([])
   const [pressures, setPressures] = useState<string[]>([])
   const [error, setError] = useState<string | null>(null)
@@ -45,6 +46,7 @@ export function StartRun({ characters, onCancel }: Props) {
       const state = newRunState(newRunId(), makeJoinCode(), party, activePressures)
       await saveRunState(state, null, characters)
       // The live listener picks up the new run and shows the tracker.
+      onStarted()
     } catch {
       setError('Could not start the run. Please try again.')
       setStarting(false)

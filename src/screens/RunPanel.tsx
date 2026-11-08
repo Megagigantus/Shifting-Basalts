@@ -31,17 +31,18 @@ export function RunPanel() {
         <RunTracker
           state={state}
           characters={characters}
-          onEnded={(results, endedState) => {
-            setStarting(false)
-            setEnded({ results, state: endedState })
-          }}
+          onEnded={(results, endedState) => setEnded({ results, state: endedState })}
         />
       )}
 
       {!state && ended && <RunSummary {...ended} onDone={() => setEnded(null)} />}
 
       {!state && !ended && starting && characters && (
-        <StartRun characters={characters} onCancel={() => setStarting(false)} />
+        <StartRun
+          characters={characters}
+          onStarted={() => setStarting(false)}
+          onCancel={() => setStarting(false)}
+        />
       )}
 
       {!state && !ended && !starting && !loading && (
