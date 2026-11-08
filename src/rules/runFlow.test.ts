@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import { emptyDungeonLayer, emptyProfile, type Character } from '../model/character'
 import type { RunState } from '../model/run'
+import { takeBoon } from './boons'
 import {
   canExtract,
+  changeSlots,
+  setHiddenBoon,
   clearRoom,
   defeatBoss,
   descend,
@@ -223,6 +226,31 @@ describe('upgrades in a run', () => {
     const ones = () => 1
     const other = markDead(descend(clearFloor(newRunState('r', 'X', party, []))), 'a', ones) // 2 - 3
     expect(other.players[0].lockoutDays).toBe(1)
+  })
+})
+
+describe('boons in a run', () => {
+  it('each player starts with empty slots sized by Extra Boon Slot, and no hidden boon', () => {
+    const party = [char('a', 5), { ...char('b', 5), upgrades: { 'extra-boon-slot': 2 } }]
+    const { players } = newRunState('r', 'X', party, [])
+    expect(players[0].slots).toEqual([null, null, null])
+    expect(players[1].slots).toHaveLength(5)
+    expect(players[0].hiddenBoonId).toBeNull()
+  })
+
+  it('changes one player\'s slots and hidden boon', () => {
+    let state = start([5, 5])
+    state = changeSlots(state, 'c0', (s) => takeBoon(s, 'hardy'))
+    state = setHiddenBoon(state, 'c1', 'keeper-of-ways')
+    expect(state.players[0].slots?.[0]).toMatchObject({ boonId: 'hardy', level: 1 })
+    expect(state.players[1].slots).toEqual([null, null, null])
+    expect(state.players[1].hiddenBoonId).toBe('keeper-of-ways')
+    expect(() => setHiddenBoon(state, 'c1', 'not-a-boon')).toThrow()
+  })
+
+  it('fallen players can\'t change boons', () => {
+    const state = markDead(start([5, 5]), 'c1', twos)
+    expect(() => changeSlots(state, 'c1', (s) => takeBoon(s, 'hardy'))).toThrow('fallen')
   })
 })
 

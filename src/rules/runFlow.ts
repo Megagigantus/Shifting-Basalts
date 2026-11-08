@@ -16,6 +16,7 @@ import {
   rollLockoutDays,
   withPressureBonus,
 } from './run'
+import { emptySlots, hiddenBoon, slotCount, type Slot } from './boons'
 import {
   deepPocketsPercent,
   extraLootBonusPercent,
@@ -67,6 +68,8 @@ export function newRunState(id: string, joinCode: string, party: Character[], pr
       devotions: 0,
       extraLootBonusPercent: extraLootBonusPercent(c),
       quickReturnDays: quickReturnDays(c),
+      slots: emptySlots(slotCount(c.upgrades['extra-boon-slot'] ?? 0)),
+      hiddenBoonId: null,
       diedOnFloor: null,
       lockoutDays: null,
       lockoutRolls: null,
@@ -168,6 +171,29 @@ export function pass(state: RunState, characterId: string): RunState {
       }
     }),
   }
+}
+
+function updatePlayer(state: RunState, characterId: string, change: (p: RunPlayer) => RunPlayer): RunState {
+  requireActive(state)
+  return {
+    ...state,
+    players: state.players.map((p) => {
+      if (p.characterId !== characterId) return p
+      if (!p.alive) throw new Error(`${p.name} has fallen.`)
+      return change(p)
+    }),
+  }
+}
+
+/** Apply a boon-slot change (from rules/boons.ts) to one living player. */
+export function changeSlots(state: RunState, characterId: string, change: (slots: Slot[]) => Slot[]): RunState {
+  return updatePlayer(state, characterId, (p) => ({ ...p, slots: change(p.slots ?? []) }))
+}
+
+/** Put a hidden boon in a player's hidden slot (replacing any held one), or clear it with null. */
+export function setHiddenBoon(state: RunState, characterId: string, hiddenBoonId: string | null): RunState {
+  if (hiddenBoonId) hiddenBoon(hiddenBoonId) // throws if unknown
+  return updatePlayer(state, characterId, (p) => ({ ...p, hiddenBoonId }))
 }
 
 /** A character dies: expelled, locked out, and the run wipes if nobody is left. */

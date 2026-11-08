@@ -2,6 +2,7 @@
 //   runs/{runId}                    -> Run (minus id)
 //   runs/{runId}/players/{charId}   -> RunPlayer
 // Hidden information (runs/{runId}/dmOnly) arrives with the room generator.
+import type { Slot } from '../rules/boons'
 
 export type RunStatus = 'active' | 'extracted' | 'wiped'
 export type RoomKind = 'combat' | 'elite' | 'reprieve' | 'boss'
@@ -53,6 +54,10 @@ export interface RunPlayer {
   extraLootBonusPercent?: number
   /** Days this player's Quick Return takes off a death lockout. */
   quickReturnDays?: number
+  /** Boon slots (3 plus Extra Boon Slot ranks). Boons reset every run. */
+  slots?: Slot[]
+  /** The hidden boon slot: a class hidden boon or one of Thils's gifts. */
+  hiddenBoonId?: string | null
   diedOnFloor: number | null
   lockoutDays: number | null
   lockoutRolls: number[] | null
