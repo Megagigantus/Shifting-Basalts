@@ -39,27 +39,27 @@
     "name": "Overflowing Cup",
     "from": "overhealing",
     "effect": "Temp HP from Overhealing stacks with other temp HP instead of replacing it.",
-    "status": "proposed"
+    "status": "locked"
   },
   {
     "id": "titans-hide",
     "name": "Titan's Hide",
     "from": "hardened-hide",
     "effect": "Once per room, as a bonus action, gain resistance to all damage until the start of your next turn, and enemies within 10 ft can only attack you.",
-    "status": "proposed"
+    "status": "locked"
   },
   {
     "id": "hex-unwoven",
     "name": "Hex Unwoven",
     "from": "cleansing-nova",
     "effect": "Your heals also end curses and remove one level of Exhaustion, and the pulse reaches 20 ft.",
-    "status": "proposed"
+    "status": "locked"
   },
   {
     "id": "mirror-step",
     "name": "Mirror Step",
     "from": "riposte-step",
     "effect": "You no longer need to Dodge: when an attack misses you, teleport up to 10 ft and counterattack for +PB damage.",
-    "status": "proposed"
+    "status": "locked"
   }
 ]
