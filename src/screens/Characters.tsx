@@ -16,6 +16,15 @@ import { proficiencyBonus } from '../rules/proficiency'
 import { useCharacters } from '../useCharacters'
 import { CharacterForm } from './CharacterForm'
 import { StatTracks } from './StatTracks'
+import { UpgradeShop } from './UpgradeShop'
+import { UPGRADES } from '../rules/upgrades'
+
+/** e.g. "Forge · Extra Boon Slot 2", for upgrades owned. */
+function upgradeSummary(c: Character): string {
+  return UPGRADES.filter((u) => (c.upgrades[u.id] ?? 0) > 0)
+    .map((u) => (u.costs.length > 1 ? `${u.name} ${c.upgrades[u.id]}` : u.name))
+    .join(' · ')
+}
 import { rankProgress, STAT_TRACKS } from '../rules/statTracks'
 
 /** e.g. "Max HP 2 · Speed 1", for tracks with at least one rank. */
@@ -31,7 +40,8 @@ const className = (id: string) => classes.find((c) => c.id === id)?.name ?? id
 export function Characters() {
   const { characters, error: loadError } = useCharacters()
   const [editing, setEditing] = useState<'new' | string | null>(null)
-  const [tracksFor, setTracksFor] = useState<string | null>(null)
+  // Which character's Stat tracks or Upgrades panel is open, if any.
+  const [open, setOpen] = useState<{ id: string; kind: 'tracks' | 'upgrades' } | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   async function create(profile: CharacterProfile) {
@@ -136,12 +146,21 @@ export function Characters() {
                 {c.lockoutDays > 0 && (
                   <span className="warning">Locked out: {c.lockoutDays} days</span>
                 )}
-                {tracksFor === c.id && <StatTracks character={c} onClose={() => setTracksFor(null)} />}
+                {upgradeSummary(c) && <span className="hint">Upgrades: {upgradeSummary(c)}</span>}
+                {open?.id === c.id && open.kind === 'tracks' && (
+                  <StatTracks character={c} onClose={() => setOpen(null)} />
+                )}
+                {open?.id === c.id && open.kind === 'upgrades' && (
+                  <UpgradeShop character={c} onClose={() => setOpen(null)} />
+                )}
               </div>
-              {editing === null && tracksFor !== c.id && (
+              {editing === null && open?.id !== c.id && (
                 <div className="row-actions">
-                  <button type="button" onClick={() => setTracksFor(c.id)}>
+                  <button type="button" onClick={() => setOpen({ id: c.id, kind: 'tracks' })}>
                     Stat tracks
+                  </button>
+                  <button type="button" onClick={() => setOpen({ id: c.id, kind: 'upgrades' })}>
+                    Upgrades
                   </button>
                   {c.lockoutDays > 0 && (
                     <button type="button" onClick={() => clearLockout(c)}>
