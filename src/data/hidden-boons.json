@@ -1,0 +1,166 @@
+[
+  {
+    "id": "unbroken",
+    "name": "Unbroken",
+    "kind": "class",
+    "classId": "barbarian",
+    "condition": "Clear a room while Bloodied without being healed in it",
+    "effect": "While Bloodied, your Rage damage bonus doubles.",
+    "status": "proposed"
+  },
+  {
+    "id": "charm-the-pants-off",
+    "name": "Charm the Pants Off",
+    "kind": "class",
+    "classId": "bard",
+    "condition": "A fight ends with an enemy charmed, frightened or talked into surrender",
+    "effect": "Once per room, a creature that fails a save against your charm spell fights for you until the end of its next turn.",
+    "status": "proposed"
+  },
+  {
+    "id": "divine-witness",
+    "name": "Divine Witness",
+    "kind": "class",
+    "classId": "cleric",
+    "condition": "Restore an ally from 0 HP and deal radiant damage in the same turn",
+    "effect": "Channel Divinity regains one use after each boss.",
+    "status": "proposed"
+  },
+  {
+    "id": "many-faces",
+    "name": "Many Faces",
+    "kind": "class",
+    "classId": "druid",
+    "condition": "Drop an enemy in Wild Shape and another with a spell in the same room",
+    "effect": "You can cast cantrips while in Wild Shape.",
+    "status": "proposed"
+  },
+  {
+    "id": "perfect-form",
+    "name": "Perfect Form",
+    "kind": "class",
+    "classId": "fighter",
+    "condition": "Hit with every attack you make in a room (at least 6 attacks)",
+    "effect": "Action Surge regains one use after each boss.",
+    "status": "proposed"
+  },
+  {
+    "id": "empty-hand",
+    "name": "Empty Hand",
+    "kind": "class",
+    "classId": "monk",
+    "condition": "Clear a room using only unarmed strikes",
+    "effect": "Flurry of Blows makes one extra strike.",
+    "status": "proposed"
+  },
+  {
+    "id": "oathkeeper",
+    "name": "Oathkeeper",
+    "kind": "class",
+    "classId": "paladin",
+    "condition": "Heal an ally and Divine Smite in the same turn",
+    "effect": "Once per room, Divine Smite costs no spell slot.",
+    "status": "proposed"
+  },
+  {
+    "id": "pogs-path",
+    "name": "Pog's Path",
+    "kind": "class",
+    "classId": "ranger",
+    "condition": "Hit your Hunter's Mark target with every attack you make in a room",
+    "effect": "You ignore difficult terrain, and room tricks never reveal your position.",
+    "status": "proposed"
+  },
+  {
+    "id": "unseen-hand",
+    "name": "Unseen Hand",
+    "kind": "class",
+    "classId": "rogue",
+    "condition": "Drop an enemy that never saw you",
+    "effect": "Your Sneak Attack dice become d8s.",
+    "status": "proposed"
+  },
+  {
+    "id": "wild-overflow",
+    "name": "Wild Overflow",
+    "kind": "class",
+    "classId": "sorcerer",
+    "condition": "Spend every Sorcery Point you have in a single room",
+    "effect": "Regain half your Sorcery Points at the end of each room.",
+    "status": "proposed"
+  },
+  {
+    "id": "pact-echo",
+    "name": "Pact Echo",
+    "kind": "class",
+    "classId": "warlock",
+    "condition": "Hit with every Eldritch Blast beam in a turn of 3 or more beams",
+    "effect": "Your Pact Magic slots refresh after each boss.",
+    "status": "proposed"
+  },
+  {
+    "id": "the-archivist",
+    "name": "The Archivist",
+    "kind": "class",
+    "classId": "wizard",
+    "condition": "Keep three different spell effects active on enemies at once",
+    "effect": "Once per floor, cast a spell of 5th level or lower from your spellbook without spending a slot.",
+    "status": "proposed"
+  },
+  {
+    "id": "lost-and-found",
+    "name": "Lost and Found",
+    "kind": "gift",
+    "effect": "Once per run, recover one consumable you used up this run.",
+    "status": "proposed"
+  },
+  {
+    "id": "thilss-wink",
+    "name": "Thils's Wink",
+    "kind": "gift",
+    "effect": "Once per room, reroll a d20 test made against a room trick.",
+    "status": "proposed"
+  },
+  {
+    "id": "pilgrims-due",
+    "name": "Pilgrim's Due",
+    "kind": "gift",
+    "effect": "Gain 1 extra Devotion when you extract.",
+    "status": "proposed"
+  },
+  {
+    "id": "keeper-of-ways",
+    "name": "Keeper of Ways",
+    "kind": "gift",
+    "effect": "You always see a room's true exit.",
+    "status": "proposed"
+  },
+  {
+    "id": "collectors-eye",
+    "name": "Collector's Eye",
+    "kind": "gift",
+    "effect": "Your share of run loot increases by 10%.",
+    "status": "proposed"
+  },
+  {
+    "id": "trapwise",
+    "name": "Trapwise",
+    "kind": "gift",
+    "effect": "Room tricks you trigger deal half damage to you.",
+    "status": "proposed"
+  },
+  {
+    "id": "maze-runner",
+    "name": "Maze Runner",
+    "kind": "gift",
+    "effect": "+10 ft speed in rooms with more than one exit.",
+    "status": "proposed"
+  },
+  {
+    "id": "offering-accepted",
+    "name": "Offering Accepted",
+    "kind": "gift",
+    "effect": "Once per floor, when you drop to 0 HP, drop to 1 instead.",
+    "status": "proposed"
+  }
+]

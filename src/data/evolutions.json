@@ -1,0 +1,345 @@
+[
+  {
+    "id": "ball-of-yarn",
+    "name": "Ball of Yarn",
+    "from": "ulmas-thread",
+    "effect": "Once per run, extract the whole party from any room, not just after a boss, keeping loot as if you'd beaten the last boss you passed.",
+    "status": "locked"
+  },
+  {
+    "id": "the-whole-shelf",
+    "name": "The Whole Shelf",
+    "from": "the-archivists-index",
+    "effect": "While in the Basalts, you have every spell on your class list prepared.",
+    "status": "locked"
+  },
+  {
+    "id": "master-weaver",
+    "name": "Master Weaver",
+    "from": "weavers-mending",
+    "effect": "Once per room, when an ally within 60 ft drops to 0 HP, use your reaction to cast a healing spell on them without spending a slot.",
+    "status": "locked"
+  },
+  {
+    "id": "chain-of-echoes",
+    "name": "Chain of Echoes",
+    "from": "traverts-echoes",
+    "effect": "Keeps Level 3. If echoes hit the same enemy 4 times in one turn, you rise 10 ft and slam down, causing a 30 ft echo for 50% damage. The slam adds an echo to the next echo that hits an enemy other than the big echo's main target.",
+    "status": "locked"
+  },
+  {
+    "id": "nothing-personal",
+    "name": "Nothing Personal",
+    "from": "reapers-sprint",
+    "effect": "Hitting an enemy from behind lets you teleport behind another enemy for a free attack at 50% damage. On a hit it repeats, up to PB times, until you miss or kill. A kill during the chain earns the Reaper's favor: his scythe lands on the first attack of your next hit for significant damage.",
+    "status": "locked"
+  },
+  {
+    "id": "and-you-get-a-spell",
+    "name": "And You Get a Spell!",
+    "from": "spellslingers-delight",
+    "effect": "When a single-target spell hits, cast it for free at another target. If that hits, you also get your three-target cantrip cast. Spells of 6th level or higher can be copied only once per room.",
+    "status": "locked"
+  },
+  {
+    "id": "samurais-wake",
+    "name": "Samurai's Wake",
+    "from": "a-fine-steels-glint",
+    "effect": "You get the Level 3 teleport, and enemies in the line from you to the target take lightning damage. You then turn and teleport back to your starting position, hitting the target again.",
+    "status": "locked"
+  },
+  {
+    "id": "elemains-retribution",
+    "name": "Elemain's Retribution",
+    "from": "elemains-flight-of-fancy",
+    "effect": "Ricochets 3 + PB times. Crits split into two projectiles, and splits don't ricochet. Ricochets can return to the same target, dealing 25% less damage for each repeated hit, compounding (50%, then about 38%, 28%, 21% and so on). Built for groups, but still useful against a single target.",
+    "status": "locked"
+  },
+  {
+    "id": "battlefield-artist",
+    "name": "Battlefield Artist",
+    "from": "elemental-residue",
+    "effect": "Keeps Level 3. Puddles now form whether a creature fails or succeeds on its save. Puddles of different elements combine when they touch: fire and cold make steam that heavily obscures the area, and lightning arcs between any puddles it touches.",
+    "status": "locked"
+  },
+  {
+    "id": "overflowing-cup",
+    "name": "Overflowing Cup",
+    "from": "overhealing",
+    "effect": "Temp HP from Overhealing stacks with other temp HP instead of replacing it.",
+    "status": "locked"
+  },
+  {
+    "id": "titans-hide",
+    "name": "Titan's Hide",
+    "from": "hardened-hide",
+    "effect": "Once per room, as a bonus action, gain resistance to all damage until the start of your next turn, and enemies within 10 ft can only attack you.",
+    "status": "locked"
+  },
+  {
+    "id": "hex-unwoven",
+    "name": "Hex Unwoven",
+    "from": "cleansing-nova",
+    "effect": "Your heals also end curses and remove one level of Exhaustion, and the pulse reaches 20 ft.",
+    "status": "locked"
+  },
+  {
+    "id": "mirror-step",
+    "name": "Mirror Step",
+    "from": "riposte-step",
+    "effect": "You no longer need to Dodge: when an attack misses you, teleport up to 10 ft and counterattack for +PB damage.",
+    "status": "locked"
+  },
+  {
+    "id": "pull-from-the-weave",
+    "name": "Pull From the Weave",
+    "from": "overchannel",
+    "effect": "Your spell slots no longer have levels: any slot can cast any spell you know, at any level up to your highest slot. Wish and other reality-altering spells still need a slot of their own level.",
+    "status": "locked"
+  },
+  {
+    "id": "arc-conduit",
+    "name": "Arc Conduit",
+    "from": "conduit",
+    "effect": "The extra damage chains to every creature within 10 ft of the first target.",
+    "status": "locked"
+  },
+  {
+    "id": "twin-focus",
+    "name": "Twin Focus",
+    "from": "unbroken-focus",
+    "effect": "Once per room, concentrate on two spells at once until the end of your next turn.",
+    "status": "locked"
+  },
+  {
+    "id": "every-moving-thing",
+    "name": "Every Moving Thing",
+    "from": "deadeye-stance",
+    "effect": "Once per round while you haven't moved, make a ranged opportunity attack against any creature that moves within your range.",
+    "status": "locked"
+  },
+  {
+    "id": "rain-of-splinters",
+    "name": "Rain of Splinters",
+    "from": "scatter-volley",
+    "effect": "The area grows to 20 ft, and you choose which creatures in it are hit.",
+    "status": "locked"
+  },
+  {
+    "id": "gone-in-the-gaps",
+    "name": "Gone in the Gaps",
+    "from": "fading-veil",
+    "effect": "While hidden, you can move through creatures' spaces, and your first hit each turn deals +2 × PB damage.",
+    "status": "locked"
+  },
+  {
+    "id": "opening-contract",
+    "name": "Opening Contract",
+    "from": "first-strike",
+    "effect": "Your first hit in each room also deals maximum damage on its dice.",
+    "status": "locked"
+  },
+  {
+    "id": "stride-step",
+    "name": "Stride Step",
+    "from": "vanishing-step",
+    "effect": "Bring one willing ally within 5 ft with you; both of you are Invisible until the start of your next turn.",
+    "status": "locked"
+  },
+  {
+    "id": "shared-flame",
+    "name": "Shared Flame",
+    "from": "twin-flame",
+    "effect": "Once per room, a single-target buff spell of any level can target one extra ally.",
+    "status": "locked"
+  },
+  {
+    "id": "lodge-backing",
+    "name": "Lodge Backing",
+    "from": "bolster",
+    "effect": "The die becomes a d10, and you can grant it as a reaction after the ally sees their roll.",
+    "status": "locked"
+  },
+  {
+    "id": "hunting-party",
+    "name": "Hunting Party",
+    "from": "kindled-ally",
+    "effect": "Every ally who hits the enemy this round deals +PB damage, not just the first.",
+    "status": "locked"
+  },
+  {
+    "id": "the-hoard",
+    "name": "The Hoard",
+    "from": "collectors-menagerie",
+    "effect": "Once per floor, keep one extra summon from a spell for a whole room without concentrating on it.",
+    "status": "locked"
+  },
+  {
+    "id": "life-weaver",
+    "name": "Life Weaver",
+    "from": "thalisanes-weave",
+    "effect": "You can weave one ally into the link as well.",
+    "status": "locked"
+  },
+  {
+    "id": "express-line",
+    "name": "Express Line",
+    "from": "the-express",
+    "effect": "Your hit bonus carries into your next turn as long as you hit at least once each turn.",
+    "status": "locked"
+  },
+  {
+    "id": "champion-of-the-ring",
+    "name": "Champion of the Ring",
+    "from": "breakers-last-stand",
+    "effect": "While Bloodied, you make one extra attack when you take the Attack action.",
+    "status": "locked"
+  },
+  {
+    "id": "thilss-maze",
+    "name": "Thils's Maze",
+    "from": "thilss-favor",
+    "effect": "Once per room, set your own trick: a 10 ft square where entering enemies must make a Dex save against your DC or take 4 × PB damage and be Restrained.",
+    "status": "locked"
+  },
+  {
+    "id": "god-slayer",
+    "name": "God-Slayer",
+    "from": "zolics-nine-eyes",
+    "effect": "Eyes build against any creature, and at 9 Eyes your hit ignores resistance and immunity.",
+    "status": "locked"
+  },
+  {
+    "id": "token-of-whim",
+    "name": "Token of Whim",
+    "from": "ostras-coin",
+    "effect": "Once per floor, flip the token. Heads: a dying ally returns at half HP. Tails: a non-boss enemy below PB × 10 HP drops to 0.",
+    "status": "locked"
+  },
+  {
+    "id": "the-rift-below",
+    "name": "The Rift Below",
+    "from": "lenns-descent",
+    "effect": "Creatures affected by your control spells take 2 × PB psychic damage at the start of each of their turns.",
+    "status": "locked"
+  },
+  {
+    "id": "living-labyrinth",
+    "name": "Living Labyrinth",
+    "from": "corrows-lure",
+    "effect": "Pulled creatures are also Restrained until the end of their next turn.",
+    "status": "locked"
+  },
+  {
+    "id": "seismic-aftershock",
+    "name": "Seismic Aftershock",
+    "from": "resounding-blow",
+    "effect": "When your delayed echo triggers, it erupts in a 10 ft radius around the target, dealing its 40% damage to every enemy there and knocking them prone.",
+    "status": "locked"
+  },
+  {
+    "id": "phantom-phalanx",
+    "name": "Phantom Phalanx",
+    "from": "echoing-step",
+    "effect": "Every 20 ft you move leaves a solid afterimage in the space you left (up to PB). Once per turn, when you attack, each afterimage makes an echo strike against an enemy within 5 ft of it for 50% damage.",
+    "status": "locked"
+  },
+  {
+    "id": "bell-tolls",
+    "name": "Bell Tolls",
+    "from": "last-rites",
+    "effect": "Your execution threshold (5 × PB HP) triggers whenever an enemy starts its turn within 15 ft of you, dropping it to 0 HP with no attack roll. Bosses below 10 × PB HP take 3 × PB necrotic damage at the start of their turns instead.",
+    "status": "locked"
+  },
+  {
+    "id": "soul-furnace",
+    "name": "Soul Furnace",
+    "from": "harvest",
+    "effect": "Your Soul cap doubles, and you can spend 3 Souls at once, with no action, to take an extra turn after this one (once per floor) or turn a hit into a critical hit.",
+    "status": "locked"
+  },
+  {
+    "id": "apex-predator",
+    "name": "Apex Predator",
+    "from": "marked-quarry",
+    "effect": "Mark up to 3 creatures at once. Your attacks against any marked creature also deal your 2d6 mark damage to every other marked creature within 30 ft.",
+    "status": "locked"
+  },
+  {
+    "id": "fatal-anatomy",
+    "name": "Fatal Anatomy",
+    "from": "weak-point",
+    "effect": "Once per room, declare an enemy vulnerable to your next attack's damage type until the end of your turn. Immunity becomes resistance, and resistance becomes normal damage.",
+    "status": "locked"
+  },
+  {
+    "id": "death-by-a-thousand",
+    "name": "Death by a Thousand",
+    "from": "thousand-cuts",
+    "effect": "Once per room, when a creature fails its save against your 4-hit Stun, immediately make PB free attacks against it.",
+    "status": "locked"
+  },
+  {
+    "id": "twin-tempest",
+    "name": "Twin Tempest",
+    "from": "second-hand",
+    "effect": "Your bonus action attack becomes two attacks, and both get Second Hand's damage and prone riders.",
+    "status": "locked"
+  },
+  {
+    "id": "crimson-sovereign",
+    "name": "Crimson Sovereign",
+    "from": "bleed-out",
+    "effect": "Spending your own HP can't drop you below 1. Whenever you spend HP for Bleed Out, every enemy within 15 ft takes necrotic damage equal to the HP you lost.",
+    "status": "locked"
+  },
+  {
+    "id": "undying-rage",
+    "name": "Undying Rage",
+    "from": "red-mist",
+    "effect": "When your Level 3 effect triggers at 0 HP, dropping an enemy before the end of your next turn ends the fall, restores you to 3 × PB HP and refreshes the Level 3 use for the room.",
+    "status": "locked"
+  },
+  {
+    "id": "house-always-wins",
+    "name": "House Always Wins",
+    "from": "lucky-break",
+    "effect": "When you roll a natural 1 on any d20 Test, or an enemy rolls a natural 20 against you, it becomes a critical success for you and a normal miss for the enemy.",
+    "status": "locked"
+  },
+  {
+    "id": "tectonic-anchor",
+    "name": "Tectonic Anchor",
+    "from": "iron-root",
+    "effect": "While rooted, the ground within your reach is difficult terrain for enemies, and as a bonus action you can stomp to pull every creature within 20 ft into your reach.",
+    "status": "locked"
+  },
+  {
+    "id": "alphas-call",
+    "name": "Alpha's Call",
+    "from": "pack-tactics",
+    "effect": "When you take the Attack action, your summon or companion makes one free attack against your target without using its action or reaction.",
+    "status": "locked"
+  },
+  {
+    "id": "entanglement-rift",
+    "name": "Entanglement Rift",
+    "from": "swap-places",
+    "effect": "You can also swap places with an unwilling enemy within 30 ft of your companion if it fails a Cha save against your DC, and you and your companion each get a free reaction attack against it.",
+    "status": "locked"
+  },
+  {
+    "id": "prismatic-barrage",
+    "name": "Prismatic Barrage",
+    "from": "elemental-quiver",
+    "effect": "Your ranged hits apply fire, cold and lightning at once for +3 × PB total damage, and hitting a target already carrying all three triggers a 10 ft elemental explosion for 2 × PB damage.",
+    "status": "locked"
+  },
+  {
+    "id": "immortal-banner",
+    "name": "Immortal Banner",
+    "from": "battle-standard",
+    "effect": "Wear the standard on your back so the aura moves with you and can't be knocked over. Once per room, allies in the aura who drop to 0 HP drop to 1 instead.",
+    "status": "locked"
+  }
+]

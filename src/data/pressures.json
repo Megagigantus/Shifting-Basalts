@@ -1,0 +1,87 @@
+[
+  {
+    "id": "brittle-ground",
+    "name": "Brittle Ground",
+    "effect": "Critical hits against players crack the floor beneath them.",
+    "bonusPercent": 10,
+    "unlockRank": 0,
+    "status": "proposed"
+  },
+  {
+    "id": "narrow-seam",
+    "name": "Narrow Seam",
+    "effect": "Boon offers drop from 4 to 3.",
+    "bonusPercent": 15,
+    "unlockRank": 0,
+    "status": "proposed"
+  },
+  {
+    "id": "closing-ring",
+    "name": "Closing Ring",
+    "effect": "The room's outer ring becomes hazardous terrain, growing inward every 3 rounds.",
+    "bonusPercent": 15,
+    "unlockRank": 0,
+    "status": "proposed"
+  },
+  {
+    "id": "restless-stone",
+    "name": "Restless Stone",
+    "effect": "A shift action triggers mid-fight in every room, not just boss rooms.",
+    "bonusPercent": 15,
+    "unlockRank": 1,
+    "status": "proposed"
+  },
+  {
+    "id": "heavy-crown",
+    "name": "Heavy Crown",
+    "effect": "Bosses gain one extra Legendary Action.",
+    "bonusPercent": 20,
+    "unlockRank": 1,
+    "status": "proposed"
+  },
+  {
+    "id": "closing-ring-2",
+    "name": "Closing Ring II",
+    "effect": "The ring grows every 2 rounds instead of 3.",
+    "bonusPercent": 25,
+    "unlockRank": 2,
+    "replaces": "closing-ring",
+    "status": "proposed"
+  },
+  {
+    "id": "brittle-ground-2",
+    "name": "Brittle Ground II",
+    "effect": "The crack also knocks the player prone.",
+    "bonusPercent": 20,
+    "unlockRank": 2,
+    "replaces": "brittle-ground",
+    "status": "proposed"
+  },
+  {
+    "id": "narrow-seam-2",
+    "name": "Narrow Seam II",
+    "effect": "Offers drop to 2.",
+    "bonusPercent": 25,
+    "unlockRank": 2,
+    "replaces": "narrow-seam",
+    "status": "proposed"
+  },
+  {
+    "id": "restless-stone-2",
+    "name": "Restless Stone II",
+    "effect": "Two Shift Actions per fight.",
+    "bonusPercent": 25,
+    "unlockRank": 2,
+    "replaces": "restless-stone",
+    "status": "proposed"
+  },
+  {
+    "id": "heavy-crown-2",
+    "name": "Heavy Crown II",
+    "effect": "+1 Legendary Action and +1 Legendary Resistance.",
+    "bonusPercent": 30,
+    "unlockRank": 2,
+    "replaces": "heavy-crown",
+    "status": "proposed"
+  }
+]

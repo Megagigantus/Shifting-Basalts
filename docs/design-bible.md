@@ -1,6 +1,6 @@
 # The Shifting Basalts: Design Bible
 
-Oct 18, 2026 · @Brian Mahy
+Updated Nov 8, 2026 · @Brian Mahy
 
 ## Overview
 
@@ -53,7 +53,7 @@ A run is a stack of floors, each a set of rooms ending in a boss. After every bo
 * **Rooms:** each cleared room triggers a boon draft (see Boon system rules). Floors 1 to 4 each hold 4 rooms and a boss room.
 * **Bosses:** a boss closes every floor. Extraction is only possible after a boss.
 * **The Shift:** every exit reshuffles floors, rooms and encounters, so a returning party never sees the same layout.
-* **Death:** the character is expelled, loses unbanked run loot and is locked out (see Loot, extraction and death).
+* **Death:** the character is expelled, is locked out, and forfeits this run's Quantum Basalts except passed ones. The party's loot pool stays whole as long as anyone extracts; only a wipe loses it (see Loot, extraction and death).
 * **Encounter scaling** *(proposed)***:** encounters use the 2024 XP budget for the party's actual level plus each floor's offset, so entering low never makes a run easier, only less rewarding.
 * **Difficulty curve** *(proposed)***:** each floor is keyed to an offset from the party's level, starting below it and ending well beyond it (see Difficulty by floor). Bosses use their floor's budget plus Shift Actions.
 * **Shift actions** *(proposed)***:** lair-style terrain changes on initiative count 20, such as walls sliding, floors tilting or exits rearranging.
@@ -119,7 +119,7 @@ Each player starts with 3 boon slots and can buy up to 5 with Quantum Basalts. E
 - **No slots:** tracks never use boon slots, never evolve and never combine.
 - **Safe stats only:** tracks grow numbers 5e lets scale freely. Ability scores, skills, attack bonus, AC and save DCs are off limits to protect bounded accuracy.
 - **Tier caps** *(proposed)***:** maximum ranks rise with the 2024 tiers of play, so higher-level runs have new ceilings to reach.
-- **Payoff boons:** a tag in the regular boon pool. A payoff boon reads from a stat track, such as A Healthy Dose of Pain reading from Max HP, so drafting one shows players why their tracks matter. Payoff boons don't evolve or combine, because they already grow with their track. A payoff only appears in offers once someone in the party has at least 1 rank in its track.
+- **Payoff boons:** a tag in the regular boon pool. A payoff boon reads from a stat track, such as A Healthy Dose of Pain reading from Max HP, so drafting one shows players why their tracks matter. Payoff boons don't evolve or combine, because they already grow with their track. A payoff only appears in your offers once you have at least 1 rank in its track.
 
 ### Hidden boon conditions (examples)
 
@@ -188,7 +188,7 @@ When 2 or more players hold at least one boon with the same tag, each of them ga
 
 ## Boon catalogue
 
-Fifteen draft boons are in the main table: ten from Brian and five proposed. Four proposed batches follow it, bringing the pool to 69. Payoff boons sit in the same pool and read from the stat tracks listed after this table. Status tracks what still needs work before the boon goes into the app.
+Fifteen draft boons are in the main table: ten from Brian and five proposed. Four more batches follow it, bringing the pool to 69. Payoff boons sit in the same pool and read from the stat tracks listed after this table. Status tracks what still needs work before the boon goes into the app.
 
 ### Boons
 
@@ -210,9 +210,9 @@ Fifteen draft boons are in the main table: ten from Brian and five proposed. Fou
 | Avalanche Stride | Payoff (Speed) | Once per turn, a hit deals +1 damage for every 5 ft you moved this turn. | The bonus also applies to your first ranged attack after moving. | A hit after moving 20 ft or more knocks the target prone. | Grows with its track | Locked |
 | Spillover | Payoff (Healing received) | Overhealing bursts as radiant damage on adjacent enemies. | The burst becomes a 10 ft radius. | Allies in the burst regain HP equal to half the damage it deals. | Grows with its track | Locked |
 
-### Proposed: caster, ranged, stealth and support boons
+### Batch 1: caster, ranged, stealth and support boons
 
-Thirteen proposed boons to fill gaps in the pool. Keep, cut or rename any of them, then move keepers into the main table.
+Thirteen boons for casters, ranged builds, stealth and support.
 
 | Boon | Tag | Level 1 | Level 2 | Level 3 | Next step | Status |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -236,9 +236,9 @@ Thirteen proposed boons to fill gaps in the pool. Keep, cut or rename any of the
 
 * **Elemental Residue riders:** fire puddles deal their damage again to creatures that end their turn in them, cold puddles are difficult terrain, lightning stops reactions, necrotic stops healing, poison leaves creatures Poisoned, and radiant reveals Invisible creatures. The app should track puddles per room.
 
-### Proposed batch 2: gap fillers
+### Batch 2: gap fillers
 
-Twelve proposed boons for control casters, summoners, many-hit builds, Bloodied builds, traps and boss hunting, plus payoffs for the three tracks that lacked one. Names echo figures from across the Archive's multiverse, fitting the idea that the local god hands back what past visitors taught it.
+Twelve boons for control casters, summoners, many-hit builds, Bloodied builds, traps and boss hunting, plus payoffs for the three tracks that lacked one. Names echo figures from across the Archive's multiverse, fitting the idea that the local god hands back what past visitors taught it.
 
 | Boon | Tag | Level 1 | Level 2 | Level 3 | Next step | Status |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -262,9 +262,9 @@ Twelve proposed boons for control casters, summoners, many-hit builds, Bloodied 
 - **Zolic's Nine Eyes:** pairs with the Heavy Crown Pressure, since extra Legendary Actions feed Eyes faster.
 - **Lore names:** swap any of them if you'd rather keep certain figures out of the Basalts.
 
-### Proposed batch 3: core boons and thin tags
+### Batch 3: core boons and thin tags
 
-Ten Core boons any character can draft, built from Brian's list, plus sixteen boons for the thinnest tags. This brings the pool to 66.
+Ten Core boons any character can draft, built from Brian's list, plus sixteen boons for the thinnest tags.
 
 | Boon | Tag | Level 1 | Level 2 | Level 3 | Next step | Status |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -301,7 +301,7 @@ Ten Core boons any character can draft, built from Brian's list, plus sixteen bo
 - **Unshackled:** 5e has no "immobilized" condition, so it covers Grappled, Restrained and speed reductions.
 - **Pocket Sweep:** 2024 already makes drinking a potion a bonus action, so Level 3 goes one step further.
 
-### Proposed batch 4: lore boons
+### Batch 4: lore boons
 
 Three boons for casters, healers and anyone fighting the dungeon itself, each an echo of a strider Thils absorbed.
 
@@ -380,7 +380,7 @@ The hidden boons unlocked by room conditions. Like class hidden boons, they sit 
 | Elemain's Retribution | Elemain's Flight of Fancy | Ricochets 3 + PB times. Crits split into two projectiles, and splits don't ricochet. Ricochets can return to the same target, dealing 25% less damage for each repeated hit, compounding (50%, then about 38%, 28%, 21% and so on). Built for groups, but still useful against a single target. | Locked |
 | Battlefield Artist | Elemental Residue | Keeps Level 3. Puddles now form whether a creature fails or succeeds on its save. Puddles of different elements combine when they touch: fire and cold make steam that heavily obscures the area, and lightning arcs between any puddles it touches. | Locked |
 
-### Proposed evolutions
+### More evolutions
 
 One evolution for every boon that lacked one. Each keeps its boon's Level 3 effect and adds to it.
 
@@ -466,7 +466,7 @@ A Combination fuses two specific Level 3 boons into one slot, trading the Evolut
 - **Eligibility** *(proposed)***:** only listed pairs can combine, and both boons must be at Level 3. The app flags a player as eligible when they hold both.
 - **Super Normal d20s** *(proposed)***:** PB d20s on a crit, so the bonus scales from level 5 to 20.
 
-### Proposed combinations
+### More combinations
 
 | Combination | Boons | Effect | Status |
 | --- | --- | --- | --- |
@@ -586,7 +586,7 @@ A Quantum Basalt sells for 1,000 credits, and a portable personal stepgate costs
 
 - **Shared pool:** everything but Quantum Basalts goes into the party's run loot. On extraction the party keeps its loot share by credit value and chooses which items make up that share.
 - **Basalts in loot:** every player receives the amount rolled, banked like boss Basalts: forfeit on death, never cut by the loot share.
-- **Bonuses:** Pressures and Extra Loot multiply credits and Basalts, and every full 50% of bonus also adds 1 roll to each boss cache. Collector's Eye and Deep Pockets still raise the share kept.
+- **Bonuses:** Pressures multiply credits and Basalts, Extra Loot multiplies its owner's Basalts, and every full 50% of bonus also adds 1 roll to each boss cache. Collector's Eye and Deep Pockets still raise the share kept.
 - **Entry tier:** the ×2 and ×4 multipliers apply to credits and Basalts. For items, entry tier raises rarity instead (see the next table).
 - **Item numbers:** PB in an item means its user's proficiency bonus, and item save DCs are 10 + PB, so every table here works from level 5 to 20.
 - **Item uses inside:** the party can't rest in the Basalts, so per-day item uses recharge after each boss.
@@ -813,13 +813,13 @@ Quantum Basalts are a rare resource awarded to each player on extraction. They a
 | Healing Font | 1 | 30 | Unlocks a Healing Font in post-boss rooms. | Brian |
 | Extra Boon Slot | 2 | 40, then 120 | A 4th slot at rank 1 and a 5th at rank 2. | Brian |
 | Reroll | 3 | 10, 20, 35 | Reroll your boon offer 1, 2, then 3 times per floor. | Brian |
-| Extra Loot | 3 | 15, 30, 50 | +10% loot and Quantum Basalts per rank. | Brian |
+| Extra Loot | 3 | 15, 30, 50 | +10% to your own Quantum Basalts per rank. | Brian |
 | Extra Pressures | 2 | 20, 40 | Unlock more Pressures, then harsher versions of them. Each owner in the party adds 5% to rewards. | Brian |
 | Reprieve | 4 | 20, 35, 55, 80 | A 20%, 35%, 50%, then 65% chance of a Reprieve room mid-floor. Every owner rolls separately. | Brian |
 | Attunement | 1 | 15 | Your first offer of each run includes a tag you choose. | Proposed |
 | Banish | 3 | 10, 20, 30 | Remove 1, 2, then 3 boons from your personal offers. | Proposed |
 | Hidden Sight | 1 | 20 | One hint per floor about a room's secret condition. | Proposed |
-| Deep Pockets | 3 | 25, 50, 80 | +5% loot kept on extraction per rank, up to 100%. | Proposed |
+| Deep Pockets | 3 | 25, 50, 80 | +5% loot kept on extraction per rank, up to 100%. Party-wide: the highest rank in the party applies. | Proposed |
 | Quick Return | 3 | 10, 20, 30 | Shorten your death lockout by 1 day per rank, to a minimum of 1 day. | Proposed |
 
 ### Pacing *(proposed)*
@@ -1182,6 +1182,22 @@ The DM hosts the run; players join on their own devices with a lighter view.
 ### Data
 
 - The boon catalogue, Combinations, Pressures and upgrades from this doc become the app's editable data, so new boons can be added without code changes *(proposed)*.
+
+## Build clarifications
+
+Rules the app follows where the rest of the Bible implies an answer without spelling it out.
+
+1. **Leveling:** drafting a boon you already hold raises it 1 level, up to Level 3, and so does the Forge. The guaranteed held-boon offer picks from boons below Level 3; if all of a player's boons are maxed, that slot becomes the wildcard.
+2. **Upgrade scope:** party-wide, with each extra owner adding more: Forge (+1 use per owner), Healing Font (+temp HP per extra owner), Extra Pressures (+5% rewards per owner) and Reprieve (every owner rolls). Party-wide at the highest rank only: Deep Pockets. Personal: Extra Boon Slot, Reroll, Banish, Starting Boon, Attunement, Hidden Sight, Quick Return and Extra Loot (its owner's Basalts only).
+3. **Party level:** the average of the party's levels, rounded down. It sets boss CR, room trick DCs, the entry multiplier (one per party) and loot rarity. Encounter XP budgets add up from each player's own level, and PB-based boon numbers use each player's own PB.
+4. **Payoff and Core boons:** they level through drafts and the Forge like other boons, but never evolve or combine.
+5. **Tags:** an Evolution keeps its source boon's tag, and a Combination carries both source tags, for Resonance and offer weighting.
+6. **Reprieve:** it replaces one of a floor's 4 rooms, so that floor has 3 combat rooms, the Reprieve and the boss. It grants no Devotion and no draft.
+7. **The boon pool:** 69 boons across the main table and Batches 1 to 4. Kept separately: 49 Evolutions, 21 Combinations, 12 class hidden boons and 8 of Thils's hidden gifts.
+8. **Death:** if even one player survives to extract, the party's loot pool stays whole and is shared as usual. Only a wipe loses it. A fallen character still forfeits the Quantum Basalts they earned that run, except passed ones.
+9. **Pressure unlocks:** Brittle Ground, Narrow Seam and Closing Ring are available from the start. Extra Pressures rank 1 unlocks Restless Stone and Heavy Crown. Rank 2 unlocks the harsher versions, each replacing its base version *(proposed)*: Closing Ring II (the ring grows every 2 rounds, +25%), Brittle Ground II (the crack also knocks the player prone, +20%), Narrow Seam II (offers drop to 2, +25%), Restless Stone II (two Shift Actions per fight, +25%) and Heavy Crown II (+1 Legendary Action and +1 Legendary Resistance, +30%). Extra Pressures is party-wide, so one owner unlocks them for everyone, and every owner in the party (the first included) adds +5% to rewards.
+10. **Pressure bonuses and passing:** Pressure bonuses multiply boss Quantum Basalt payouts (and loot), not Basalts earned by passing. A pass is always 1 Quantum Basalt times the entry multiplier.
+11. **Stacking reward bonuses:** a player's boss Quantum Basalt bonus is the sum of the party's Pressures, +5% per Extra Pressures owner in the party, and their own Extra Loot (+10% per rank). The total is applied once and rounded up. Like Pressures, Extra Loot never applies to passed Basalts. Example: 40 Basalts with Pressures +25% and Extra Loot rank 2 (+20%) pays 40 × 1.45 = 58.
 
 ## Open questions
 

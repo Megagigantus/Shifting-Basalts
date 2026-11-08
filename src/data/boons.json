@@ -1,0 +1,1138 @@
+[
+  {
+    "id": "traverts-echoes",
+    "name": "Travert's Echoes",
+    "tags": [
+      "Echo"
+    ],
+    "kind": "normal",
+    "levels": [
+      "A physical attack hit echoes 25% of its damage in a 10 ft ring or a 10 ft directional rectangle.",
+      "Echoes twice.",
+      "Echoes 3 times. If an echo kills an enemy, bank an echo to release whenever you want."
+    ],
+    "evolvesTo": "chain-of-echoes",
+    "combinesWith": [
+      "shooting-gallery",
+      "rush-hour"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "reapers-sprint",
+    "name": "Reaper's Sprint",
+    "tags": [
+      "Reaper"
+    ],
+    "kind": "normal",
+    "levels": [
+      "On a kill, teleport up to 30 ft to a space behind another enemy. Your next hit has advantage and crits.",
+      "As Level 1, and killing the second enemy lets you jump to a third.",
+      "Adds another jump. Full of the Reaper's energy, you unleash a guaranteed hit for triple crit damage."
+    ],
+    "evolvesTo": "nothing-personal",
+    "combinesWith": [
+      "ghost-reaper"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "spellslingers-delight",
+    "name": "Spellslinger's Delight",
+    "tags": [
+      "Spell"
+    ],
+    "kind": "normal",
+    "levels": [
+      "When a leveled spell hits, cast a cantrip for free.",
+      "A second known cantrip is also cast for free.",
+      "The second cantrip is cast at 3 targets for free."
+    ],
+    "evolvesTo": "and-you-get-a-spell",
+    "status": "locked"
+  },
+  {
+    "id": "critical-delight",
+    "name": "Critical Delight",
+    "tags": [
+      "Crit"
+    ],
+    "kind": "normal",
+    "levels": [
+      "Crit range 17 to 20, but non-crits deal 75% damage.",
+      "Crit range 15 to 20.",
+      "Crit range 10 to 20. Crits deal double, non-crits fall to 10%, and each crit adds another multiplier until you fail to crit or your turn ends."
+    ],
+    "combinesWith": [
+      "super-normal",
+      "elemains-fancy-criticals",
+      "blood-and-glory"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "crits-are-for-suckers",
+    "name": "Crits Are for Suckers",
+    "tags": [
+      "Crit"
+    ],
+    "kind": "normal",
+    "levels": [
+      "You can't crit, but damage increases by 25%.",
+      "Damage +35%.",
+      "Damage +50%."
+    ],
+    "combinesWith": [
+      "super-normal"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "a-fine-steels-glint",
+    "name": "A Fine Steel's Glint",
+    "tags": [
+      "Stance"
+    ],
+    "kind": "normal",
+    "levels": [
+      "As a bonus action, sheathe your weapon and anchor in place. You can't attack, but you have resistance to bludgeoning, piercing and slashing damage, and each turn you hold the stance adds one weapon damage die to your strike (up to PB).",
+      "You have resistance to all damage, and your strike carries you 10 ft forward from your spot.",
+      "You instantly teleport to the target enemy and hit, guaranteed."
+    ],
+    "evolvesTo": "samurais-wake",
+    "combinesWith": [
+      "still-water"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "stand-off",
+    "name": "Stand Off",
+    "tags": [
+      "Stance"
+    ],
+    "kind": "normal",
+    "levels": [
+      "When you approach a group of 2 or more enemies, enter stand off. When one attacks you, roll a challenge against it, up to a number of times per round equal to this boon's level. Win and the attack misses and you roll a counterattack; lose and you exit stand off and the attack resolves normally.",
+      "You can shrug off one hit and stay in stand off.",
+      "When you counter, you deflect the attack onto a nearby enemy."
+    ],
+    "combinesWith": [
+      "still-water",
+      "immovable-object"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "elemains-flight-of-fancy",
+    "name": "Elemain's Flight of Fancy",
+    "tags": [
+      "Volley"
+    ],
+    "kind": "normal",
+    "levels": [
+      "A fired or thrown projectile ricochets once for 50% damage.",
+      "2 ricochets.",
+      "3 ricochets. Each ricochet rolls a d20 and crits only on a 20."
+    ],
+    "evolvesTo": "elemains-retribution",
+    "combinesWith": [
+      "elemains-fancy-criticals",
+      "shooting-gallery"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "overhealing",
+    "name": "Overhealing",
+    "tags": [
+      "Guard"
+    ],
+    "kind": "normal",
+    "levels": [
+      "Healing beyond max HP becomes temp HP.",
+      "Overhealed targets gain resistance.",
+      "The healer gains temp HP equal to half the amount overhealed."
+    ],
+    "evolvesTo": "overflowing-cup",
+    "status": "locked"
+  },
+  {
+    "id": "hardened-hide",
+    "name": "Hardened Hide",
+    "tags": [
+      "Guard"
+    ],
+    "kind": "normal",
+    "levels": [
+      "Reduce damage taken by PB.",
+      "Attackers who hit you take PB damage.",
+      "Enemies within 10 ft have disadvantage attacking anyone but you."
+    ],
+    "evolvesTo": "titans-hide",
+    "combinesWith": [
+      "immovable-object"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "cleansing-nova",
+    "name": "Cleansing Nova",
+    "tags": [
+      "Guard"
+    ],
+    "kind": "normal",
+    "levels": [
+      "Your heals end one condition on the target.",
+      "Heals pulse 10 ft, granting allies PB temp HP.",
+      "Enemies in the pulse take radiant damage equal to half the healing."
+    ],
+    "evolvesTo": "hex-unwoven",
+    "combinesWith": [
+      "hemomancer"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "riposte-step",
+    "name": "Riposte Step",
+    "tags": [
+      "Guard"
+    ],
+    "kind": "normal",
+    "levels": [
+      "When an attack misses you, move 5 ft without provoking, and your next attack against that attacker has advantage.",
+      "While Dodging, a miss lets you counterattack as a reaction.",
+      "Once per round, the counterattack is free and has advantage."
+    ],
+    "evolvesTo": "mirror-step",
+    "status": "locked"
+  },
+  {
+    "id": "a-healthy-dose-of-pain",
+    "name": "A Healthy Dose of Pain",
+    "tags": [
+      "Payoff"
+    ],
+    "kind": "payoff",
+    "levels": [
+      "Once per turn, a hit adds damage equal to the HP your Max HP track grants.",
+      "The bonus also applies to reaction attacks.",
+      "When you take damage, your next hit also adds the damage you took."
+    ],
+    "payoffTrack": "max-hp",
+    "status": "locked"
+  },
+  {
+    "id": "avalanche-stride",
+    "name": "Avalanche Stride",
+    "tags": [
+      "Payoff"
+    ],
+    "kind": "payoff",
+    "levels": [
+      "Once per turn, a hit deals +1 damage for every 5 ft you moved this turn.",
+      "The bonus also applies to your first ranged attack after moving.",
+      "A hit after moving 20 ft or more knocks the target prone."
+    ],
+    "payoffTrack": "speed",
+    "status": "locked"
+  },
+  {
+    "id": "spillover",
+    "name": "Spillover",
+    "tags": [
+      "Payoff"
+    ],
+    "kind": "payoff",
+    "levels": [
+      "Overhealing bursts as radiant damage on adjacent enemies.",
+      "The burst becomes a 10 ft radius.",
+      "Allies in the burst regain HP equal to half the damage it deals."
+    ],
+    "payoffTrack": "healing-received",
+    "status": "locked"
+  },
+  {
+    "id": "overchannel",
+    "name": "Overchannel",
+    "tags": [
+      "Spell"
+    ],
+    "kind": "normal",
+    "levels": [
+      "Once per room, cast a spell one level higher than the slot you spend.",
+      "Twice per room.",
+      "Once per room, cast it two levels higher instead."
+    ],
+    "evolvesTo": "pull-from-the-weave",
+    "status": "locked"
+  },
+  {
+    "id": "conduit",
+    "name": "Conduit",
+    "tags": [
+      "Spell"
+    ],
+    "kind": "normal",
+    "levels": [
+      "Once per turn, a creature your spell damages takes extra damage equal to PB.",
+      "The extra damage also hits one other creature within 10 ft of it.",
+      "The extra damage becomes 2 × PB and ignores resistance."
+    ],
+    "evolvesTo": "arc-conduit",
+    "status": "locked"
+  },
+  {
+    "id": "unbroken-focus",
+    "name": "Unbroken Focus",
+    "tags": [
+      "Spell"
+    ],
+    "kind": "normal",
+    "levels": [
+      "Advantage on saves to maintain concentration.",
+      "Once per turn, taking damage while concentrating grants PB temp HP.",
+      "Once per room, when you would lose concentration, you don't."
+    ],
+    "evolvesTo": "twin-focus",
+    "status": "locked"
+  },
+  {
+    "id": "elemental-residue",
+    "name": "Elemental Residue",
+    "tags": [
+      "Spell"
+    ],
+    "kind": "normal",
+    "levels": [
+      "When a creature fails a save against your damaging spell, a 5 ft puddle of that spell's damage type forms in its space until the end of your next turn. Creatures entering or starting their turn there take PB damage of that type.",
+      "Puddles last the whole room, deal 2 × PB, and gain their element's rider.",
+      "A creature that fails a save while standing in a puddle of the same element takes maximum damage from the spell."
+    ],
+    "evolvesTo": "battlefield-artist",
+    "combinesWith": [
+      "dragnet"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "leyline-surge",
+    "name": "Leyline Surge",
+    "tags": [
+      "Payoff"
+    ],
+    "kind": "payoff",
+    "levels": [
+      "Unspent recovery points can be spent on a damaging spell for +1d6 force damage per point.",
+      "The force dice become d8s.",
+      "Each creature the boosted spell kills refunds 1 point."
+    ],
+    "payoffTrack": "spell-slot-recovery",
+    "status": "locked"
+  },
+  {
+    "id": "deadeye-stance",
+    "name": "Deadeye Stance",
+    "tags": [
+      "Volley"
+    ],
+    "kind": "normal",
+    "levels": [
+      "If you haven't moved this turn, your ranged attacks ignore half cover and deal +PB damage.",
+      "They also ignore three-quarters cover.",
+      "Once per round, a hit pins the target: its speed is 0 until the end of its next turn."
+    ],
+    "evolvesTo": "every-moving-thing",
+    "status": "locked"
+  },
+  {
+    "id": "scatter-volley",
+    "name": "Scatter Volley",
+    "tags": [
+      "Volley"
+    ],
+    "kind": "normal",
+    "levels": [
+      "Once per room, as an action, make a ranged attack against up to 3 creatures within 10 ft of a point you can see.",
+      "Up to PB creatures.",
+      "Twice per room, and creatures hit are pushed 10 ft."
+    ],
+    "evolvesTo": "rain-of-splinters",
+    "combinesWith": [
+      "tempest-volley"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "fading-veil",
+    "name": "Fading Veil",
+    "tags": [
+      "Shadow"
+    ],
+    "kind": "normal",
+    "levels": [
+      "Once per turn, after you drop an enemy, take the Hide action without spending an action.",
+      "You can Hide while only lightly obscured.",
+      "If an attack you make from hiding drops the target, you stay hidden."
+    ],
+    "evolvesTo": "gone-in-the-gaps",
+    "combinesWith": [
+      "ghost-reaper"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "first-strike",
+    "name": "First Strike",
+    "tags": [
+      "Shadow"
+    ],
+    "kind": "normal",
+    "levels": [
+      "In the first round of a room, your attacks against creatures that haven't taken a turn deal +PB damage.",
+      "You also have advantage on initiative.",
+      "Your first hit in each room is a critical hit."
+    ],
+    "evolvesTo": "opening-contract",
+    "combinesWith": [
+      "contract-kill"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "vanishing-step",
+    "name": "Vanishing Step",
+    "tags": [
+      "Shadow"
+    ],
+    "kind": "normal",
+    "levels": [
+      "Once per room, as a bonus action, teleport to an unoccupied space you can see within 30 ft and become Invisible until the start of your next turn.",
+      "Range becomes 60 ft.",
+      "Twice per room, and your first attack after teleporting has advantage."
+    ],
+    "evolvesTo": "stride-step",
+    "status": "locked"
+  },
+  {
+    "id": "twin-flame",
+    "name": "Twin Flame",
+    "tags": [
+      "Rally"
+    ],
+    "kind": "normal",
+    "levels": [
+      "When you cast a spell that targets only one ally, they also gain PB temp HP.",
+      "Single-target buff spells of 2nd level or lower can target one extra ally.",
+      "The extra target works for buff spells up to 4th level."
+    ],
+    "evolvesTo": "shared-flame",
+    "combinesWith": [
+      "pack-leader"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "bolster",
+    "name": "Bolster",
+    "tags": [
+      "Rally"
+    ],
+    "kind": "normal",
+    "levels": [
+      "Twice per room, as a bonus action, give an ally within 30 ft a d4 to add to one attack roll or saving throw.",
+      "The die becomes a d6, three times per room.",
+      "The die becomes a d8, and a use recharges when that ally drops an enemy."
+    ],
+    "evolvesTo": "lodge-backing",
+    "status": "locked"
+  },
+  {
+    "id": "kindled-ally",
+    "name": "Kindled Ally",
+    "tags": [
+      "Rally"
+    ],
+    "kind": "normal",
+    "levels": [
+      "Once per turn, when you hit an enemy, the next ally to hit it deals +PB damage.",
+      "That ally also gains +10 ft speed until the end of their turn.",
+      "Once per round, that ally can attack the enemy as a reaction."
+    ],
+    "evolvesTo": "hunting-party",
+    "status": "locked"
+  },
+  {
+    "id": "ostras-coin",
+    "name": "Ostra's Coin",
+    "tags": [
+      "Spell"
+    ],
+    "kind": "normal",
+    "levels": [
+      "Once per room, when a creature fails a save against your spell, flip a coin. Heads: an ally within 30 ft regains HP equal to PB × the spell's level. Tails: the creature takes that much necrotic damage.",
+      "Once per turn instead of once per room.",
+      "Call the side before flipping. Call it right and both sides happen."
+    ],
+    "evolvesTo": "token-of-whim",
+    "combinesWith": [
+      "loaded-dice"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "lenns-descent",
+    "name": "Lenn's Descent",
+    "tags": [
+      "Spell"
+    ],
+    "kind": "normal",
+    "levels": [
+      "You know the remaining HP of every creature that failed a save against your spell this room.",
+      "Allies have advantage on their first attack each turn against a creature that failed a save against your spell this turn.",
+      "Once per room, a creature that fails a save against your control spell is also Incapacitated until the end of its next turn."
+    ],
+    "evolvesTo": "the-rift-below",
+    "status": "locked"
+  },
+  {
+    "id": "corrows-lure",
+    "name": "Corrow's Lure",
+    "tags": [
+      "Spell"
+    ],
+    "kind": "normal",
+    "levels": [
+      "When a creature fails a save against your spell, pull it up to 10 ft toward you or toward a point in the spell's area.",
+      "Pull up to 20 ft, and pulled creatures can't take reactions until the start of their next turn.",
+      "Once per room, every creature that fails a save against your area spell is pulled to the spell's center."
+    ],
+    "evolvesTo": "living-labyrinth",
+    "combinesWith": [
+      "dragnet"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "collectors-menagerie",
+    "name": "Collector's Menagerie",
+    "tags": [
+      "Bond"
+    ],
+    "kind": "normal",
+    "levels": [
+      "Your summons, familiar, companion and Wild Shape forms gain PB temp HP at the start of each room and deal +PB damage once per turn.",
+      "Once per room, when your summon or companion would drop to 0 HP, it drops to 1 instead and reappears within 5 ft of you.",
+      "Once per room, when you cast a spell that summons one creature, a second copy appears with half the HP."
+    ],
+    "evolvesTo": "the-hoard",
+    "combinesWith": [
+      "pack-leader"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "thalisanes-weave",
+    "name": "Thalisane's Weave",
+    "tags": [
+      "Bond"
+    ],
+    "kind": "normal",
+    "levels": [
+      "When you or your companion or summon takes damage, you can split it evenly between you.",
+      "When either of you regains HP, the other regains half as much.",
+      "Once per room, when either of you would drop to 0 HP, both of you drop to 1 instead."
+    ],
+    "evolvesTo": "life-weaver",
+    "status": "locked"
+  },
+  {
+    "id": "the-express",
+    "name": "The Express",
+    "tags": [
+      "Flurry"
+    ],
+    "kind": "normal",
+    "levels": [
+      "Each attack hit in a turn after your first deals +1 damage per earlier hit that turn. Weapon, unarmed and spell attacks all count.",
+      "+2 per earlier hit.",
+      "If you land 4 or more hits in a turn, your last hit pushes the target 15 ft and knocks it prone."
+    ],
+    "evolvesTo": "express-line",
+    "combinesWith": [
+      "rush-hour"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "breakers-last-stand",
+    "name": "Breaker's Last Stand",
+    "tags": [
+      "Blood"
+    ],
+    "kind": "normal",
+    "levels": [
+      "While Bloodied, your weapon and unarmed hits deal +PB damage.",
+      "While Bloodied, you gain +10 ft speed and can't be Frightened.",
+      "While Bloodied, your crit range expands by 1, and your crits restore PB HP."
+    ],
+    "evolvesTo": "champion-of-the-ring",
+    "combinesWith": [
+      "blood-and-glory"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "thilss-favor",
+    "name": "Thils's Favor",
+    "tags": [
+      "Shadow"
+    ],
+    "kind": "normal",
+    "levels": [
+      "Advantage on checks to detect and disarm room tricks, and you take half damage from them.",
+      "When you disarm a room trick, you can reset it so it only triggers on enemies.",
+      "Once per room, as a reaction, redirect a room trick that targets you onto an enemy within 30 ft."
+    ],
+    "evolvesTo": "thilss-maze",
+    "status": "locked"
+  },
+  {
+    "id": "zolics-nine-eyes",
+    "name": "Zolic's Nine Eyes",
+    "tags": [
+      "Hunt"
+    ],
+    "kind": "normal",
+    "levels": [
+      "Against bosses and Large or larger creatures, your hits deal +PB damage.",
+      "Each time a boss uses a Legendary Resistance or Legendary Action, gain an Eye (up to 9). Each Eye adds +1d4 to your hits against that boss.",
+      "At 9 Eyes, your next hit against that boss is a critical hit, and your Eyes reset."
+    ],
+    "evolvesTo": "god-slayer",
+    "combinesWith": [
+      "contract-kill"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "deflector-burst",
+    "name": "Deflector Burst",
+    "tags": [
+      "Payoff"
+    ],
+    "kind": "payoff",
+    "levels": [
+      "When the temp HP from your Opening temp HP track runs out, it bursts, dealing force damage equal to that amount to creatures within 5 ft.",
+      "The burst reaches 10 ft.",
+      "The burst also grants allies in range temp HP equal to half the damage."
+    ],
+    "payoffTrack": "opening-temp-hp",
+    "status": "locked"
+  },
+  {
+    "id": "hunters-tally",
+    "name": "Hunter's Tally",
+    "tags": [
+      "Payoff"
+    ],
+    "kind": "payoff",
+    "levels": [
+      "Against Bloodied creatures, your flat damage bonus applies to every hit instead of once per turn.",
+      "Allies also add your bonus to their first hit each turn against a creature you hit.",
+      "When your hit drops a creature, your next hit adds double the bonus."
+    ],
+    "payoffTrack": "flat-damage",
+    "status": "locked"
+  },
+  {
+    "id": "gleam-dealers-gamble",
+    "name": "Gleam Dealer's Gamble",
+    "tags": [
+      "Payoff"
+    ],
+    "kind": "payoff",
+    "levels": [
+      "Before rolling, stake a Fortune Die. If the roll succeeds, keep the die and deal +1d6 damage; if it fails, lose the die.",
+      "Stake up to 2 dice at once, +1d6 each.",
+      "Stake up to PB dice at once."
+    ],
+    "payoffTrack": "fortune-dice",
+    "status": "locked"
+  },
+  {
+    "id": "fleet-foot",
+    "name": "Fleet Foot",
+    "tags": [
+      "Core"
+    ],
+    "kind": "core",
+    "levels": [
+      "+10 ft speed.",
+      "+15 ft speed.",
+      "+20 ft speed."
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "unshackled",
+    "name": "Unshackled",
+    "tags": [
+      "Core"
+    ],
+    "kind": "core",
+    "levels": [
+      "Advantage on saves and checks to avoid or escape Grappled and Restrained.",
+      "Your speed can't be reduced by spells or effects.",
+      "You can't be Grappled or Restrained."
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "elemental-ward",
+    "name": "Elemental Ward",
+    "tags": [
+      "Core"
+    ],
+    "kind": "core",
+    "levels": [
+      "Resistance to one of acid, cold, fire, lightning or thunder, chosen when drafted.",
+      "Resistance to a second of those types.",
+      "Resistance to all five."
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "pocket-sweep",
+    "name": "Pocket Sweep",
+    "tags": [
+      "Core"
+    ],
+    "kind": "core",
+    "levels": [
+      "Once per turn, loot or pick up an item within reach without using an action.",
+      "You can also loot a fallen creature within 15 ft.",
+      "Once per room, use a consumable you looted this room without any action."
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "quick-cantrip",
+    "name": "Quick Cantrip",
+    "tags": [
+      "Core"
+    ],
+    "kind": "core",
+    "levels": [
+      "Once per room, cast a cantrip as a bonus action.",
+      "Twice per room.",
+      "Once per turn, any cantrip that takes an action can be cast as a bonus action instead."
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "hardy",
+    "name": "Hardy",
+    "tags": [
+      "Core"
+    ],
+    "kind": "core",
+    "levels": [
+      "+1 max HP per character level.",
+      "+2 max HP per character level.",
+      "+3 max HP per character level."
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "honed",
+    "name": "Honed",
+    "tags": [
+      "Core"
+    ],
+    "kind": "core",
+    "levels": [
+      "+1 to one ability score, up to 20.",
+      "+2 total, split or stacked.",
+      "+2 total, and that score can go up to 22 this run."
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "keen-reflexes",
+    "name": "Keen Reflexes",
+    "tags": [
+      "Core"
+    ],
+    "kind": "core",
+    "levels": [
+      "+2 to initiative.",
+      "+PB to initiative instead.",
+      "You also have advantage on initiative."
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "steady-will",
+    "name": "Steady Will",
+    "tags": [
+      "Core"
+    ],
+    "kind": "core",
+    "levels": [
+      "Advantage on saves against being Charmed or Frightened.",
+      "You can't be Frightened.",
+      "You can't be Charmed either."
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "night-eyes",
+    "name": "Night Eyes",
+    "tags": [
+      "Core"
+    ],
+    "kind": "core",
+    "levels": [
+      "Darkvision 60 ft, or +60 ft if you already have it.",
+      "You can see through magical darkness within 30 ft.",
+      "Blindsight 15 ft."
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "resounding-blow",
+    "name": "Resounding Blow",
+    "tags": [
+      "Echo"
+    ],
+    "kind": "normal",
+    "levels": [
+      "Once per turn, when you hit, the target takes 25% of the damage again at the start of its next turn.",
+      "The delayed echo deals 40%.",
+      "If the delayed echo kills, it jumps to the nearest enemy."
+    ],
+    "evolvesTo": "seismic-aftershock",
+    "combinesWith": [
+      "seismic-waltz"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "echoing-step",
+    "name": "Echoing Step",
+    "tags": [
+      "Echo"
+    ],
+    "kind": "normal",
+    "levels": [
+      "After you move at least 20 ft, the first attack against you before your next turn has disadvantage.",
+      "When that attack misses, the attacker takes PB force damage.",
+      "Your first hit each turn after moving 20 ft echoes 50% of its damage onto a second creature within 10 ft."
+    ],
+    "evolvesTo": "phantom-phalanx",
+    "combinesWith": [
+      "seismic-waltz"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "last-rites",
+    "name": "Last Rites",
+    "tags": [
+      "Reaper"
+    ],
+    "kind": "normal",
+    "levels": [
+      "Your hits against Bloodied creatures deal +PB damage.",
+      "When you drop a creature, gain PB temp HP.",
+      "A non-boss creature with fewer than 5 × PB HP drops to 0 when you hit it."
+    ],
+    "evolvesTo": "bell-tolls",
+    "combinesWith": [
+      "the-ferrymans-toll"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "harvest",
+    "name": "Harvest",
+    "tags": [
+      "Reaper"
+    ],
+    "kind": "normal",
+    "levels": [
+      "Each creature you drop grants a Soul (up to PB per room). Spend one to add 1d8 necrotic damage to a hit.",
+      "As a reaction, spend a Soul to reduce damage you take by 1d8 + PB.",
+      "Souls carry over between rooms on the same floor."
+    ],
+    "evolvesTo": "soul-furnace",
+    "combinesWith": [
+      "the-ferrymans-toll"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "marked-quarry",
+    "name": "Marked Quarry",
+    "tags": [
+      "Hunt"
+    ],
+    "kind": "normal",
+    "levels": [
+      "Once per room, as a bonus action, mark a creature. Your hits on it deal +1d6 damage, no concentration needed.",
+      "You always know where the marked creature is within 60 ft, even if it's hidden.",
+      "When the mark drops, move it for free, and the bonus becomes +2d6."
+    ],
+    "evolvesTo": "apex-predator",
+    "combinesWith": [
+      "dead-to-rights"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "weak-point",
+    "name": "Weak Point",
+    "tags": [
+      "Hunt"
+    ],
+    "kind": "normal",
+    "levels": [
+      "Once per room, as a bonus action, study a creature to learn its lowest save and one resistance or vulnerability.",
+      "Your first hit each turn against it ignores resistance.",
+      "Your crit range against it expands by 2."
+    ],
+    "evolvesTo": "fatal-anatomy",
+    "combinesWith": [
+      "dead-to-rights"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "thousand-cuts",
+    "name": "Thousand Cuts",
+    "tags": [
+      "Flurry"
+    ],
+    "kind": "normal",
+    "levels": [
+      "Each hit after your first on the same creature in a turn reduces its speed by 5 ft until your next turn.",
+      "At 3 hits on one creature in a turn, it has disadvantage on its next attack.",
+      "At 4 hits, it must make a Con save against your DC or be Stunned until the start of your next turn."
+    ],
+    "evolvesTo": "death-by-a-thousand",
+    "combinesWith": [
+      "blender"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "second-hand",
+    "name": "Second Hand",
+    "tags": [
+      "Flurry"
+    ],
+    "kind": "normal",
+    "levels": [
+      "Once per turn, an attack you make as a bonus action (Nick, Flurry of Blows, two-weapon fighting) deals +PB damage.",
+      "That attack has advantage.",
+      "If your action attack and bonus attack both hit the same creature, it's knocked prone."
+    ],
+    "evolvesTo": "twin-tempest",
+    "combinesWith": [
+      "blender"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "bleed-out",
+    "name": "Bleed Out",
+    "tags": [
+      "Blood"
+    ],
+    "kind": "normal",
+    "levels": [
+      "As a bonus action, lose PB HP to add 2 × PB damage to your next hit this turn.",
+      "If that hit drops the target, the lost HP returns as temp HP.",
+      "Once per room, lose half your current HP to make your next hit a critical hit."
+    ],
+    "evolvesTo": "crimson-sovereign",
+    "combinesWith": [
+      "martyrs-engine",
+      "hemomancer"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "red-mist",
+    "name": "Red Mist",
+    "tags": [
+      "Blood"
+    ],
+    "kind": "normal",
+    "levels": [
+      "When you become Bloodied, gain PB temp HP and +10 ft speed until your next turn.",
+      "When you become Bloodied, make one attack as a reaction.",
+      "Once per room, when you drop to 0 HP, keep acting until the end of your next turn before falling."
+    ],
+    "evolvesTo": "undying-rage",
+    "combinesWith": [
+      "martyrs-engine"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "lucky-break",
+    "name": "Lucky Break",
+    "tags": [
+      "Crit"
+    ],
+    "kind": "normal",
+    "levels": [
+      "Once per room, reroll a natural 1 on an attack roll.",
+      "Once per room, after you hit, turn the hit into a critical hit.",
+      "Each critical hit you score restores one use of Level 2."
+    ],
+    "evolvesTo": "house-always-wins",
+    "combinesWith": [
+      "loaded-dice"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "iron-root",
+    "name": "Iron Root",
+    "tags": [
+      "Stance"
+    ],
+    "kind": "normal",
+    "levels": [
+      "As a bonus action, root yourself: you can't move, but you can't be moved or knocked prone.",
+      "While rooted, enemies that end their turn within your reach take PB damage.",
+      "While rooted, your melee reach increases by 5 ft."
+    ],
+    "evolvesTo": "tectonic-anchor",
+    "combinesWith": [
+      "living-bastion"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "pack-tactics",
+    "name": "Pack Tactics",
+    "tags": [
+      "Bond"
+    ],
+    "kind": "normal",
+    "levels": [
+      "When you and your summon or companion hit the same creature in a round, the second hit deals +PB damage.",
+      "Once per round, your companion can make an opportunity attack without using its reaction.",
+      "When your companion drops a creature, you gain PB temp HP and it can move up to half its speed."
+    ],
+    "evolvesTo": "alphas-call",
+    "combinesWith": [
+      "pack-swap"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "swap-places",
+    "name": "Swap Places",
+    "tags": [
+      "Bond"
+    ],
+    "kind": "normal",
+    "levels": [
+      "Once per room, as a bonus action, swap places with your summon or companion.",
+      "Once per round instead.",
+      "After swapping, you both have advantage on your next attack."
+    ],
+    "evolvesTo": "entanglement-rift",
+    "combinesWith": [
+      "pack-swap"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "elemental-quiver",
+    "name": "Elemental Quiver",
+    "tags": [
+      "Volley"
+    ],
+    "kind": "normal",
+    "levels": [
+      "Once per turn, a ranged hit deals +PB fire, cold or lightning damage, your choice.",
+      "Cold also slows the target by 10 ft, lightning stops its reactions, and fire burns for PB at the start of its turn.",
+      "You can apply two elements to one hit."
+    ],
+    "evolvesTo": "prismatic-barrage",
+    "combinesWith": [
+      "tempest-volley"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "battle-standard",
+    "name": "Battle Standard",
+    "tags": [
+      "Rally"
+    ],
+    "kind": "normal",
+    "levels": [
+      "Once per room, as a bonus action, plant a standard. Allies within 10 ft add +PB to one damage roll per turn until it's knocked over (AC 15, 5 × PB HP).",
+      "Allies near the standard have advantage on saves against being Frightened, and the radius becomes 15 ft.",
+      "Allies near the standard regain PB HP at the start of their turns."
+    ],
+    "evolvesTo": "immortal-banner",
+    "combinesWith": [
+      "living-bastion"
+    ],
+    "status": "locked"
+  },
+  {
+    "id": "ulmas-thread",
+    "name": "Ulma's Thread",
+    "tags": [
+      "Shadow"
+    ],
+    "kind": "normal",
+    "levels": [
+      "You always know the way back to the room's entrance. Once per room, as a reaction, ignore a room trick or Shift Action that would move or teleport you.",
+      "Advantage on saves against room tricks, and difficult terrain costs you no extra movement.",
+      "Once per room, as a bonus action, pull yourself and one willing ally within 30 ft back to any space you occupied this room."
+    ],
+    "evolvesTo": "ball-of-yarn",
+    "status": "locked"
+  },
+  {
+    "id": "the-archivists-index",
+    "name": "The Archivist's Index",
+    "tags": [
+      "Spell"
+    ],
+    "kind": "normal",
+    "levels": [
+      "Once per room, swap one prepared or known spell for another on your class list.",
+      "Twice per room, and a swapped-in spell deals or heals +PB the first time you cast it.",
+      "Once per room, cast a spell from your class list that you don't have prepared, using a slot."
+    ],
+    "evolvesTo": "the-whole-shelf",
+    "status": "locked"
+  },
+  {
+    "id": "weavers-mending",
+    "name": "Weaver's Mending",
+    "tags": [
+      "Guard"
+    ],
+    "kind": "normal",
+    "levels": [
+      "Your healing spells and features restore +PB HP.",
+      "A single-target healing spell can target one more creature within range.",
+      "Once per room, a healing spell restores its maximum amount."
+    ],
+    "evolvesTo": "master-weaver",
+    "status": "locked"
+  }
+]
