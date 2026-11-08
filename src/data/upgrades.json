@@ -1,0 +1,115 @@
+{
+  "_source": "docs/design-bible.md: Quantum Basalts and permanent upgrades, plus Build clarifications 2, 9 and 11.",
+  "_scopes": "personal = only its owner benefits. party-per-owner = shared, and every owner in the party adds more. party-highest = shared, the highest rank in the party applies.",
+  "upgrades": [
+    {
+      "id": "starting-boon",
+      "name": "Starting Boon",
+      "costs": [15],
+      "effect": "At the start of floor 1, room 1, roll a random boon at Level 1. Banish and Reroll apply to it.",
+      "scope": "personal",
+      "status": "locked"
+    },
+    {
+      "id": "forge",
+      "name": "Forge",
+      "costs": [30],
+      "effect": "Unlocks a Forge in post-boss rooms. One use per owner in the party, then it cools.",
+      "scope": "party-per-owner",
+      "status": "locked"
+    },
+    {
+      "id": "healing-font",
+      "name": "Healing Font",
+      "costs": [30],
+      "effect": "Unlocks a Healing Font in post-boss rooms. Each owner beyond the first adds temp HP for everyone.",
+      "scope": "party-per-owner",
+      "status": "locked"
+    },
+    {
+      "id": "extra-boon-slot",
+      "name": "Extra Boon Slot",
+      "costs": [40, 120],
+      "effect": "A 4th boon slot at rank 1 and a 5th at rank 2.",
+      "scope": "personal",
+      "status": "locked"
+    },
+    {
+      "id": "reroll",
+      "name": "Reroll",
+      "costs": [10, 20, 35],
+      "effect": "Reroll your boon offer 1, 2, then 3 times per floor.",
+      "scope": "personal",
+      "status": "locked"
+    },
+    {
+      "id": "extra-loot",
+      "name": "Extra Loot",
+      "costs": [15, 30, 50],
+      "effect": "+10% to your own boss Quantum Basalts per rank.",
+      "scope": "personal",
+      "status": "locked"
+    },
+    {
+      "id": "extra-pressures",
+      "name": "Extra Pressures",
+      "costs": [20, 40],
+      "effect": "Rank 1 unlocks Restless Stone and Heavy Crown; rank 2 unlocks the harsher versions. Every owner in the party adds +5% to rewards.",
+      "scope": "party-per-owner",
+      "status": "locked"
+    },
+    {
+      "id": "reprieve",
+      "name": "Reprieve",
+      "costs": [20, 35, 55, 80],
+      "effect": "A 20%, 35%, 50%, then 65% chance of a Reprieve room mid-floor. Every owner rolls separately.",
+      "scope": "party-per-owner",
+      "status": "locked"
+    },
+    {
+      "id": "attunement",
+      "name": "Attunement",
+      "costs": [15],
+      "effect": "Your first offer of each run includes a tag you choose.",
+      "scope": "personal",
+      "status": "proposed"
+    },
+    {
+      "id": "banish",
+      "name": "Banish",
+      "costs": [10, 20, 30],
+      "effect": "Remove 1, 2, then 3 boons from your personal offers.",
+      "scope": "personal",
+      "status": "proposed"
+    },
+    {
+      "id": "hidden-sight",
+      "name": "Hidden Sight",
+      "costs": [20],
+      "effect": "One hint per floor about a room's secret condition.",
+      "scope": "personal",
+      "status": "proposed"
+    },
+    {
+      "id": "deep-pockets",
+      "name": "Deep Pockets",
+      "costs": [25, 50, 80],
+      "effect": "+5% loot kept on extraction per rank, up to 100%. The highest rank in the party applies.",
+      "scope": "party-highest",
+      "status": "proposed"
+    },
+    {
+      "id": "quick-return",
+      "name": "Quick Return",
+      "costs": [10, 20, 30],
+      "effect": "Shorten your death lockout by 1 day per rank, to a minimum of 1 day.",
+      "scope": "personal",
+      "status": "proposed"
+    }
+  ],
+  "extraPressuresBonusPerOwner": 5,
+  "extraLootBonusPerRank": 10,
+  "deepPocketsPerRank": 5,
+  "quickReturnDaysPerRank": 1,
+  "minimumLockoutDays": 1
+}
