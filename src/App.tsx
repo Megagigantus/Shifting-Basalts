@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth'
 import { auth, firebaseConfigured } from './firebase'
 import { useAccess } from './useAccess'
+import { InviteList } from './screens/InviteList'
 
 function App() {
   const access = useAccess()
@@ -60,8 +61,12 @@ function App() {
           <p>
             Signed in as {access.user.email} ({access.role === 'dm' ? 'DM' : 'Player'}).
           </p>
-          <p className="status">Tracker coming soon.</p>
           {signOutButton}
+          {access.role === 'dm' ? (
+            <InviteList myEmail={access.user.email ?? ''} />
+          ) : (
+            <p className="status">Tracker coming soon.</p>
+          )}
         </>
       )}
     </main>

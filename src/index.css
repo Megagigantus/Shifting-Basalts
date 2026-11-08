@@ -36,3 +36,67 @@ button:hover {
 .error {
   color: #f08a7a;
 }
+
+input,
+select {
+  font: inherit;
+  padding: 0.45rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #6b665c;
+  background: #26252a;
+  color: inherit;
+}
+
+.panel {
+  margin-top: 2rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid #3a3940;
+  border-radius: 10px;
+  background: #222126;
+}
+
+.panel h2 {
+  margin-top: 0;
+}
+
+.hint {
+  opacity: 0.7;
+  font-size: 0.9rem;
+}
+
+.tag {
+  font-size: 0.8rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: #3a3940;
+}
+
+.invite-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.invite-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid #2f2e34;
+}
+
+.invite-email {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.invite-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.invite-form input {
+  flex: 1 1 14rem;
+}
