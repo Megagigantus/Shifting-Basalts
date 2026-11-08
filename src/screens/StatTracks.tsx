@@ -42,6 +42,7 @@ export function StatTracks({ character, onClose }: { character: Character; onClo
       <p>
         <strong>{banked}</strong> Devotions banked · tier cap rank {cap} at level {character.level}
         {cap < MAX_RANK && <span className="hint"> (rises at the next tier of play)</span>}
+        {busy && <span className="hint"> · Saving…</span>}
       </p>
 
       <table className="party-table">

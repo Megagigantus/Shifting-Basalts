@@ -10,6 +10,7 @@ import {
   togglePressure,
 } from '../rules/run'
 import { makeJoinCode, newRunState } from '../rules/runFlow'
+import { deepPocketsPercent, extraPressuresBonusPercent } from '../rules/upgrades'
 import { newRunId, saveRunState } from '../runStore'
 
 const EXTRA_PRESSURES = 'extra-pressures'
@@ -102,6 +103,8 @@ export function StartRun({ characters, onStarted, onCancel }: Props) {
         <p className="summary">
           Party level {level} · {party.length} {party.length === 1 ? 'player' : 'players'} · rewards ×
           {entryMultiplier(level)} · Pressure bonus +{pressureBonusPercent(activePressures)}%
+          {extraPressuresBonusPercent(party) > 0 && ` · Extra Pressures +${extraPressuresBonusPercent(party)}%`}
+          {deepPocketsPercent(party) > 0 && ` · Deep Pockets +${deepPocketsPercent(party)}% loot kept`}
         </p>
       )}
 

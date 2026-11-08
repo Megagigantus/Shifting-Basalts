@@ -44,6 +44,7 @@ export function UpgradeShop({ character, onClose }: { character: Character; onCl
       </div>
       <p>
         <strong>{banked}</strong> Quantum Basalts banked
+        {busy && <span className="hint"> · Saving…</span>}
       </p>
 
       <table className="party-table">
