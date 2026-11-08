@@ -9,7 +9,8 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "check-data": "node scripts/check-data.ts",
-    "test:rules": "firebase emulators:exec --only firestore --project demo-shifting-basalts \"vitest run\""
+    "test": "vitest run src",
+    "test:rules": "firebase emulators:exec --only firestore --project demo-shifting-basalts \"vitest run tests\""
   },
   "dependencies": {
     "firebase": "^13.2.0",
