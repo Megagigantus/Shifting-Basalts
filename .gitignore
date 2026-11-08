@@ -147,3 +147,26 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+
+# Vite / app build
+node_modules
+dist
+dist-ssr
+*.local
+
+# Secrets: never commit
+.env
+.env.*
+!.env.example
+
+# Firebase local files
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
