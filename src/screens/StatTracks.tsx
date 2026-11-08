@@ -12,7 +12,16 @@ import {
   tierCap,
 } from '../rules/statTracks'
 
-export function StatTracks({ character, onClose }: { character: Character; onClose: () => void }) {
+interface Props {
+  character: Character
+  onClose: () => void
+  /** Players can't use the −1 correction; the database rules refuse it anyway. */
+  canCorrect?: boolean
+  /** False for the DM's read-only "view as player" preview. */
+  canSpend?: boolean
+}
+
+export function StatTracks({ character, onClose, canCorrect = true, canSpend = true }: Props) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const cap = tierCap(character.level)
@@ -82,7 +91,7 @@ export function StatTracks({ character, onClose }: { character: Character; onClo
                 <td className="row-actions">
                   <button
                     type="button"
-                    disabled={busy || banked < 1 || atCap}
+                    disabled={!canSpend || busy || banked < 1 || atCap}
                     onClick={() => invest(track.id, 1)}
                     title="Invest 1 Devotion"
                   >
@@ -91,22 +100,24 @@ export function StatTracks({ character, onClose }: { character: Character; onClo
                   {toFinish > 1 && (
                     <button
                       type="button"
-                      disabled={busy || banked < toFinish || toFinish > roomLeft}
+                      disabled={!canSpend || busy || banked < toFinish || toFinish > roomLeft}
                       onClick={() => invest(track.id, toFinish)}
                       title={`Invest ${toFinish} Devotions to reach rank ${rank + 1}`}
                     >
                       Finish rank (+{toFinish})
                     </button>
                   )}
-                  <button
-                    type="button"
-                    className="quiet"
-                    disabled={busy || invested === 0}
-                    onClick={() => invest(track.id, -1)}
-                    title="Correction: take 1 Devotion back out of this track"
-                  >
-                    −1
-                  </button>
+                  {canCorrect && (
+                    <button
+                      type="button"
+                      className="quiet"
+                      disabled={busy || invested === 0}
+                      onClick={() => invest(track.id, -1)}
+                      title="Correction: take 1 Devotion back out of this track"
+                    >
+                      −1
+                    </button>
+                  )}
                 </td>
               </tr>
             )
@@ -114,8 +125,9 @@ export function StatTracks({ character, onClose }: { character: Character; onClo
         </tbody>
       </table>
       <p className="hint">
-        Maxing a track takes {devotionsForRank(MAX_RANK)} Devotions. −1 is for correcting mistakes and
-        refunds the Devotion to the bank.
+        Maxing a track takes {devotionsForRank(MAX_RANK)} Devotions.
+        {canCorrect && ' −1 is for correcting mistakes and refunds the Devotion to the bank.'}
+        {!canCorrect && ' Spent Devotions are permanent; ask your DM if you make a mistake.'}
       </p>
       {error && <p className="error">{error}</p>}
     </div>

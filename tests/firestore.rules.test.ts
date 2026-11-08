@@ -11,6 +11,8 @@ import {
 } from '@firebase/rules-unit-testing'
 import {
   deleteDoc,
+  FieldPath,
+  runTransaction,
   doc,
   getDoc,
   serverTimestamp,
@@ -310,5 +312,28 @@ describe('players and characters', () => {
     const asDM = doc(as(DM), 'characters', OWNED)
     await assertSucceeds(updateDoc(asDM, { 'trackDevotions.max-hp': 0, bankedDevotions: 12 }))
     await assertSucceeds(updateDoc(asDM, { 'upgrades.reroll': 0, bankedQuantumBasalts: 60, level: 8 }))
+  })
+})
+
+describe('the app\'s own save path (transaction with field paths)', () => {
+  beforeEach(() => seedCharacters())
+
+  it('a player\'s Devotion spend and upgrade purchase go through exactly as the app writes them', async () => {
+    const db = as(PLAYER)
+    const ref = doc(db, 'characters', OWNED)
+    await assertSucceeds(
+      runTransaction(db, async (tx) => {
+        const snap = await tx.get(ref)
+        const banked = snap.data()!.bankedDevotions
+        const invested = snap.data()!.trackDevotions['max-hp']
+        tx.update(ref, new FieldPath('trackDevotions', 'max-hp'), invested + 3, 'bankedDevotions', banked - 3, 'updatedAt', serverTimestamp())
+      }),
+    )
+    await assertSucceeds(
+      runTransaction(db, async (tx) => {
+        const snap = await tx.get(ref)
+        tx.update(ref, new FieldPath('upgrades', 'extra-boon-slot'), 1, 'bankedQuantumBasalts', snap.data()!.bankedQuantumBasalts - 40, 'updatedAt', serverTimestamp())
+      }),
+    )
   })
 })

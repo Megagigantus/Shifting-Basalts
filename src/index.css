@@ -393,3 +393,18 @@ button.quiet {
   padding-top: 0.5rem;
   border-top: 1px solid #2f2e34;
 }
+
+.party-table tr.mine td:first-child {
+  border-left: 3px solid #c9a35a;
+  padding-left: 0.6rem;
+}
+
+.party-table .tag {
+  margin-left: 0.4rem;
+}
+
+.preview-frame {
+  border: 1px dashed #6b665c;
+  border-radius: 10px;
+  padding: 0 0.75rem 0.75rem;
+}

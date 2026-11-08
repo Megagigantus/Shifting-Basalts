@@ -5,6 +5,8 @@ import { useAccess } from './useAccess'
 import { InviteList } from './screens/InviteList'
 import { Characters } from './screens/Characters'
 import { RunPanel } from './screens/RunPanel'
+import { PlayerHome } from './screens/PlayerHome'
+import { PlayerPreview } from './screens/PlayerPreview'
 
 function App() {
   const access = useAccess()
@@ -69,9 +71,10 @@ function App() {
               <RunPanel />
               <Characters />
               <InviteList myEmail={access.user.email ?? ''} />
+              <PlayerPreview />
             </>
           ) : (
-            <p className="status">Tracker coming soon.</p>
+            <PlayerHome email={access.user.email ?? ''} />
           )}
         </>
       )}

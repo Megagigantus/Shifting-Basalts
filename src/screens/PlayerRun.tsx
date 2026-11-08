@@ -1,0 +1,92 @@
+// Player screen: the run their character is in, read-only. Shows where the
+// party is and everyone's boons; never anything from the DM-only data.
+import { Fragment, useState } from 'react'
+import type { RunState } from '../model/run'
+import { boonSummary } from '../rules/boons'
+import { floorInfo, LAST_FLOOR, PRESSURES } from '../rules/run'
+import { canExtract, isBossRoom, lootKeptIfExtracting } from '../rules/runFlow'
+import { BoonList } from './BoonList'
+
+export function PlayerRun({ state, myCharacterIds }: { state: RunState; myCharacterIds: string[] }) {
+  const { run, players } = state
+  const [open, setOpen] = useState<string | null>(myCharacterIds[0] ?? null)
+  const floor = floorInfo(run.floor)
+  const bossRoom = isBossRoom(state)
+
+  const where = run.awaitingChoice
+    ? `Floor ${run.floor} boss defeated: descend or extract?`
+    : bossRoom
+      ? run.floor === LAST_FLOOR
+        ? 'Floor 5: the legendary boss'
+        : `Floor ${run.floor}: boss room`
+      : `Floor ${run.floor}: room ${run.room} of ${floor.rooms}`
+
+  return (
+    <section className="panel">
+      <h2>Current run</h2>
+      <div className="run-where">{where}</div>
+      <div className="hint">
+        Hazard class {floor.hazard} · party level {run.partyLevel} · rewards ×{run.entryMultiplier}
+      </div>
+      {run.pressures.length > 0 && (
+        <div className="hint">
+          Pressures: {run.pressures.map((id) => PRESSURES.find((p) => p.id === id)?.name ?? id).join(', ')}
+        </div>
+      )}
+      <p className="hint">
+        Loot kept if the party extracts now:{' '}
+        {canExtract(state) ? `${lootKeptIfExtracting(state)}%` : 'extraction opens after a boss'}
+      </p>
+
+      <table className="party-table">
+        <thead>
+          <tr>
+            <th>Party</th>
+            <th title="Devotions earned this run">Devotions</th>
+            <th title="Boss Quantum Basalts, before bonuses. Lost on death.">QB earned</th>
+            <th title="Quantum Basalts from passing. Kept even on death.">QB passed</th>
+            <th />
+          </tr>
+        </thead>
+        <tbody>
+          {players.map((p) => {
+            const mine = myCharacterIds.includes(p.characterId)
+            return (
+              <Fragment key={p.characterId}>
+                <tr className={`${p.alive ? '' : 'fallen'} ${mine ? 'mine' : ''}`}>
+                  <td>
+                    {p.name}
+                    {mine && <span className="tag">you</span>}
+                    {boonSummary(p.slots, p.hiddenBoonId) && (
+                      <div className="hint">{boonSummary(p.slots, p.hiddenBoonId)}</div>
+                    )}
+                    {!p.alive && (
+                      <div className="warning">
+                        Fell on floor {p.diedOnFloor} · locked out {p.lockoutDays} days
+                      </div>
+                    )}
+                  </td>
+                  <td>{p.devotions}</td>
+                  <td>{p.alive ? p.quantumBasaltsEarned : `${p.quantumBasaltsEarned} (forfeit)`}</td>
+                  <td>{p.quantumBasaltsPassed}</td>
+                  <td>
+                    <button type="button" onClick={() => setOpen(open === p.characterId ? null : p.characterId)}>
+                      {open === p.characterId ? 'Hide boons' : 'Boons'}
+                    </button>
+                  </td>
+                </tr>
+                {open === p.characterId && (
+                  <tr className="boons-row">
+                    <td colSpan={5}>
+                      <BoonList player={p} />
+                    </td>
+                  </tr>
+                )}
+              </Fragment>
+            )
+          })}
+        </tbody>
+      </table>
+    </section>
+  )
+}
