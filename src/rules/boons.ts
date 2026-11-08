@@ -171,6 +171,14 @@ export function clearSlot(slots: Slot[], index: number): Slot[] {
   return replaceAt(slots, index, null)
 }
 
+/** One-line summary of held boons, e.g. "Hardy 2 · Chain of Echoes · hidden: Keeper of Ways". */
+export function boonSummary(slots: Slot[] | undefined, hiddenBoonId?: string | null): string {
+  const held = (slots ?? []).filter((s): s is SlotContent => s !== null)
+  const parts = held.map((s) => (s.kind === 'boon' ? `${slotName(s)} ${s.level}` : slotName(s)))
+  if (hiddenBoonId) parts.push(`hidden: ${hiddenBoon(hiddenBoonId).name}`)
+  return parts.join(' · ')
+}
+
 /**
  * Grow (or keep) a slot list to match the slot count, e.g. after an Extra
  * Boon Slot purchase. Never removes filled slots.

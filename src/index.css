@@ -327,3 +327,69 @@ button.quiet {
 .character-row {
   flex-wrap: wrap;
 }
+
+.boons-row td {
+  background: #1f1e23;
+}
+
+.player-boons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.25rem 0;
+}
+
+.slot-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.slot {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #3a3940;
+  border-radius: 8px;
+}
+
+.slot.suppressed {
+  border-style: dashed;
+  opacity: 0.7;
+}
+
+.slot-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.slot details p {
+  margin: 0.25rem 0;
+}
+
+.row-actions.wrap {
+  flex-wrap: wrap;
+  margin-top: 0.4rem;
+}
+
+.boon-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.boon-picker select {
+  flex: 1 1 14rem;
+  min-width: 0;
+}
+
+.hidden-slot {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #2f2e34;
+}

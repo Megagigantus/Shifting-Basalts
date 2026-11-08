@@ -1,6 +1,6 @@
 // DM screen: the run in progress. Every button runs one step from
 // rules/runFlow.ts, then saves the new state.
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import type { Character } from '../model/character'
 import type { RunResult, RunState } from '../model/run'
 import { floorInfo, LAST_FLOOR, PRESSURES } from '../rules/run'
@@ -16,6 +16,8 @@ import {
   pass,
 } from '../rules/runFlow'
 import { cancelRun, saveRunState } from '../runStore'
+import { boonSummary } from '../rules/boons'
+import { PlayerBoons } from './PlayerBoons'
 
 const ROOM_LABELS = { combat: 'Combat', elite: 'Elite', reprieve: 'Reprieve', boss: 'Boss' }
 
@@ -27,6 +29,8 @@ interface Props {
 
 export function RunTracker({ state, characters, onEnded }: Props) {
   const [busy, setBusy] = useState(false)
+  // Which player's boon panel is open, if any.
+  const [boonsFor, setBoonsFor] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const { run, players } = state
   const floor = floorInfo(run.floor)
@@ -152,9 +156,13 @@ export function RunTracker({ state, characters, onEnded }: Props) {
         </thead>
         <tbody>
           {players.map((p) => (
-            <tr key={p.characterId} className={p.alive ? '' : 'fallen'}>
+            <Fragment key={p.characterId}>
+            <tr className={p.alive ? '' : 'fallen'}>
               <td>
                 {p.name}
+                {boonSummary(p.slots, p.hiddenBoonId) && (
+                  <div className="hint">{boonSummary(p.slots, p.hiddenBoonId)}</div>
+                )}
                 {!p.alive && (
                   <div className="warning">
                     Fell on floor {p.diedOnFloor} · locked out {p.lockoutDays} days (rolled{' '}
@@ -169,6 +177,12 @@ export function RunTracker({ state, characters, onEnded }: Props) {
               <td className="row-actions">
                 {p.alive && (
                   <>
+                    <button
+                      type="button"
+                      onClick={() => setBoonsFor(boonsFor === p.characterId ? null : p.characterId)}
+                    >
+                      {boonsFor === p.characterId ? 'Hide boons' : 'Boons'}
+                    </button>
                     <button type="button" disabled={busy} onClick={() => act((s) => pass(s, p.characterId))}>
                       Pass
                     </button>
@@ -188,6 +202,19 @@ export function RunTracker({ state, characters, onEnded }: Props) {
                 )}
               </td>
             </tr>
+            {p.alive && boonsFor === p.characterId && (
+              <tr className="boons-row">
+                <td colSpan={5}>
+                  <PlayerBoons
+                    player={p}
+                    character={characters.find((c) => c.id === p.characterId)}
+                    busy={busy}
+                    act={act}
+                  />
+                </td>
+              </tr>
+            )}
+            </Fragment>
           ))}
         </tbody>
       </table>
