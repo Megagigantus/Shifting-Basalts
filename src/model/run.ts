@@ -1,0 +1,67 @@
+// A run in progress, as saved in Firestore:
+//   runs/{runId}                    -> Run (minus id)
+//   runs/{runId}/players/{charId}   -> RunPlayer
+// Hidden information (runs/{runId}/dmOnly) arrives with the room generator.
+
+export type RunStatus = 'active' | 'extracted' | 'wiped'
+export type RoomKind = 'combat' | 'elite' | 'reprieve' | 'boss'
+
+export interface RoomLogEntry {
+  floor: number
+  room: number
+  kind: RoomKind
+}
+
+export interface Run {
+  id: string
+  /** Short code players will use to find the run (Phase 2). */
+  joinCode: string
+  status: RunStatus
+  characterIds: string[]
+  partyLevel: number
+  partySize: number
+  entryMultiplier: number
+  pressures: string[]
+  pressureBonusPercent: number
+  floor: number
+  /** The room being played: 1..rooms on the floor, then rooms + 1 is the boss. */
+  room: number
+  /** True after a boss on floors 1 to 4, until the party descends or extracts. */
+  awaitingChoice: boolean
+  /** Highest floor whose boss was beaten (0 = none yet). */
+  lastBossFloor: number
+  log: RoomLogEntry[]
+  /** Set when the run ends. */
+  lootKeptPercent: number | null
+}
+
+export interface RunPlayer {
+  characterId: string
+  name: string
+  alive: boolean
+  /** Boss Quantum Basalts banked this run, before Pressure bonuses. Lost on death. */
+  quantumBasaltsEarned: number
+  /** Quantum Basalts from passing. Kept even on death. */
+  quantumBasaltsPassed: number
+  passes: number
+  devotions: number
+  diedOnFloor: number | null
+  lockoutDays: number | null
+  lockoutRolls: number[] | null
+}
+
+export interface RunState {
+  run: Run
+  players: RunPlayer[]
+}
+
+/** What a run adds to each character's permanent record when it ends. */
+export interface RunResult {
+  characterId: string
+  name: string
+  survived: boolean
+  quantumBasaltsGained: number
+  devotions: number
+  deepestFloor: number
+  lockoutDays: number | null
+}
