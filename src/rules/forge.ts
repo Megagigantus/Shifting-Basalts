@@ -38,6 +38,7 @@ export function spendForge(state: RunState, characterId: string, action: ForgeAc
   else if (action.kind === 'evolve') next = evolve(slots, action.slotIndex)
   else next = combine(slots, action.combinationId)
   return {
+    ...state,
     run: { ...state.run, forgeUsesLeft: (state.run.forgeUsesLeft ?? 0) - 1 },
     players: state.players.map((p): RunPlayer => (p.characterId === characterId ? { ...p, slots: next } : p)),
   }

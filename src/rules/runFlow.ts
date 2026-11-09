@@ -75,6 +75,9 @@ export function newRunState(id: string, joinCode: string, party: Character[], pr
       hiddenOffer: null,
       draftsSeen: 0,
       forgeOwner: (c.upgrades.forge ?? 0) > 0,
+      reprieveRank: c.upgrades.reprieve ?? 0,
+      hiddenSight: (c.upgrades['hidden-sight'] ?? 0) > 0,
+      hiddenSightFloor: null,
       diedOnFloor: null,
       lockoutDays: null,
       lockoutRolls: null,
@@ -126,6 +129,7 @@ export function clearRoom(state: RunState, kind: Exclude<RoomKind, 'boss'>): Run
   if (isBossRoom(state)) throw new Error('This is the boss room.')
   const { run } = state
   return {
+    ...state,
     run: { ...run, room: run.room + 1, log: [...run.log, { floor: run.floor, room: run.room, kind }] },
     players: awardDevotions(state.players, devotionsForRoom(kind)),
   }
@@ -142,6 +146,7 @@ export function defeatBoss(state: RunState): RunState {
     p.alive ? { ...p, quantumBasaltsEarned: p.quantumBasaltsEarned + payout } : p,
   )
   const next: RunState = {
+    ...state,
     run: {
       ...run,
       lastBossFloor: run.floor,
@@ -252,6 +257,7 @@ export function markDead(state: RunState, characterId: string, roll?: Roll): Run
   })
   const wiped = players.every((p) => !p.alive)
   return {
+    ...state,
     players,
     run: wiped
       ? { ...state.run, status: 'wiped', awaitingChoice: false, lootKeptPercent: 0 }
