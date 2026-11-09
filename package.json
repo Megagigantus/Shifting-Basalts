@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:local": "firebase emulators:exec --only auth,firestore --project demo-shifting-basalts \"node scripts/seed-emulator.ts && vite --mode emulators --port 5174 --strictPort\"",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",

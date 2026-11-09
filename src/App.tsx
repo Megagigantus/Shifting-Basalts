@@ -1,7 +1,8 @@
-import { useState } from 'react'
-import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth'
-import { auth, firebaseConfigured } from './firebase'
+import { signOut } from 'firebase/auth'
+import { auth, firebaseConfigured, usingEmulators } from './firebase'
 import { useAccess } from './useAccess'
+import { SignIn } from './screens/SignIn'
+import { VerifyEmail } from './screens/VerifyEmail'
 import { InviteList } from './screens/InviteList'
 import { Characters } from './screens/Characters'
 import { RunPanel } from './screens/RunPanel'
@@ -9,22 +10,7 @@ import { PlayerHome } from './screens/PlayerHome'
 import { PlayerPreview } from './screens/PlayerPreview'
 
 function App() {
-  const access = useAccess()
-  const [error, setError] = useState<string | null>(null)
-
-  async function signIn() {
-    if (!auth) return
-    setError(null)
-    try {
-      await signInWithPopup(auth, new GoogleAuthProvider())
-    } catch (err) {
-      const code = (err as { code?: string }).code
-      // Closing the popup isn't an error worth showing.
-      if (code !== 'auth/popup-closed-by-user' && code !== 'auth/cancelled-popup-request') {
-        setError('Sign-in failed. Please try again.')
-      }
-    }
-  }
+  const { access, recheck } = useAccess()
 
   const signOutButton = (
     <button type="button" onClick={() => auth && signOut(auth)}>
@@ -35,20 +21,17 @@ function App() {
   return (
     <main className="placeholder">
       <h1>Shifting Basalts</h1>
+      {usingEmulators && (
+        <p className="warning">Local test mode: using the emulators on this computer, not real data.</p>
+      )}
 
       {!firebaseConfigured && <p>Firebase isn't set up yet (see .env.example).</p>}
 
       {firebaseConfigured && access.status === 'loading' && <p>Checking your invite…</p>}
 
-      {firebaseConfigured && access.status === 'signedOut' && (
-        <>
-          <p>This app is invite only. Sign in with the Google account your DM invited.</p>
-          <button type="button" onClick={signIn}>
-            Sign in with Google
-          </button>
-          {error && <p className="error">{error}</p>}
-        </>
-      )}
+      {firebaseConfigured && access.status === 'signedOut' && <SignIn />}
+
+      {access.status === 'unverified' && <VerifyEmail user={access.user} recheck={recheck} />}
 
       {access.status === 'notInvited' && (
         <>
