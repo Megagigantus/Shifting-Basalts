@@ -11,6 +11,7 @@ import { useCharacters } from '../useCharacters'
 import { PlayerRun } from './PlayerRun'
 import { StatTracks } from './StatTracks'
 import { UpgradeShop } from './UpgradeShop'
+import { DraftPreferences } from './DraftPreferences'
 
 const className = (id: string) => classes.find((c) => c.id === id)?.name ?? id
 
@@ -38,7 +39,7 @@ export function PlayerHome({ email, readOnly = false }: Props) {
 
   return (
     <>
-      {myRun && <PlayerRun state={myRun} myCharacterIds={myIds} />}
+      {myRun && <PlayerRun state={myRun} myCharacterIds={myIds} readOnly={readOnly} />}
 
       <section className="panel">
         <h2>{mine.length === 1 ? 'Your character' : 'Your characters'}</h2>
@@ -69,6 +70,7 @@ export function PlayerHome({ email, readOnly = false }: Props) {
                   <span className="hint">In the Basalts, add to your sheet: {trackEffects(c).join(' · ')}</span>
                 )}
                 {c.lockoutDays > 0 && <span className="warning">Locked out: {c.lockoutDays} days</span>}
+                <DraftPreferences character={c} canEdit={!readOnly} />
                 {open?.id === c.id && open.kind === 'tracks' && (
                   <StatTracks character={c} onClose={() => setOpen(null)} canCorrect={false} canSpend={!readOnly} />
                 )}

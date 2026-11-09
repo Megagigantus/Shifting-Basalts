@@ -14,6 +14,7 @@ const readJson = (file: string) =>
 export function generatedBlock(): string {
   const upgrades: { id: string; costs: number[] }[] = readJson('upgrades.json').upgrades
   const tracks: { id: string }[] = readJson('stat-tracks.json').tracks
+  const boons: { id: string; tags: string[] }[] = readJson('boons.json')
   const costBands: { fromRank: number; toRank: number; devotions: number }[] = readJson('stat-tracks.json').rankCosts
   const tiers: { minLevel: number; maxLevel: number; maxRank: number }[] = readJson('stat-tracks.json').tierCaps
 
@@ -51,6 +52,16 @@ export function generatedBlock(): string {
     '    // Most Devotions one track may hold at a character level (tier caps).',
     '    function devotionCap(level) {',
     `      return ${cap};`,
+    '    }',
+    '',
+    '    // Every boon id (from src/data/boons.json), for checking Banish lists.',
+    '    function boonIds() {',
+    `      return [${boons.map((b) => `'${b.id}'`).join(', ')}];`,
+    '    }',
+    '',
+    '    // Every boon tag, for checking Attunement choices.',
+    '    function boonTags() {',
+    `      return [${[...new Set(boons.flatMap((b) => b.tags))].map((t) => `'${t}'`).join(', ')}];`,
     '    }',
     '',
     '    // True if this update is a valid Devotion spend on one of the tracks.',

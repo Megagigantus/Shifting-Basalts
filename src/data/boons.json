@@ -329,6 +329,9 @@
       "Each creature the boosted spell kills refunds 1 point."
     ],
     "payoffTrack": "spell-slot-recovery",
+    "requires": [
+      "spells"
+    ],
     "status": "locked"
   },
   {
@@ -728,6 +731,9 @@
       "Once per room, cast a cantrip as a bonus action.",
       "Twice per room.",
       "Once per turn, any cantrip that takes an action can be cast as a bonus action instead."
+    ],
+    "requires": [
+      "spells"
     ],
     "status": "locked"
   },

@@ -70,6 +70,11 @@ export function newRunState(id: string, joinCode: string, party: Character[], pr
       quickReturnDays: quickReturnDays(c),
       slots: emptySlots(slotCount(c.upgrades['extra-boon-slot'] ?? 0)),
       hiddenBoonId: null,
+      draftProfile: draftProfileFor(c),
+      draft: null,
+      hiddenOffer: null,
+      draftsSeen: 0,
+      forgeOwner: (c.upgrades.forge ?? 0) > 0,
       diedOnFloor: null,
       lockoutDays: null,
       lockoutRolls: null,
@@ -81,6 +86,34 @@ function requireActive(state: RunState) {
   if (state.run.status !== 'active') throw new Error('This run has ended.')
 }
 
+/** The draft details a run keeps for a character, captured at run start. */
+export function draftProfileFor(c: Character): NonNullable<RunPlayer['draftProfile']> {
+  return {
+    classId: c.classId,
+    casterType: c.casterType,
+    hasSummon: c.hasSummon,
+    trackDevotions: { ...c.trackDevotions },
+    banished: [...(c.banished ?? [])],
+    favoredTags: [...(c.favoredTags ?? [])],
+    rerollsPerFloor: c.upgrades.reroll ?? 0,
+    attuneTag: (c.upgrades.attunement ?? 0) > 0 ? (c.attuneTag ?? null) : null,
+  }
+}
+
+/** True while any living player still has a draft to choose from. */
+export function draftsPending({ players }: RunState): boolean {
+  return players.some((p) => p.alive && p.draft)
+}
+
+/** Living players still choosing their draft, by name. */
+export function waitingOn({ players }: RunState): string[] {
+  return players.filter((p) => p.alive && p.draft).map((p) => p.name)
+}
+
+function requireNoDrafts(state: RunState) {
+  if (draftsPending(state)) throw new Error(`Waiting on draft picks from ${waitingOn(state).join(', ')}.`)
+}
+
 function awardDevotions(players: RunPlayer[], amount: number): RunPlayer[] {
   return players.map((p) => (p.alive ? { ...p, devotions: p.devotions + amount } : p))
 }
@@ -88,6 +121,7 @@ function awardDevotions(players: RunPlayer[], amount: number): RunPlayer[] {
 /** Clear a non-boss room as combat, elite or Reprieve. */
 export function clearRoom(state: RunState, kind: Exclude<RoomKind, 'boss'>): RunState {
   requireActive(state)
+  requireNoDrafts(state)
   if (state.run.awaitingChoice) throw new Error('Choose to descend or extract first.')
   if (isBossRoom(state)) throw new Error('This is the boss room.')
   const { run } = state
@@ -100,6 +134,7 @@ export function clearRoom(state: RunState, kind: Exclude<RoomKind, 'boss'>): Run
 /** Beat the floor's boss: Devotions plus the boss's Quantum Basalts for everyone alive. */
 export function defeatBoss(state: RunState): RunState {
   requireActive(state)
+  requireNoDrafts(state)
   if (!isBossRoom(state)) throw new Error('Clear the floor\'s rooms first.')
   const { run } = state
   const payout = bossQuantumBasalts(run.floor, run.entryMultiplier)
@@ -110,6 +145,8 @@ export function defeatBoss(state: RunState): RunState {
     run: {
       ...run,
       lastBossFloor: run.floor,
+      // The post-boss room's Forge: one use per living owner (none after the final boss).
+      forgeUsesLeft: run.floor < LAST_FLOOR ? players.filter((p) => p.alive && p.forgeOwner).length : 0,
       awaitingChoice: true,
       log: [...run.log, { floor: run.floor, room: run.room, kind: 'boss' }],
     },
@@ -121,9 +158,10 @@ export function defeatBoss(state: RunState): RunState {
 
 export function descend(state: RunState): RunState {
   requireActive(state)
+  requireNoDrafts(state)
   if (!state.run.awaitingChoice) throw new Error('You can only descend after a boss.')
   if (state.run.floor >= LAST_FLOOR) throw new Error('There is no deeper floor.')
-  return { ...state, run: { ...state.run, floor: state.run.floor + 1, room: 1, awaitingChoice: false } }
+  return { ...state, run: { ...state.run, floor: state.run.floor + 1, room: 1, awaitingChoice: false, forgeUsesLeft: 0 } }
 }
 
 export function extract(state: RunState): RunState {

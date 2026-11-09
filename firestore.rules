@@ -73,6 +73,16 @@ service cloud.firestore {
       return level < 5 ? 0 : level <= 10 ? 15 : level <= 16 ? 40 : level <= 20 ? 120 : 0;
     }
 
+    // Every boon id (from src/data/boons.json), for checking Banish lists.
+    function boonIds() {
+      return ['traverts-echoes', 'reapers-sprint', 'spellslingers-delight', 'critical-delight', 'crits-are-for-suckers', 'a-fine-steels-glint', 'stand-off', 'elemains-flight-of-fancy', 'overhealing', 'hardened-hide', 'cleansing-nova', 'riposte-step', 'a-healthy-dose-of-pain', 'avalanche-stride', 'spillover', 'overchannel', 'conduit', 'unbroken-focus', 'elemental-residue', 'leyline-surge', 'deadeye-stance', 'scatter-volley', 'fading-veil', 'first-strike', 'vanishing-step', 'twin-flame', 'bolster', 'kindled-ally', 'ostras-coin', 'lenns-descent', 'corrows-lure', 'collectors-menagerie', 'thalisanes-weave', 'the-express', 'breakers-last-stand', 'thilss-favor', 'zolics-nine-eyes', 'deflector-burst', 'hunters-tally', 'gleam-dealers-gamble', 'fleet-foot', 'unshackled', 'elemental-ward', 'pocket-sweep', 'quick-cantrip', 'hardy', 'honed', 'keen-reflexes', 'steady-will', 'night-eyes', 'resounding-blow', 'echoing-step', 'last-rites', 'harvest', 'marked-quarry', 'weak-point', 'thousand-cuts', 'second-hand', 'bleed-out', 'red-mist', 'lucky-break', 'iron-root', 'pack-tactics', 'swap-places', 'elemental-quiver', 'battle-standard', 'ulmas-thread', 'the-archivists-index', 'weavers-mending'];
+    }
+
+    // Every boon tag, for checking Attunement choices.
+    function boonTags() {
+      return ['Echo', 'Reaper', 'Spell', 'Crit', 'Stance', 'Volley', 'Guard', 'Payoff', 'Shadow', 'Rally', 'Bond', 'Flurry', 'Blood', 'Hunt', 'Core'];
+    }
+
     // True if this update is a valid Devotion spend on one of the tracks.
     function anyTrackSpend() {
       return devotionSpendOn('max-hp')
@@ -105,6 +115,16 @@ service cloud.firestore {
     // Fields changed by this update.
     function changedFields() {
       return request.resource.data.diff(resource.data).affectedKeys();
+    }
+
+    // True if the signed-in player owns this character and it's in this active run.
+    function ownsRunCharacter(runId, characterId) {
+      let run = get(/databases/$(database)/documents/runs/$(runId)).data;
+      let character = get(/databases/$(database)/documents/characters/$(characterId)).data;
+      return isInvited()
+        && character.get('playerEmail', '') == myEmail()
+        && run.status == 'active'
+        && characterId in run.characterIds;
     }
 
     // The player who owns this character (by the email the DM assigned).
@@ -158,13 +178,44 @@ service cloud.firestore {
         && request.resource.data.bankedQuantumBasalts >= 0;
     }
 
+    // A character in an active run carries activeRunId; Banish and Attunement
+    // can only be edited between runs (Build clarifications: Banish).
+    function notInRun() {
+      return resource.data.get('activeRunId', null) == null;
+    }
+
+    // A player edits their Banish list: real boon ids, no repeats, and no
+    // longer than their Banish rank.
+    function isBanishEdit() {
+      let list = request.resource.data.banished;
+      return changedFields().hasOnly(['banished', 'updatedAt'])
+        && request.resource.data.updatedAt == request.time
+        && notInRun()
+        && list is list
+        && list.size() <= resource.data.get('upgrades', {}).get('banish', 0)
+        && list.toSet().size() == list.size()
+        && list.hasOnly(boonIds());
+    }
+
+    // A player sets (or clears) their Attunement tag, if they own Attunement.
+    function isAttunementEdit() {
+      let tag = request.resource.data.attuneTag;
+      return changedFields().hasOnly(['attuneTag', 'updatedAt'])
+        && request.resource.data.updatedAt == request.time
+        && notInRun()
+        && resource.data.get('upgrades', {}).get('attunement', 0) >= 1
+        && (tag == null || tag in boonTags());
+    }
+
     // Saved characters. The DM can change anything; the owning player can
-    // only spend their own Devotions and Quantum Basalts, as checked above.
+    // only spend their own Devotions and Quantum Basalts, and edit their
+    // Banish list and Attunement tag between runs, as checked above.
     match /characters/{characterId} {
       allow read: if isInvited();
       allow create, delete: if isDM();
       allow update: if isDM()
-        || (ownsCharacter() && (isDevotionSpend() || isUpgradePurchase()));
+        || (ownsCharacter()
+          && (isDevotionSpend() || isUpgradePurchase() || isBanishEdit() || isAttunementEdit()));
     }
 
     match /runs/{runId} {
@@ -175,6 +226,19 @@ service cloud.firestore {
       match /players/{characterId} {
         allow read: if isInvited();
         allow write: if isDM();
+      }
+
+      // A player's pending draft choice, which the DM's app applies with the
+      // draft rules. A player may only write their own character's choice,
+      // in an active run that character is in, with only the choice fields.
+      match /choices/{characterId} {
+        allow read: if isInvited();
+        allow write: if isDM();
+        allow create, update: if ownsRunCharacter(runId, characterId)
+          && request.resource.data.keys().hasOnly(['action', 'index', 'replaceSlot', 'hiddenBoonId', 'forgeKind', 'slotIndex', 'combinationId', 'draftKey', 'createdAt'])
+          && request.resource.data.action in ['take', 'pass', 'reroll', 'hidden', 'passHidden', 'forge']
+          && request.resource.data.createdAt == request.time;
+        allow delete: if ownsRunCharacter(runId, characterId);
       }
 
       // Hidden information: enemy stats, hidden condition, unsprung tricks.

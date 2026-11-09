@@ -337,3 +337,93 @@ describe('the app\'s own save path (transaction with field paths)', () => {
     )
   })
 })
+
+describe('player draft choices', () => {
+  beforeEach(async () => {
+    await seedCharacters()
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      const db = ctx.firestore()
+      await setDoc(doc(db, 'runs', 'live'), { status: 'active', characterIds: [OWNED, OTHERS] })
+      await setDoc(doc(db, 'runs', 'over'), { status: 'extracted', characterIds: [OWNED] })
+      await setDoc(doc(db, 'runs', 'without'), { status: 'active', characterIds: [OTHERS] })
+    })
+  })
+  const choice = (extra: DocumentData = {}) => ({ action: 'take', index: 1, replaceSlot: null, draftKey: '1-1-1-0', createdAt: now(), ...extra })
+
+  it('a player can send, change and cancel a choice for their own character', async () => {
+    const ref = doc(as(PLAYER), 'runs', 'live', 'choices', OWNED)
+    await assertSucceeds(setDoc(ref, choice()))
+    await assertSucceeds(setDoc(ref, { action: 'pass', draftKey: '1-1-1-0', createdAt: now() }))
+    await assertSucceeds(setDoc(ref, { action: 'hidden', hiddenBoonId: 'trapwise', draftKey: null, createdAt: now() }))
+    await assertSucceeds(setDoc(ref, { action: 'forge', forgeKind: 'level', slotIndex: 0, draftKey: null, createdAt: now() }))
+    await assertSucceeds(setDoc(ref, { action: 'forge', forgeKind: 'combine', combinationId: 'super-normal', draftKey: null, createdAt: now() }))
+    await assertSucceeds(deleteDoc(ref))
+  })
+
+  it('a player cannot choose for someone else\'s character', async () => {
+    await assertFails(setDoc(doc(as(PLAYER), 'runs', 'live', 'choices', OTHERS), choice()))
+  })
+
+  it('only for an active run their character is in', async () => {
+    await assertFails(setDoc(doc(as(PLAYER), 'runs', 'over', 'choices', OWNED), choice()))
+    await assertFails(setDoc(doc(as(PLAYER), 'runs', 'without', 'choices', OWNED), choice()))
+  })
+
+  it('cannot add extra fields, invent actions, fake the time or set the error', async () => {
+    const ref = doc(as(PLAYER), 'runs', 'live', 'choices', OWNED)
+    await assertFails(setDoc(ref, choice({ error: 'nope' })))
+    await assertFails(setDoc(ref, choice({ quantumBasalts: 999 })))
+    await assertFails(setDoc(ref, choice({ action: 'win' })))
+    await assertFails(setDoc(ref, choice({ createdAt: new Date(0) })))
+  })
+
+  it('players still cannot write run or player state directly', async () => {
+    await assertFails(setDoc(doc(as(PLAYER), 'runs', 'live', 'players', OWNED), { slots: [] }))
+  })
+
+  it('strangers get nothing; the DM can write choices and errors', async () => {
+    await assertFails(setDoc(doc(as(STRANGER), 'runs', 'live', 'choices', OWNED), choice()))
+    await assertFails(getDoc(doc(as(STRANGER), 'runs', 'live', 'choices', OWNED)))
+    await assertSucceeds(setDoc(doc(as(DM), 'runs', 'live', 'choices', OWNED), { action: 'pass', error: 'stale' }))
+  })
+})
+
+describe('Banish list and Attunement tag', () => {
+  const owned = () => doc(as(PLAYER), 'characters', OWNED)
+  beforeEach(() => seedCharacters({ upgrades: { banish: 2, attunement: 1 }, banished: [], attuneTag: null }))
+
+  it('a player can set a Banish list up to their rank, with real boons', async () => {
+    await assertSucceeds(updateDoc(owned(), { banished: ['hardy', 'honed'], updatedAt: now() }))
+    await assertSucceeds(updateDoc(owned(), { banished: [], updatedAt: now() }))
+  })
+
+  it('refuses a list that is too long, repeats, or names unknown boons', async () => {
+    await assertFails(updateDoc(owned(), { banished: ['hardy', 'honed', 'fleet-foot'], updatedAt: now() }))
+    await assertFails(updateDoc(owned(), { banished: ['hardy', 'hardy'], updatedAt: now() }))
+    await assertFails(updateDoc(owned(), { banished: ['not-a-boon'], updatedAt: now() }))
+  })
+
+  it('a player without Banish can\'t banish anything', async () => {
+    await seedCharacters({ upgrades: {}, banished: [] })
+    await assertFails(updateDoc(owned(), { banished: ['hardy'], updatedAt: now() }))
+  })
+
+  it('a player can set or clear their Attunement tag, only with the upgrade', async () => {
+    await assertSucceeds(updateDoc(owned(), { attuneTag: 'Guard', updatedAt: now() }))
+    await assertSucceeds(updateDoc(owned(), { attuneTag: null, updatedAt: now() }))
+    await assertFails(updateDoc(owned(), { attuneTag: 'Dragons', updatedAt: now() }))
+    await seedCharacters({ upgrades: {}, attuneTag: null })
+    await assertFails(updateDoc(owned(), { attuneTag: 'Guard', updatedAt: now() }))
+  })
+
+  it('neither can change during a run', async () => {
+    await seedCharacters({ upgrades: { banish: 2, attunement: 1 }, banished: [], activeRunId: 'live' })
+    await assertFails(updateDoc(owned(), { banished: ['hardy'], updatedAt: now() }))
+    await assertFails(updateDoc(owned(), { attuneTag: 'Guard', updatedAt: now() }))
+  })
+
+  it('can\'t be combined with other changes, or done for someone else', async () => {
+    await assertFails(updateDoc(owned(), { banished: ['hardy'], level: 20, updatedAt: now() }))
+    await assertFails(updateDoc(doc(as(PLAYER), 'characters', OTHERS), { banished: [], updatedAt: now() }))
+  })
+})

@@ -10,6 +10,7 @@ import {
   togglePressure,
 } from '../rules/run'
 import { makeJoinCode, newRunState } from '../rules/runFlow'
+import { openStartingBoons } from '../rules/draftFlow'
 import { deepPocketsPercent, extraPressuresBonusPercent } from '../rules/upgrades'
 import { newRunId, saveRunState } from '../runStore'
 
@@ -44,7 +45,12 @@ export function StartRun({ characters, onStarted, onCancel }: Props) {
     if (party.length === 0) return setError('Pick at least one character.')
     setStarting(true)
     try {
-      const state = newRunState(newRunId(), makeJoinCode(), party, activePressures)
+      const owners = party.filter((c) => (c.upgrades['starting-boon'] ?? 0) > 0).map((c) => c.id)
+      const state = openStartingBoons(
+        newRunState(newRunId(), makeJoinCode(), party, activePressures),
+        owners,
+        Math.random,
+      )
       await saveRunState(state, null, characters)
       // The live listener picks up the new run and shows the tracker.
       onStarted()

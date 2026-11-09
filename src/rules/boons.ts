@@ -69,7 +69,7 @@ export function slotTags(slot: SlotContent): string[] {
 }
 
 /** Boon ids a slot "uses up": the boon itself, an evolution's source, or both of a combination's. */
-function boonsIn(slot: SlotContent): string[] {
+export function boonsIn(slot: SlotContent): string[] {
   if (slot.kind === 'boon') return [slot.boonId]
   if (slot.kind === 'evolution') return [evolution(slot.evolutionId).from]
   return combination(slot.combinationId).boons

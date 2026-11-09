@@ -55,7 +55,7 @@ A run is a stack of floors, each a set of rooms ending in a boss. After every bo
 * **The Shift:** every exit reshuffles floors, rooms and encounters, so a returning party never sees the same layout.
 * **Death:** the character is expelled, is locked out, and forfeits this run's Quantum Basalts except passed ones. The party's loot pool stays whole as long as anyone extracts; only a wipe loses it (see Loot, extraction and death).
 * **Encounter scaling** *(proposed)***:** encounters use the 2024 XP budget for the party's actual level plus each floor's offset, so entering low never makes a run easier, only less rewarding.
-* **Difficulty curve** *(proposed)***:** each floor is keyed to an offset from the party's level, starting below it and ending well beyond it (see Difficulty by floor). Bosses use their floor's budget plus Shift Actions.
+* **Difficulty curve** *(proposed)***:** each floor is keyed to an offset from the party's level, starting below it and ending well beyond it (see Difficulty by floor). Bosses don't use the floor's XP budget; they're built from Boss stat scaling (target CR by floor) and take Shift Actions.
 * **Shift actions** *(proposed)***:** lair-style terrain changes on initiative count 20, such as walls sliding, floors tilting or exits rearranging.
 
 - **Escalation:** each floor raises enemy HP and damage, and room tricks (traps and hazards that damage players directly) grow more frequent and more complex.
@@ -70,7 +70,7 @@ Floors are keyed to the party's level: the first sits below it, and the legendar
 | 2 | Party level −1 | High |
 | 3 | Party level | High |
 | 4 | Party level +2 | High |
-| 5 (legendary) | Party level +4 | Double High |
+| 5 (legendary) | Boss only: CR party level +7 | See Boss stat scaling |
 
 - **Leveling up doesn't trivialize it:** the whole ladder moves with the party's level, so permanent power inside the Basalts comes from Devotions and upgrades, not character levels.
 - **Playtest targets:** a fresh party should reach floor 2 or 3, most parties should reach floor 4 by their third to fifth run, and a first legendary clear should take around six to eight runs, usually after the 4th boon slot, the Forge and a few stat track ranks.
@@ -96,7 +96,7 @@ Each player starts with 3 boon slots and can buy up to 5 with Quantum Basalts. E
 
 ### Drafting
 
-- **Personal offer:** after each room, each player sees their own 4 boons, weighted toward their class and the tags they hold, and picks one. Two players can still end up with the same boon.
+- **Personal offer:** after each room, each player sees their own 4 boons, weighted toward their class and the tags they hold (see Offer weighting under Build clarifications), and picks one. Two players can still end up with the same boon.
 - **Hidden boon:** a 5th offer unlocks for every player when the room's secret condition was met, or for one player when they meet their class trigger. Hidden boons sit in their own extra slot and never level, evolve or combine; they're flavor for really playing your character. A player who earns a second hidden boon can replace the one they hold, or pass for the normal Pass bonus.
 - **Offer mix** *(proposed)***:** 1 offer is a boon you already hold, so leveling stays within reach, 2 are random, and 1 is a wildcard (an Evolution or Combination if anyone qualifies).
 
@@ -510,6 +510,22 @@ Pressures are optional challenges that raise the payout of loot and Quantum Basa
 
 * **Pale Lodge contracts** *(proposed)***:** the Lodge could list each run as a contract whose lethality rating rises with every Pressure, an in-world way to show the risk the party is choosing.
 
+### Availability
+
+Parties start with the Pressures that make rooms harder, and unlock the ones that make bosses harder through Extra Pressures. One owner unlocks them for the whole party.
+
+- **From the start:** Brittle Ground, Narrow Seam and Closing Ring.
+- **Extra Pressures, rank 1:** unlocks Restless Stone and Heavy Crown.
+- **Extra Pressures, rank 2:** unlocks the harsher versions below. Each one replaces its base version rather than stacking with it.
+
+| Harsher version | Change | Loot and QB bonus |
+| --- | --- | --- |
+| Closing Ring II | The ring grows every 2 rounds instead of 3. | +25% |
+| Brittle Ground II | The crack also knocks the player prone. | +20% |
+| Narrow Seam II | Boon offers drop to 2. | +25% |
+| Restless Stone II | Two Shift Actions per fight. | +25% |
+| Heavy Crown II | Bosses gain +1 Legendary Action and +1 Legendary Resistance. | +30% |
+
 ## Loot, extraction and death
 
 The deeper a party goes before extracting, the larger the share of loot it keeps. Rewards also scale with entry level, using the 2024 tiers of play. All values here are proposed.
@@ -814,10 +830,10 @@ Quantum Basalts are a rare resource awarded to each player on extraction. They a
 | Extra Boon Slot | 2 | 40, then 120 | A 4th slot at rank 1 and a 5th at rank 2. | Brian |
 | Reroll | 3 | 10, 20, 35 | Reroll your boon offer 1, 2, then 3 times per floor. | Brian |
 | Extra Loot | 3 | 15, 30, 50 | +10% to your own Quantum Basalts per rank. | Brian |
-| Extra Pressures | 2 | 20, 40 | Unlock more Pressures, then harsher versions of them. Each owner in the party adds 5% to rewards. | Brian |
+| Extra Pressures | 2 | 20, 40 | Rank 1 unlocks Restless Stone and Heavy Crown; rank 2 unlocks the harsher version of every Pressure. Each owner in the party adds 5% to rewards. | Brian |
 | Reprieve | 4 | 20, 35, 55, 80 | A 20%, 35%, 50%, then 65% chance of a Reprieve room mid-floor. Every owner rolls separately. | Brian |
 | Attunement | 1 | 15 | Your first offer of each run includes a tag you choose. | Proposed |
-| Banish | 3 | 10, 20, 30 | Remove 1, 2, then 3 boons from your personal offers. | Proposed |
+| Banish | 3 | 10, 20, 30 | Keep a standing list of 1, 2, then 3 boons that never appear in your offers. Edit it between runs. | Proposed |
 | Hidden Sight | 1 | 20 | One hint per floor about a room's secret condition. | Proposed |
 | Deep Pockets | 3 | 25, 50, 80 | +5% loot kept on extraction per rank, up to 100%. Party-wide: the highest rank in the party applies. | Proposed |
 | Quick Return | 3 | 10, 20, 30 | Shorten your death lockout by 1 day per rank, to a minimum of 1 day. | Proposed |
@@ -848,12 +864,12 @@ Combat rooms drive the boon draft, and post-boss rooms are where Quantum Basalt 
 
 ## Bosses
 
-Every run pulls one random boss per floor from three options, so repeat runs stay fresh. Bosses scale to their floor's XP budget and take a Shift Action on initiative count 20.
+Every run pulls one random boss per floor from three options, so repeat runs stay fresh. Bosses are built from Boss stat scaling (a target CR by floor), not the floor's XP budget, and take a Shift Action on initiative count 20.
 
 - **Rewards:** a boss room awards the standard draft, 1 Devotion per player and the floor's Quantum Basalt payout. Bosses never drop boss-specific boons.
 - **Hazard classes:** the Archive rates each floor on its own scale: floor 1 Yellow, floors 2 and 3 Red, floor 4 Black, and the legendary floor Quarantine.
 
-### Floor 1 (Yellow, party level −2, Moderate)
+### Floor 1 (Yellow, boss CR party level −1)
 
 | Boss | Lore | Role and mechanics | Shift Action |
 | --- | --- | --- | --- |
@@ -861,7 +877,7 @@ Every run pulls one random boss per floor from three options, so repeat runs sta
 | Choir of the Hollow Column | A cluster of fluted basalt pipes that absorbed the hymns of local pilgrims. | Stationary artillery with 4 destructible pipe clusters. Resonant Blasts deal thunder damage in a 30 ft cone, Deafen and push 10 ft. Destroying a cluster shrinks its aura. | Acoustic Shift: the outer walls slide into new chambers. Creatures within 10 ft of a wall make a Con save or take PB d6 thunder damage and are pushed 15 ft toward the center. |
 | Gilded Excavation Herd | An Archive survey golem overgrown with golden crystal, tethered to two minor basalt hounds. | Summoner and pack controller. Tether Beam links a player to a pillar, limiting movement to 15 ft of it until the pillar is smashed. | Conveyor Shift: two 15 ft strips of floor slide 20 ft in opposite directions, carrying creatures and pillars and breaking or stretching tethers. |
 
-### Floor 2 (Red, party level −1, High)
+### Floor 2 (Red, boss CR party level +1)
 
 | Boss | Lore | Role and mechanics | Shift Action |
 | --- | --- | --- | --- |
@@ -869,7 +885,7 @@ Every run pulls one random boss per floor from three options, so repeat runs sta
 | Senior Tracker Halvard Quill | The absorbed echo of a Pale Lodge Tracker who died here chasing a high-lethality contract. | Trap-setter and single-target executioner. Snare Shards arm into room tricks the next round, and a Lethality Contract marks the lowest-HP player for +PB damage. | Trophy Gallery: four statues of past victims slide across the arena on floor tracks. Creatures in their path take PB d8 bludgeoning damage (Dex save halves), and the statues block line of sight. |
 | The Lattice Spinner | A many-limbed arachnid built from stridegate transit cables and shattered transit lenses. | High-mobility controller. Strings Transit Cables between columns; a creature crossing one takes PB d6 lightning damage and is teleported 15 ft toward the Spinner. | Loom Rotation: every column shifts 15 ft clockwise, dragging its cables along. Creatures in the sweep make Dex saves. |
 
-### Floor 3 (Red, party level, High)
+### Floor 3 (Red, boss CR party level +2)
 
 | Boss | Lore | Role and mechanics | Shift Action |
 | --- | --- | --- | --- |
@@ -877,7 +893,7 @@ Every run pulls one random boss per floor from three options, so repeat runs sta
 | General Vane of the Tenth Stride | A multiplanar conqueror whose entire platoon was compressed into one towering suit of basalt armor. | Stance-switching juggernaut. Phalanx Stance reduces damage from the front and reflects ranged attacks; Stampede Stance tramples through creatures' spaces, knocking them prone. | Marching Columns: a phalanx of stone walls rises at one end and marches 15 ft each round, crushing anyone caught against the room's edge. |
 | The Glass Hydra | A crystalline beast grown from gate-glass fused where the stridegate's core first ruptured. | Multi-headed brawler whose heads deal fire, lightning or cold damage. Severing a head (8 × PB damage in one turn) leaves an Elemental Residue puddle before two refracted light-heads grow back. | Refraction Shift: floor panels flip to polished mirrors. Any beam, line or ranged spell this round reflects to hit a second random creature within 15 ft. |
 
-### Floor 4 (Black, party level +2, High)
+### Floor 4 (Black, boss CR party level +4)
 
 | Boss | Lore | Role and mechanics | Shift Action |
 | --- | --- | --- | --- |
@@ -885,7 +901,7 @@ Every run pulls one random boss per floor from three options, so repeat runs sta
 | The Chorus of Unseen Angles | Three floating polyhedrons of empty black space, where Sonder ate away part of the local god's memory. | Shared-HP trio in different corners. Immune to damage from any creature that moved closer to them this turn, so players must attack while moving parallel or away, or use ricochets and echoes. | Perspective Collapse: gravity reorients to the wall nearest the member with the most HP, dropping creatures up to 20 ft onto the new floor. |
 | The Inverted Reliquary | The vault heart of the local temple, turned inside out so its wards now try to erase whatever is inside. | Mimics the party's builds. Each round it attunes to the party's two most common tags and gains corrupted versions of their Resonance riders. | Slot Scramble: the floor breaks into 4 islands over 15 ft chasms of void, and each player has one random non-evolved boon suppressed until they cross to a different island. |
 
-### Floor 5 (Quarantine, party level +4, double High)
+### Floor 5 (Quarantine, boss CR party level +7)
 
 | Boss | Lore | Role and mechanics | Shift Action |
 | --- | --- | --- | --- |
@@ -1195,9 +1211,136 @@ Rules the app follows where the rest of the Bible implies an answer without spel
 6. **Reprieve:** it replaces one of a floor's 4 rooms, so that floor has 3 combat rooms, the Reprieve and the boss. It grants no Devotion and no draft.
 7. **The boon pool:** 69 boons across the main table and Batches 1 to 4. Kept separately: 49 Evolutions, 21 Combinations, 12 class hidden boons and 8 of Thils's hidden gifts.
 8. **Death:** if even one player survives to extract, the party's loot pool stays whole and is shared as usual. Only a wipe loses it. A fallen character still forfeits the Quantum Basalts they earned that run, except passed ones.
-9. **Pressure unlocks:** Brittle Ground, Narrow Seam and Closing Ring are available from the start. Extra Pressures rank 1 unlocks Restless Stone and Heavy Crown. Rank 2 unlocks the harsher versions, each replacing its base version *(proposed)*: Closing Ring II (the ring grows every 2 rounds, +25%), Brittle Ground II (the crack also knocks the player prone, +20%), Narrow Seam II (offers drop to 2, +25%), Restless Stone II (two Shift Actions per fight, +25%) and Heavy Crown II (+1 Legendary Action and +1 Legendary Resistance, +30%). Extra Pressures is party-wide, so one owner unlocks them for everyone, and every owner in the party (the first included) adds +5% to rewards.
-10. **Pressure bonuses and passing:** Pressure bonuses multiply boss Quantum Basalt payouts (and loot), not Basalts earned by passing. A pass is always 1 Quantum Basalt times the entry multiplier.
-11. **Stacking reward bonuses:** a player's boss Quantum Basalt bonus is the sum of the party's Pressures, +5% per Extra Pressures owner in the party, and their own Extra Loot (+10% per rank). The total is applied once and rounded up. Like Pressures, Extra Loot never applies to passed Basalts. Example: 40 Basalts with Pressures +25% and Extra Loot rank 2 (+20%) pays 40 × 1.45 = 58.
+
+### Offer weighting
+
+Every draft is built in three steps.
+
+1. **Filter out ineligible boons.** Spell boons require spells, so non-casters never see them, nor Quick Cantrip, The Archivist's Index or Leyline Surge. Bond boons require a summon or companion. Payoffs require at least 1 rank in their track. Held boons (they have their own slot) and banished boons never appear.
+2. **Build the 4 offers.**
+   - **Slot 1, held boon:** a boon you hold below Level 3. If you hold none, it becomes a weighted roll; if all of yours are maxed, it becomes a wildcard.
+   - **Slots 2 and 3, weighted rolls:** drawn using the weights below.
+   - **Slot 4, wildcard:** an Evolution or Combination you qualify for, or else one eligible boon at even odds.
+   - **Variety cap:** no more than 2 boons from the same tag in one draft.
+   - **Narrow Seam:** drops a weighted slot first; Narrow Seam II drops the wildcard next.
+3. **Weight the rolls.** Every eligible boon starts at 1, and these multiply: a primary tag for the character's class ×3, a secondary tag ×2, and a tag the player already holds ×2. Core boons stay at 1.
+
+| Class | Primary tags | Secondary tags |
+| --- | --- | --- |
+| Barbarian | Blood, Stance, Reaper | Crit, Hunt, Guard |
+| Bard | Rally, Spell | Guard, Shadow |
+| Cleric | Guard, Spell | Rally |
+| Druid | Spell, Bond | Guard |
+| Fighter | Crit, Stance, Echo | Volley, Hunt, Flurry |
+| Monk | Flurry, Shadow | Echo, Stance |
+| Paladin | Guard, Crit, Rally | Blood, Hunt |
+| Ranger | Volley, Hunt | Bond, Shadow |
+| Rogue | Shadow, Crit | Reaper, Flurry, Volley |
+| Sorcerer | Spell | Rally, Crit |
+| Warlock | Spell, Flurry | Shadow |
+| Wizard | Spell | Shadow, Rally |
+
+- **Subclasses:** the DM can shift a character's map, such as giving a Beast Master Ranger Bond as a primary tag.
+- **Expected feel:** for a Wizard, about 45% of weighted rolls are Spell boons, tailored but still open to surprises.
+
+### Offering Thils's hidden gifts
+
+- **When a room's condition is met:** each player gets a separate hidden offer of 2 random gifts they don't already hold, and picks one or passes for the normal Pass bonus.
+- **It's extra:** the hidden offer doesn't replace the room's normal draft pick.
+- **One hidden slot:** taking a new hidden boon replaces the one the player holds.
+- **Class triggers:** offer their specific hidden boon directly, with no roll. If a class trigger and a room condition land in the same room, the player picks one of the three.
+- **Reveal the condition** once it's met, as a sign of Thils's approval, so players learn what he rewards.
+
+### Banish
+
+- **Permanent list:** each owner keeps a standing list of up to 1, 2 or 3 boons (by rank) that never appear in their offers, run after run.
+- **Editable between runs only:** players can swap boons on or off their list at run setup, never mid-run.
+- **Everywhere a boon is rolled:** the list applies to weighted rolls, the wildcard's random pick and the Starting Boon roll.
+
+### Reward math
+
+- **Pressure bonuses and passing:** Pressure bonuses multiply boss Quantum Basalt payouts and loot, never Basalts earned by passing. A pass is always 1 Quantum Basalt times the entry multiplier.
+- **Stacking bonuses:** a player's boss Quantum Basalt bonus is the sum of the party's Pressures, +5% per Extra Pressures owner in the party (the first included), and their own Extra Loot (+10% per rank). Apply the total once and round up. Extra Loot never applies to passed Basalts. Example: 40 Basalts with Pressures +25% and Extra Loot rank 2 (+20%) pays 40 × 1.45 = 58.
+- **Loot share:** the kept value is the pool's credit value times the loot-kept percentage, rounded down. The party picks items whose combined value doesn't exceed it, and any unused kept value is paid out in credits.
+- **Assigning loot:** the party decides at the table, and the DM assigns items to players in the app. Players can request items from their view.
+
+### Draft defaults *(proposed)*
+
+- **Wildcard:** always the player's own Evolution or Combination, picked at random if several qualify.
+- **Elite rooms:** never drop the wildcard, even under Narrow Seam II.
+- **Pacing:** the next room can't be cleared until every living player has made their draft choice, and the DM can choose for any player.
+
+### Encounter budgets
+
+Non-boss rooms use the 2024 Dungeon Master's Guide XP budget per character, looked up at each player's own level plus the floor's offset, then added together. There's no multiplier for groups of monsters in 2024.
+
+| Level | Low | Moderate | High |
+| --- | --- | --- | --- |
+| 1 | 50 | 75 | 100 |
+| 2 | 100 | 150 | 200 |
+| 3 | 150 | 225 | 400 |
+| 4 | 250 | 375 | 500 |
+| 5 | 500 | 750 | 1,100 |
+| 6 | 600 | 1,000 | 1,400 |
+| 7 | 750 | 1,300 | 1,700 |
+| 8 | 1,000 | 1,700 | 2,100 |
+| 9 | 1,300 | 2,000 | 2,600 |
+| 10 | 1,600 | 2,300 | 3,100 |
+| 11 | 1,900 | 2,900 | 4,100 |
+| 12 | 2,200 | 3,700 | 4,700 |
+| 13 | 2,600 | 4,200 | 5,400 |
+| 14 | 2,900 | 4,900 | 6,200 |
+| 15 | 3,300 | 5,400 | 7,800 |
+| 16 | 3,800 | 6,100 | 9,800 |
+| 17 | 4,500 | 7,200 | 11,700 |
+| 18 | 5,000 | 8,700 | 14,200 |
+| 19 | 5,500 | 10,700 | 17,200 |
+| 20 | 6,400 | 13,200 | 22,000 |
+| 21 *(proposed)* | 8,000 | 16,500 | 27,500 |
+| 22 *(proposed)* | 9,600 | 19,800 | 33,000 |
+
+- **Above level 20:** floor 4 can push a level 19 or 20 party's encounter level to 21 or 22. Those rows extend level 20 by 25% per level.
+- **Creature XP by CR:** 1/2 = 100, 1 = 200, 2 = 450, 3 = 700, 4 = 1,100, 5 = 1,800, 6 = 2,300, 7 = 2,900, 8 = 3,900, 9 = 5,000, 10 = 5,900, 11 = 7,200, 12 = 8,400, 13 = 10,000, 14 = 11,500, 15 = 13,000, 16 = 15,000, 17 = 18,000, 18 = 20,000, 19 = 22,000, 20 = 25,000.
+- **Bosses:** use Boss stat scaling, never these budgets.
+
+### Player view visibility *(proposed)*
+
+Everything rolled for a room is DM-only until revealed, and the DM gets a reveal control for each item.
+
+- **Shown by default:** shape, size, elevation, lighting, visible terrain features, the number of exits, flavor details, active Pressures, and the boss's name once its room starts.
+- **Hidden until revealed:** enemy names and stats, false walls, the true exit, unsprung room tricks, oddities and Shift Action details.
+- **Hidden until met:** the room's secret condition. The Hidden Sight hint shows only to its owner.
+
+### Content safety *(proposed)*
+
+- **Lore never ships to players:** content tables in the app bundle can be read with browser dev tools, so they carry names and mechanics only. Boss lore, the Campaign context truths and anything about Sonder stay in this Bible and the Campaign Lorebook, outside the app.
+- **No Lorebook in the repo:** every table the generator needs is in this Bible, so the Lorebook isn't needed, and keeping it out protects spoilers.
+- **Monster stat blocks:** store each creature's name, CR, reskin source and twist; the DM pulls up the 2024 Monster Manual stat block. Boss stats are original, built from the benchmarks.
+
+### Hidden Sight hints
+
+| d20 | Condition | Hint |
+| --- | --- | --- |
+| 1 | No one drops below half HP. | Thils favors those who stay whole. |
+| 2 | An enemy is killed by terrain or a room trick. | Let the labyrinth do the work. |
+| 3 | Cleared in 3 rounds or fewer. | Thils is impatient today. |
+| 4 | Every player triggers a different boon tag. | Every road, not one. |
+| 5 | No spell slots are spent. | Keep your magic in your pockets. |
+| 6 | No one takes damage from a room trick. | Step lightly; the traps are watching. |
+| 7 | Every player drops at least one enemy. | Everyone pays their toll. |
+| 8 | The last enemy falls to a critical hit. | End it with a flourish. |
+| 9 | No healing is used. | Wounds are offerings. |
+| 10 | Every player uses a terrain feature. | Touch the maze. |
+| 11 | An enemy is defeated by a trick it armed itself. | Let the hunter step in its own snare. |
+| 12 | An offering at a shrine mid-fight, and the shrine survives. | Remember whose house this is. |
+| 13 | The true exit is found before the fight ends. | Know the way out before you need it. |
+| 14 | A player brings an ally back up from 0 HP. | No one is lost here. |
+| 15 | No one misses an attack in the final round. | Make the last blows count. |
+| 16 | No player ends a turn more than 30 ft from an ally. | Stay close in the dark. |
+| 17 | An Absorbed Echo is defeated by the same boon it carried. | Answer an echo in its own voice. |
+| 18 | No one takes the Dash or Disengage action. | Stand your ground. |
+| 19 | A player finishes the room Bloodied without being healed. | Bleed and carry on. |
+| 20 | DM's choice. | Surprise him. |
 
 ## Open questions
 
