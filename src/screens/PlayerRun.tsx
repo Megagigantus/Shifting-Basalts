@@ -7,6 +7,7 @@ import { floorInfo, LAST_FLOOR, PRESSURES } from '../rules/run'
 import { canExtract, isBossRoom, lootKeptIfExtracting } from '../rules/runFlow'
 import { BoonList } from './BoonList'
 import { PlayerDraft } from './PlayerDraft'
+import { PlayerRoom } from './PlayerRoom'
 import { useChoices } from '../runStore'
 
 interface Props {
@@ -47,6 +48,13 @@ export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
         Loot kept if the party extracts now:{' '}
         {canExtract(state) ? `${lootKeptIfExtracting(state)}%` : 'extraction opens after a boss'}
       </p>
+
+      <PlayerRoom
+        key={`${run.floor}-${run.room}`}
+        state={state}
+        me={players.find((p) => myCharacterIds.includes(p.characterId)) ?? null}
+        readOnly={readOnly}
+      />
 
       {players
         .filter((p) => myCharacterIds.includes(p.characterId))

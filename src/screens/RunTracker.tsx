@@ -16,7 +16,7 @@ import {
   markDead,
   waitingOn,
 } from '../rules/runFlow'
-import { classTriggerMet, openDrafts, rerollsLeft, roomConditionMet } from '../rules/draftFlow'
+import { classTriggerMet, openDrafts, rerollsLeft } from '../rules/draftFlow'
 import { applyChoice } from '../rules/draftChoice'
 import { classHiddenBoon } from '../rules/draft'
 import { applyChoiceDoc, cancelRun, saveRunState, useChoices } from '../runStore'
@@ -24,6 +24,8 @@ import { boonSummary } from '../rules/boons'
 import { PlayerBoons } from './PlayerBoons'
 import { DraftOffers } from './DraftOffers'
 import { ForgePanel } from './ForgePanel'
+import { DmRoom } from './DmRoom'
+import { enterRoom, startFloor } from '../rules/roomFlow'
 import { forgeUsesLeft, spendForge } from '../rules/forge'
 
 const ROOM_LABELS = { combat: 'Combat', elite: 'Elite', reprieve: 'Reprieve', boss: 'Boss' }
@@ -69,7 +71,11 @@ export function RunTracker({ state, characters, onEnded }: Props) {
 
   /** Clear a room (or beat the boss) and open everyone's draft. */
   const clearAndDraft = (kind: RoomKind) =>
-    act((s) => openDrafts(kind === 'boss' ? defeatBoss(s) : clearRoom(s, kind), kind, Math.random))
+    act((s) =>
+      enterRoom(openDrafts(kind === 'boss' ? defeatBoss(s) : clearRoom(s, kind), kind, Math.random), Math.random),
+    )
+  // The generated room's kind (elite, Reprieve...), when this run has rooms.
+  const roomKind = state.dm?.room?.kind ?? null
 
   // Apply players' choices as they arrive, one at a time.
   const choices = useChoices(run.id)
@@ -146,7 +152,11 @@ export function RunTracker({ state, characters, onEnded }: Props) {
         {run.awaitingChoice ? (
           <>
             {run.floor < LAST_FLOOR && (
-              <button type="button" disabled={busy || waiting.length > 0} onClick={() => act(descend)}>
+              <button
+                type="button"
+                disabled={busy || waiting.length > 0}
+                onClick={() => act((s) => startFloor(descend(s), Math.random))}
+              >
                 Descend to floor {run.floor + 1}
               </button>
             )}
@@ -164,6 +174,14 @@ export function RunTracker({ state, characters, onEnded }: Props) {
           <button type="button" disabled={busy || waiting.length > 0} onClick={() => clearAndDraft('boss')}>
             Boss defeated
           </button>
+        ) : roomKind === 'reprieve' ? (
+          <button type="button" disabled={busy || waiting.length > 0} onClick={() => clearAndDraft('reprieve')}>
+            Take the Reprieve
+          </button>
+        ) : roomKind ? (
+          <button type="button" disabled={busy || waiting.length > 0} onClick={() => clearAndDraft(roomKind)}>
+            {roomKind === 'elite' ? 'Elite room cleared' : 'Room cleared'}
+          </button>
         ) : (
           <>
             <button type="button" disabled={busy || waiting.length > 0} onClick={() => clearAndDraft('combat')}>
@@ -177,20 +195,9 @@ export function RunTracker({ state, characters, onEnded }: Props) {
             </button>
           </>
         )}
-        <button
-          type="button"
-          className="quiet"
-          disabled={busy}
-          onClick={() =>
-            act(
-              (s) => roomConditionMet(s, Math.random),
-              'Mark this room\'s secret condition as met? Every living player gets a hidden offer of 2 gifts.',
-            )
-          }
-        >
-          Room condition met
-        </button>
       </div>
+
+      <DmRoom state={state} busy={busy} act={act} />
 
       <ForgePanel
         players={players}

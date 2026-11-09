@@ -1317,6 +1317,13 @@ Everything rolled for a room is DM-only until revealed, and the DM gets a reveal
 - **No Lorebook in the repo:** every table the generator needs is in this Bible, so the Lorebook isn't needed, and keeping it out protects spoilers.
 - **Monster stat blocks:** store each creature's name, CR, reskin source and twist; the DM pulls up the 2024 Monster Manual stat block. Boss stats are original, built from the benchmarks.
 
+### Room generator defaults *(proposed)*
+
+- **Elite rooms:** when a floor starts, each non-boss room rolls a 1 in 4 chance to be elite, at most 2 per floor, never room 1 of floor 1. The floor plan is DM-only.
+- **Reprieve:** each Reprieve owner rolls their chance when a floor starts. Any success makes room 2 or 3 the floor's single Reprieve; more successes don't add more. The party can decline it and fight that room instead.
+- **Hidden Sight:** once per floor, the owner chooses a room and sees its hint on their own screen only.
+- **Flavor and oddities ship in the app:** an exception to Content safety. They're player-facing by design, so the DM accepts that a curious player could read them in the app's files. Boss lore, Campaign context truths and Sonder still stay out.
+
 ### Hidden Sight hints
 
 | d20 | Condition | Hint |

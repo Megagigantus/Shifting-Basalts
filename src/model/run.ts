@@ -4,6 +4,7 @@
 // Hidden information (runs/{runId}/dmOnly) arrives with the room generator.
 import type { Slot } from '../rules/boons'
 import type { DraftCharacter, Offer } from '../rules/draft'
+import type { Room, RoomView } from '../rules/rooms'
 
 /** A player's open draft. */
 export interface DraftOffer {
@@ -47,6 +48,8 @@ export interface Run {
   deepPocketsPercent?: number
   /** Forge uses left in this post-boss room (one per living owner); 0 once it cools. */
   forgeUsesLeft?: number
+  /** What players may see of the current room (null in the post-boss room). */
+  roomView?: RoomView | null
   floor: number
   /** The room being played: 1..rooms on the floor, then rooms + 1 is the boss. */
   room: number
@@ -94,14 +97,30 @@ export interface RunPlayer {
   draftsSeen?: number
   /** Owns the Forge upgrade (adds one Forge use after each boss). */
   forgeOwner?: boolean
+  /** Reprieve upgrade rank (each owner rolls for a Reprieve when a floor starts). */
+  reprieveRank?: number
+  /** Owns Hidden Sight (one hint per floor). */
+  hiddenSight?: boolean
+  /** The floor Hidden Sight was last used on. */
+  hiddenSightFloor?: number | null
   diedOnFloor: number | null
   lockoutDays: number | null
   lockoutRolls: number[] | null
 }
 
+/** The DM-only part of a run: runs/{runId}/dmOnly/room. Players can never read it. */
+export interface DmRunState {
+  /** Room kinds for the current floor (elite and Reprieve placement). */
+  floorPlan: RoomKind[]
+  /** The full current room, hidden parts included (null in the post-boss room). */
+  room: Room | null
+}
+
 export interface RunState {
   run: Run
   players: RunPlayer[]
+  /** Present on the DM's screen only. */
+  dm?: DmRunState
 }
 
 /** What a run adds to each character's permanent record when it ends. */

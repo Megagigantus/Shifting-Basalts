@@ -12,6 +12,8 @@ export type DraftChoice =
   | { action: 'hidden'; hiddenBoonId: string }
   | { action: 'passHidden' }
   | { action: 'forge'; forge: ForgeAction }
+  /** Use Hidden Sight on the current room (the hint goes to a private document). */
+  | { action: 'hiddenSight' }
 
 /**
  * Identifies the exact offer a choice was made against. If the offer changes
@@ -38,6 +40,9 @@ export function applyChoice(state: RunState, characterId: string, choice: DraftC
       return passHidden(state, characterId)
     case 'forge':
       return spendForge(state, characterId, choice.forge)
+    case 'hiddenSight':
+      // Needs to write the hint privately; runStore.applyHiddenSight does that.
+      throw new Error('Hidden Sight is applied separately.')
   }
 }
 

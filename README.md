@@ -35,7 +35,7 @@ The emulator commands (`dev:local`, `test:rules`) also need [Java](https://learn
 | DM | dm@example.com | local-test-dm |
 | Player | player@example.com | local-test-player |
 
-These exist only in the emulator and are wiped every time it stops. Two characters come ready-made: **Test Fighter** (played by the test player, owning Starting Boon, Reroll, Forge, Banish and Attunement) and **Test Wizard** (played by the DM).
+These exist only in the emulator and are wiped every time it stops. Two characters come ready-made: **Test Fighter** (played by the test player, owning Starting Boon, Reroll, Forge, Banish, Attunement, Hidden Sight and Reprieve rank 4) and **Test Wizard** (played by the DM).
 
 To be the DM and a player at once, sign in as the DM at http://localhost:5174 and as the player in another tab at http://[::1]:5174. The browser treats those as separate sites, so each keeps its own sign-in. Keep the DM's tab open: it applies the players' draft choices. The emulator doesn't send real email: list the verification and password-reset links it would have sent with `curl http://127.0.0.1:9099/emulator/v1/projects/demo-shifting-basalts/oobCodes`.
 

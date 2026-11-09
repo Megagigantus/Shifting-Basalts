@@ -574,3 +574,75 @@ button.link {
   padding: 0.4rem 0;
   border-top: 1px solid #3a3530;
 }
+
+.room-stage {
+  margin: 0.75rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid #4a4840;
+  border-radius: 10px;
+  background: #24232a;
+}
+
+.room-stage h3 {
+  margin: 0 0 0.5rem;
+}
+
+.room-stage.kind-elite {
+  border-color: #c96a5a;
+}
+
+.room-stage.kind-reprieve {
+  border-color: #6ab98a;
+}
+
+.room-stage.kind-boss {
+  border-color: #c9a35a;
+}
+
+.room-facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.4rem 1rem;
+  margin: 0.5rem 0 0;
+}
+
+.room-facts dt {
+  opacity: 0.7;
+}
+
+.room-facts dd {
+  margin: 0;
+}
+
+.plain-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.25rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.flavor li {
+  font-style: italic;
+}
+
+.tag.hidden-tag {
+  background: #4a3a2a;
+}
+
+.tag.shown {
+  background: #2a4a35;
+}
+
+.private-hint {
+  padding: 0.4rem 0.6rem;
+  border-left: 3px solid #8a7ad1;
+  background: #26243a;
+}
+
+@media (max-width: 600px) {
+  .room-facts {
+    grid-template-columns: 1fr;
+  }
+}

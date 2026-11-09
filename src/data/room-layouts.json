@@ -1,0 +1,261 @@
+{
+  "_source": "docs/design-bible.md: Room layouts. Proposed values; edit freely.",
+  "shapes": [
+    {
+      "roll": 1,
+      "id": "hex-hall",
+      "name": "Hex hall",
+      "description": "One large hexagon, with columns lining the walls."
+    },
+    {
+      "roll": 2,
+      "id": "column-forest",
+      "name": "Column forest",
+      "description": "An open floor crowded with basalt columns of uneven heights."
+    },
+    {
+      "roll": 3,
+      "id": "split-chamber",
+      "name": "Split chamber",
+      "description": "Two halves joined by a narrow bridge or a gap to jump."
+    },
+    {
+      "roll": 4,
+      "id": "ring",
+      "name": "Ring",
+      "description": "A circular path around a central pit, pillar or dais."
+    },
+    {
+      "roll": 5,
+      "id": "switchback",
+      "name": "Switchback",
+      "description": "A zigzag room that doubles back on itself, like a maze in miniature."
+    },
+    {
+      "roll": 6,
+      "id": "tiered-stair",
+      "name": "Tiered stair",
+      "description": "Three or four levels of stepped column tops."
+    },
+    {
+      "roll": 7,
+      "id": "honeycomb",
+      "name": "Honeycomb",
+      "description": "A cluster of small hex cells joined by gaps."
+    },
+    {
+      "roll": 8,
+      "id": "twisted-vault",
+      "name": "Twisted vault",
+      "description": "Features hang from the ceiling as often as they rise from the floor.",
+      "minFloor": 3
+    }
+  ],
+  "sizes": [
+    {
+      "id": "small",
+      "name": "Small",
+      "feet": 30
+    },
+    {
+      "id": "medium",
+      "name": "Medium",
+      "feet": 50
+    },
+    {
+      "id": "large",
+      "name": "Large",
+      "feet": 70
+    }
+  ],
+  "elevations": [
+    {
+      "roll": 1,
+      "name": "Flat"
+    },
+    {
+      "roll": 2,
+      "name": "One 10 ft ledge"
+    },
+    {
+      "roll": 3,
+      "name": "Columns of varied heights to climb"
+    },
+    {
+      "roll": 4,
+      "name": "A 20 ft pit"
+    }
+  ],
+  "lighting": [
+    {
+      "rolls": [
+        1,
+        2,
+        3
+      ],
+      "id": "dim-seam-light",
+      "name": "Dim seam-light"
+    },
+    {
+      "rolls": [
+        4
+      ],
+      "id": "bright-rune-light",
+      "name": "Bright rune-light"
+    },
+    {
+      "rolls": [
+        5
+      ],
+      "id": "flickering",
+      "name": "Flickering: alternates dim and dark each round"
+    },
+    {
+      "rolls": [
+        6
+      ],
+      "id": "magical-darkness",
+      "name": "Patches of magical darkness"
+    }
+  ],
+  "floor4GoldenLight": {
+    "rolls": [
+      5,
+      6
+    ],
+    "id": "golden-light",
+    "name": "Golden light from below"
+  },
+  "maxExits": 3,
+  "trueExitBaseDC": 10,
+  "terrainCount": {
+    "min": 2,
+    "max": 3
+  },
+  "terrain": [
+    {
+      "roll": 1,
+      "id": "low-columns",
+      "name": "Low columns",
+      "effect": "Half cover."
+    },
+    {
+      "roll": 2,
+      "id": "tall-columns",
+      "name": "Tall columns",
+      "effect": "Full cover; climbing one is a DC 12 Athletics check."
+    },
+    {
+      "roll": 3,
+      "id": "broken-column-field",
+      "name": "Broken column field",
+      "effect": "Difficult terrain."
+    },
+    {
+      "roll": 4,
+      "id": "fissure",
+      "name": "Fissure",
+      "effect": "A 5 ft wide crack running across the room, 15 ft deep."
+    },
+    {
+      "roll": 5,
+      "id": "hex-dais",
+      "name": "Hex dais",
+      "effect": "A raised platform that grants high ground."
+    },
+    {
+      "roll": 6,
+      "id": "transit-rune-pair",
+      "name": "Transit rune pair",
+      "effect": "Once per round, a creature on one rune can spend 5 ft of movement to teleport to the other."
+    },
+    {
+      "roll": 7,
+      "id": "gate-glass-shards",
+      "name": "Gate-glass shards",
+      "effect": "Difficult terrain; moving through at full speed deals 1d4 piercing damage per 5 ft."
+    },
+    {
+      "roll": 8,
+      "id": "collapsed-archway",
+      "name": "Collapsed archway",
+      "effect": "A 10 ft choke point."
+    },
+    {
+      "roll": 9,
+      "id": "shrine-to-thils",
+      "name": "Shrine to Thils",
+      "effect": "Offerings and candles; locals would be furious if it were damaged."
+    },
+    {
+      "roll": 10,
+      "id": "strider-remains",
+      "name": "Strider remains",
+      "effect": "A lost traveler's gear, worth a search for loot."
+    },
+    {
+      "roll": 11,
+      "id": "hanging-cables",
+      "name": "Hanging cables",
+      "effect": "Climbable lines from the old gate; they swing a creature 15 ft as part of its move."
+    },
+    {
+      "roll": 12,
+      "id": "polished-floor",
+      "name": "Polished floor",
+      "effect": "Creatures that Dash make a DC 12 Dexterity save or fall prone."
+    },
+    {
+      "roll": 13,
+      "id": "rotating-column-ring",
+      "name": "Rotating column ring",
+      "effect": "At initiative 20, a ring of columns turns 30 degrees."
+    },
+    {
+      "roll": 14,
+      "id": "narrow-catwalk",
+      "name": "Narrow catwalk",
+      "effect": "A 5 ft walkway over a 20 ft drop."
+    },
+    {
+      "roll": 15,
+      "id": "echoing-chamber",
+      "name": "Echoing chamber",
+      "effect": "Sound carries: no one can take the Hide action."
+    },
+    {
+      "roll": 16,
+      "id": "false-wall",
+      "name": "False wall",
+      "effect": "A hidden passage found with a DC 15 Investigation check.",
+      "hidden": true
+    },
+    {
+      "roll": 17,
+      "id": "dead-end-alcoves",
+      "name": "Dead-end alcoves",
+      "effect": "Small nooks that offer full cover but trap whoever hides there."
+    },
+    {
+      "roll": 18,
+      "id": "pool-of-raw-stride-energy",
+      "name": "Pool of raw stride energy",
+      "effect": "Difficult terrain dealing PB force damage to creatures starting a turn in it.",
+      "minFloor": 3
+    },
+    {
+      "roll": 19,
+      "id": "inverted-overgrowth",
+      "name": "Inverted overgrowth",
+      "effect": "Grass and vines grow from the ceiling down, lightly obscuring the area.",
+      "onlyFloor": 4
+    },
+    {
+      "roll": 20,
+      "id": "roll-twice",
+      "name": "Roll twice",
+      "effect": "Combine both features.",
+      "rollTwice": true
+    }
+  ]
+}
