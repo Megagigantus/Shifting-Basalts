@@ -38,4 +38,60 @@ for (const a of accounts) {
   )
 }
 
-console.log(`Seeded local emulators: ${accounts.map((a) => `${a.email} (${a.role})`).join(', ')}`)
+// Two ready-made characters, so drafts can be tried straight away.
+type Value = string | number | boolean | null | Value[] | { [key: string]: Value }
+function toFirestore(value: Value): unknown {
+  if (value === null) return { nullValue: null }
+  if (typeof value === 'string') return { stringValue: value }
+  if (typeof value === 'boolean') return { booleanValue: value }
+  if (typeof value === 'number') return { integerValue: String(value) }
+  if (Array.isArray(value)) return { arrayValue: { values: value.map(toFirestore) } }
+  return { mapValue: { fields: Object.fromEntries(Object.entries(value).map(([k, v]) => [k, toFirestore(v)])) } }
+}
+
+const dungeonLayer = {
+  bankedQuantumBasalts: 0,
+  bankedDevotions: 0,
+  trackDevotions: {},
+  deepestFloor: 0,
+  lockoutDays: 0,
+  banished: [],
+  attuneTag: null,
+}
+const characters: Record<string, { [key: string]: Value }> = {
+  'test-fighter': {
+    name: 'Test Fighter',
+    playerEmail: 'player@example.com',
+    classId: 'fighter',
+    subclass: 'Champion',
+    level: 5,
+    casterType: 'none',
+    slotLevels: [],
+    hasSummon: false,
+    attackStyle: 'melee',
+    ...dungeonLayer,
+    upgrades: { reroll: 1 },
+  },
+  'test-wizard': {
+    name: 'Test Wizard',
+    playerEmail: 'dm@example.com',
+    classId: 'wizard',
+    subclass: 'Evoker',
+    level: 5,
+    casterType: 'full',
+    slotLevels: [1, 2, 3],
+    hasSummon: false,
+    attackStyle: 'spells',
+    ...dungeonLayer,
+    upgrades: {},
+  },
+}
+for (const [id, data] of Object.entries(characters)) {
+  await call(`${FIRESTORE}/v1/projects/${PROJECT}/databases/(default)/documents/characters/${id}`, 'PATCH', {
+    fields: Object.fromEntries(Object.entries(data).map(([k, v]) => [k, toFirestore(v)])),
+  })
+}
+
+console.log(
+  `Seeded local emulators: ${accounts.map((a) => `${a.email} (${a.role})`).join(', ')}; characters: ${Object.keys(characters).join(', ')}`,
+)
