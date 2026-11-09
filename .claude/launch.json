@@ -6,6 +6,20 @@
       "runtimeExecutable": "C:\\Program Files\\nodejs\\npm.cmd",
       "runtimeArgs": ["run", "dev", "--", "--port", "5173", "--strictPort"],
       "port": 5173
+    },
+    {
+      "name": "local",
+      "runtimeExecutable": "cmd.exe",
+      "runtimeArgs": [
+        "/c",
+        "set",
+        "PATH=C:\\Program Files\\nodejs;C:\\Program Files\\Microsoft\\jdk-21.0.13.21-hotspot\\bin;%PATH%",
+        "&&",
+        "npm.cmd",
+        "run",
+        "dev:local"
+      ],
+      "port": 5174
     }
   ]
 }
