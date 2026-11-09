@@ -3,7 +3,7 @@
 // every function returns a new state or throws if the move isn't allowed.
 import type { RoomKind, RunPlayer, RunState } from '../model/run'
 import { combine, evolve, replaceBoon, takeBoon, type Slot } from './boons'
-import { classHiddenBoon, generateOffer, giftOffer, type DraftCharacter, type Random } from './draft'
+import { classHiddenBoon, generateOffer, giftOffer, startingOffer, type DraftCharacter, type Random } from './draft'
 import { pass, setHiddenBoon } from './runFlow'
 
 /** Offer size for the run's Pressures: 4, 3 under Narrow Seam, 2 under Narrow Seam II. */
@@ -121,10 +121,31 @@ export function rerollDraft(state: RunState, characterId: string, random: Random
     const rerolled = { ...p, draftsSeen: Math.max(1, p.draftsSeen ?? 1) }
     return {
       ...rerolled,
-      draft: { ...draft, offers: buildOffer(state, rerolled, draft.elite, random) },
+      draft: {
+        ...draft,
+        offers: draft.starting
+          ? startingOffer(profileOf(p), p.slots ?? [], random)
+          : buildOffer(state, rerolled, draft.elite, random),
+      },
       rerolls: { floor, used: used + 1 },
     }
   })
+}
+
+/**
+ * Starting Boon: at the start of floor 1, room 1, each owner is offered one
+ * random boon at Level 1. Call this on a fresh run, before the first room.
+ */
+export function openStartingBoons(state: RunState, owners: string[], random: Random): RunState {
+  return {
+    ...state,
+    players: state.players.map((p) => {
+      if (!p.alive || !owners.includes(p.characterId)) return p
+      const offers = startingOffer(profileOf(p), p.slots ?? [], random)
+      if (offers.length === 0) return p
+      return { ...p, draft: { floor: 1, room: 0, elite: false, offers, starting: true } }
+    }),
+  }
 }
 
 /** The room's secret condition was met: every living player gets 2 random gifts. */

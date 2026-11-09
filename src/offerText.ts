@@ -45,7 +45,8 @@ export function describeOffer(offer: Offer, slots: Slot[]): OfferText {
     }
   }
   return {
-    label: offer.source === 'wildcard' ? 'Wildcard: new boon' : 'New boon',
+    label:
+      offer.source === 'starting' ? 'Starting Boon' : offer.source === 'wildcard' ? 'Wildcard: new boon' : 'New boon',
     heading: b.name,
     tag: b.tags[0],
     text: `Level 1: ${b.levels[0]}`,

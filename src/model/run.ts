@@ -11,6 +11,8 @@ export interface DraftOffer {
   room: number
   elite: boolean
   offers: Offer[]
+  /** The Starting Boon offer before room 1, rather than a room's draft. */
+  starting?: boolean
 }
 
 /** A hidden offer: Thils's gifts (room condition met) and/or the class hidden boon. */

@@ -32,9 +32,15 @@ export function DraftOffers({ player, passValue, rerollsLeft, busy, onChoose, wh
       {draft && (
         <>
           <div className="panel-header">
-            <h3>{who ? `${who}: choose a boon` : 'Choose a boon'}</h3>
+            <h3>
+              {draft.starting
+                ? who ? `${who}: Starting Boon` : 'Your Starting Boon'
+                : who ? `${who}: choose a boon` : 'Choose a boon'}
+            </h3>
             <span className="hint">
-              Floor {draft.floor}, {draft.elite ? 'elite room' : `room ${draft.room}`}
+              {draft.starting
+                ? 'Before room 1'
+                : `Floor ${draft.floor}, ${draft.elite ? 'elite room' : `room ${draft.room}`}`}
             </span>
           </div>
           <div className="offer-cards">

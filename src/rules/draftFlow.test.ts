@@ -1,13 +1,14 @@
 import { describe, expect, it } from 'vitest'
 import { emptyDungeonLayer, emptyProfile, type Character } from '../model/character'
 import type { RunState } from '../model/run'
-import { boon } from './boons'
+import { boon, BOONS } from './boons'
 import {
   chooseHidden,
   chooseOffer,
   classTriggerMet,
   offerSize,
   openDrafts,
+  openStartingBoons,
   passDraft,
   passHidden,
   rerollDraft,
@@ -206,3 +207,37 @@ describe('hidden offers', () => {
 function passAll(state: RunState): RunState {
   return state.players.reduce((s, p) => (p.alive && p.draft ? passDraft(s, p.characterId) : s), state)
 }
+
+describe('Starting Boon', () => {
+  const owners = [character('a', { upgrades: { 'starting-boon': 1, reroll: 1 } }), character('b')]
+
+  it('offers each owner one random boon before room 1, and blocks room 1 until chosen', () => {
+    const state = openStartingBoons(start([], owners), ['a'], seeded(3))
+    expect(state.players[0].draft).toMatchObject({ starting: true, room: 0 })
+    expect(state.players[0].draft!.offers).toHaveLength(1)
+    expect(state.players[0].draft!.offers[0]).toMatchObject({ kind: 'boon', source: 'starting' })
+    expect(state.players[1].draft).toBeNull()
+    expect(() => clearRoom(state, 'combat')).toThrow('Waiting on draft picks from a')
+  })
+
+  it('taking it puts the boon in at Level 1; Attunement still shapes the first room\'s offer', () => {
+    const chars = [character('a', { upgrades: { 'starting-boon': 1, attunement: 1 }, attuneTag: 'Guard' })]
+    let state = openStartingBoons(start([], chars), ['a'], seeded(4))
+    state = chooseOffer(state, 'a', 0)
+    expect(state.players[0].slots![0]).toMatchObject({ level: 1 })
+    expect(state.players[0].draftsSeen).toBe(0)
+    state = clearAndDraft(state, seeded(5))
+    expect(state.players[0].draft!.offers.some((o) => o.kind === 'boon' && boon(o.boonId).tags[0] === 'Guard')).toBe(true)
+  })
+
+  it('can be rerolled (using a reroll) into another single boon, and respects Banish', () => {
+    let state = openStartingBoons(start([], owners), ['a'], seeded(6))
+    state = rerollDraft(state, 'a', seeded(7))
+    expect(state.players[0].draft).toMatchObject({ starting: true })
+    expect(state.players[0].draft!.offers).toHaveLength(1)
+    const banished = BOONS.map((b) => b.id).filter((id) => id !== 'hardy')
+    const onlyHardy = [character('a', { upgrades: { 'starting-boon': 1 }, banished })]
+    const offered = openStartingBoons(start([], onlyHardy), ['a'], seeded(8)).players[0].draft!.offers[0]
+    expect(offered).toMatchObject({ boonId: 'hardy' })
+  })
+})

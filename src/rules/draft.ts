@@ -21,7 +21,7 @@ export type Random = () => number
 
 /** One choice in a draft offer. */
 export type Offer =
-  | { kind: 'boon'; boonId: string; source: 'held' | 'weighted' | 'wildcard' }
+  | { kind: 'boon'; boonId: string; source: 'held' | 'weighted' | 'wildcard' | 'starting' }
   | { kind: 'evolution'; evolutionId: string; slotIndex: number; source: 'wildcard' }
   | { kind: 'combination'; combinationId: string; source: 'wildcard' }
 
@@ -186,6 +186,18 @@ export function generateOffer({ character, slots, offerSize, elite = false, attu
 
 function isDuplicate(offers: Offer[], offer: Offer): boolean {
   return offers.some((o) => JSON.stringify(o) === JSON.stringify(offer))
+}
+
+/**
+ * Starting Boon upgrade: one random eligible boon at even odds (Banish applies).
+ * Returns an empty offer if nothing is eligible.
+ */
+export function startingOffer(character: DraftCharacter, slots: Slot[], random: Random): Offer[] {
+  const held = slots.filter((s): s is SlotContent => s !== null).flatMap(boonsIn)
+  const pool = eligibleBoons(character, held)
+  if (pool.length === 0) return []
+  const b = pool[Math.floor(random() * pool.length)]
+  return [{ kind: 'boon', boonId: b.id, source: 'starting' }]
 }
 
 /** Hidden offer when a room's condition is met: 2 random Thils's gifts the player doesn't hold. */
