@@ -9,8 +9,12 @@ import {
   type AttackStyle,
 } from '../model/character'
 import { MAX_LEVEL, MIN_ENTRY_LEVEL, proficiencyBonus } from '../rules/proficiency'
+import classTags from '../data/class-tags.json'
+import { BOONS } from '../rules/boons'
 
 const SLOT_LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+// Tags a subclass might favor (Core and Payoff aren't weighted by class).
+const FAVORABLE_TAGS = [...new Set(BOONS.flatMap((b) => b.tags))].filter((t) => t !== 'Core' && t !== 'Payoff')
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const ordinal = (n: number) => `${n}${n === 1 ? 'st' : n === 2 ? 'nd' : n === 3 ? 'rd' : 'th'}`
 
@@ -154,6 +158,33 @@ export function CharacterForm({ initial, title, onSave, onCancel }: Props) {
           ))}
         </fieldset>
       )}
+
+      <fieldset className="slot-levels">
+        <legend>
+          Extra favored tags <span className="hint">(optional, for subclasses: weighted like the class's primary tags)</span>
+        </legend>
+        {FAVORABLE_TAGS.map((tag) => {
+          const fromClass = classTags.classes.find((c) => c.classId === profile.classId)?.primary.includes(tag)
+          return (
+            <label key={tag} className={`checkbox ${fromClass ? 'disabled' : ''}`}>
+              <input
+                type="checkbox"
+                checked={fromClass || profile.favoredTags.includes(tag)}
+                disabled={fromClass}
+                onChange={() =>
+                  set(
+                    'favoredTags',
+                    profile.favoredTags.includes(tag)
+                      ? profile.favoredTags.filter((t) => t !== tag)
+                      : [...profile.favoredTags, tag],
+                  )
+                }
+              />
+              {tag}
+            </label>
+          )
+        })}
+      </fieldset>
 
       <label className="checkbox">
         <input

@@ -106,6 +106,13 @@ export async function saveRunState(
     }
   }
 
+  // A new run locks its characters' Banish and Attunement until it ends.
+  if (previous === null && next.run.status === 'active') {
+    for (const characterId of next.run.characterIds) {
+      batch.update(doc(db, 'characters', characterId), { activeRunId: id, updatedAt: serverTimestamp() })
+    }
+  }
+
   const justEnded = next.run.status !== 'active' && (previous === null || previous.run.status === 'active')
   let results: RunResult[] | null = null
   if (justEnded) {
@@ -117,6 +124,7 @@ export async function saveRunState(
         bankedDevotions: increment(r.devotions),
         deepestFloor: Math.max(character?.deepestFloor ?? 0, r.deepestFloor),
         ...(r.lockoutDays !== null ? { lockoutDays: r.lockoutDays } : {}),
+        activeRunId: null,
         updatedAt: serverTimestamp(),
       })
     }
@@ -239,6 +247,7 @@ export async function cancelRun(state: RunState): Promise<void> {
   for (const player of state.players) {
     batch.delete(doc(db, 'runs', state.run.id, 'players', player.characterId))
     batch.delete(doc(db, 'runs', state.run.id, 'choices', player.characterId))
+    batch.update(doc(db, 'characters', player.characterId), { activeRunId: null, updatedAt: serverTimestamp() })
   }
   batch.delete(doc(db, 'runs', state.run.id))
   await batch.commit()

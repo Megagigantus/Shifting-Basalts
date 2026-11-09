@@ -93,6 +93,7 @@ export function draftProfileFor(c: Character): NonNullable<RunPlayer['draftProfi
     hasSummon: c.hasSummon,
     trackDevotions: { ...c.trackDevotions },
     banished: [...(c.banished ?? [])],
+    favoredTags: [...(c.favoredTags ?? [])],
     rerollsPerFloor: c.upgrades.reroll ?? 0,
     attuneTag: (c.upgrades.attunement ?? 0) > 0 ? (c.attuneTag ?? null) : null,
   }

@@ -33,6 +33,8 @@ export interface DraftCharacter {
   trackDevotions: Record<string, number>
   /** Boon ids on this character's Banish list. */
   banished?: string[]
+  /** Extra tags treated as primary for this character (a subclass shift). */
+  favoredTags?: string[]
 }
 
 type SlotPlan = 'held' | 'weighted' | 'wildcard'
@@ -62,12 +64,12 @@ export function eligibleBoons(character: DraftCharacter, heldBoonIds: string[]):
 }
 
 /** A boon's draft weight for this character (Core boons always 1). */
-export function boonWeight(b: Boon, classId: string, heldTags: Set<string>): number {
+export function boonWeight(b: Boon, classId: string, heldTags: Set<string>, favoredTags: string[] = []): number {
   if (b.kind === 'core') return WEIGHTS.base
   const row = classRow(classId)
   const tag = b.tags[0]
   let weight = WEIGHTS.base
-  if (row?.primary.includes(tag)) weight *= WEIGHTS.primaryTag
+  if (row?.primary.includes(tag) || favoredTags.includes(tag)) weight *= WEIGHTS.primaryTag
   else if (row?.secondary.includes(tag)) weight *= WEIGHTS.secondaryTag
   if (heldTags.has(tag)) weight *= WEIGHTS.heldTag
   return weight
@@ -122,7 +124,7 @@ export function generateOffer({ character, slots, offerSize, elite = false, attu
 
   const weightedRoll = (onlyTag?: string | null): Boon | null => {
     const candidates = pool.filter((b) => roomFor(b) && (!onlyTag || b.tags[0] === onlyTag))
-    return weightedPick(candidates, (b) => boonWeight(b, character.classId, heldTags), random)
+    return weightedPick(candidates, (b) => boonWeight(b, character.classId, heldTags, character.favoredTags), random)
   }
   const evenRoll = (): Boon | null => {
     const candidates = pool.filter(roomFor)

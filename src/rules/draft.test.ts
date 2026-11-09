@@ -64,6 +64,13 @@ describe('weights', () => {
     expect(boonWeight(boon('hardy'), 'wizard', new Set(['Core']))).toBe(1)
   })
 
+  it('favored tags count as primary for that character (a subclass shift)', () => {
+    const none = new Set<string>()
+    expect(boonWeight(boon('pack-tactics'), 'ranger', none)).toBe(2) // Bond: ranger secondary
+    expect(boonWeight(boon('pack-tactics'), 'ranger', none, ['Bond'])).toBe(3)
+    expect(boonWeight(boon('hardy'), 'ranger', none, ['Core'])).toBe(1) // Core stays 1
+  })
+
   it('weighted picks follow the weights', () => {
     const random = seeded(7)
     const counts = { a: 0, b: 0 }

@@ -17,6 +17,7 @@ import { useCharacters } from '../useCharacters'
 import { CharacterForm } from './CharacterForm'
 import { StatTracks } from './StatTracks'
 import { UpgradeShop } from './UpgradeShop'
+import { DraftPreferences } from './DraftPreferences'
 import { UPGRADES } from '../rules/upgrades'
 
 /** e.g. "Forge · Extra Boon Slot 2", for upgrades owned. */
@@ -146,6 +147,7 @@ export function Characters() {
                 {c.lockoutDays > 0 && (
                   <span className="warning">Locked out: {c.lockoutDays} days</span>
                 )}
+                <DraftPreferences character={c} />
                 {upgradeSummary(c) && <span className="hint">Upgrades: {upgradeSummary(c)}</span>}
                 {open?.id === c.id && open.kind === 'tracks' && (
                   <StatTracks character={c} onClose={() => setOpen(null)} />

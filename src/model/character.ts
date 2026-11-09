@@ -18,6 +18,11 @@ export interface CharacterProfile {
   slotLevels: number[]
   hasSummon: boolean
   attackStyle: AttackStyle
+  /**
+   * Extra tags the draft treats as primary for this character, e.g. Bond for a
+   * Beast Master Ranger (design bible: Offer weighting, Subclasses).
+   */
+  favoredTags: string[]
 }
 
 /** What persists between runs. Changed by runs and upgrades, not the profile form. */
@@ -36,6 +41,8 @@ export interface DungeonLayer {
   banished: string[]
   /** Attunement: the tag the first offer of each run includes. */
   attuneTag: string | null
+  /** Set while the character is in a run; Banish and Attunement lock until it clears. */
+  activeRunId: string | null
 }
 
 export interface Character extends CharacterProfile, DungeonLayer {
@@ -66,6 +73,7 @@ export function emptyProfile(): CharacterProfile {
     slotLevels: [],
     hasSummon: false,
     attackStyle: 'melee',
+    favoredTags: [],
   }
 }
 
@@ -79,6 +87,7 @@ export function emptyDungeonLayer(): DungeonLayer {
     upgrades: {},
     banished: [],
     attuneTag: null,
+    activeRunId: null,
   }
 }
 
@@ -94,5 +103,6 @@ export function profileOf(c: Character): CharacterProfile {
     slotLevels: c.slotLevels,
     hasSummon: c.hasSummon,
     attackStyle: c.attackStyle,
+    favoredTags: c.favoredTags ?? [],
   }
 }

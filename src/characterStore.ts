@@ -1,7 +1,7 @@
 // Changes to a character's dungeon layer that need checking against the
 // latest saved values. Each runs as a Firestore transaction: it re-reads the
 // character, checks the rule, then writes, so double-clicks can't overspend.
-import { doc, FieldPath, runTransaction, serverTimestamp } from 'firebase/firestore'
+import { doc, FieldPath, runTransaction, serverTimestamp, updateDoc } from 'firebase/firestore'
 import { db } from './firebase'
 import { investmentCap } from './rules/statTracks'
 import { nextRankCost, ownedRankCost, upgradeById } from './rules/upgrades'
@@ -81,4 +81,16 @@ export async function investDevotions(characterId: string, trackId: string, amou
       serverTimestamp(),
     )
   })
+}
+
+/** Save a character's Banish list (between runs only; the rules check the size and ids). */
+export async function setBanished(characterId: string, banished: string[]): Promise<void> {
+  if (!db) throw new Error('Firebase is not set up.')
+  await updateDoc(doc(db, 'characters', characterId), { banished, updatedAt: serverTimestamp() })
+}
+
+/** Save (or clear) a character's Attunement tag (between runs only). */
+export async function setAttuneTag(characterId: string, attuneTag: string | null): Promise<void> {
+  if (!db) throw new Error('Firebase is not set up.')
+  await updateDoc(doc(db, 'characters', characterId), { attuneTag, updatedAt: serverTimestamp() })
 }
