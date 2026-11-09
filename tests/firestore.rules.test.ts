@@ -385,3 +385,43 @@ describe('player draft choices', () => {
     await assertSucceeds(setDoc(doc(as(DM), 'runs', 'live', 'choices', OWNED), { action: 'pass', error: 'stale' }))
   })
 })
+
+describe('Banish list and Attunement tag', () => {
+  const owned = () => doc(as(PLAYER), 'characters', OWNED)
+  beforeEach(() => seedCharacters({ upgrades: { banish: 2, attunement: 1 }, banished: [], attuneTag: null }))
+
+  it('a player can set a Banish list up to their rank, with real boons', async () => {
+    await assertSucceeds(updateDoc(owned(), { banished: ['hardy', 'honed'], updatedAt: now() }))
+    await assertSucceeds(updateDoc(owned(), { banished: [], updatedAt: now() }))
+  })
+
+  it('refuses a list that is too long, repeats, or names unknown boons', async () => {
+    await assertFails(updateDoc(owned(), { banished: ['hardy', 'honed', 'fleet-foot'], updatedAt: now() }))
+    await assertFails(updateDoc(owned(), { banished: ['hardy', 'hardy'], updatedAt: now() }))
+    await assertFails(updateDoc(owned(), { banished: ['not-a-boon'], updatedAt: now() }))
+  })
+
+  it('a player without Banish can\'t banish anything', async () => {
+    await seedCharacters({ upgrades: {}, banished: [] })
+    await assertFails(updateDoc(owned(), { banished: ['hardy'], updatedAt: now() }))
+  })
+
+  it('a player can set or clear their Attunement tag, only with the upgrade', async () => {
+    await assertSucceeds(updateDoc(owned(), { attuneTag: 'Guard', updatedAt: now() }))
+    await assertSucceeds(updateDoc(owned(), { attuneTag: null, updatedAt: now() }))
+    await assertFails(updateDoc(owned(), { attuneTag: 'Dragons', updatedAt: now() }))
+    await seedCharacters({ upgrades: {}, attuneTag: null })
+    await assertFails(updateDoc(owned(), { attuneTag: 'Guard', updatedAt: now() }))
+  })
+
+  it('neither can change during a run', async () => {
+    await seedCharacters({ upgrades: { banish: 2, attunement: 1 }, banished: [], activeRunId: 'live' })
+    await assertFails(updateDoc(owned(), { banished: ['hardy'], updatedAt: now() }))
+    await assertFails(updateDoc(owned(), { attuneTag: 'Guard', updatedAt: now() }))
+  })
+
+  it('can\'t be combined with other changes, or done for someone else', async () => {
+    await assertFails(updateDoc(owned(), { banished: ['hardy'], level: 20, updatedAt: now() }))
+    await assertFails(updateDoc(doc(as(PLAYER), 'characters', OTHERS), { banished: [], updatedAt: now() }))
+  })
+})
