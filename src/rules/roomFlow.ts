@@ -67,7 +67,7 @@ export function spendHiddenSight(state: RunState, characterId: string): { state:
   const player = state.players.find((p) => p.characterId === characterId)
   if (!player) throw new Error('That character isn\'t in this run.')
   if (!player.alive) throw new Error(`${player.name} has fallen.`)
-  if (!player.hiddenSight) throw new Error(`${player.name} doesn\'t have Hidden Sight.`)
+  if (!player.hiddenSight) throw new Error(`${player.name} doesn't have Hidden Sight.`)
   if (player.hiddenSightFloor === state.run.floor) throw new Error('Hidden Sight is already used on this floor.')
   const room = state.dm?.room
   if (!room || room.condition === null) throw new Error('This room has no secret condition to hint at.')
