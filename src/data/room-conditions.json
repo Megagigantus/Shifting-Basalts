@@ -1,0 +1,105 @@
+{
+  "_source": "docs/design-bible.md: Room condition pool and Hidden Sight hints.",
+  "conditions": [
+    {
+      "roll": 1,
+      "condition": "No one drops below half HP.",
+      "hint": "Thils favors those who stay whole."
+    },
+    {
+      "roll": 2,
+      "condition": "An enemy is killed by terrain or a room trick.",
+      "hint": "Let the labyrinth do the work."
+    },
+    {
+      "roll": 3,
+      "condition": "The room is cleared in 3 rounds or fewer.",
+      "hint": "Thils is impatient today."
+    },
+    {
+      "roll": 4,
+      "condition": "Every player triggers a different boon tag.",
+      "hint": "Every road, not one."
+    },
+    {
+      "roll": 5,
+      "condition": "No spell slots are spent.",
+      "hint": "Keep your magic in your pockets."
+    },
+    {
+      "roll": 6,
+      "condition": "No one takes damage from a room trick.",
+      "hint": "Step lightly; the traps are watching."
+    },
+    {
+      "roll": 7,
+      "condition": "Every player drops at least one enemy.",
+      "hint": "Everyone pays their toll."
+    },
+    {
+      "roll": 8,
+      "condition": "The last enemy falls to a critical hit.",
+      "hint": "End it with a flourish."
+    },
+    {
+      "roll": 9,
+      "condition": "No healing is used.",
+      "hint": "Wounds are offerings."
+    },
+    {
+      "roll": 10,
+      "condition": "Every player uses a terrain feature, like a rune, column, cable or ledge.",
+      "hint": "Touch the maze."
+    },
+    {
+      "roll": 11,
+      "condition": "An enemy is defeated by a room trick it armed itself.",
+      "hint": "Let the hunter step in its own snare."
+    },
+    {
+      "roll": 12,
+      "condition": "Someone leaves an offering at a shrine to Thils mid-fight, and the shrine survives.",
+      "hint": "Remember whose house this is."
+    },
+    {
+      "roll": 13,
+      "condition": "The true exit is found before the fight ends.",
+      "hint": "Know the way out before you need it."
+    },
+    {
+      "roll": 14,
+      "condition": "A player brings an ally back up from 0 HP.",
+      "hint": "No one is lost here."
+    },
+    {
+      "roll": 15,
+      "condition": "No one misses an attack in the final round.",
+      "hint": "Make the last blows count."
+    },
+    {
+      "roll": 16,
+      "condition": "No player ends a turn more than 30 ft from an ally.",
+      "hint": "Stay close in the dark."
+    },
+    {
+      "roll": 17,
+      "condition": "An Absorbed Echo is defeated by a player using the same boon it carried.",
+      "hint": "Answer an echo in its own voice."
+    },
+    {
+      "roll": 18,
+      "condition": "No one takes the Dash or Disengage action.",
+      "hint": "Stand your ground."
+    },
+    {
+      "roll": 19,
+      "condition": "A player finishes the room Bloodied without being healed.",
+      "hint": "Bleed and carry on."
+    },
+    {
+      "roll": 20,
+      "condition": "DM's choice: the party did something clever, in character or funny enough to earn it.",
+      "hint": "Surprise him."
+    }
+  ]
+}

@@ -1,0 +1,163 @@
+{
+  "_source": "docs/design-bible.md: Room tricks and Trick frequency. DC = 10 + PB + floor; damage PB d6 (floors 1-2) or PB d8 (floors 3-4).",
+  "tricks": [
+    {
+      "id": "snap-pillar",
+      "floor": 1,
+      "name": "Snap-Pillar",
+      "trigger": "Stepping on a hairline seam hex",
+      "effect": "Dex save or be launched 15 ft into the air, taking PB d6 bludgeoning damage and landing prone.",
+      "counterplay": "Perception spots the seam; Athletics or thieves' tools jams it, or push an enemy onto it."
+    },
+    {
+      "id": "static-vent",
+      "floor": 1,
+      "name": "Static Vent",
+      "trigger": "Ending a turn within 5 ft of a glowing fissure",
+      "effect": "Con save or take PB d6 lightning damage and lose reactions until the start of your next turn.",
+      "counterplay": "Cap the vent with a heavy object, or seal it with cold damage."
+    },
+    {
+      "id": "shatter-step",
+      "floor": 1,
+      "name": "Shatter-Step",
+      "trigger": "Moving more than 15 ft in one turn across tiled stone",
+      "effect": "The tiles burst into caltrops: PB piercing damage per 5 ft moved, unless moving at half speed.",
+      "counterplay": "Jump the section, teleport, or blast the tiles with an area effect first."
+    },
+    {
+      "id": "crushing-columns",
+      "floor": 2,
+      "name": "Crushing Columns",
+      "trigger": "Initiative count 0 each round",
+      "effect": "Two rows of pillars slam together across a 10 ft lane. Str or Dex save or take PB d8 bludgeoning damage and be Restrained until the pillars reset.",
+      "counterplay": "Dust shows the lane a round early; Arcana or thieves' tools locks a pillar in place."
+    },
+    {
+      "id": "ricochet-monolith",
+      "floor": 2,
+      "name": "Ricochet Monolith",
+      "trigger": "Any ranged attack or spell within 15 ft of the crystal",
+      "effect": "The monolith absorbs it and fires a wild bolt at the nearest creature within 30 ft for PB d6 force damage.",
+      "counterplay": "Shatter the crystal (AC 14, 4 × PB HP) for a 10 ft burst on nearby enemies."
+    },
+    {
+      "id": "magnetic-floor",
+      "floor": 2,
+      "name": "Magnetic Floor",
+      "trigger": "Wearing metal armor or wielding metal weapons in the zone",
+      "effect": "Speed is halved, and at the end of the turn you're pulled 10 ft toward the center lodestone.",
+      "counterplay": "Disarm the lodestone runes (Arcana or thieves' tools) to reverse polarity and hurl enemies away."
+    },
+    {
+      "id": "gate-shear",
+      "floor": 3,
+      "name": "Gate Shear",
+      "trigger": "Any creature in the room becomes Bloodied",
+      "effect": "The floor splits along a 5 ft chasm of raw stride energy. Creatures on the line make a Dex save or take PB d8 force damage and fall into the trench.",
+      "counterplay": "Knock down a column to bridge the chasm and splash energy onto adjacent enemies."
+    },
+    {
+      "id": "stride-vent",
+      "floor": 3,
+      "name": "Stride Vent",
+      "trigger": "Casting a leveled spell or using a bonus action within 20 ft",
+      "effect": "A vent erupts under the caster at the end of their turn: Dex save or take PB d8 force damage and be Blinded by the flash until the end of their next turn.",
+      "counterplay": "Bait the vent and step away, leaving a charged pool for enemies."
+    },
+    {
+      "id": "gravity-inversion-tile",
+      "floor": 3,
+      "name": "Gravity Inversion Tile",
+      "trigger": "Stepping onto an inverted rune tile",
+      "effect": "Str save or fall upward 30 ft to the ceiling, taking falling damage and staying stuck there until you crawl off the tile's column.",
+      "counterplay": "Push enemies onto the tile to take melee threats off the floor."
+    },
+    {
+      "id": "unseen-aperture",
+      "floor": 4,
+      "name": "Unseen Aperture",
+      "trigger": "Ending a turn in a corner no ally can see",
+      "effect": "Jaws bite from negative space: Wis save or take PB d8 psychic or force damage and be teleported to a random space in the room.",
+      "counterplay": "Keep sightlines on allies, or isolate an enemy in a corner to trigger it on them."
+    },
+    {
+      "id": "looping-corridor",
+      "floor": 4,
+      "name": "Looping Corridor",
+      "trigger": "Moving within 5 ft of the room's outer boundary",
+      "effect": "You wrap to the opposite wall with momentum intact and take PB d8 force damage unless you pass an Acrobatics or Arcana check.",
+      "counterplay": "Shove enemies through the boundary into the opposite wall's hazards."
+    },
+    {
+      "id": "memory-drain",
+      "floor": 4,
+      "name": "Memory Drain",
+      "trigger": "Starting a turn within 15 ft of a weeping statue",
+      "effect": "Int or Cha save or take PB d8 necrotic damage and lose one random Level 1 to 3 boon until the statue is destroyed.",
+      "counterplay": "Destroy the statue (AC 16, 6 × PB HP) for a shockwave that stuns nearby enemies."
+    }
+  ],
+  "frequency": [
+    {
+      "floor": 1,
+      "table": [
+        {
+          "upTo": 3,
+          "count": 0
+        },
+        {
+          "upTo": 6,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "floor": 2,
+      "table": [
+        {
+          "upTo": 4,
+          "count": 1
+        },
+        {
+          "upTo": 6,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "floor": 3,
+      "table": [
+        {
+          "upTo": 3,
+          "count": 1
+        },
+        {
+          "upTo": 6,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "floor": 4,
+      "table": [
+        {
+          "upTo": 4,
+          "count": 2
+        },
+        {
+          "upTo": 6,
+          "count": 3
+        }
+      ]
+    }
+  ],
+  "earlierFloorChanceOneIn": 3,
+  "eliteExtraTricks": 1,
+  "damageDie": {
+    "1": "d6",
+    "2": "d6",
+    "3": "d8",
+    "4": "d8"
+  }
+}

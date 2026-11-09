@@ -1,0 +1,63 @@
+{
+  "_source": "docs/design-bible.md: Room flavor and Oddities. Ships in the app by the DM's choice (Room generator defaults).",
+  "detailsPerRoom": 2,
+  "oddityChanceOneIn": 6,
+  "floors": [
+    {
+      "floor": 1,
+      "title": "the pilgrims' floor",
+      "details": [
+        "Wax drippings and pressed flowers fill the cracks between columns, offerings to Thils.",
+        "Faint hymns hum through the stone, though no one is singing.",
+        "Chalk arrows from past tourists point in contradictory directions.",
+        "The basalt is warm to the touch, like stone left in the sun.",
+        "A brass tourist placard reads “Floor One: Mind the Shift,” half swallowed by fresh stone.",
+        "Hex tiles click softly underfoot, settling after every step."
+      ]
+    },
+    {
+      "floor": 2,
+      "title": "the expedition floor",
+      "details": [
+        "A dented Archive survey beacon blinks a dead expedition's code.",
+        "A Pale Lodge contract tag is nailed to a column, its ink faded past reading.",
+        "A flickering strider replays a single step, over and over, then vanishes.",
+        "Abandoned gear lies scattered: a cracked lantern, a bedroll, one boot.",
+        "Voices argue around corners that aren't there about which way to go.",
+        "Scratched tallies on a wall count days, then stop."
+      ]
+    },
+    {
+      "floor": 3,
+      "title": "the gate floor",
+      "details": [
+        "Gold-veined transit runes pulse along the floor slowly, like breathing.",
+        "The air hums at a pitch that makes teeth ache.",
+        "Shards of gate-glass hang in midair, turning slowly.",
+        "Thin veins of Quantum Basalt glint in the columns, too deep to pry loose.",
+        "Some columns are riveted struts engraved with stridegate schematics.",
+        "Static lifts hair and makes metal gear tick and spark."
+      ]
+    },
+    {
+      "floor": 4,
+      "title": "the inverted floor",
+      "details": [
+        "Golden light falls from below, casting shadows upward.",
+        "Flowers bloom from the cracks, their petals folding shut in the light.",
+        "Birdsong plays backward and ends in silence.",
+        "The air smells of rain and honey, then for one breath, of ash.",
+        "Grass grows on the ceiling, and dew falls upward.",
+        "A painted meadow peels off a column from the inside out."
+      ]
+    }
+  ],
+  "oddities": [
+    "An item one of the players lost long ago, outside the dungeon, sits on a column top. Thils collects lost things.",
+    "An echo of a party member from a previous run walks past, mid-fight with something unseen.",
+    "A locked door with no keyhole stands alone in the middle of the room.",
+    "A column hums the name of a pilgrim who visited long ago.",
+    "The room is an exact copy of one from a previous run, down to the scuff marks.",
+    "A local's prayer to Thils is carved fresh into the floor, still dusty."
+  ]
+}
