@@ -1,16 +1,20 @@
 // Loading and saving runs in Firestore.
 //   runs/{runId}                  the run
 //   runs/{runId}/players/{charId} each player's run state
+//   runs/{runId}/choices/{charId} a player's pending draft choice
 //   runHistory/{runId}            summary written when a run ends
 import { useEffect, useState } from 'react'
 import {
   collection,
+  deleteDoc,
   doc,
   increment,
   limit,
   onSnapshot,
   query,
   serverTimestamp,
+  setDoc,
+  updateDoc,
   where,
   writeBatch,
 } from 'firebase/firestore'
@@ -18,6 +22,7 @@ import { db } from './firebase'
 import type { Character } from './model/character'
 import type { Run, RunPlayer, RunResult, RunState } from './model/run'
 import { runResults } from './rules/runFlow'
+import { applyChoice, draftKey, isHiddenChoice, type DraftChoice } from './rules/draftChoice'
 
 /** Live view of the run currently in progress, if any. */
 export function useActiveRun(): { state: RunState | null; loading: boolean; error: string | null } {
@@ -89,9 +94,16 @@ export async function saveRunState(
   if (!db) throw new Error('Firebase is not set up.')
   const batch = writeBatch(db)
   const { id, ...runData } = next.run
-  batch.set(doc(db, 'runs', id), { ...runData, updatedAt: serverTimestamp() }, { merge: true })
+  // Only write what changed, so a save never overwrites a player's choice
+  // that another device applied a moment earlier.
+  if (!previous || !same(previous.run, next.run)) {
+    batch.set(doc(db, 'runs', id), { ...runData, updatedAt: serverTimestamp() }, { merge: true })
+  }
   for (const player of next.players) {
-    batch.set(doc(db, 'runs', id, 'players', player.characterId), player)
+    const before = previous?.players.find((p) => p.characterId === player.characterId)
+    if (!before || !same(before, player)) {
+      batch.set(doc(db, 'runs', id, 'players', player.characterId), player)
+    }
   }
 
   const justEnded = next.run.status !== 'active' && (previous === null || previous.run.status === 'active')
@@ -124,6 +136,95 @@ export async function saveRunState(
 
   await batch.commit()
   return results
+}
+
+const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b)
+
+// ---------------------------------------------------------------------------
+// Player draft choices: runs/{runId}/choices/{characterId}
+// A player's device writes only this small note; the DM's app applies it with
+// the draft rules and then deletes it (or marks it with an error).
+
+export interface ChoiceDoc {
+  action: DraftChoice['action']
+  index?: number
+  replaceSlot?: number | null
+  hiddenBoonId?: string
+  /** The offer this choice was made against (null for hidden-offer choices). */
+  draftKey: string | null
+  /** Set by the DM's app when the choice couldn't be applied. */
+  error?: string
+}
+
+/** A player sends their draft choice. */
+export async function submitChoice(runId: string, characterId: string, choice: DraftChoice, key: string | null) {
+  if (!db) throw new Error('Firebase is not set up.')
+  const data: Record<string, unknown> = { action: choice.action, draftKey: key, createdAt: serverTimestamp() }
+  if (choice.action === 'take') {
+    data.index = choice.index
+    data.replaceSlot = choice.replaceSlot ?? null
+  }
+  if (choice.action === 'hidden') data.hiddenBoonId = choice.hiddenBoonId
+  await setDoc(doc(db, 'runs', runId, 'choices', characterId), data)
+}
+
+/** A player takes back a choice that hasn't been applied yet. */
+export async function cancelChoice(runId: string, characterId: string) {
+  if (!db) throw new Error('Firebase is not set up.')
+  await deleteDoc(doc(db, 'runs', runId, 'choices', characterId))
+}
+
+/** Live map of characterId -> pending choice for a run. */
+export function useChoices(runId: string | null): Record<string, ChoiceDoc> {
+  const [loaded, setLoaded] = useState<{ runId: string; choices: Record<string, ChoiceDoc> } | null>(null)
+  useEffect(() => {
+    if (!db || !runId) return
+    return onSnapshot(collection(db, 'runs', runId, 'choices'), (snapshot) => {
+      const choices: Record<string, ChoiceDoc> = {}
+      for (const d of snapshot.docs) choices[d.id] = d.data() as ChoiceDoc
+      setLoaded({ runId, choices })
+    })
+  }, [runId])
+  return loaded && loaded.runId === runId ? loaded.choices : {}
+}
+
+function choiceFromDoc(c: ChoiceDoc): DraftChoice {
+  switch (c.action) {
+    case 'take':
+      return { action: 'take', index: c.index ?? -1, replaceSlot: c.replaceSlot ?? null }
+    case 'hidden':
+      return { action: 'hidden', hiddenBoonId: c.hiddenBoonId ?? '' }
+    default:
+      return { action: c.action }
+  }
+}
+
+/**
+ * DM's app: apply one player's pending choice. Saves the changed player and
+ * deletes the choice together; if the choice is stale or not allowed, marks
+ * it with an error the player can see instead.
+ */
+export async function applyChoiceDoc(state: RunState, characterId: string, choice: ChoiceDoc): Promise<void> {
+  if (!db) throw new Error('Firebase is not set up.')
+  const choiceRef = doc(db, 'runs', state.run.id, 'choices', characterId)
+  const player = state.players.find((p) => p.characterId === characterId)
+  const parsed = choiceFromDoc(choice)
+  let next: RunState
+  try {
+    if (!player) throw new Error('That character isn\'t in this run.')
+    if (!isHiddenChoice(parsed) && choice.draftKey !== draftKey(player)) {
+      throw new Error('Your offer changed before your choice arrived. Please choose again.')
+    }
+    next = applyChoice(state, characterId, parsed, Math.random)
+  } catch (err) {
+    await updateDoc(choiceRef, { error: (err as Error).message })
+    return
+  }
+  const batch = writeBatch(db)
+  const updated = next.players.find((p) => p.characterId === characterId)!
+  batch.set(doc(db, 'runs', state.run.id, 'players', characterId), updated)
+  batch.delete(choiceRef)
+  await batch.commit()
 }
 
 /** Throw away a run without applying any results (for mistakes and test runs). */

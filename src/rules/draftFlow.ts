@@ -36,7 +36,8 @@ function buildOffer(state: RunState, p: RunPlayer, elite: boolean, random: Rando
  * Call this on the state returned by clearRoom / defeatBoss.
  */
 export function openDrafts(state: RunState, kind: RoomKind, random: Random): RunState {
-  if (kind === 'reprieve') return state
+  // No draft after a Reprieve, or once the run has ended (a full clear).
+  if (kind === 'reprieve' || state.run.status !== 'active') return state
   const last = state.run.log.at(-1)
   const elite = kind === 'elite'
   return {
