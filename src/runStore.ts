@@ -209,6 +209,11 @@ export async function applyChoiceDoc(state: RunState, characterId: string, choic
   const choiceRef = doc(db, 'runs', state.run.id, 'choices', characterId)
   const player = state.players.find((p) => p.characterId === characterId)
   const parsed = choiceFromDoc(choice)
+  // Nothing left to choose (e.g. the DM already picked for them): just clear it.
+  if (player && !player.draft && !player.hiddenOffer) {
+    await deleteDoc(choiceRef)
+    return
+  }
   let next: RunState
   try {
     if (!player) throw new Error('That character isn\'t in this run.')
@@ -233,6 +238,7 @@ export async function cancelRun(state: RunState): Promise<void> {
   const batch = writeBatch(db)
   for (const player of state.players) {
     batch.delete(doc(db, 'runs', state.run.id, 'players', player.characterId))
+    batch.delete(doc(db, 'runs', state.run.id, 'choices', player.characterId))
   }
   batch.delete(doc(db, 'runs', state.run.id))
   await batch.commit()

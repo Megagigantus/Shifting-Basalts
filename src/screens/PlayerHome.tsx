@@ -38,7 +38,7 @@ export function PlayerHome({ email, readOnly = false }: Props) {
 
   return (
     <>
-      {myRun && <PlayerRun state={myRun} myCharacterIds={myIds} />}
+      {myRun && <PlayerRun state={myRun} myCharacterIds={myIds} readOnly={readOnly} />}
 
       <section className="panel">
         <h2>{mine.length === 1 ? 'Your character' : 'Your characters'}</h2>

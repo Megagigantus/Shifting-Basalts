@@ -1,9 +1,10 @@
 // DM screen: the run in progress. Every button runs one step from
-// rules/runFlow.ts, then saves the new state.
-import { Fragment, useState } from 'react'
+// rules/runFlow.ts or rules/draftFlow.ts, then saves the new state. While
+// open, it also applies players' draft choices sent from their devices.
+import { Fragment, useEffect, useRef, useState } from 'react'
 import type { Character } from '../model/character'
-import type { RunResult, RunState } from '../model/run'
-import { floorInfo, LAST_FLOOR, PRESSURES } from '../rules/run'
+import type { RoomKind, RunResult, RunState } from '../model/run'
+import { floorInfo, LAST_FLOOR, PRESSURES, passQuantumBasalts } from '../rules/run'
 import {
   canExtract,
   clearRoom,
@@ -13,11 +14,15 @@ import {
   isBossRoom,
   lootKeptIfExtracting,
   markDead,
-  pass,
+  waitingOn,
 } from '../rules/runFlow'
-import { cancelRun, saveRunState } from '../runStore'
+import { classTriggerMet, openDrafts, rerollsLeft, roomConditionMet } from '../rules/draftFlow'
+import { applyChoice } from '../rules/draftChoice'
+import { classHiddenBoon } from '../rules/draft'
+import { applyChoiceDoc, cancelRun, saveRunState, useChoices } from '../runStore'
 import { boonSummary } from '../rules/boons'
 import { PlayerBoons } from './PlayerBoons'
+import { DraftOffers } from './DraftOffers'
 
 const ROOM_LABELS = { combat: 'Combat', elite: 'Elite', reprieve: 'Reprieve', boss: 'Boss' }
 
@@ -29,12 +34,14 @@ interface Props {
 
 export function RunTracker({ state, characters, onEnded }: Props) {
   const [busy, setBusy] = useState(false)
-  // Which player's boon panel is open, if any.
-  const [boonsFor, setBoonsFor] = useState<string | null>(null)
+  // Which player's boons or draft panel is open, if any.
+  const [open, setOpen] = useState<{ id: string; kind: 'boons' | 'draft' } | null>(null)
   const [error, setError] = useState<string | null>(null)
   const { run, players } = state
   const floor = floorInfo(run.floor)
   const bossRoom = isBossRoom(state)
+  const waiting = waitingOn(state)
+  const passValue = passQuantumBasalts(run.entryMultiplier)
 
   /** Run one step and save it. Steps throw if they aren't allowed right now. */
   async function act(step: (s: RunState) => RunState, confirmText?: string) {
@@ -58,6 +65,25 @@ export function RunTracker({ state, characters, onEnded }: Props) {
     }
   }
 
+  /** Clear a room (or beat the boss) and open everyone's draft. */
+  const clearAndDraft = (kind: RoomKind) =>
+    act((s) => openDrafts(kind === 'boss' ? defeatBoss(s) : clearRoom(s, kind), kind, Math.random))
+
+  // Apply players' choices as they arrive, one at a time.
+  const choices = useChoices(run.id)
+  const applying = useRef(false)
+  useEffect(() => {
+    if (applying.current) return
+    const next = Object.entries(choices).find(([, c]) => !c.error)
+    if (!next) return
+    applying.current = true
+    applyChoiceDoc(state, next[0], next[1])
+      .catch(() => setError('Could not apply a player\'s choice. Check your connection.'))
+      .finally(() => {
+        applying.current = false
+      })
+  }, [choices, state])
+
   async function cancel() {
     const sure = window.confirm(
       'Cancel this run? It will be deleted and nobody gets any rewards, Devotions or lockouts from it.',
@@ -71,6 +97,9 @@ export function RunTracker({ state, characters, onEnded }: Props) {
       setBusy(false)
     }
   }
+
+  const toggle = (id: string, kind: 'boons' | 'draft') =>
+    setOpen(open?.id === id && open.kind === kind ? null : { id, kind })
 
   const where = run.awaitingChoice
     ? `Floor ${run.floor} boss defeated`
@@ -97,7 +126,7 @@ export function RunTracker({ state, characters, onEnded }: Props) {
             </div>
           )}
         </div>
-        <div className="join-code" title="Players will use this code to join (Phase 2)">
+        <div className="join-code" title="Players find this run automatically when they sign in">
           <span className="hint">Join code</span>
           <strong>{run.joinCode}</strong>
         </div>
@@ -107,11 +136,15 @@ export function RunTracker({ state, characters, onEnded }: Props) {
         Loot kept if the party extracts now: {canExtract(state) ? `${lootKeptIfExtracting(state)}%` : 'extraction opens after a boss'}
       </p>
 
+      {waiting.length > 0 && (
+        <p className="waiting-banner">Waiting on draft picks from {waiting.join(', ')}.</p>
+      )}
+
       <div className="run-actions">
         {run.awaitingChoice ? (
           <>
             {run.floor < LAST_FLOOR && (
-              <button type="button" disabled={busy} onClick={() => act(descend)}>
+              <button type="button" disabled={busy || waiting.length > 0} onClick={() => act(descend)}>
                 Descend to floor {run.floor + 1}
               </button>
             )}
@@ -126,22 +159,35 @@ export function RunTracker({ state, characters, onEnded }: Props) {
             </button>
           </>
         ) : bossRoom ? (
-          <button type="button" disabled={busy} onClick={() => act(defeatBoss)}>
+          <button type="button" disabled={busy || waiting.length > 0} onClick={() => clearAndDraft('boss')}>
             Boss defeated
           </button>
         ) : (
           <>
-            <button type="button" disabled={busy} onClick={() => act((s) => clearRoom(s, 'combat'))}>
+            <button type="button" disabled={busy || waiting.length > 0} onClick={() => clearAndDraft('combat')}>
               Combat room cleared
             </button>
-            <button type="button" disabled={busy} onClick={() => act((s) => clearRoom(s, 'elite'))}>
+            <button type="button" disabled={busy || waiting.length > 0} onClick={() => clearAndDraft('elite')}>
               Elite room cleared
             </button>
-            <button type="button" disabled={busy} onClick={() => act((s) => clearRoom(s, 'reprieve'))}>
+            <button type="button" disabled={busy || waiting.length > 0} onClick={() => clearAndDraft('reprieve')}>
               Reprieve room
             </button>
           </>
         )}
+        <button
+          type="button"
+          className="quiet"
+          disabled={busy}
+          onClick={() =>
+            act(
+              (s) => roomConditionMet(s, Math.random),
+              'Mark this room\'s secret condition as met? Every living player gets a hidden offer of 2 gifts.',
+            )
+          }
+        >
+          Room condition met
+        </button>
       </div>
 
       <table className="party-table">
@@ -155,67 +201,96 @@ export function RunTracker({ state, characters, onEnded }: Props) {
           </tr>
         </thead>
         <tbody>
-          {players.map((p) => (
-            <Fragment key={p.characterId}>
-            <tr className={p.alive ? '' : 'fallen'}>
-              <td>
-                {p.name}
-                {boonSummary(p.slots, p.hiddenBoonId) && (
-                  <div className="hint">{boonSummary(p.slots, p.hiddenBoonId)}</div>
+          {players.map((p) => {
+            const character = characters.find((c) => c.id === p.characterId)
+            const sent = choices[p.characterId]
+            const hasClassBoon = Boolean(p.draftProfile && classHiddenBoon(p.draftProfile.classId))
+            return (
+              <Fragment key={p.characterId}>
+                <tr className={p.alive ? '' : 'fallen'}>
+                  <td>
+                    {p.name}
+                    {p.alive && (p.draft || p.hiddenOffer) && (
+                      <span className="tag">{sent && !sent.error ? 'sent a choice' : 'choosing…'}</span>
+                    )}
+                    {boonSummary(p.slots, p.hiddenBoonId) && (
+                      <div className="hint">{boonSummary(p.slots, p.hiddenBoonId)}</div>
+                    )}
+                    {sent?.error && <div className="warning">Their last choice failed: {sent.error}</div>}
+                    {!p.alive && (
+                      <div className="warning">
+                        Fell on floor {p.diedOnFloor} · locked out {p.lockoutDays} days (rolled{' '}
+                        {p.lockoutRolls?.join(' + ')}
+                        {(p.quickReturnDays ?? 0) > 0 && `, Quick Return −${p.quickReturnDays}, minimum 1`})
+                      </div>
+                    )}
+                  </td>
+                  <td>{p.devotions}</td>
+                  <td>{p.alive ? p.quantumBasaltsEarned : `${p.quantumBasaltsEarned} (forfeit)`}</td>
+                  <td>{p.quantumBasaltsPassed}</td>
+                  <td className="row-actions wrap">
+                    {p.alive && (
+                      <>
+                        {(p.draft || p.hiddenOffer) && (
+                          <button type="button" onClick={() => toggle(p.characterId, 'draft')}>
+                            {open?.id === p.characterId && open.kind === 'draft' ? 'Hide draft' : 'Draft'}
+                          </button>
+                        )}
+                        <button type="button" onClick={() => toggle(p.characterId, 'boons')}>
+                          {open?.id === p.characterId && open.kind === 'boons' ? 'Hide boons' : 'Boons'}
+                        </button>
+                        {hasClassBoon && (
+                          <button
+                            type="button"
+                            className="quiet"
+                            disabled={busy}
+                            onClick={() =>
+                              act(
+                                (s) => classTriggerMet(s, p.characterId),
+                                `Mark ${p.name}'s class trigger as met? They get their class hidden boon as an offer.`,
+                              )
+                            }
+                          >
+                            Class trigger
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          disabled={busy}
+                          onClick={() =>
+                            act(
+                              (s) => markDead(s, p.characterId),
+                              `Mark ${p.name} as dead? They're expelled, lose this run's boss Quantum Basalts and get locked out ${run.floor}d4 days.`,
+                            )
+                          }
+                        >
+                          Died
+                        </button>
+                      </>
+                    )}
+                  </td>
+                </tr>
+                {p.alive && open?.id === p.characterId && (
+                  <tr className="boons-row">
+                    <td colSpan={5}>
+                      {open.kind === 'boons' ? (
+                        <PlayerBoons player={p} character={character} busy={busy} act={act} />
+                      ) : (
+                        <DraftOffers
+                          player={p}
+                          who={p.name}
+                          passValue={passValue}
+                          rerollsLeft={rerollsLeft(p, run.floor)}
+                          busy={busy}
+                          onChoose={(choice) => act((s) => applyChoice(s, p.characterId, choice, Math.random))}
+                        />
+                      )}
+                    </td>
+                  </tr>
                 )}
-                {!p.alive && (
-                  <div className="warning">
-                    Fell on floor {p.diedOnFloor} · locked out {p.lockoutDays} days (rolled{' '}
-                    {p.lockoutRolls?.join(' + ')}
-                    {(p.quickReturnDays ?? 0) > 0 && `, Quick Return −${p.quickReturnDays}, minimum 1`})
-                  </div>
-                )}
-              </td>
-              <td>{p.devotions}</td>
-              <td>{p.alive ? p.quantumBasaltsEarned : `${p.quantumBasaltsEarned} (forfeit)`}</td>
-              <td>{p.quantumBasaltsPassed}</td>
-              <td className="row-actions">
-                {p.alive && (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => setBoonsFor(boonsFor === p.characterId ? null : p.characterId)}
-                    >
-                      {boonsFor === p.characterId ? 'Hide boons' : 'Boons'}
-                    </button>
-                    <button type="button" disabled={busy} onClick={() => act((s) => pass(s, p.characterId))}>
-                      Pass
-                    </button>
-                    <button
-                      type="button"
-                      disabled={busy}
-                      onClick={() =>
-                        act(
-                          (s) => markDead(s, p.characterId),
-                          `Mark ${p.name} as dead? They're expelled, lose this run's boss Quantum Basalts and get locked out ${run.floor}d4 days.`,
-                        )
-                      }
-                    >
-                      Died
-                    </button>
-                  </>
-                )}
-              </td>
-            </tr>
-            {p.alive && boonsFor === p.characterId && (
-              <tr className="boons-row">
-                <td colSpan={5}>
-                  <PlayerBoons
-                    player={p}
-                    character={characters.find((c) => c.id === p.characterId)}
-                    busy={busy}
-                    act={act}
-                  />
-                </td>
-              </tr>
-            )}
-            </Fragment>
-          ))}
+              </Fragment>
+            )
+          })}
         </tbody>
       </table>
 

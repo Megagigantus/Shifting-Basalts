@@ -6,9 +6,19 @@ import { boonSummary } from '../rules/boons'
 import { floorInfo, LAST_FLOOR, PRESSURES } from '../rules/run'
 import { canExtract, isBossRoom, lootKeptIfExtracting } from '../rules/runFlow'
 import { BoonList } from './BoonList'
+import { PlayerDraft } from './PlayerDraft'
+import { useChoices } from '../runStore'
 
-export function PlayerRun({ state, myCharacterIds }: { state: RunState; myCharacterIds: string[] }) {
+interface Props {
+  state: RunState
+  myCharacterIds: string[]
+  /** The DM's read-only preview. */
+  readOnly?: boolean
+}
+
+export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
   const { run, players } = state
+  const choices = useChoices(run.id)
   const [open, setOpen] = useState<string | null>(myCharacterIds[0] ?? null)
   const floor = floorInfo(run.floor)
   const bossRoom = isBossRoom(state)
@@ -37,6 +47,12 @@ export function PlayerRun({ state, myCharacterIds }: { state: RunState; myCharac
         Loot kept if the party extracts now:{' '}
         {canExtract(state) ? `${lootKeptIfExtracting(state)}%` : 'extraction opens after a boss'}
       </p>
+
+      {players
+        .filter((p) => myCharacterIds.includes(p.characterId))
+        .map((p) => (
+          <PlayerDraft key={p.characterId} state={state} player={p} sent={choices[p.characterId]} readOnly={readOnly} />
+        ))}
 
       <table className="party-table">
         <thead>
