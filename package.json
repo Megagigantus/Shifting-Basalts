@@ -9,6 +9,7 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "check-data": "node scripts/check-data.ts",
+    "sync-rules": "node scripts/sync-rules.ts",
     "test": "vitest run src",
     "test:rules": "firebase emulators:exec --only firestore --project demo-shifting-basalts \"vitest run tests\""
   },

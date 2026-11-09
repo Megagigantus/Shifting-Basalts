@@ -9,9 +9,7 @@ import {
   boon,
   BOONS,
   clearSlot,
-  combination,
   combine,
-  evolution,
   evolutionFor,
   evolve,
   fitSlots,
@@ -23,6 +21,7 @@ import {
   setSuppressed,
   slotCount,
   slotName,
+  slotRulesText,
   slotTags,
   takeBoon,
   type Slot,
@@ -52,15 +51,6 @@ function fitWarnings(boonId: string, character: Character | undefined): string[]
     warnings.push('Payoff boon, but this character has no rank in its stat track yet.')
   }
   return warnings
-}
-
-/** Rules text for a slot: every level reached for plain boons, the effect otherwise. */
-function slotText(slot: NonNullable<Slot>): string[] {
-  if (slot.kind === 'boon') {
-    return boon(slot.boonId).levels.slice(0, slot.level).map((text, i) => `Level ${i + 1}: ${text}`)
-  }
-  if (slot.kind === 'evolution') return [evolution(slot.evolutionId).effect]
-  return [combination(slot.combinationId).effect]
 }
 
 export function PlayerBoons({ player, character, busy, act }: Props) {
@@ -100,7 +90,7 @@ export function PlayerBoons({ player, character, busy, act }: Props) {
                 </div>
                 <details>
                   <summary className="hint">Rules text</summary>
-                  {slotText(slot).map((line) => (
+                  {slotRulesText(slot).map((line) => (
                     <p key={line} className="hint">
                       {line}
                     </p>

@@ -171,6 +171,15 @@ export function clearSlot(slots: Slot[], index: number): Slot[] {
   return replaceAt(slots, index, null)
 }
 
+/** Rules text for a slot: every level reached for plain boons, the effect otherwise. */
+export function slotRulesText(slot: SlotContent): string[] {
+  if (slot.kind === 'boon') {
+    return boon(slot.boonId).levels.slice(0, slot.level).map((text, i) => `Level ${i + 1}: ${text}`)
+  }
+  if (slot.kind === 'evolution') return [evolution(slot.evolutionId).effect]
+  return [combination(slot.combinationId).effect]
+}
+
 /** One-line summary of held boons, e.g. "Hardy 2 · Chain of Echoes · hidden: Keeper of Ways". */
 export function boonSummary(slots: Slot[] | undefined, hiddenBoonId?: string | null): string {
   const held = (slots ?? []).filter((s): s is SlotContent => s !== null)

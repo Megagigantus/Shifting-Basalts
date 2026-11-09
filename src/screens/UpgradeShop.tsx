@@ -10,7 +10,16 @@ const SCOPE_LABELS: Record<UpgradeScope, string> = {
   'party-highest': 'Whole party; highest rank applies',
 }
 
-export function UpgradeShop({ character, onClose }: { character: Character; onClose: () => void }) {
+interface Props {
+  character: Character
+  onClose: () => void
+  /** Players can't refund; the database rules refuse it anyway. */
+  canCorrect?: boolean
+  /** False for the DM's read-only "view as player" preview. */
+  canSpend?: boolean
+}
+
+export function UpgradeShop({ character, onClose, canCorrect = true, canSpend = true }: Props) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const banked = character.bankedQuantumBasalts
@@ -73,21 +82,23 @@ export function UpgradeShop({ character, onClose }: { character: Character; onCl
                 </td>
                 <td className="row-actions">
                   {cost !== null ? (
-                    <button type="button" disabled={busy || cost > banked} onClick={() => change(u.id, 'buy')}>
+                    <button type="button" disabled={!canSpend || busy || cost > banked} onClick={() => change(u.id, 'buy')}>
                       Buy ({cost})
                     </button>
                   ) : (
                     <span className="hint">Maxed</span>
                   )}
-                  <button
-                    type="button"
-                    className="quiet"
-                    disabled={busy || owned === 0}
-                    onClick={() => change(u.id, 'refund')}
-                    title="Correction: undo the last rank bought and return its cost"
-                  >
-                    Refund
-                  </button>
+                  {canCorrect && (
+                    <button
+                      type="button"
+                      className="quiet"
+                      disabled={busy || owned === 0}
+                      onClick={() => change(u.id, 'refund')}
+                      title="Correction: undo the last rank bought and return its cost"
+                    >
+                      Refund
+                    </button>
+                  )}
                 </td>
               </tr>
             )
@@ -95,7 +106,8 @@ export function UpgradeShop({ character, onClose }: { character: Character; onCl
         </tbody>
       </table>
       <p className="hint">
-        Upgrades bought during a run take effect from the next run. Refund is for correcting mistakes.
+        Upgrades bought during a run take effect from the next run.
+        {canCorrect ? ' Refund is for correcting mistakes.' : ' Purchases are permanent; ask your DM if you make a mistake.'}
       </p>
       {error && <p className="error">{error}</p>}
     </div>

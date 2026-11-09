@@ -43,10 +43,128 @@ service cloud.firestore {
       allow delete: if isDM() && inviteEmail != myEmail();
     }
 
-    // Saved characters. Players get write access in Phase 2.
+    // BEGIN GENERATED (npm run sync-rules). Do not edit by hand.
+    // Upgrade id -> price of each rank (from src/data/upgrades.json).
+    function upgradePrices() {
+      return {
+        'starting-boon': [15],
+        'forge': [30],
+        'healing-font': [30],
+        'extra-boon-slot': [40, 120],
+        'reroll': [10, 20, 35],
+        'extra-loot': [15, 30, 50],
+        'extra-pressures': [20, 40],
+        'reprieve': [20, 35, 55, 80],
+        'attunement': [15],
+        'banish': [10, 20, 30],
+        'hidden-sight': [20],
+        'deep-pockets': [25, 50, 80],
+        'quick-return': [10, 20, 30]
+      };
+    }
+
+    // Stat track ids (from src/data/stat-tracks.json).
+    function statTrackIds() {
+      return ['max-hp', 'spell-slot-recovery', 'opening-temp-hp', 'flat-damage', 'healing-received', 'speed', 'fortune-dice'];
+    }
+
+    // Most Devotions one track may hold at a character level (tier caps).
+    function devotionCap(level) {
+      return level < 5 ? 0 : level <= 10 ? 15 : level <= 16 ? 40 : level <= 20 ? 120 : 0;
+    }
+
+    // True if this update is a valid Devotion spend on one of the tracks.
+    function anyTrackSpend() {
+      return devotionSpendOn('max-hp')
+        || devotionSpendOn('spell-slot-recovery')
+        || devotionSpendOn('opening-temp-hp')
+        || devotionSpendOn('flat-damage')
+        || devotionSpendOn('healing-received')
+        || devotionSpendOn('speed')
+        || devotionSpendOn('fortune-dice');
+    }
+
+    // True if this update is a valid purchase of one of the upgrades.
+    function anyUpgradePurchase() {
+      return upgradePurchaseOf('starting-boon')
+        || upgradePurchaseOf('forge')
+        || upgradePurchaseOf('healing-font')
+        || upgradePurchaseOf('extra-boon-slot')
+        || upgradePurchaseOf('reroll')
+        || upgradePurchaseOf('extra-loot')
+        || upgradePurchaseOf('extra-pressures')
+        || upgradePurchaseOf('reprieve')
+        || upgradePurchaseOf('attunement')
+        || upgradePurchaseOf('banish')
+        || upgradePurchaseOf('hidden-sight')
+        || upgradePurchaseOf('deep-pockets')
+        || upgradePurchaseOf('quick-return');
+    }
+    // END GENERATED
+
+    // Fields changed by this update.
+    function changedFields() {
+      return request.resource.data.diff(resource.data).affectedKeys();
+    }
+
+    // The player who owns this character (by the email the DM assigned).
+    function ownsCharacter() {
+      return isInvited() && resource.data.get('playerEmail', '') == myEmail();
+    }
+
+    // A player invests banked Devotions in exactly one stat track: only
+    // upward, the bank drops by exactly that much, and the track stays within
+    // the tier cap for the character's level. Refunds are DM-only.
+    function isDevotionSpend() {
+      return changedFields().hasOnly(['trackDevotions', 'bankedDevotions', 'updatedAt'])
+        && changedFields().hasAll(['trackDevotions', 'bankedDevotions'])
+        && request.resource.data.updatedAt == request.time
+        && anyTrackSpend();
+    }
+
+    // The spend checks for one named track (anyTrackSpend tries each track id).
+    function devotionSpendOn(track) {
+      let before = resource.data.get('trackDevotions', {});
+      let after = request.resource.data.trackDevotions;
+      let added = after.get(track, 0) - before.get(track, 0);
+      return after.diff(before).affectedKeys().hasOnly([track])
+        && after[track] is int
+        && added > 0
+        && request.resource.data.bankedDevotions == resource.data.get('bankedDevotions', 0) - added
+        && request.resource.data.bankedDevotions >= 0
+        && after[track] <= devotionCap(resource.data.level);
+    }
+
+    // A player buys the next rank of exactly one upgrade, paying exactly its
+    // price from banked Quantum Basalts. Refunds are DM-only.
+    function isUpgradePurchase() {
+      return changedFields().hasOnly(['upgrades', 'bankedQuantumBasalts', 'updatedAt'])
+        && changedFields().hasAll(['upgrades', 'bankedQuantumBasalts'])
+        && request.resource.data.updatedAt == request.time
+        && anyUpgradePurchase();
+    }
+
+    // The purchase checks for one named upgrade (anyUpgradePurchase tries each id).
+    function upgradePurchaseOf(upgrade) {
+      let before = resource.data.get('upgrades', {});
+      let after = request.resource.data.upgrades;
+      let owned = before.get(upgrade, 0);
+      let prices = upgradePrices()[upgrade];
+      return after.diff(before).affectedKeys().hasOnly([upgrade])
+        && owned < prices.size()
+        && after.get(upgrade, 0) == owned + 1
+        && request.resource.data.bankedQuantumBasalts
+          == resource.data.get('bankedQuantumBasalts', 0) - prices[owned]
+        && request.resource.data.bankedQuantumBasalts >= 0;
+    }
+
+    // Saved characters. The DM can change anything; the owning player can
+    // only spend their own Devotions and Quantum Basalts, as checked above.
     match /characters/{characterId} {
       allow read: if isInvited();
-      allow write: if isDM();
+      allow create, delete: if isDM();
+      allow update: if isDM()
+        || (ownsCharacter() && (isDevotionSpend() || isUpgradePurchase()));
     }
 
     match /runs/{runId} {
