@@ -129,6 +129,27 @@ for (const h of hiddenBoons) {
   }
 }
 
+for (const b of boons) {
+  for (const r of b.requires ?? []) {
+    if (r !== 'spells' && r !== 'summon') fail(`boons.json "${b.id}": unknown requirement "${r}"`)
+  }
+}
+
+// class-tags.json: every class has a row, with real tags and no repeats.
+const classTags = JSON.parse(
+  readFileSync(new URL('../src/data/class-tags.json', import.meta.url), 'utf8').replace(/^﻿/, ''),
+) as { classes: { classId: string; primary: string[]; secondary: string[] }[] }
+for (const id of classIds) {
+  if (!classTags.classes.some((c) => c.classId === id)) fail(`class-tags.json: no row for class "${id}"`)
+}
+for (const row of classTags.classes) {
+  const where = `class-tags.json "${row.classId}"`
+  if (!classIds.includes(row.classId)) fail(`${where}: unknown class`)
+  const all = [...row.primary, ...row.secondary]
+  for (const t of all) if (!TAGS.includes(t)) fail(`${where}: unknown tag "${t}"`)
+  if (new Set(all).size !== all.length) fail(`${where}: a tag is listed twice`)
+}
+
 // firestore.rules carries a generated copy of upgrade prices and track caps.
 const rulesText = readFileSync(new URL('../firestore.rules', import.meta.url), 'utf8').replace(/\r\n/g, '\n')
 if (withGeneratedBlock(rulesText) !== rulesText) {

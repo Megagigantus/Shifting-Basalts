@@ -1,0 +1,24 @@
+{
+  "_source": "docs/design-bible.md, Build clarification 12. Primary tags weigh x3 in draft offers, secondary x2. Subclasses can shift this map later.",
+  "classes": [
+    { "classId": "barbarian", "primary": ["Blood", "Stance", "Reaper"], "secondary": ["Crit", "Hunt", "Guard"] },
+    { "classId": "bard", "primary": ["Rally", "Spell"], "secondary": ["Guard", "Shadow"] },
+    { "classId": "cleric", "primary": ["Guard", "Spell"], "secondary": ["Rally"] },
+    { "classId": "druid", "primary": ["Spell", "Bond"], "secondary": ["Guard"] },
+    { "classId": "fighter", "primary": ["Crit", "Stance", "Echo"], "secondary": ["Volley", "Hunt", "Flurry"] },
+    { "classId": "monk", "primary": ["Flurry", "Shadow"], "secondary": ["Echo", "Stance"] },
+    { "classId": "paladin", "primary": ["Guard", "Crit", "Rally"], "secondary": ["Blood", "Hunt"] },
+    { "classId": "ranger", "primary": ["Volley", "Hunt"], "secondary": ["Bond", "Shadow"] },
+    { "classId": "rogue", "primary": ["Shadow", "Crit"], "secondary": ["Reaper", "Flurry", "Volley"] },
+    { "classId": "sorcerer", "primary": ["Spell"], "secondary": ["Rally", "Crit"] },
+    { "classId": "warlock", "primary": ["Spell", "Flurry"], "secondary": ["Shadow"] },
+    { "classId": "wizard", "primary": ["Spell"], "secondary": ["Shadow", "Rally"] }
+  ],
+  "weights": {
+    "base": 1,
+    "primaryTag": 3,
+    "secondaryTag": 2,
+    "heldTag": 2
+  },
+  "maxPerTag": 2
+}
