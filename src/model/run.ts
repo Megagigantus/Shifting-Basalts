@@ -43,6 +43,8 @@ export interface Run {
   extraPressuresBonusPercent?: number
   /** Extra loot share kept from Deep Pockets (highest rank in the party). */
   deepPocketsPercent?: number
+  /** Forge uses left in this post-boss room (one per living owner); 0 once it cools. */
+  forgeUsesLeft?: number
   floor: number
   /** The room being played: 1..rooms on the floor, then rooms + 1 is the boss. */
   room: number
@@ -88,6 +90,8 @@ export interface RunPlayer {
   rerolls?: { floor: number; used: number }
   /** How many drafts this player has had this run (the first gets Attunement). */
   draftsSeen?: number
+  /** Owns the Forge upgrade (adds one Forge use after each boss). */
+  forgeOwner?: boolean
   diedOnFloor: number | null
   lockoutDays: number | null
   lockoutRolls: number[] | null

@@ -355,6 +355,8 @@ describe('player draft choices', () => {
     await assertSucceeds(setDoc(ref, choice()))
     await assertSucceeds(setDoc(ref, { action: 'pass', draftKey: '1-1-1-0', createdAt: now() }))
     await assertSucceeds(setDoc(ref, { action: 'hidden', hiddenBoonId: 'trapwise', draftKey: null, createdAt: now() }))
+    await assertSucceeds(setDoc(ref, { action: 'forge', forgeKind: 'level', slotIndex: 0, draftKey: null, createdAt: now() }))
+    await assertSucceeds(setDoc(ref, { action: 'forge', forgeKind: 'combine', combinationId: 'super-normal', draftKey: null, createdAt: now() }))
     await assertSucceeds(deleteDoc(ref))
   })
 

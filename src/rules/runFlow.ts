@@ -74,6 +74,7 @@ export function newRunState(id: string, joinCode: string, party: Character[], pr
       draft: null,
       hiddenOffer: null,
       draftsSeen: 0,
+      forgeOwner: (c.upgrades.forge ?? 0) > 0,
       diedOnFloor: null,
       lockoutDays: null,
       lockoutRolls: null,
@@ -144,6 +145,8 @@ export function defeatBoss(state: RunState): RunState {
     run: {
       ...run,
       lastBossFloor: run.floor,
+      // The post-boss room's Forge: one use per living owner (none after the final boss).
+      forgeUsesLeft: run.floor < LAST_FLOOR ? players.filter((p) => p.alive && p.forgeOwner).length : 0,
       awaitingChoice: true,
       log: [...run.log, { floor: run.floor, room: run.room, kind: 'boss' }],
     },
@@ -158,7 +161,7 @@ export function descend(state: RunState): RunState {
   requireNoDrafts(state)
   if (!state.run.awaitingChoice) throw new Error('You can only descend after a boss.')
   if (state.run.floor >= LAST_FLOOR) throw new Error('There is no deeper floor.')
-  return { ...state, run: { ...state.run, floor: state.run.floor + 1, room: 1, awaitingChoice: false } }
+  return { ...state, run: { ...state.run, floor: state.run.floor + 1, room: 1, awaitingChoice: false, forgeUsesLeft: 0 } }
 }
 
 export function extract(state: RunState): RunState {

@@ -7,6 +7,8 @@ import { rerollsLeft } from '../rules/draftFlow'
 import { passQuantumBasalts } from '../rules/run'
 import { cancelChoice, submitChoice, type ChoiceDoc } from '../runStore'
 import { DraftOffers } from './DraftOffers'
+import { ForgePanel } from './ForgePanel'
+import { forgeUsesLeft } from '../rules/forge'
 
 interface Props {
   state: RunState
@@ -22,6 +24,7 @@ const ACTION_LABELS: Record<ChoiceDoc['action'], string> = {
   reroll: 'a reroll',
   hidden: 'your hidden boon pick',
   passHidden: 'a pass on the hidden offer',
+  forge: 'your Forge use',
 }
 
 export function PlayerDraft({ state, player, sent, readOnly = false }: Props) {
@@ -52,7 +55,8 @@ export function PlayerDraft({ state, player, sent, readOnly = false }: Props) {
     }
   }
 
-  if (!player.alive || (!player.draft && !player.hiddenOffer)) return null
+  const forgeUses = forgeUsesLeft(state)
+  if (!player.alive || (!player.draft && !player.hiddenOffer && forgeUses < 1)) return null
 
   return (
     <div className="player-draft">
@@ -74,6 +78,13 @@ export function PlayerDraft({ state, player, sent, readOnly = false }: Props) {
         rerollsLeft={rerollsLeft(player, state.run.floor)}
         busy={readOnly || sending || waiting}
         onChoose={choose}
+      />
+      <ForgePanel
+        players={[player]}
+        usesLeft={forgeUses}
+        busy={readOnly || sending || waiting}
+        intro="The Forge is shared by the party, so agree on who uses it."
+        onUse={(_, forge) => choose({ action: 'forge', forge })}
       />
       {error && <p className="error">{error}</p>}
     </div>

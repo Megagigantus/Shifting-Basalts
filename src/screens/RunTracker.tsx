@@ -23,6 +23,8 @@ import { applyChoiceDoc, cancelRun, saveRunState, useChoices } from '../runStore
 import { boonSummary } from '../rules/boons'
 import { PlayerBoons } from './PlayerBoons'
 import { DraftOffers } from './DraftOffers'
+import { ForgePanel } from './ForgePanel'
+import { forgeUsesLeft, spendForge } from '../rules/forge'
 
 const ROOM_LABELS = { combat: 'Combat', elite: 'Elite', reprieve: 'Reprieve', boss: 'Boss' }
 
@@ -189,6 +191,13 @@ export function RunTracker({ state, characters, onEnded }: Props) {
           Room condition met
         </button>
       </div>
+
+      <ForgePanel
+        players={players}
+        usesLeft={forgeUsesLeft(state)}
+        busy={busy}
+        onUse={(characterId, action) => act((s) => spendForge(s, characterId, action))}
+      />
 
       <table className="party-table">
         <thead>

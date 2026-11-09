@@ -3,6 +3,7 @@
 import type { RunPlayer, RunState } from '../model/run'
 import type { Random } from './draft'
 import { chooseHidden, chooseOffer, passDraft, passHidden, rerollDraft } from './draftFlow'
+import { spendForge, type ForgeAction } from './forge'
 
 export type DraftChoice =
   | { action: 'take'; index: number; replaceSlot?: number | null }
@@ -10,6 +11,7 @@ export type DraftChoice =
   | { action: 'reroll' }
   | { action: 'hidden'; hiddenBoonId: string }
   | { action: 'passHidden' }
+  | { action: 'forge'; forge: ForgeAction }
 
 /**
  * Identifies the exact offer a choice was made against. If the offer changes
@@ -34,10 +36,12 @@ export function applyChoice(state: RunState, characterId: string, choice: DraftC
       return chooseHidden(state, characterId, choice.hiddenBoonId)
     case 'passHidden':
       return passHidden(state, characterId)
+    case 'forge':
+      return spendForge(state, characterId, choice.forge)
   }
 }
 
-/** Hidden-offer choices aren't tied to a particular draft. */
-export function isHiddenChoice(choice: DraftChoice): boolean {
-  return choice.action === 'hidden' || choice.action === 'passHidden'
+/** Choices that answer the current draft offer (others aren't tied to one). */
+export function isDraftChoice(choice: DraftChoice): boolean {
+  return choice.action === 'take' || choice.action === 'pass' || choice.action === 'reroll'
 }

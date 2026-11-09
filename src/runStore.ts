@@ -22,7 +22,7 @@ import { db } from './firebase'
 import type { Character } from './model/character'
 import type { Run, RunPlayer, RunResult, RunState } from './model/run'
 import { runResults } from './rules/runFlow'
-import { applyChoice, draftKey, isHiddenChoice, type DraftChoice } from './rules/draftChoice'
+import { applyChoice, draftKey, isDraftChoice, type DraftChoice } from './rules/draftChoice'
 
 /** Live view of the run currently in progress, if any. */
 export function useActiveRun(): { state: RunState | null; loading: boolean; error: string | null } {
@@ -158,6 +158,10 @@ export interface ChoiceDoc {
   index?: number
   replaceSlot?: number | null
   hiddenBoonId?: string
+  /** Forge uses: what to do, and to which slot or Combination. */
+  forgeKind?: 'level' | 'evolve' | 'combine'
+  slotIndex?: number
+  combinationId?: string
   /** The offer this choice was made against (null for hidden-offer choices). */
   draftKey: string | null
   /** Set by the DM's app when the choice couldn't be applied. */
@@ -173,6 +177,11 @@ export async function submitChoice(runId: string, characterId: string, choice: D
     data.replaceSlot = choice.replaceSlot ?? null
   }
   if (choice.action === 'hidden') data.hiddenBoonId = choice.hiddenBoonId
+  if (choice.action === 'forge') {
+    data.forgeKind = choice.forge.kind
+    if (choice.forge.kind === 'combine') data.combinationId = choice.forge.combinationId
+    else data.slotIndex = choice.forge.slotIndex
+  }
   await setDoc(doc(db, 'runs', runId, 'choices', characterId), data)
 }
 
@@ -202,6 +211,14 @@ function choiceFromDoc(c: ChoiceDoc): DraftChoice {
       return { action: 'take', index: c.index ?? -1, replaceSlot: c.replaceSlot ?? null }
     case 'hidden':
       return { action: 'hidden', hiddenBoonId: c.hiddenBoonId ?? '' }
+    case 'forge':
+      return {
+        action: 'forge',
+        forge:
+          c.forgeKind === 'combine'
+            ? { kind: 'combine', combinationId: c.combinationId ?? '' }
+            : { kind: c.forgeKind === 'evolve' ? 'evolve' : 'level', slotIndex: c.slotIndex ?? -1 },
+      }
     default:
       return { action: c.action }
   }
@@ -217,15 +234,17 @@ export async function applyChoiceDoc(state: RunState, characterId: string, choic
   const choiceRef = doc(db, 'runs', state.run.id, 'choices', characterId)
   const player = state.players.find((p) => p.characterId === characterId)
   const parsed = choiceFromDoc(choice)
-  // Nothing left to choose (e.g. the DM already picked for them): just clear it.
-  if (player && !player.draft && !player.hiddenOffer) {
+  // A draft or hidden-offer answer with nothing left to answer (e.g. the DM
+  // already picked for them): just clear it.
+  const answersOffer = parsed.action !== 'forge'
+  if (player && answersOffer && !player.draft && !player.hiddenOffer) {
     await deleteDoc(choiceRef)
     return
   }
   let next: RunState
   try {
     if (!player) throw new Error('That character isn\'t in this run.')
-    if (!isHiddenChoice(parsed) && choice.draftKey !== draftKey(player)) {
+    if (isDraftChoice(parsed) && choice.draftKey !== draftKey(player)) {
       throw new Error('Your offer changed before your choice arrived. Please choose again.')
     }
     next = applyChoice(state, characterId, parsed, Math.random)
@@ -236,6 +255,11 @@ export async function applyChoiceDoc(state: RunState, characterId: string, choic
   const batch = writeBatch(db)
   const updated = next.players.find((p) => p.characterId === characterId)!
   batch.set(doc(db, 'runs', state.run.id, 'players', characterId), updated)
+  // Forge uses also change the run (uses left).
+  if (!same(state.run, next.run)) {
+    const { id, ...runData } = next.run
+    batch.set(doc(db, 'runs', id), { ...runData, updatedAt: serverTimestamp() }, { merge: true })
+  }
   batch.delete(choiceRef)
   await batch.commit()
 }
