@@ -5,6 +5,7 @@
 //   runHistory/{runId}            summary written when a run ends
 import { useEffect, useState } from 'react'
 import {
+  arrayUnion,
   collection,
   deleteDoc,
   doc,
@@ -20,12 +21,17 @@ import {
 } from 'firebase/firestore'
 import { db } from './firebase'
 import type { Character } from './model/character'
-import type { Run, RunPlayer, RunResult, RunState } from './model/run'
+import type { DmRunState, Run, RunPlayer, RunResult, RunState } from './model/run'
+import { spendHiddenSight } from './rules/roomFlow'
 import { runResults } from './rules/runFlow'
 import { applyChoice, draftKey, isDraftChoice, type DraftChoice } from './rules/draftChoice'
 
-/** Live view of the run currently in progress, if any. */
-export function useActiveRun(): { state: RunState | null; loading: boolean; error: string | null } {
+/**
+ * Live view of the run currently in progress, if any. Only the DM's screen
+ * passes includeDm, which also loads the DM-only part (floor plan and full
+ * room); players' screens never ask for it, and the rules would refuse anyway.
+ */
+export function useActiveRun(includeDm = false): { state: RunState | null; loading: boolean; error: string | null } {
   const [run, setRun] = useState<Run | null>(null)
   // Players are tagged with the run they belong to, so a stale list from a
   // previous run is never shown against a new one.
@@ -62,6 +68,15 @@ export function useActiveRun(): { state: RunState | null; loading: boolean; erro
 
   const players = loaded && loaded.runId === runId ? loaded.players : null
 
+  const [dmLoaded, setDmLoaded] = useState<{ runId: string; dm: DmRunState | null } | null>(null)
+  useEffect(() => {
+    if (!db || !runId || !includeDm) return
+    return onSnapshot(doc(db, 'runs', runId, 'dmOnly', 'room'), (snap) =>
+      setDmLoaded({ runId, dm: snap.exists() ? (snap.data() as DmRunState) : null }),
+    )
+  }, [runId, includeDm])
+  const dm = dmLoaded && dmLoaded.runId === runId ? dmLoaded.dm : null
+
   const state =
     run && players
       ? {
@@ -70,6 +85,7 @@ export function useActiveRun(): { state: RunState | null; loading: boolean; erro
           players: run.characterIds
             .map((id) => players.find((p) => p.characterId === id))
             .filter((p): p is RunPlayer => Boolean(p)),
+          ...(dm ? { dm } : {}),
         }
       : null
   return { state, loading: loading || Boolean(run && !players), error }
@@ -98,6 +114,10 @@ export async function saveRunState(
   // that another device applied a moment earlier.
   if (!previous || !same(previous.run, next.run)) {
     batch.set(doc(db, 'runs', id), { ...runData, updatedAt: serverTimestamp() }, { merge: true })
+  }
+  // The DM-only part (floor plan and full room), when it changed.
+  if (next.dm && (!previous?.dm || !same(previous.dm, next.dm))) {
+    batch.set(doc(db, 'runs', id, 'dmOnly', 'room'), next.dm)
   }
   for (const player of next.players) {
     const before = previous?.players.find((p) => p.characterId === player.characterId)
@@ -236,6 +256,10 @@ export async function applyChoiceDoc(state: RunState, characterId: string, choic
   const parsed = choiceFromDoc(choice)
   // A draft or hidden-offer answer with nothing left to answer (e.g. the DM
   // already picked for them): just clear it.
+  if (parsed.action === 'hiddenSight') {
+    await applyHiddenSight(state, characterId, choiceRef)
+    return
+  }
   const answersOffer = parsed.action !== 'forge'
   if (player && answersOffer && !player.draft && !player.hiddenOffer) {
     await deleteDoc(choiceRef)
@@ -273,6 +297,60 @@ export async function cancelRun(state: RunState): Promise<void> {
     batch.delete(doc(db, 'runs', state.run.id, 'choices', player.characterId))
     batch.update(doc(db, 'characters', player.characterId), { activeRunId: null, updatedAt: serverTimestamp() })
   }
+  batch.delete(doc(db, 'runs', state.run.id, 'dmOnly', 'room'))
   batch.delete(doc(db, 'runs', state.run.id))
   await batch.commit()
+}
+
+// ---------------------------------------------------------------------------
+// Hidden Sight: runs/{runId}/private/{characterId} holds a player's hints,
+// readable only by that player and the DM.
+
+export interface PrivateHint {
+  floor: number
+  room: number
+  hint: string
+}
+
+/**
+ * Spend a player's Hidden Sight on the current room: mark it used and write
+ * the hint where only they (and the DM) can read it. `choiceRef`, if given,
+ * is the player's request, cleared on success or marked with the error.
+ */
+export async function applyHiddenSight(
+  state: RunState,
+  characterId: string,
+  choiceRef?: ReturnType<typeof doc>,
+): Promise<void> {
+  if (!db) throw new Error('Firebase is not set up.')
+  let result: ReturnType<typeof spendHiddenSight>
+  try {
+    result = spendHiddenSight(state, characterId)
+  } catch (err) {
+    if (choiceRef) await updateDoc(choiceRef, { error: (err as Error).message })
+    else throw err
+    return
+  }
+  const batch = writeBatch(db)
+  const updated = result.state.players.find((p) => p.characterId === characterId)!
+  batch.set(doc(db, 'runs', state.run.id, 'players', characterId), updated)
+  const hint: PrivateHint = { floor: state.run.floor, room: state.run.room, hint: result.hint }
+  batch.set(doc(db, 'runs', state.run.id, 'private', characterId), { hints: arrayUnion(hint) }, { merge: true })
+  if (choiceRef) batch.delete(choiceRef)
+  await batch.commit()
+}
+
+/** A player's own Hidden Sight hints for this run (players read only their own). */
+export function usePrivateHints(runId: string | null, characterId: string | null): PrivateHint[] {
+  const [loaded, setLoaded] = useState<{ key: string; hints: PrivateHint[] } | null>(null)
+  const key = `${runId}/${characterId}`
+  useEffect(() => {
+    if (!db || !runId || !characterId) return
+    return onSnapshot(
+      doc(db, 'runs', runId, 'private', characterId),
+      (snap) => setLoaded({ key: `${runId}/${characterId}`, hints: (snap.data()?.hints as PrivateHint[]) ?? [] }),
+      () => setLoaded({ key: `${runId}/${characterId}`, hints: [] }),
+    )
+  }, [runId, characterId])
+  return loaded && loaded.key === key ? loaded.hints : []
 }

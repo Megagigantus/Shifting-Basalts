@@ -427,3 +427,35 @@ describe('Banish list and Attunement tag', () => {
     await assertFails(updateDoc(doc(as(PLAYER), 'characters', OTHERS), { banished: [], updatedAt: now() }))
   })
 })
+
+describe('private Hidden Sight hints and the DM-only room', () => {
+  beforeEach(async () => {
+    await seedCharacters()
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      const db = ctx.firestore()
+      await setDoc(doc(db, 'runs', 'live'), { status: 'active', characterIds: [OWNED, OTHERS], roomView: { floor: 1 } })
+      await setDoc(doc(db, 'runs', 'live', 'private', OWNED), { hints: [{ floor: 1, room: 1, hint: 'Stand your ground.' }] })
+      await setDoc(doc(db, 'runs', 'live', 'private', OTHERS), { hints: [] })
+      await setDoc(doc(db, 'runs', 'live', 'dmOnly', 'room'), { floorPlan: ['combat'], room: { condition: 18 } })
+    })
+  })
+
+  it('a player can read their own hints, but not anyone else\'s, and can\'t write them', async () => {
+    await assertSucceeds(getDoc(doc(as(PLAYER), 'runs', 'live', 'private', OWNED)))
+    await assertFails(getDoc(doc(as(PLAYER), 'runs', 'live', 'private', OTHERS)))
+    await assertFails(setDoc(doc(as(PLAYER), 'runs', 'live', 'private', OWNED), { hints: [] }))
+  })
+
+  it('players read the room view but never the DM-only room; the DM reads both', async () => {
+    await assertSucceeds(getDoc(doc(as(PLAYER), 'runs', 'live')))
+    await assertFails(getDoc(doc(as(PLAYER), 'runs', 'live', 'dmOnly', 'room')))
+    await assertSucceeds(getDoc(doc(as(DM), 'runs', 'live', 'dmOnly', 'room')))
+    await assertSucceeds(getDoc(doc(as(DM), 'runs', 'live', 'private', OWNED)))
+  })
+
+  it('a player can ask to use Hidden Sight', async () => {
+    await assertSucceeds(
+      setDoc(doc(as(PLAYER), 'runs', 'live', 'choices', OWNED), { action: 'hiddenSight', draftKey: null, createdAt: now() }),
+    )
+  })
+})

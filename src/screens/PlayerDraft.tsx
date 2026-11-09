@@ -25,6 +25,7 @@ const ACTION_LABELS: Record<ChoiceDoc['action'], string> = {
   hidden: 'your hidden boon pick',
   passHidden: 'a pass on the hidden offer',
   forge: 'your Forge use',
+  hiddenSight: 'your Hidden Sight request',
 }
 
 export function PlayerDraft({ state, player, sent, readOnly = false }: Props) {
