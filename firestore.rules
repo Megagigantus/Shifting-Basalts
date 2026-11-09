@@ -107,6 +107,16 @@ service cloud.firestore {
       return request.resource.data.diff(resource.data).affectedKeys();
     }
 
+    // True if the signed-in player owns this character and it's in this active run.
+    function ownsRunCharacter(runId, characterId) {
+      let run = get(/databases/$(database)/documents/runs/$(runId)).data;
+      let character = get(/databases/$(database)/documents/characters/$(characterId)).data;
+      return isInvited()
+        && character.get('playerEmail', '') == myEmail()
+        && run.status == 'active'
+        && characterId in run.characterIds;
+    }
+
     // The player who owns this character (by the email the DM assigned).
     function ownsCharacter() {
       return isInvited() && resource.data.get('playerEmail', '') == myEmail();
@@ -175,6 +185,19 @@ service cloud.firestore {
       match /players/{characterId} {
         allow read: if isInvited();
         allow write: if isDM();
+      }
+
+      // A player's pending draft choice, which the DM's app applies with the
+      // draft rules. A player may only write their own character's choice,
+      // in an active run that character is in, with only the choice fields.
+      match /choices/{characterId} {
+        allow read: if isInvited();
+        allow write: if isDM();
+        allow create, update: if ownsRunCharacter(runId, characterId)
+          && request.resource.data.keys().hasOnly(['action', 'index', 'replaceSlot', 'hiddenBoonId', 'draftKey', 'createdAt'])
+          && request.resource.data.action in ['take', 'pass', 'reroll', 'hidden', 'passHidden']
+          && request.resource.data.createdAt == request.time;
+        allow delete: if ownsRunCharacter(runId, characterId);
       }
 
       // Hidden information: enemy stats, hidden condition, unsprung tricks.
