@@ -32,6 +32,10 @@ export interface DungeonLayer {
   lockoutDays: number
   /** Upgrade id -> rank owned. */
   upgrades: Record<string, number>
+  /** Banish list: boon ids that never appear in this character's offers (Build clarification 14). */
+  banished: string[]
+  /** Attunement: the tag the first offer of each run includes. */
+  attuneTag: string | null
 }
 
 export interface Character extends CharacterProfile, DungeonLayer {
@@ -73,6 +77,8 @@ export function emptyDungeonLayer(): DungeonLayer {
     deepestFloor: 0,
     lockoutDays: 0,
     upgrades: {},
+    banished: [],
+    attuneTag: null,
   }
 }
 
