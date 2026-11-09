@@ -11,6 +11,7 @@ import {
 } from '../rules/run'
 import { makeJoinCode, newRunState } from '../rules/runFlow'
 import { openStartingBoons } from '../rules/draftFlow'
+import { startFloor } from '../rules/roomFlow'
 import { deepPocketsPercent, extraPressuresBonusPercent } from '../rules/upgrades'
 import { newRunId, saveRunState } from '../runStore'
 
@@ -46,9 +47,8 @@ export function StartRun({ characters, onStarted, onCancel }: Props) {
     setStarting(true)
     try {
       const owners = party.filter((c) => (c.upgrades['starting-boon'] ?? 0) > 0).map((c) => c.id)
-      const state = openStartingBoons(
-        newRunState(newRunId(), makeJoinCode(), party, activePressures),
-        owners,
+      const state = startFloor(
+        openStartingBoons(newRunState(newRunId(), makeJoinCode(), party, activePressures), owners, Math.random),
         Math.random,
       )
       await saveRunState(state, null, characters)

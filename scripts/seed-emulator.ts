@@ -70,7 +70,7 @@ const characters: Record<string, { [key: string]: Value }> = {
     hasSummon: false,
     attackStyle: 'melee',
     ...dungeonLayer,
-    upgrades: { reroll: 1, 'starting-boon': 1, forge: 1, banish: 1, attunement: 1 },
+    upgrades: { reroll: 1, 'starting-boon': 1, forge: 1, banish: 1, attunement: 1, 'hidden-sight': 1, reprieve: 4 },
   },
   'test-wizard': {
     name: 'Test Wizard',

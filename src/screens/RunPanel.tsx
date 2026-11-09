@@ -8,7 +8,7 @@ import { RunTracker } from './RunTracker'
 import { StartRun } from './StartRun'
 
 export function RunPanel() {
-  const { state, loading, error } = useActiveRun()
+  const { state, loading, error } = useActiveRun(true)
   const { characters } = useCharacters()
   const [starting, setStarting] = useState(false)
   const [ended, setEnded] = useState<{ results: RunResult[]; state: RunState } | null>(null)
