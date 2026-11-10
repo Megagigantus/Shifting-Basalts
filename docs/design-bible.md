@@ -1384,7 +1384,7 @@ Everything rolled for a room is DM-only until revealed, and the DM gets a reveal
 - **Thils's Vault:** survivors only. The fallen were expelled before the party reached it.
 - **Relic weighting:** each relic carries the boon tags that fit its Build, and offers are weighted like boon offers: a class primary tag ×3, a secondary ×2, a tag the player holds ×2.
 - **Text that ships:** item names and effects ship as written, except the relics' Lost by column, which stays out. Pog's unfinished map's Woken effect reads "even the way out of a god's own labyrinth." Paradise Bleed reads "half the arena becomes a golden meadow," the Gravity Inversion Tile triggers on "a gravity rune tile," and Meadow in a jar is "a living patch of a sunlit meadow."
-- **Lore check (see below):** Thilsavrass and Sonder never appear in app data. Gatewright, paradise and inverted or inversion appear only inside an approved list of names players meet in play: the bosses, the Inverted Paradise family and its creatures, the Gravity Inversion Tile, Inverted overgrowth, Paradise Spores, Paradise Bleed, Inverted Gravity Beam, Paradise honey, Paradise seed, Inverted bloom and Gatewright's three keys.
+- **Lore check:** Thilsavrass and Sonder never appear in app data. Gatewright, paradise and inverted or inversion appear only inside an approved list of names players meet in play: the bosses, the Inverted Paradise family and its creatures, the Gravity Inversion Tile, Inverted overgrowth, Paradise Spores, Paradise Bleed, Inverted Gravity Beam, Paradise honey, Paradise seed, Inverted bloom and Gatewright's three keys.
 
 ### Phase 7 defaults *(proposed)*
 
