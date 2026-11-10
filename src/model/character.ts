@@ -1,5 +1,6 @@
 // A saved character: the lean profile from the design bible's
 // "App requirements > Characters" section, plus the permanent dungeon layer.
+import type { LootItem } from '../rules/loot'
 
 export type CasterType = 'none' | 'half' | 'full' | 'pact'
 export type AttackStyle = 'melee' | 'ranged' | 'spells'
@@ -43,7 +44,12 @@ export interface DungeonLayer {
   attuneTag: string | null
   /** Set while the character is in a run; Banish and Attunement lock until it clears. */
   activeRunId: string | null
+  /** Loot this character carried out of the Basalts, relics included (missing on older characters). */
+  loot?: OwnedLoot[]
 }
+
+/** An item a character took home from a run. */
+export type OwnedLoot = LootItem & { runId: string }
 
 export interface Character extends CharacterProfile, DungeonLayer {
   id: string
@@ -88,6 +94,7 @@ export function emptyDungeonLayer(): DungeonLayer {
     banished: [],
     attuneTag: null,
     activeRunId: null,
+    loot: [],
   }
 }
 

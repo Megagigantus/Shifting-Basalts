@@ -7,16 +7,16 @@ import type { RoomKind, RunResult, RunState } from '../model/run'
 import { floorInfo, LAST_FLOOR, PRESSURES, passQuantumBasalts } from '../rules/run'
 import {
   canExtract,
-  clearRoom,
-  defeatBoss,
   descend,
-  extract,
   isBossRoom,
   lootKeptIfExtracting,
   markDead,
   waitingOn,
 } from '../rules/runFlow'
-import { classTriggerMet, openDrafts, rerollsLeft } from '../rules/draftFlow'
+import { classTriggerMet, rerollsLeft } from '../rules/draftFlow'
+import { finishRoom } from '../rules/progress'
+import { DmLootPanel, ExtractPanel, VaultPanel } from './LootScreens'
+import { useLootRequests } from '../runStore'
 import { applyChoice } from '../rules/draftChoice'
 import { classHiddenBoon } from '../rules/draft'
 import { applyChoiceDoc, cancelRun, saveRunState, useChoices } from '../runStore'
@@ -25,7 +25,7 @@ import { PlayerBoons } from './PlayerBoons'
 import { DraftOffers } from './DraftOffers'
 import { ForgePanel } from './ForgePanel'
 import { DmRoom } from './DmRoom'
-import { enterRoom, startFloor } from '../rules/roomFlow'
+import { startFloor } from '../rules/roomFlow'
 import { forgeUsesLeft, spendForge } from '../rules/forge'
 
 const ROOM_LABELS = { combat: 'Combat', elite: 'Elite', reprieve: 'Reprieve', boss: 'Boss' }
@@ -41,7 +41,9 @@ export function RunTracker({ state, characters, onEnded }: Props) {
   // Which player's boons or draft panel is open, if any.
   const [open, setOpen] = useState<{ id: string; kind: 'boons' | 'draft' } | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [extracting, setExtracting] = useState(false)
   const { run, players } = state
+  const requests = useLootRequests(run.id)
   const floor = floorInfo(run.floor)
   const bossRoom = isBossRoom(state)
   const waiting = waitingOn(state)
@@ -69,11 +71,8 @@ export function RunTracker({ state, characters, onEnded }: Props) {
     }
   }
 
-  /** Clear a room (or beat the boss) and open everyone's draft. */
-  const clearAndDraft = (kind: RoomKind) =>
-    act((s) =>
-      enterRoom(openDrafts(kind === 'boss' ? defeatBoss(s) : clearRoom(s, kind), kind, Math.random), Math.random),
-    )
+  /** Clear a room (or beat the boss): its loot, then everyone's draft (or Thils's Vault after the legendary boss). */
+  const clearAndDraft = (kind: RoomKind) => act((s) => finishRoom(s, kind, Math.random))
   // The generated room's kind (elite, Reprieve...), when this run has rooms.
   const roomKind = state.dm?.room?.kind ?? null
 
@@ -160,14 +159,8 @@ export function RunTracker({ state, characters, onEnded }: Props) {
                 Descend to floor {run.floor + 1}
               </button>
             )}
-            <button
-              type="button"
-              disabled={busy}
-              onClick={() =>
-                act(extract, `Extract now? The party keeps ${lootKeptIfExtracting(state)}% of its loot and the run ends.`)
-              }
-            >
-              Extract (keep {lootKeptIfExtracting(state)}%)
+            <button type="button" disabled={busy || extracting} onClick={() => setExtracting(true)}>
+              {run.floor >= LAST_FLOOR ? 'Finish the full clear…' : `Extract (keep ${lootKeptIfExtracting(state)}%)…`}
             </button>
           </>
         ) : bossRoom ? (
@@ -197,7 +190,15 @@ export function RunTracker({ state, characters, onEnded }: Props) {
         )}
       </div>
 
+      {extracting && run.awaitingChoice && (
+        <ExtractPanel state={state} busy={busy} act={act} requests={requests} onClose={() => setExtracting(false)} />
+      )}
+
+      <VaultPanel state={state} busy={busy} act={act} />
+
       <DmRoom state={state} busy={busy} act={act} />
+
+      <DmLootPanel state={state} busy={busy} act={act} requests={requests} />
 
       <ForgePanel
         players={players}

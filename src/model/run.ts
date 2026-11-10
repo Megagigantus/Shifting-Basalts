@@ -5,6 +5,7 @@
 import type { Slot } from '../rules/boons'
 import type { DraftCharacter, Offer } from '../rules/draft'
 import type { Room, RoomView } from '../rules/rooms'
+import type { LootItem, LootShare, RunLoot } from '../rules/loot'
 
 /** A player's open draft. */
 export interface DraftOffer {
@@ -60,6 +61,12 @@ export interface Run {
   log: RoomLogEntry[]
   /** Set when the run ends. */
   lootKeptPercent: number | null
+  /** The party's shared run loot (items and credits). Lost on a wipe. */
+  loot?: RunLoot
+  /** What the party kept on extraction: items picked and assigned, plus the credits payout. */
+  lootShare?: LootShare | null
+  /** Thils's Vault is open (after the floor 5 boss, before the run ends). */
+  vaultOpen?: boolean
 }
 
 export interface RunPlayer {
@@ -105,6 +112,12 @@ export interface RunPlayer {
   hiddenSight?: boolean
   /** The floor Hidden Sight was last used on. */
   hiddenSightFloor?: number | null
+  /** Relics this character already owns (captured at run start; never offered again). */
+  relicsOwned?: string[]
+  /** Thils's Vault: the relics offered, until the player takes one. */
+  vaultOffer?: string[] | null
+  /** Thils's Vault: the relic taken. */
+  vaultRelic?: string | null
   diedOnFloor: number | null
   lockoutDays: number | null
   lockoutRolls: number[] | null
@@ -136,4 +149,6 @@ export interface RunResult {
   devotions: number
   deepestFloor: number
   lockoutDays: number | null
+  /** Items assigned to this character at extraction, plus a Vault relic on a full clear. */
+  loot: LootItem[]
 }

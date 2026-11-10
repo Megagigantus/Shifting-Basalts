@@ -1,0 +1,120 @@
+{
+  "_source": "docs/design-bible.md: Trinkets, Consumables, Gear, Wondrous items, Boss trophies, Loot defaults. Names and effects as written; Meadow in a jar reworded per Loot defaults.",
+  "status": "proposed",
+  "healingPotionGrades": { "common": "Potion of Healing", "uncommon": "Potion of Greater Healing", "rare": "Potion of Superior Healing", "very-rare": "Potion of Supreme Healing", "legendary": "Potion of Supreme Healing" },
+  "gearBonus": { "common": 0, "uncommon": 1, "rare": 2, "very-rare": 3, "legendary": 3 },
+  "gearSecondPropertyAt": "legendary",
+  "trinkets": [
+    "A stub of tourist chalk that only draws arrows. They always point back the way you came.",
+    "A brass placard fragment reading \"...ind the Shift.\"",
+    "A Pale Lodge contract tag, faded past reading, except under moonlight, where one name shows clearly.",
+    "A pressed flower from a pilgrim's offering. It smells like whoever you miss most.",
+    "A dented Archive survey beacon blinking a dead expedition's code. Caretaker-9 can look it up.",
+    "One boot. Its pair turns up in a later run, always one floor deeper.",
+    "A hex tile that clicks softly whenever it's set down, settling.",
+    "A shrine candle stub that relights itself once a day for 1 minute.",
+    "A tally stick notched to 41, then nothing.",
+    "A sliver of gate-glass. Held to the eye, it shows a sunlit meadow for one heartbeat.",
+    "A die blank on every face but one, which always lands facing down.",
+    "A key with no teeth. If the party ever finds the door with no keyhole, this opens it.",
+    "A Corky's coaster with a stranger's story scrawled on the back, unfinished.",
+    "A ball of red thread, knotted every 10 feet.",
+    "A pilgrim's hymn page. Humming it makes the nearest column hum back.",
+    "A punched stride ticket to a destination the Archive has no record of.",
+    "A jar of honey that tastes of rain.",
+    "A brass maze puzzle with no solution. Solving it anyway (DC 20 Intelligence) makes it an offering worth two rerolls.",
+    "A pilgrim's prayer card: \"Let what is lost be found by someone.\"",
+    "Something you lost years ago, outside the Basalts. Thils returns it, a little worn."
+  ],
+  "consumables": [
+    { "id": "healing-potion", "name": "Healing potion", "effect": "A Potion of Healing of the floor's grade: common Healing, uncommon Greater, rare Superior, very rare and up Supreme." },
+    { "id": "pilgrims-wax", "name": "Pilgrim's wax", "effect": "Light it as a Bonus Action. For 1 minute, you and allies within 10 ft have advantage on saves against traps and room tricks." },
+    { "id": "tourists-chalk", "name": "Tourist's chalk", "effect": "Draw an arrow on a wall. You learn which exit leads on, and the arrow keeps pointing there for 1 hour." },
+    { "id": "vial-of-upward-dew", "name": "Vial of upward dew", "effect": "Drink it: for 10 minutes you can walk on walls and ceilings, and you can choose to fall upward." },
+    { "id": "gate-glass-splinter", "name": "Gate-glass splinter", "effect": "Throw it at a creature within 30 ft: Charisma save or it's teleported up to 15 ft to a space you choose." },
+    { "id": "paradise-honey", "name": "Paradise honey", "effect": "Eat it as a Bonus Action: gain 5 × PB temp HP, and you can't be Frightened while they last." },
+    { "id": "echo-phial", "name": "Echo phial", "effect": "Uncork it as a Bonus Action: your next hit before the end of your next turn repeats as an echo for half its damage, as force." },
+    { "id": "snap-pillar-charge", "name": "Snap-pillar charge", "effect": "A disarmed room trick. As an action, arm it in an adjacent space; it triggers as a Snap-Pillar on the next enemy to step there." },
+    { "id": "lodge-contract-ink", "name": "Lodge contract ink", "effect": "Write a creature's name on any tag as a Bonus Action. For 1 minute, your attacks against it deal +PB damage." },
+    { "id": "capped-static-vent", "name": "Capped static vent", "effect": "Throw it up to 30 ft: creatures within 10 ft make a Constitution save or take PB d6 lightning damage and lose Reactions until their next turn." },
+    { "id": "thils-lucky-pip", "name": "Thils's lucky pip", "effect": "A single die face. Spend it to reroll one d20 test after you see the result." },
+    { "id": "stride-spark", "name": "Stride spark", "effect": "Crush it as a Bonus Action to teleport 30 ft, or crush it before a stride roll to add +PB to the roll." }
+  ],
+  "gear": [
+    { "id": "lodge-hunting-blade", "name": "Lodge hunting blade", "base": "Dagger, shortsword or scimitar", "property": "Your first hit against a creature that hasn't acted yet this combat deals +1d6 damage." },
+    { "id": "columnbreaker", "name": "Columnbreaker", "base": "Any hammer or maul", "property": "Double damage to objects and structures. Hitting a column or pillar can topple it onto a creature within 10 ft: Dexterity save or PB d6 bludgeoning damage and Prone." },
+    { "id": "ricochet-sling", "name": "Ricochet sling", "base": "Sling or any thrown weapon", "property": "Once per turn, when you miss, the shot bounces: attack another creature within 10 ft of the first." },
+    { "id": "cable-lash", "name": "Cable-lash", "base": "Whip", "property": "Reach 15 ft. As a Bonus Action, swing on it up to 15 ft to a column, cable or ledge you can see." },
+    { "id": "hymn-tuned-glaive", "name": "Hymn-tuned glaive", "base": "Any polearm", "property": "On a hit, the weapon hums: the next ally to attack that target before your next turn adds 1d4 to the roll." },
+    { "id": "gate-glass-edge", "name": "Gate-glass edge", "base": "Any blade", "property": "Deals force damage instead of its normal type when you choose. When drawn, its light shows a meadow." },
+    { "id": "wardstone-plate", "name": "Wardstone plate", "base": "Any heavy armor", "property": "When an effect would push, pull or knock you Prone, you can use your Reaction to stay put." },
+    { "id": "surveyors-coat", "name": "Surveyor's coat", "base": "Any light armor", "property": "Advantage on checks to spot traps, room tricks and false walls." },
+    { "id": "echo-stitched-leathers", "name": "Echo-stitched leathers", "base": "Light or medium armor", "property": "When an attack misses you, you can use your Reaction to move 5 ft without provoking Opportunity Attacks." },
+    { "id": "choir-shield", "name": "Choir shield", "base": "Shield", "property": "When you take the Dodge action, allies within 5 ft of you have half cover." },
+    { "id": "lodestone-shield", "name": "Lodestone shield", "base": "Shield", "property": "You ignore magnetic pulls like the Magnetic Floor. Once per day, as an action, pull a metal weapon from a creature within 10 ft (Strength save or it lands at your feet)." },
+    { "id": "meadowlight-breastplate", "name": "Meadowlight breastplate", "base": "Any medium armor", "property": "While Bloodied, you shed golden light in a 10 ft radius and have advantage on Death Saving Throws." }
+  ],
+  "wondrous": {
+    "common": [
+      { "id": "wayward-compass", "name": "Wayward compass", "effect": "Points to the last thing you lost." },
+      { "id": "pilgrims-bell", "name": "Pilgrim's bell", "effect": "Chimes softly when you come within 10 ft of an armed trap or room trick, without showing where." },
+      { "id": "ask-me-about-the-shift-pin", "name": "\"Ask Me About the Shift\" pin", "effect": "Locals of the Basalts treat the wearer as a fellow pilgrim." },
+      { "id": "self-humming-hymnal", "name": "Self-humming hymnal", "effect": "Quietly plays any hymn you've heard once, up to 1 hour a day." },
+      { "id": "meadow-locket", "name": "Meadow locket", "effect": "Opening it smells of rain and honey. Once per day, open it to end the Frightened condition on yourself." },
+      { "id": "echo-spool", "name": "Echo spool", "effect": "Records 6 seconds of sound and replays it on command." },
+      { "id": "hourglass-that-falls-up", "name": "Hourglass that falls up", "effect": "Its sand runs upward and keeps exact time on any plane. Caretaker-9 finds it deeply annoying." },
+      { "id": "lost-and-found-pouch", "name": "Lost-and-found pouch", "effect": "Anything that once sat in the pouch and is then lost reappears in it at the next dawn, once per item." }
+    ],
+    "uncommon": [
+      { "id": "gamewrights-dice", "name": "Gamewright's dice", "effect": "Twice per day, when a creature within 30 ft makes a d20 test, roll 1d6 and add it to or subtract it from the roll." },
+      { "id": "survey-beacon", "name": "Survey beacon", "effect": "Plant it as an action. Within 1 mile, you always know its direction. Once per day, it sends a 25-word message to your Stride Anchor with no delay." },
+      { "id": "gate-glass-monocle", "name": "Gate-glass monocle", "effect": "Once per day, as a Bonus Action, see invisible creatures and objects within 30 ft through it for 1 minute." },
+      { "id": "rune-pair-tiles", "name": "Rune-pair tiles", "effect": "Once per day, set both tiles down up to 60 ft apart. For 1 hour, a creature on one can spend 5 ft of movement to teleport to the other, once per round." },
+      { "id": "cloak-of-the-unregarded", "name": "Cloak of the unregarded", "effect": "You can Hide while only lightly obscured, as long as no creature is looking directly at you." },
+      { "id": "paradise-seed", "name": "Paradise seed", "effect": "Plant it and it grows overnight into a shrub with 1d4 + PB golden berries. Each restores 1 HP and feeds a creature for a day. The shrub leaves a new seed after 7 days." },
+      { "id": "collectors-loupe", "name": "Collector's loupe", "effect": "Touch a magic item through it to identify it, learn its value in credits, and learn the name of the last person who lost it." },
+      { "id": "ball-of-red-thread", "name": "Ball of red thread", "effect": "Tie it off at a doorway. While you hold the ball, you always know the way back, and once per day you can teleport to that doorway as an action if it's within 120 ft." }
+    ],
+    "rare": [
+      { "id": "wardstone-heart", "name": "Wardstone heart", "effect": "Once per day, as an action, it unfolds into a Column Sentinel (Gargoyle stat block) that obeys you for 1 hour." },
+      { "id": "contract-seal", "name": "Contract seal", "effect": "Once per day, as a Bonus Action, seal a contract on a creature you can see. For 1 minute, you score critical hits against it on a 19 or 20, and you know its location while it's within 1 mile." },
+      { "id": "anchoring-spike", "name": "Anchoring spike", "effect": "Once per day, drive it into the ground as an action. For 1 minute, creatures within 30 ft can't be teleported, pushed or pulled against their will." },
+      { "id": "folded-room", "name": "Folded room", "effect": "A hex tile that unfolds into a 20 ft hexagonal room with one door, for up to 8 hours a day (as Leomund's Tiny Hut, but solid). It won't unfold in the Basalts: Thils allows no rooms he didn't build." },
+      { "id": "echo-locket", "name": "Echo locket", "effect": "Once per day, when you drop to 0 HP, an echo takes your place: you drop to 1 HP instead and are Invisible until the start of your next turn." },
+      { "id": "pressed-bookmark", "name": "Pressed bookmark", "effect": "When you cast a healing spell, one target also ends the Charmed, Frightened or Poisoned condition." },
+      { "id": "dead-surveyors-log", "name": "Dead surveyor's log", "effect": "Once per day, ask it a yes-or-no question about the place you're in. The answer writes itself in a dead surveyor's hand." },
+      { "id": "doorwrights-calipers", "name": "Doorwright's calipers", "effect": "Once per day, measure a doorway you're touching and one you touched in the last 24 hours within 500 ft. For 1 minute, they're linked as a two-way portal." }
+    ],
+    "very-rare": [
+      { "id": "the-thousandth-key", "name": "The thousandth key", "effect": "Once per day, turn it in any door. For 1 minute, the door opens onto any door you've passed through on this plane." },
+      { "id": "pilgrim-saints-censer", "name": "Pilgrim-saint's censer", "effect": "Once per day, swing it as an action to fill a 30 ft radius with golden smoke for 1 minute. Allies starting a turn in it regain PB HP, and enemies starting a turn in it take PB necrotic damage." },
+      { "id": "collectors-satchel", "name": "Collector's satchel", "effect": "Works as a Bag of Holding. Once per day, reach in to find one consumable you used up since the last dawn." },
+      { "id": "duelists-echo-mask", "name": "Duelist's echo mask", "effect": "Once per day, as a Bonus Action, call a past strider's echo for 1 minute. It shares your AC and attack bonus, has 5 × PB HP, and makes one weapon attack whenever you take the Attack action." },
+      { "id": "gate-glass-eye", "name": "Gate-glass eye", "effect": "You have Truesight to 30 ft, and you always know the way out of any maze or labyrinth you're in, except Thils's own." },
+      { "id": "hourglass-of-the-shift", "name": "Hourglass of the Shift", "effect": "Once per day, as a Reaction at the start of another creature's turn, swap two creatures you can see within 60 ft (Charisma save for an unwilling creature)." }
+    ],
+    "legendary": [
+      { "id": "thils-cast-off-die", "name": "Thils's cast-off die", "effect": "A d20 the god lost in a game. Once per day, replace any d20 roll you can see with a 20 or a 1." },
+      { "id": "meadow-in-a-jar", "name": "Meadow in a jar", "effect": "A living patch of a sunlit meadow, sealed. Once per day, open it for 1 minute: allies within 30 ft regain 10 HP at the start of each turn, and the first time each would drop to 0 HP, they drop to 1 instead." },
+      { "id": "ring-of-many-exits", "name": "Ring of many exits", "effect": "Cast Dimension Door at will, as long as you leave from and arrive at a doorway, archway or other opening." },
+      { "id": "first-expeditions-stride-compass", "name": "First Expedition's stride compass", "effect": "When you stride, you can choose your stride roll's result instead of rolling. Once per day, it points to the nearest stride gate or tear on your plane." }
+    ]
+  },
+  "trophies": [
+    { "bossId": "tessellated-warden", "id": "wardens-cracked-lens", "name": "Warden's cracked lens", "rarity": "uncommon", "effect": "Once per day, as an action, hold it up: a creature within 30 ft that can see it makes a Wisdom save or is Charmed for 1 minute, walking toward a golden meadow only it can see. It repeats the save at the end of each of its turns." },
+    { "bossId": "choir-hollow-column", "id": "hollow-pipe", "name": "Hollow pipe", "rarity": "uncommon", "effect": "3 charges, regained at dawn. As an action, spend 1 to blast a 15 ft cone: Constitution save or PB d6 thunder damage and pushed 10 ft, half damage and no push on a success." },
+    { "bossId": "gilded-excavation-herd", "id": "gilded-tether", "name": "Gilded tether", "rarity": "uncommon", "effect": "Once per day, as a Bonus Action, tether a creature within 30 ft to a column or object (Dexterity save). For 1 minute, it can't move more than 15 ft from that point." },
+    { "bossId": "kaelen-and-vyr", "id": "twin-swap-bands", "name": "Twin-swap bands", "rarity": "rare", "effect": "A pair of bracers for two wearers. Once per round, as a Bonus Action, either wearer can swap places with the other within 60 ft." },
+    { "bossId": "halvard-quill", "id": "quills-longshot-scope", "name": "Quill's longshot scope", "rarity": "rare", "effect": "Fits any ranged weapon. Normal range doubles, and your hits deal +PB damage to the Bloodied creature with the lowest HP you can see." },
+    { "bossId": "lattice-spinner", "id": "spinners-spool", "name": "Spinner's spool", "rarity": "rare", "effect": "As a Bonus Action, string a glowing cable between two points within 60 ft (up to 2 at once, 1 minute each). Allies touching one can teleport 15 ft along it as part of their move, and enemies crossing it take PB d4 lightning damage." },
+    { "bossId": "stride-core", "id": "core-shard", "name": "Core shard", "rarity": "rare", "effect": "Once per day, as an action, open a 10 ft pool of raw stride energy within 60 ft for 1 minute. It's difficult terrain, and creatures ending a turn in it make a Strength save or are Restrained." },
+    { "bossId": "general-vane", "id": "tenth-stride-pauldron", "name": "Tenth Stride pauldron", "rarity": "rare", "effect": "Switch stance as a Bonus Action. Phalanx: ranged attacks that miss you rebound at the attacker. Stampede: +10 ft speed, and you can move through hostile creatures' spaces (Strength save or Prone)." },
+    { "bossId": "glass-hydra", "id": "hydra-prism", "name": "Hydra prism", "rarity": "rare", "effect": "When a ray, line or beam spell targets or includes you, use your Reaction to roll a d20. On 11 or higher, you're unaffected and it strikes another creature you choose within 30 ft." },
+    { "bossId": "blind-architect", "id": "seamless-veil", "name": "Seamless veil", "rarity": "very-rare", "effect": "Once per day, for 1 minute, creatures looking at you have disadvantage on attacks against you. A creature can avert its eyes to attack normally, but is Blinded to you until its next turn." },
+    { "bossId": "chorus-unseen-angles", "id": "three-black-angles", "name": "Three black angles", "rarity": "very-rare", "effect": "Three polyhedrons orbit you. Once per day, for 1 minute, you take half damage from any creature that moved closer to you this turn." },
+    { "bossId": "inverted-reliquary", "id": "reliquary-lock", "name": "Reliquary lock", "rarity": "very-rare", "effect": "2 charges, regained at dawn. Spend 1 to cast Dispel Magic at 6th level. A creature that loses an effect this way takes PB d8 necrotic damage." },
+    { "bossId": "ophaniel", "id": "inverted-bloom", "name": "Inverted bloom", "rarity": "legendary", "effect": "While you hold it, allies within 10 ft regain PB HP at the start of their turns. Once per day, as an action, release Paradise Spores in a 30 ft cone: Wisdom save or Charmed for 1 minute, spending each turn walking toward you." },
+    { "bossId": "sun-eaters-husk", "id": "sun-eaters-antler", "name": "Sun-eater's antler", "rarity": "legendary", "effect": "3 charges, regained at dawn. As a Bonus Action, spend 1 to devour a light source or one magical effect within 60 ft (as Dispel Magic at 9th level) and regain 5 × PB HP." },
+    { "bossId": "gatewright", "id": "gatewrights-three-keys", "name": "Gatewright's three keys", "rarity": "legendary", "effect": "Once per day, for 1 minute, open three portals within 60 ft. Your attacks and spells can come from any portal, and creatures can step from one portal to another." }
+  ]
+}

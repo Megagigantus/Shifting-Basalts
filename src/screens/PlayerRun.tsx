@@ -8,7 +8,8 @@ import { canExtract, isBossRoom, lootKeptIfExtracting } from '../rules/runFlow'
 import { BoonList } from './BoonList'
 import { PlayerDraft } from './PlayerDraft'
 import { PlayerRoom } from './PlayerRoom'
-import { useChoices } from '../runStore'
+import { useChoices, useLootRequests } from '../runStore'
+import { PlayerLoot } from './LootScreens'
 
 interface Props {
   state: RunState
@@ -20,6 +21,7 @@ interface Props {
 export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
   const { run, players } = state
   const choices = useChoices(run.id)
+  const requests = useLootRequests(run.id)
   const [open, setOpen] = useState<string | null>(myCharacterIds[0] ?? null)
   const floor = floorInfo(run.floor)
   const bossRoom = isBossRoom(state)
@@ -61,6 +63,8 @@ export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
         .map((p) => (
           <PlayerDraft key={p.characterId} state={state} player={p} sent={choices[p.characterId]} readOnly={readOnly} />
         ))}
+
+      <PlayerLoot state={state} myCharacterIds={myCharacterIds} requests={requests} readOnly={readOnly} />
 
       <table className="party-table">
         <thead>

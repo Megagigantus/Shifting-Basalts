@@ -11,6 +11,7 @@ import {
   descend,
   extract,
   isBossRoom,
+  isFullClear,
   makeJoinCode,
   markDead,
   newRunState,
@@ -104,10 +105,67 @@ describe('floor progress', () => {
     expect(state.run.floor).toBe(5)
     expect(isBossRoom(state)).toBe(true)
     state = defeatBoss(state)
+    // The run waits for Thils's Vault, then extracts with everything kept.
+    expect(state.run.status).toBe('active')
+    expect(isFullClear(state)).toBe(true)
+    expect(() => descend(state)).toThrow('no deeper floor')
+    state = extract(state)
     expect(state.run.status).toBe('extracted')
     expect(state.run.lootKeptPercent).toBe(100)
     expect(state.players[0].quantumBasaltsEarned).toBe(65)
     expect(state.players[0].devotions).toBe(21)
+  })
+})
+
+describe('finishing rooms with loot', () => {
+  it('rolls a room\'s loot before clearing it, and a boss cache before the boss is beaten', async () => {
+    const { finishRoom } = await import('./progress')
+    const { passDraft } = await import('./draftFlow')
+    let state = start()
+    state = finishRoom(state, 'combat', () => 0.01) // d100 = 2: credits on floor 1
+    expect(state.run.loot?.log).toEqual([{ floor: 1, room: 1, source: 'room', credits: 20 }])
+    expect(state.run.room).toBe(2)
+    for (const p of state.players) state = passDraft(state, p.characterId)
+    state = { ...state, run: { ...state.run, room: 5 } }
+    state = finishRoom(state, 'boss', () => 0.01)
+    expect(state.run.loot?.log.filter((l) => l.source === 'cache').every((l) => l.room === 5)).toBe(true)
+    expect(state.run.awaitingChoice).toBe(true)
+  })
+
+  it('opens Thils\'s Vault after the legendary boss, and extraction waits for it', async () => {
+    const { finishRoom } = await import('./progress')
+    const { chooseRelic } = await import('./vault')
+    let state = start()
+    for (let f = 1; f <= 4; f++) state = descend(clearFloor(state))
+    state = finishRoom(state, 'boss', Math.random)
+    expect(state.run.vaultOpen).toBe(true)
+    expect(() => extract(state)).toThrow('Vault')
+    for (const p of state.players) state = chooseRelic(state, p.characterId, p.vaultOffer![0])
+    state = extract(state)
+    const results = runResults(state)
+    expect(results[0].loot.at(-1)).toMatchObject({ kind: 'relic', relicState: 'dormant', source: 'vault' })
+  })
+
+  it('gives assigned items to their characters, fallen ones too, and nothing on a wipe', () => {
+    let state = clearFloor(start())
+    state = {
+      ...state,
+      run: {
+        ...state.run,
+        loot: {
+          items: [{ uid: 'L1', kind: 'trinket', ref: '0', rarity: null, floor: 1, room: 1, source: 'room' }],
+          credits: 1000,
+          nextUid: 2,
+          log: [],
+          searched: [],
+        },
+      },
+    }
+    const fallen = state.players[1].characterId
+    state = markDead(state, fallen, () => 1)
+    const ended = extract(state, [{ uid: 'L1', characterId: fallen }])
+    expect(ended.run.lootShare).toMatchObject({ keptValue: 252, itemsValue: 10, creditsPayout: 242 })
+    expect(runResults(ended).find((r) => r.characterId === fallen)?.loot.map((i) => i.uid)).toEqual(['L1'])
   })
 })
 

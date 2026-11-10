@@ -235,9 +235,23 @@ service cloud.firestore {
         allow read: if isInvited();
         allow write: if isDM();
         allow create, update: if ownsRunCharacter(runId, characterId)
-          && request.resource.data.keys().hasOnly(['action', 'index', 'replaceSlot', 'hiddenBoonId', 'forgeKind', 'slotIndex', 'combinationId', 'draftKey', 'createdAt'])
-          && request.resource.data.action in ['take', 'pass', 'reroll', 'hidden', 'passHidden', 'forge', 'hiddenSight']
+          && request.resource.data.keys().hasOnly(['action', 'index', 'replaceSlot', 'hiddenBoonId', 'forgeKind', 'slotIndex', 'combinationId', 'relicId', 'draftKey', 'createdAt'])
+          && request.resource.data.action in ['take', 'pass', 'reroll', 'hidden', 'passHidden', 'forge', 'hiddenSight', 'relic']
           && request.resource.data.createdAt == request.time;
+        allow delete: if ownsRunCharacter(runId, characterId);
+      }
+
+      // A player's wish list from the party's loot. Everyone in the app can see
+      // requests; only that character's player writes them, as a short list of
+      // item ids. The DM decides who gets what at extraction.
+      match /requests/{characterId} {
+        allow read: if isInvited();
+        allow write: if isDM();
+        allow create, update: if ownsRunCharacter(runId, characterId)
+          && request.resource.data.keys().hasOnly(['uids', 'updatedAt'])
+          && request.resource.data.uids is list
+          && request.resource.data.uids.size() <= 100
+          && request.resource.data.updatedAt == request.time;
         allow delete: if ownsRunCharacter(runId, characterId);
       }
 

@@ -1,0 +1,35 @@
+{
+  "_source": "docs/design-bible.md: Loot defaults (Lore check). Used only by scripts/check-data.ts; never shipped in the app.",
+  "bannedEverywhere": ["thilsavrass", "sonder", "lorebook"],
+  "bannedExceptNames": ["gatewright", "paradise", "invert"],
+  "approvedNames": [
+    "The Inverted Reliquary",
+    "Ophaniel of the Inverted Bloom",
+    "Inverted Gravity Beam",
+    "Paradise Spores",
+    "Paradise Bleed",
+    "The Gatewright",
+    "Inverted Paradise",
+    "Inverted Unicorn",
+    "Inverted Treant",
+    "Inverted overgrowth",
+    "Gravity Inversion Tile",
+    "Paradise honey",
+    "Paradise seed",
+    "Inverted bloom",
+    "Gatewright's three keys"
+  ],
+  "approvedIds": [
+    "inverted-reliquary",
+    "gatewright",
+    "inverted-paradise",
+    "inverted-unicorn",
+    "inverted-treant",
+    "inverted-overgrowth",
+    "gravity-inversion-tile",
+    "paradise-honey",
+    "paradise-seed",
+    "inverted-bloom",
+    "gatewrights-three-keys"
+  ]
+}

@@ -69,7 +69,7 @@
       "id": "gravity-inversion-tile",
       "floor": 3,
       "name": "Gravity Inversion Tile",
-      "trigger": "Stepping onto an inverted rune tile",
+      "trigger": "Stepping onto a gravity rune tile",
       "effect": "Str save or fall upward 30 ft to the ceiling, taking falling damage and staying stuck there until you crawl off the tile's column.",
       "counterplay": "Push enemies onto the tile to take melee threats off the floor."
     },

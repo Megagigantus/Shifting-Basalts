@@ -666,3 +666,26 @@ button.link {
   font-size: 1.15rem;
   margin: 0 0 0.4rem;
 }
+
+/* Phase 6: loot. */
+.loot-item {
+  margin-bottom: 0.45rem;
+}
+
+.loot-panel h3,
+.vault-panel h3,
+.extract-panel h3 {
+  margin: 0 0 0.4rem;
+}
+
+.extract-panel {
+  border-color: #c9a35a;
+}
+
+.vault-panel {
+  border-color: #8a7ad1;
+}
+
+.character-loot summary {
+  cursor: pointer;
+}

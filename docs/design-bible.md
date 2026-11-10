@@ -1369,6 +1369,23 @@ Everything rolled for a room is DM-only until revealed, and the DM gets a reveal
 - **Heavy Crown on floors 1 and 2:** a boss without listed Legendary Actions can use the extra one to make one of its attacks or move half its speed without provoking.
 - **Restless Stone:** each non-boss room rolls one of the three Shift Actions belonging to its floor's bosses, using the floor's boss save DC.
 
+### Loot defaults *(proposed)*
+
+- **Party reward bonus:** the party's Pressures plus 5% per Extra Pressures owner. It multiplies credits and loot Basalts the same way it multiplies boss Basalts, applied once and rounded up. Extra Loot stays personal: it raises only its owner's Basalts.
+- **Extra cache rolls:** every full 50% of the party reward bonus adds 1 floor roll to each boss cache.
+- **Credits:** the party's credits go into the pool at their bonus value, times the entry multiplier.
+- **Loot Basalts:** each player's roll amount times the entry multiplier is banked like boss Basalts, so the same bonuses apply at payout and they're forfeit on death.
+- **Item values:** magic items and gear by rarity (Value ladder), trinkets 10, and consumables half their rarity's value. A consumable takes the floor's rarity, like the healing potion's grade. Relics have no value: they can't be sold.
+- **Boss cache bonus item:** rolled on the wondrous table one rarity above the floor's, up to legendary.
+- **Floor 5:** its boss cache uses floor 4's loot tables, and its bonus item is one rarity above floor 4's.
+- **Collector's Eye:** if any surviving player holds it at extraction, the party keeps 10 percentage points more, like Deep Pockets' +5 per rank. Several holders still add only 10, and the total never goes above 100%.
+- **Choosing the share:** at extraction the party picks items whose combined value fits the kept value. The rest of the kept value is paid out in credits, which the app shows and records in run history; the DM hands them out at the table.
+- **Assigning items:** if anyone extracts, the DM can assign kept items to any character in the run, fallen ones included. A wipe loses the pool.
+- **Thils's Vault:** survivors only. The fallen were expelled before the party reached it.
+- **Relic weighting:** each relic carries the boon tags that fit its Build, and offers are weighted like boon offers: a class primary tag ×3, a secondary ×2, a tag the player holds ×2.
+- **Text that ships:** item names and effects ship as written, except the relics' Lost by column, which stays out. Pog's unfinished map's Woken effect reads "even the way out of a god's own labyrinth." Paradise Bleed reads "half the arena becomes a golden meadow," the Gravity Inversion Tile triggers on "a gravity rune tile," and Meadow in a jar is "a living patch of a sunlit meadow."
+- **Lore check:** Thilsavrass and Sonder never appear in app data. Gatewright, paradise and inverted or inversion appear only inside an approved list of names players meet in play: the bosses, the Inverted Paradise family and its creatures, the Gravity Inversion Tile, Inverted overgrowth, Paradise Spores, Paradise Bleed, Inverted Gravity Beam, Paradise honey, Paradise seed, Inverted bloom and Gatewright's three keys.
+
 ### Hidden Sight hints
 
 | d20 | Condition | Hint |

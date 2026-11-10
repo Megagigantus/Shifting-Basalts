@@ -1,0 +1,51 @@
+{
+  "_source": "docs/design-bible.md: Value ladder, When loot drops, Floor loot roll (d100), Amounts and rarity by floor, Loot defaults. Tiers are entry tiers: 1 = entry 5-10, 2 = 11-16, 3 = 17-20.",
+  "status": "proposed",
+  "rarities": [
+    { "id": "common", "name": "Common", "value": 100 },
+    { "id": "uncommon", "name": "Uncommon", "value": 400 },
+    { "id": "rare", "name": "Rare", "value": 4000 },
+    { "id": "very-rare", "name": "Very rare", "value": 40000 },
+    { "id": "legendary", "name": "Legendary", "value": 200000 }
+  ],
+  "trinketValue": 10,
+  "consumableValueShare": 0.5,
+  "drops": {
+    "combat": 1,
+    "elite": 2,
+    "cacheRolls": 2,
+    "cacheBonusRarityStep": 1,
+    "trophyOn": [5, 6],
+    "extraCacheRollPerBonusPercent": 50,
+    "lastLootFloor": 4
+  },
+  "striderRemains": { "dcBase": 10, "beatBy": 5 },
+  "floorRoll": [
+    { "floor": 1, "table": [
+      { "upTo": 25, "kind": "credits" }, { "upTo": 55, "kind": "trinket" }, { "upTo": 75, "kind": "consumable" },
+      { "upTo": 90, "kind": "gear" }, { "upTo": 95, "kind": "wondrous" }, { "upTo": 100, "kind": "basalts" }
+    ] },
+    { "floor": 2, "table": [
+      { "upTo": 20, "kind": "credits" }, { "upTo": 40, "kind": "trinket" }, { "upTo": 60, "kind": "consumable" },
+      { "upTo": 80, "kind": "gear" }, { "upTo": 90, "kind": "wondrous" }, { "upTo": 100, "kind": "basalts" }
+    ] },
+    { "floor": 3, "table": [
+      { "upTo": 15, "kind": "credits" }, { "upTo": 25, "kind": "trinket" }, { "upTo": 45, "kind": "consumable" },
+      { "upTo": 65, "kind": "gear" }, { "upTo": 85, "kind": "wondrous" }, { "upTo": 100, "kind": "basalts" }
+    ] },
+    { "floor": 4, "table": [
+      { "upTo": 10, "kind": "credits" }, { "upTo": 15, "kind": "trinket" }, { "upTo": 35, "kind": "consumable" },
+      { "upTo": 55, "kind": "gear" }, { "upTo": 80, "kind": "wondrous" }, { "upTo": 100, "kind": "basalts" }
+    ] }
+  ],
+  "amounts": [
+    { "floor": 1, "credits": { "dice": 2, "sides": 6, "times": 10 }, "basalts": { "dice": 0, "sides": 0, "plus": 1 },
+      "rarity": { "1": { "base": "common" }, "2": { "base": "uncommon" }, "3": { "base": "rare" } } },
+    { "floor": 2, "credits": { "dice": 2, "sides": 6, "times": 25 }, "basalts": { "dice": 1, "sides": 2, "plus": 0 },
+      "rarity": { "1": { "base": "uncommon" }, "2": { "base": "rare" }, "3": { "base": "very-rare" } } },
+    { "floor": 3, "credits": { "dice": 2, "sides": 6, "times": 100 }, "basalts": { "dice": 1, "sides": 4, "plus": 0 },
+      "rarity": { "1": { "base": "uncommon", "onSix": "rare" }, "2": { "base": "rare", "onSix": "very-rare" }, "3": { "base": "very-rare" } } },
+    { "floor": 4, "credits": { "dice": 4, "sides": 6, "times": 100 }, "basalts": { "dice": 1, "sides": 4, "plus": 2 },
+      "rarity": { "1": { "base": "rare" }, "2": { "base": "very-rare" }, "3": { "base": "very-rare", "onSix": "legendary" } } }
+  ]
+}

@@ -12,6 +12,7 @@ import { PlayerRun } from './PlayerRun'
 import { StatTracks } from './StatTracks'
 import { UpgradeShop } from './UpgradeShop'
 import { DraftPreferences } from './DraftPreferences'
+import { CharacterLoot } from './LootScreens'
 
 const className = (id: string) => classes.find((c) => c.id === id)?.name ?? id
 
@@ -71,6 +72,7 @@ export function PlayerHome({ email, readOnly = false }: Props) {
                 )}
                 {c.lockoutDays > 0 && <span className="warning">Locked out: {c.lockoutDays} days</span>}
                 <DraftPreferences character={c} canEdit={!readOnly} />
+                <CharacterLoot loot={c.loot} />
                 {open?.id === c.id && open.kind === 'tracks' && (
                   <StatTracks character={c} onClose={() => setOpen(null)} canCorrect={false} canSpend={!readOnly} />
                 )}
