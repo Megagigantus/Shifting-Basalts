@@ -1384,8 +1384,16 @@ Everything rolled for a room is DM-only until revealed, and the DM gets a reveal
 - **Thils's Vault:** survivors only. The fallen were expelled before the party reached it.
 - **Relic weighting:** each relic carries the boon tags that fit its Build, and offers are weighted like boon offers: a class primary tag ×3, a secondary ×2, a tag the player holds ×2.
 - **Text that ships:** item names and effects ship as written, except the relics' Lost by column, which stays out. Pog's unfinished map's Woken effect reads "even the way out of a god's own labyrinth." Paradise Bleed reads "half the arena becomes a golden meadow," the Gravity Inversion Tile triggers on "a gravity rune tile," and Meadow in a jar is "a living patch of a sunlit meadow."
-- **Lore check:** Thilsavrass and Sonder never appear in app data. Gatewright, paradise and inverted or inversion appear only inside an approved list of names players meet in play: the bosses, the Inverted Paradise family and its creatures, the Gravity Inversion Tile, Inverted overgrowth, Paradise Spores, Paradise Bleed, Inverted Gravity Beam, Paradise honey, Paradise seed, Inverted bloom and Gatewright's three keys.
+- **Lore check (see below):** Thilsavrass and Sonder never appear in app data. Gatewright, paradise and inverted or inversion appear only inside an approved list of names players meet in play: the bosses, the Inverted Paradise family and its creatures, the Gravity Inversion Tile, Inverted overgrowth, Paradise Spores, Paradise Bleed, Inverted Gravity Beam, Paradise honey, Paradise seed, Inverted bloom and Gatewright's three keys.
 
+### Phase 7 defaults *(proposed)*
+
+- **Slot recovery points:** a caster with the Spell slot recovery track gains points equal to their track rank at each room clear that pays a Devotion (combat, elite and boss rooms; a Reprieve gives none). Leftover points fade at the next clear, when the new points replace them.
+- **Buying slots:** 2, 3, 5, 6 or 7 points for a 1st- to 5th-level slot (Slot recovery costs), only for slot levels the character has. Pact Magic slots cost the same. Players spend their own points from their device; the DM can spend for them.
+- **Leyline Surge:** a holder can spend recovery points as damage from the app, 1 point at a time.
+- **Boon counters:** the DM keeps named counters per player, such as banked echoes or Reaper chain jumps, and players see their own. The numbers stay at the table until the bible fixes them.
+- **Healing Font:** owners are counted at run start, like the Forge. The post-boss room shows the Font's effect and the temp HP each player gains: +5 per owner beyond the first.
+- **Run history:** players see the runs their own characters were in; the DM sees every run.
 ### Hidden Sight hints
 
 | d20 | Condition | Hint |
