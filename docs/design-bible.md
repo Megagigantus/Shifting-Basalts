@@ -1334,7 +1334,7 @@ Everything rolled for a room is DM-only until revealed, and the DM gets a reveal
 - **Who counts:** XP budgets and boss HP use the living players when the room is generated. Encounter levels and boss CRs never go below 1.
 - **Absorbed Echoes:** each echo carries a random Level 1 or 2 boon from the boon pool, never a Payoff.
 - **Picking the boss:** one of the floor's three is chosen when the floor starts. The DM sees it and can reroll it; players see its name once its room starts.
-- **Damage dice:** each attack's share of DPR is about 30% flat bonus and the rest dice of the template's die size (General Vane: 23 → 3d10 + 7).
+- **Damage dice:** each attack's share of DPR is about 30% flat bonus and the rest dice of the template's die size, d10 unless the data says otherwise (General Vane: 23 → 3d10 + 7). Small amounts step down to d8, d6 or d4 when a d10 would miss by more than a quarter.
 - **Heavy Crown on floors 1 and 2:** a boss without listed Legendary Actions can use the extra one to make one of its attacks or move half its speed without provoking.
 - **Restless Stone:** each non-boss room rolls one of the three Shift Actions belonging to its floor's bosses, using the floor's boss save DC.
 
