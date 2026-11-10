@@ -5,6 +5,7 @@
 import type { Slot } from '../rules/boons'
 import type { DraftCharacter, Offer } from '../rules/draft'
 import type { Room, RoomView } from '../rules/rooms'
+import type { LootShare, RunLoot } from '../rules/loot'
 
 /** A player's open draft. */
 export interface DraftOffer {
@@ -60,6 +61,10 @@ export interface Run {
   log: RoomLogEntry[]
   /** Set when the run ends. */
   lootKeptPercent: number | null
+  /** The party's shared run loot (items and credits). Lost on a wipe. */
+  loot?: RunLoot
+  /** What the party kept on extraction: items picked and assigned, plus the credits payout. */
+  lootShare?: LootShare | null
 }
 
 export interface RunPlayer {

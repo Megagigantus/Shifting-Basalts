@@ -9,7 +9,6 @@ import {
   entryMultiplier,
   floorInfo,
   LAST_FLOOR,
-  lootKeptPercent,
   partyLevel,
   passQuantumBasalts,
   pressureBonusPercent,
@@ -17,6 +16,7 @@ import {
   withPressureBonus,
 } from './run'
 import { emptySlots, hiddenBoon, slotCount, type Slot } from './boons'
+import { keptPercent, partyRewardBonusPercent } from './loot'
 import {
   deepPocketsPercent,
   extraLootBonusPercent,
@@ -183,20 +183,17 @@ export function extract(state: RunState): RunState {
   }
 }
 
-/** Loot share kept if the party extracts now, including Deep Pockets (capped at 100%). */
-export function lootKeptIfExtracting({ run }: RunState): number {
-  const base = lootKeptPercent(run.lastBossFloor)
-  if (base === 0) return 0
-  return Math.min(100, base + (run.deepPocketsPercent ?? 0))
+/** Loot share kept if the party extracts now: floor share, Deep Pockets and Collector's Eye (capped at 100%). */
+export function lootKeptIfExtracting(state: RunState): number {
+  return keptPercent(state)
 }
 
-/** A player's total bonus on boss Quantum Basalts: Pressures + Extra Pressures owners + their Extra Loot. */
+/**
+ * A player's total bonus on Quantum Basalts (boss and loot): the party reward
+ * bonus (Pressures + Extra Pressures owners) plus their own Extra Loot.
+ */
 export function rewardBonusPercent(state: RunState, player: RunPlayer): number {
-  return (
-    state.run.pressureBonusPercent +
-    (state.run.extraPressuresBonusPercent ?? 0) +
-    (player.extraLootBonusPercent ?? 0)
-  )
+  return partyRewardBonusPercent(state.run) + (player.extraLootBonusPercent ?? 0)
 }
 
 /** A player passes a draft for Quantum Basalts that survive even death. */
