@@ -2,6 +2,7 @@
 // the summary of a run that just ended, or a button to start a new one.
 import { useState } from 'react'
 import type { RunResult, RunState } from '../model/run'
+import { itemName } from '../rules/loot'
 import { useActiveRun } from '../runStore'
 import { useCharacters } from '../useCharacters'
 import { RunTracker } from './RunTracker'
@@ -70,6 +71,7 @@ function RunSummary({ results, state, onDone }: { results: RunResult[]; state: R
             <th>Player</th>
             <th>Quantum Basalts</th>
             <th>Devotions</th>
+            <th>Loot</th>
             <th>Outcome</th>
           </tr>
         </thead>
@@ -79,11 +81,18 @@ function RunSummary({ results, state, onDone }: { results: RunResult[]; state: R
               <td>{r.name}</td>
               <td>+{r.quantumBasaltsGained}</td>
               <td>+{r.devotions}</td>
+              <td>{(r.loot ?? []).map((i) => itemName(i)).join(', ') || 'none'}</td>
               <td>{r.survived ? 'Made it out' : `Fell on floor ${r.deepestFloor}, locked out ${r.lockoutDays} days`}</td>
             </tr>
           ))}
         </tbody>
       </table>
+      {run.lootShare && run.lootShare.creditsPayout > 0 && (
+        <p>
+          Credits to hand out: <strong>{run.lootShare.creditsPayout.toLocaleString()}</strong> (the kept value the party
+          didn't take as items).
+        </p>
+      )}
       <p className="hint">These have been added to each character's saved record.</p>
       <button type="button" onClick={onDone}>
         Done
