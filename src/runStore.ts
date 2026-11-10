@@ -144,6 +144,7 @@ export async function saveRunState(
         bankedDevotions: increment(r.devotions),
         deepestFloor: Math.max(character?.deepestFloor ?? 0, r.deepestFloor),
         ...(r.lockoutDays !== null ? { lockoutDays: r.lockoutDays } : {}),
+        ...(r.loot.length ? { loot: arrayUnion(...r.loot.map((item) => ({ ...item, runId: id }))) } : {}),
         activeRunId: null,
         updatedAt: serverTimestamp(),
       })
@@ -156,6 +157,7 @@ export async function saveRunState(
       floorReached: next.run.floor,
       lastBossFloor: next.run.lastBossFloor,
       lootKeptPercent: next.run.lootKeptPercent,
+      lootShare: next.run.lootShare ?? null,
       rooms: next.run.log,
       results,
       endedAt: serverTimestamp(),

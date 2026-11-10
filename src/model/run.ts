@@ -5,7 +5,7 @@
 import type { Slot } from '../rules/boons'
 import type { DraftCharacter, Offer } from '../rules/draft'
 import type { Room, RoomView } from '../rules/rooms'
-import type { LootShare, RunLoot } from '../rules/loot'
+import type { LootItem, LootShare, RunLoot } from '../rules/loot'
 
 /** A player's open draft. */
 export interface DraftOffer {
@@ -149,4 +149,6 @@ export interface RunResult {
   devotions: number
   deepestFloor: number
   lockoutDays: number | null
+  /** Items assigned to this character at extraction, plus a Vault relic on a full clear. */
+  loot: LootItem[]
 }

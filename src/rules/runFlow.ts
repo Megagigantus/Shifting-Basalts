@@ -16,7 +16,8 @@ import {
   withPressureBonus,
 } from './run'
 import { emptySlots, hiddenBoon, slotCount, type Slot } from './boons'
-import { keptPercent, partyRewardBonusPercent } from './loot'
+import { keptPercent, partyRewardBonusPercent, planShare, type LootItem, type LootPick } from './loot'
+import { relicStateFor, vaultPending } from './vault'
 import {
   deepPocketsPercent,
   extraLootBonusPercent,
@@ -79,6 +80,7 @@ export function newRunState(id: string, joinCode: string, party: Character[], pr
       reprieveRank: c.upgrades.reprieve ?? 0,
       hiddenSight: (c.upgrades['hidden-sight'] ?? 0) > 0,
       hiddenSightFloor: null,
+      relicsOwned: (c.loot ?? []).filter((i) => i.kind === 'relic').map((i) => i.ref),
       diedOnFloor: null,
       lockoutDays: null,
       lockoutRolls: null,
@@ -158,9 +160,13 @@ export function defeatBoss(state: RunState): RunState {
     },
     players,
   }
-  // Beating the legendary boss is a full clear: the run ends there.
-  return run.floor >= LAST_FLOOR ? extract(next) : next
+  // Beating the legendary boss is a full clear: Thils's Vault opens (rules/vault.ts),
+  // then the party extracts with all its loot.
+  return next
 }
+
+/** True after the legendary boss: the run ends with extraction once the Vault is done. */
+export const isFullClear = ({ run }: RunState) => run.lastBossFloor >= LAST_FLOOR
 
 export function descend(state: RunState): RunState {
   requireActive(state)
@@ -170,15 +176,23 @@ export function descend(state: RunState): RunState {
   return { ...state, run: { ...state.run, floor: state.run.floor + 1, room: 1, awaitingChoice: false, forgeUsesLeft: 0 } }
 }
 
-export function extract(state: RunState): RunState {
+/**
+ * Leave the Basalts after a boss. `picks`: the items the party keeps and who
+ * gets each (any character in the run, fallen ones too); the rest of the kept
+ * value is paid out in credits.
+ */
+export function extract(state: RunState, picks: LootPick[] = []): RunState {
   if (!canExtract(state)) throw new Error('You can only extract after beating a boss.')
+  if (vaultPending(state)) throw new Error('Every survivor takes a relic from Thils\'s Vault first.')
+  const lootShare = planShare(state, picks)
   return {
     ...state,
     run: {
       ...state.run,
       status: 'extracted',
       awaitingChoice: false,
-      lootKeptPercent: lootKeptIfExtracting(state),
+      lootKeptPercent: lootShare.keptPercent,
+      lootShare,
     },
   }
 }
@@ -267,9 +281,30 @@ export function markDead(state: RunState, characterId: string, roll?: Roll): Run
 export function runResults(state: RunState): RunResult[] {
   const { run } = state
   if (run.status === 'active') throw new Error('The run is still going.')
+  const pool = run.loot?.items ?? []
   return state.players.map((p) => {
     const keepsEarned = p.alive && run.status === 'extracted'
+    const loot: LootItem[] =
+      run.status === 'extracted'
+        ? (run.lootShare?.picks ?? [])
+            .filter((pick) => pick.characterId === p.characterId)
+            .map((pick) => pool.find((i) => i.uid === pick.uid))
+            .filter((i): i is LootItem => Boolean(i))
+        : []
+    if (run.status === 'extracted' && p.alive && p.vaultRelic) {
+      loot.push({
+        uid: `relic-${p.vaultRelic}`,
+        kind: 'relic',
+        ref: p.vaultRelic,
+        rarity: null,
+        floor: LAST_FLOOR,
+        room: 1,
+        source: 'vault',
+        relicState: relicStateFor(run.partyLevel),
+      })
+    }
     return {
+      loot,
       characterId: p.characterId,
       name: p.name,
       survived: p.alive,

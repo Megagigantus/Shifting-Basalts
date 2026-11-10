@@ -7,8 +7,6 @@ import type { RoomKind, RunResult, RunState } from '../model/run'
 import { floorInfo, LAST_FLOOR, PRESSURES, passQuantumBasalts } from '../rules/run'
 import {
   canExtract,
-  clearRoom,
-  defeatBoss,
   descend,
   extract,
   isBossRoom,
@@ -16,7 +14,8 @@ import {
   markDead,
   waitingOn,
 } from '../rules/runFlow'
-import { classTriggerMet, openDrafts, rerollsLeft } from '../rules/draftFlow'
+import { classTriggerMet, rerollsLeft } from '../rules/draftFlow'
+import { finishRoom } from '../rules/progress'
 import { applyChoice } from '../rules/draftChoice'
 import { classHiddenBoon } from '../rules/draft'
 import { applyChoiceDoc, cancelRun, saveRunState, useChoices } from '../runStore'
@@ -25,7 +24,7 @@ import { PlayerBoons } from './PlayerBoons'
 import { DraftOffers } from './DraftOffers'
 import { ForgePanel } from './ForgePanel'
 import { DmRoom } from './DmRoom'
-import { enterRoom, startFloor } from '../rules/roomFlow'
+import { startFloor } from '../rules/roomFlow'
 import { forgeUsesLeft, spendForge } from '../rules/forge'
 
 const ROOM_LABELS = { combat: 'Combat', elite: 'Elite', reprieve: 'Reprieve', boss: 'Boss' }
@@ -69,11 +68,8 @@ export function RunTracker({ state, characters, onEnded }: Props) {
     }
   }
 
-  /** Clear a room (or beat the boss) and open everyone's draft. */
-  const clearAndDraft = (kind: RoomKind) =>
-    act((s) =>
-      enterRoom(openDrafts(kind === 'boss' ? defeatBoss(s) : clearRoom(s, kind), kind, Math.random), Math.random),
-    )
+  /** Clear a room (or beat the boss): its loot, then everyone's draft (or Thils's Vault after the legendary boss). */
+  const clearAndDraft = (kind: RoomKind) => act((s) => finishRoom(s, kind, Math.random))
   // The generated room's kind (elite, Reprieve...), when this run has rooms.
   const roomKind = state.dm?.room?.kind ?? null
 
