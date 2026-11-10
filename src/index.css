@@ -698,6 +698,39 @@ button.link {
   opacity: 0.4;
 }
 
+.room-icons.portraits li {
+  width: 6rem;
+}
+
+.room-icons.portraits img {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.with-portrait {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+}
+
+.with-portrait > img {
+  flex: none;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.boss-portrait {
+  display: block;
+  width: 100%;
+  max-width: 16rem;
+  border-radius: 8px;
+  margin: 0 0 0.5rem;
+}
+
 .room-exits img {
   width: 2rem;
   height: 2rem;

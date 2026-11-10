@@ -19,6 +19,8 @@ import { submitChoice, usePrivateHints } from '../runStore'
 import { creatureOf } from '../rules/encounters'
 import { bossOf, floorBossDc } from '../rules/bosses'
 import { RoomCard } from './RoomCard'
+import { Art } from './Art'
+import { artUrl } from '../art'
 
 const KIND_LABELS = { combat: 'Room', elite: 'Elite room', reprieve: 'Reprieve', boss: 'Boss room' }
 
@@ -64,15 +66,34 @@ export function PlayerRoom({ state, me, readOnly = false }: Props) {
         tricks={view.tricks}
       />
       {view.bossId && (
-        <p className="boss-name">
-          <strong>{bossOf(view.bossId).name}</strong>
-        </p>
+        <>
+          <Art kind="bosses" id={view.bossId} alt={bossOf(view.bossId).name} className="boss-portrait" />
+          <p className="boss-name">
+            <strong>{bossOf(view.bossId).name}</strong>
+          </p>
+        </>
       )}
       {(view.enemies?.length ?? 0) > 0 && (
-        <p>
-          <strong>Enemies:</strong>{' '}
-          {view.enemies!.map((e) => `${e.count > 1 ? `${e.count} × ` : ''}${creatureOf(e.creatureId).name}`).join(', ')}
-        </p>
+        <>
+          <p>
+            <strong>Enemies:</strong>{' '}
+            {view.enemies!.map((e) => `${e.count > 1 ? `${e.count} × ` : ''}${creatureOf(e.creatureId).name}`).join(', ')}
+          </p>
+          {/* Only revealed creatures are in view.enemies, so only their portraits show. */}
+          {view.enemies!.some((e) => artUrl('creatures', e.creatureId)) && (
+            <ul className="room-icons portraits">
+              {view.enemies!.map((e, i) => (
+                <li key={`${e.creatureId}-${i}`}>
+                  <Art kind="creatures" id={e.creatureId} alt={creatureOf(e.creatureId).name} />
+                  <span>
+                    {e.count > 1 && `${e.count} × `}
+                    {creatureOf(e.creatureId).name}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
       )}
       {view.shifts?.map((id) => {
         const action = bossOf(id).shiftAction

@@ -7,6 +7,7 @@ import { crLabel, creatureOf, creatureXp, familyOf, pushedStats, type Encounter 
 import { bossOf, buildBoss, floorBossDc, type BossStats } from '../rules/bosses'
 import { boon } from '../rules/boons'
 import { rerollEncounter, reveal } from '../rules/roomFlow'
+import { Art } from './Art'
 
 type Step = (s: RunState) => RunState
 type Act = (step: Step, confirmText?: string) => void
@@ -63,7 +64,9 @@ export function EncounterPanel({ encounter, busy, act }: { encounter: Encounter;
           const c = creatureOf(g.creatureId)
           const pushed = pushedStats(g)
           return (
-            <li key={`${g.creatureId}-${g.cr}-${i}`}>
+            <li key={`${g.creatureId}-${g.cr}-${i}`} className="with-portrait">
+              <Art kind="creatures" id={g.creatureId} alt={c.name} />
+              <div>
               <strong>
                 {g.count} × {c.name}
               </strong>{' '}
@@ -88,6 +91,7 @@ export function EncounterPanel({ encounter, busy, act }: { encounter: Encounter;
                   </div>
                 )
               })}
+              </div>
             </li>
           )
         })}
@@ -109,6 +113,7 @@ const attackLine = (a: BossStats['attacks'][number], boss: BossStats) =>
 export function BossBlock({ boss, revealed, busy, onTrigger }: { boss: BossStats; revealed: boolean; busy: boolean; onTrigger?: () => void }) {
   return (
     <div className="fight boss-block">
+      <Art kind="bosses" id={boss.bossId} alt={boss.name} className="boss-portrait" />
       <h4>
         {boss.name} <span className="hint">CR {boss.cr}</span>
       </h4>
