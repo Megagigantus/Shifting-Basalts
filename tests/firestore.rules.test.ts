@@ -459,3 +459,38 @@ describe('private Hidden Sight hints and the DM-only room', () => {
     )
   })
 })
+
+describe('Thils\'s Vault and loot requests', () => {
+  beforeEach(async () => {
+    await seedCharacters()
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      const db = ctx.firestore()
+      await setDoc(doc(db, 'runs', 'live'), { status: 'active', characterIds: [OWNED, OTHERS] })
+      await setDoc(doc(db, 'runs', 'over'), { status: 'extracted', characterIds: [OWNED] })
+    })
+  })
+
+  it('a player can take a relic for their own character', async () => {
+    const choiceRef = (id: string) => doc(as(PLAYER), 'runs', 'live', 'choices', id)
+    await assertSucceeds(setDoc(choiceRef(OWNED), { action: 'relic', relicId: 'breakers-wraps', draftKey: null, createdAt: now() }))
+    await assertFails(setDoc(choiceRef(OTHERS), { action: 'relic', relicId: 'breakers-wraps', draftKey: null, createdAt: now() }))
+  })
+
+  it('a player can set and clear their own loot requests, and everyone invited can read them', async () => {
+    const ref = doc(as(PLAYER), 'runs', 'live', 'requests', OWNED)
+    await assertSucceeds(setDoc(ref, { uids: ['L1', 'L4'], updatedAt: now() }))
+    await assertSucceeds(setDoc(ref, { uids: [], updatedAt: now() }))
+    await assertSucceeds(getDoc(doc(as(DM), 'runs', 'live', 'requests', OWNED)))
+    await assertSucceeds(deleteDoc(ref))
+  })
+
+  it('requests are only a list of ids, for their own character, in an active run', async () => {
+    const ref = doc(as(PLAYER), 'runs', 'live', 'requests', OWNED)
+    await assertFails(setDoc(ref, { uids: ['L1'], assignedTo: OWNED, updatedAt: now() }))
+    await assertFails(setDoc(ref, { uids: 'L1', updatedAt: now() }))
+    await assertFails(setDoc(ref, { uids: ['L1'], updatedAt: new Date(0) }))
+    await assertFails(setDoc(doc(as(PLAYER), 'runs', 'live', 'requests', OTHERS), { uids: ['L1'], updatedAt: now() }))
+    await assertFails(setDoc(doc(as(PLAYER), 'runs', 'over', 'requests', OWNED), { uids: ['L1'], updatedAt: now() }))
+    await assertFails(getDoc(doc(as(STRANGER), 'runs', 'live', 'requests', OWNED)))
+  })
+})

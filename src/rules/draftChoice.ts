@@ -4,6 +4,7 @@ import type { RunPlayer, RunState } from '../model/run'
 import type { Random } from './draft'
 import { chooseHidden, chooseOffer, passDraft, passHidden, rerollDraft } from './draftFlow'
 import { spendForge, type ForgeAction } from './forge'
+import { chooseRelic } from './vault'
 
 export type DraftChoice =
   | { action: 'take'; index: number; replaceSlot?: number | null }
@@ -14,6 +15,8 @@ export type DraftChoice =
   | { action: 'forge'; forge: ForgeAction }
   /** Use Hidden Sight on the current room (the hint goes to a private document). */
   | { action: 'hiddenSight' }
+  /** Take a relic from Thils's Vault. */
+  | { action: 'relic'; relicId: string }
 
 /**
  * Identifies the exact offer a choice was made against. If the offer changes
@@ -43,6 +46,8 @@ export function applyChoice(state: RunState, characterId: string, choice: DraftC
     case 'hiddenSight':
       // Needs to write the hint privately; runStore.applyHiddenSight does that.
       throw new Error('Hidden Sight is applied separately.')
+    case 'relic':
+      return chooseRelic(state, characterId, choice.relicId)
   }
 }
 

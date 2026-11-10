@@ -184,6 +184,8 @@ export interface ChoiceDoc {
   forgeKind?: 'level' | 'evolve' | 'combine'
   slotIndex?: number
   combinationId?: string
+  /** Thils's Vault: the relic taken. */
+  relicId?: string
   /** The offer this choice was made against (null for hidden-offer choices). */
   draftKey: string | null
   /** Set by the DM's app when the choice couldn't be applied. */
@@ -199,6 +201,7 @@ export async function submitChoice(runId: string, characterId: string, choice: D
     data.replaceSlot = choice.replaceSlot ?? null
   }
   if (choice.action === 'hidden') data.hiddenBoonId = choice.hiddenBoonId
+  if (choice.action === 'relic') data.relicId = choice.relicId
   if (choice.action === 'forge') {
     data.forgeKind = choice.forge.kind
     if (choice.forge.kind === 'combine') data.combinationId = choice.forge.combinationId
@@ -233,6 +236,8 @@ function choiceFromDoc(c: ChoiceDoc): DraftChoice {
       return { action: 'take', index: c.index ?? -1, replaceSlot: c.replaceSlot ?? null }
     case 'hidden':
       return { action: 'hidden', hiddenBoonId: c.hiddenBoonId ?? '' }
+    case 'relic':
+      return { action: 'relic', relicId: c.relicId ?? '' }
     case 'forge':
       return {
         action: 'forge',
@@ -262,7 +267,7 @@ export async function applyChoiceDoc(state: RunState, characterId: string, choic
     await applyHiddenSight(state, characterId, choiceRef)
     return
   }
-  const answersOffer = parsed.action !== 'forge'
+  const answersOffer = parsed.action !== 'forge' && parsed.action !== 'relic'
   if (player && answersOffer && !player.draft && !player.hiddenOffer) {
     await deleteDoc(choiceRef)
     return
@@ -297,11 +302,36 @@ export async function cancelRun(state: RunState): Promise<void> {
   for (const player of state.players) {
     batch.delete(doc(db, 'runs', state.run.id, 'players', player.characterId))
     batch.delete(doc(db, 'runs', state.run.id, 'choices', player.characterId))
+    batch.delete(doc(db, 'runs', state.run.id, 'requests', player.characterId))
     batch.update(doc(db, 'characters', player.characterId), { activeRunId: null, updatedAt: serverTimestamp() })
   }
   batch.delete(doc(db, 'runs', state.run.id, 'dmOnly', 'room'))
   batch.delete(doc(db, 'runs', state.run.id))
   await batch.commit()
+}
+
+// ---------------------------------------------------------------------------
+// Loot requests: runs/{runId}/requests/{characterId} lists the pool items a
+// player would like at extraction. The DM decides; this is only a wish list.
+
+/** A player sets the items they'd like from the party's loot. */
+export async function setLootRequests(runId: string, characterId: string, uids: string[]) {
+  if (!db) throw new Error('Firebase is not set up.')
+  await setDoc(doc(db, 'runs', runId, 'requests', characterId), { uids, updatedAt: serverTimestamp() })
+}
+
+/** Live map of characterId -> requested item uids for a run. */
+export function useLootRequests(runId: string | null): Record<string, string[]> {
+  const [loaded, setLoaded] = useState<{ runId: string; requests: Record<string, string[]> } | null>(null)
+  useEffect(() => {
+    if (!db || !runId) return
+    return onSnapshot(collection(db, 'runs', runId, 'requests'), (snapshot) => {
+      const requests: Record<string, string[]> = {}
+      for (const d of snapshot.docs) requests[d.id] = (d.data().uids as string[]) ?? []
+      setLoaded({ runId, requests })
+    })
+  }, [runId])
+  return loaded && loaded.runId === runId ? loaded.requests : {}
 }
 
 // ---------------------------------------------------------------------------
