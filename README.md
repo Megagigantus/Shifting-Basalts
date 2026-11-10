@@ -35,7 +35,9 @@ The emulator commands (`dev:local`, `test:rules`) also need [Java](https://learn
 | DM | dm@example.com | local-test-dm |
 | Player | player@example.com | local-test-player |
 
-These exist only in the emulator and are wiped every time it stops. Two characters come ready-made: **Test Fighter** (played by the test player, owning Starting Boon, Reroll, Forge, Banish, Attunement, Hidden Sight and Reprieve rank 4) and **Test Wizard** (played by the DM).
+These exist only in the emulator and are wiped every time it stops. Two characters come ready-made, both played by the test player:
+- **Test Fighter:** owns Starting Boon, Reroll, Forge, Banish, Attunement, Hidden Sight, Reprieve rank 4, Extra Pressures rank 2 (so every Pressure can be picked) and the Healing Font.
+- **Test Wizard:** a full caster with Spell slot recovery rank 5 and the Healing Font.
 
 To be the DM and a player at once, sign in as the DM at http://localhost:5174 and as the player in another tab at http://[::1]:5174. The browser treats those as separate sites, so each keeps its own sign-in. Keep the DM's tab open: it applies the players' draft choices. The emulator doesn't send real email: list the verification and password-reset links it would have sent with `curl http://127.0.0.1:9099/emulator/v1/projects/demo-shifting-basalts/oobCodes`.
 
@@ -45,9 +47,17 @@ The app is invite only. The DM adds emails to the invite list; anyone not on it 
 - **Google:** "Sign in with Google".
 - **Any other email (Yahoo, Hotmail and so on):** create an account with email and password, then click the verification link Firebase emails you. Password resets are on the sign-in screen.
 
+## What the app does
+
+- **Characters:** the lean profile, stat tracks, upgrades, Banish and Attunement, and the loot each character carried out.
+- **Runs:** floors, rooms, Pressures, drafts, the Forge, Hidden Sight, slot recovery points, boon counters, deaths and lockouts, extraction and the Healing Font.
+- **Generators:** rooms (layout, terrain, flavor, tricks, secret conditions), encounters, bosses with full stat blocks, loot, boss caches and Thils's Vault.
+- **Player view:** players see only what the bible's visibility rules allow, plus anything the DM reveals.
+- **Run history and tables:** every finished run is kept; the DM can look up any generator table.
+
 ## Game content
 
-Boons, evolutions and combinations live in `src/data/*.json`. Their shapes are described in `src/data/types.ts`. Add or edit entries there, then run `npm run check-data`.
+All game content lives in `src/data/*.json`: boons, evolutions and combinations (shapes in `src/data/types.ts`), stat tracks, upgrades, Pressures, rooms, enemies, bosses, loot and relics. Add or edit entries there, then run `npm run check-data`. It checks references and runs a lore check: words listed in `scripts/lore-allowlist.json` may only ship inside the approved names there.
 
 ## Firebase setup (one time)
 

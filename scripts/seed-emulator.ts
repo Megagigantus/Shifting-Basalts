@@ -70,11 +70,23 @@ const characters: Record<string, { [key: string]: Value }> = {
     hasSummon: false,
     attackStyle: 'melee',
     ...dungeonLayer,
-    upgrades: { reroll: 1, 'starting-boon': 1, forge: 1, banish: 1, attunement: 1, 'hidden-sight': 1, reprieve: 4 },
+    upgrades: {
+      reroll: 1,
+      'starting-boon': 1,
+      forge: 1,
+      banish: 1,
+      attunement: 1,
+      'hidden-sight': 1,
+      reprieve: 4,
+      // Unlocks Restless Stone, Heavy Crown and the harsher Pressures for testing.
+      'extra-pressures': 2,
+      'healing-font': 1,
+    },
   },
   'test-wizard': {
     name: 'Test Wizard',
-    playerEmail: 'dm@example.com',
+    // Also the test player's, so slot recovery can be spent from their device.
+    playerEmail: 'player@example.com',
     classId: 'wizard',
     subclass: 'Evoker',
     level: 5,
@@ -83,7 +95,9 @@ const characters: Record<string, { [key: string]: Value }> = {
     hasSummon: false,
     attackStyle: 'spells',
     ...dungeonLayer,
-    upgrades: {},
+    // Spell slot recovery rank 5 (15 Devotions), and a second Healing Font owner.
+    trackDevotions: { 'spell-slot-recovery': 15 },
+    upgrades: { 'healing-font': 1 },
   },
 }
 for (const [id, data] of Object.entries(characters)) {
