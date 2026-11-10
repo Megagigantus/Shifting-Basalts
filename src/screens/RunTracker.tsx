@@ -190,6 +190,7 @@ export function RunTracker({ state, characters, onEnded }: Props) {
             </button>
           </>
         )}
+        {busy && <span className="hint saving">Saving…</span>}
       </div>
 
       {extracting && run.awaitingChoice && (
