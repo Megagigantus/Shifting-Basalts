@@ -1327,7 +1327,8 @@ Everything rolled for a room is DM-only until revealed, and the DM gets a reveal
 ### Encounter and boss defaults *(proposed)*
 
 - **Family odds:** every family allowed on a floor starts at 1; the families a floor "leans" toward count ×3. Floor 1: Wardstones and Mazework evenly. Floor 2: Wardstones, Mazework, the Lost and Absorbed Echoes evenly. Floor 3: Gate-Born and Echoes ×3. Floor 4: Inverted Paradise and Gate-Born ×3.
-- **Filling the budget:** start with one brute or elite, add support roles, then fill with minions, never going over the budget. At most 2 creatures per living player, and no creature's CR above the encounter level. If a family can't reach the budget, push a creature's CR up with the benchmarks.
+- **Filling the budget:** start with one brute or elite, add up to 2 support roles, then fill the rest, never going over the budget. Each remaining slot aims at an even share of what's left: minions while they're at least half that share, otherwise the family's closest fit, so high tiers get elites in multiples. At most 2 creatures per living player, no creature's CR above the encounter level, and none above CR 20.
+- **Pushing CR:** if budget is left over, push creatures' CR up with the benchmarks, lowest CR first, so the push spreads evenly.
 - **Splash:** 1 room in 4 swaps one creature for one from a second family allowed on that floor, inside the budget.
 - **Elite rooms:** a coin flip between adding one creature from the next floor's families and pushing one creature 2 CR higher, on top of the budget. Floor 4 always pushes.
 - **Who counts:** XP budgets and boss HP use the living players when the room is generated. Encounter levels and boss CRs never go below 1.
