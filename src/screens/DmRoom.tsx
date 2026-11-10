@@ -1,7 +1,9 @@
 // DM screen: the current room in full (the main stage), with a Reveal button
 // for each part players can't see yet.
 import type { RunState } from '../model/run'
-import { declineReprieve, enterRoom, rerollRoom, reveal, startFloor } from '../rules/roomFlow'
+import { declineReprieve, enterRoom, rerollBoss, rerollRoom, reveal, startFloor } from '../rules/roomFlow'
+import { bossOf } from '../rules/bosses'
+import { DmFight } from './DmFight'
 import { roomConditionMet } from '../rules/draftFlow'
 import {
   conditionOf,
@@ -88,6 +90,21 @@ export function DmRoom({ state, busy, act }: Props) {
           Reroll room
         </button>
       </div>
+
+      {state.dm?.bossId && (
+        <p className="hint">
+          {room.kind === 'boss' ? 'This floor\'s boss' : 'Waiting at the end of this floor'}:{' '}
+          <strong>{bossOf(state.dm.bossId).name}</strong> (DM only until its room starts){' '}
+          <button
+            type="button"
+            className="link"
+            disabled={busy}
+            onClick={() => act((s) => rerollBoss(s, Math.random), 'Swap this floor\'s boss for another of its three?')}
+          >
+            Reroll boss
+          </button>
+        </p>
+      )}
 
       {room.kind === 'reprieve' && (
         <p className="notice">
@@ -210,6 +227,8 @@ export function DmRoom({ state, busy, act }: Props) {
           </>
         )}
       </dl>
+
+      <DmFight state={state} room={room} busy={busy} act={act} />
     </div>
   )
 }

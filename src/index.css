@@ -646,3 +646,23 @@ button.link {
     grid-template-columns: 1fr;
   }
 }
+
+/* Phase 5: the fight in a room (DM encounter panel and boss stat block). */
+.fight {
+  margin-top: 0.75rem;
+  padding-top: 0.6rem;
+  border-top: 1px dashed #4a4840;
+}
+
+.fight h4 {
+  margin: 0 0 0.3rem;
+}
+
+.fight .creatures li {
+  margin-bottom: 0.35rem;
+}
+
+.boss-name {
+  font-size: 1.15rem;
+  margin: 0 0 0.4rem;
+}

@@ -16,6 +16,8 @@ import {
   trickOf,
 } from '../rules/rooms'
 import { submitChoice, usePrivateHints } from '../runStore'
+import { creatureOf } from '../rules/encounters'
+import { bossOf, floorBossDc } from '../rules/bosses'
 
 const KIND_LABELS = { combat: 'Room', elite: 'Elite room', reprieve: 'Reprieve', boss: 'Boss room' }
 
@@ -51,6 +53,25 @@ export function PlayerRoom({ state, me, readOnly = false }: Props) {
         {KIND_LABELS[view.kind]} · floor {view.floor}
         {view.kind !== 'boss' && `, room ${view.room}`}
       </h3>
+      {view.bossId && (
+        <p className="boss-name">
+          <strong>{bossOf(view.bossId).name}</strong>
+        </p>
+      )}
+      {(view.enemies?.length ?? 0) > 0 && (
+        <p>
+          <strong>Enemies:</strong>{' '}
+          {view.enemies!.map((e) => `${e.count > 1 ? `${e.count} × ` : ''}${creatureOf(e.creatureId).name}`).join(', ')}
+        </p>
+      )}
+      {view.shifts?.map((id) => {
+        const action = bossOf(id).shiftAction
+        return (
+          <p key={id} className="notice">
+            Shift Action, <strong>{action.name}</strong>: {action.text.replace(/\{dc\}/g, String(floorBossDc(view.floor, run.partyLevel)))}
+          </p>
+        )
+      })}
       <p>
         <strong>{shape.name}</strong>: {shape.description} {sizeOf(view.size).name} ({sizeOf(view.size).feet} ft
         across). {elevationOf(view.elevation).name}. {lightingName(view.lighting)}.
