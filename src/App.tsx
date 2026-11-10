@@ -9,6 +9,7 @@ import { RunPanel } from './screens/RunPanel'
 import { PlayerHome } from './screens/PlayerHome'
 import { PlayerPreview } from './screens/PlayerPreview'
 import { RunHistory } from './screens/RunHistory'
+import { TableViewer } from './screens/TableViewer'
 
 function App() {
   const { access, recheck } = useAccess()
@@ -55,6 +56,7 @@ function App() {
               <RunPanel />
               <Characters />
               <RunHistory />
+              <TableViewer />
               <InviteList myEmail={access.user.email ?? ''} />
               <PlayerPreview />
             </>

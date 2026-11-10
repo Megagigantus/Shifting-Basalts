@@ -721,3 +721,12 @@ button.link {
 .history-details {
   margin-top: 0.4rem;
 }
+
+/* Phase 7: table viewer. */
+.table-view {
+  overflow-x: auto;
+}
+
+.table-list li {
+  margin-bottom: 0.3rem;
+}
