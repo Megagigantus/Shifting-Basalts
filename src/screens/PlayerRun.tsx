@@ -11,6 +11,7 @@ import { PlayerRoom } from './PlayerRoom'
 import { submitChoice, useChoices, useLootRequests } from '../runStore'
 import { PlayerLoot } from './LootScreens'
 import { RecoveryPanel } from './RecoveryPanel'
+import { CounterList } from './CountersPanel'
 
 interface Props {
   state: RunState
@@ -100,6 +101,7 @@ export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
                     {boonSummary(p.slots, p.hiddenBoonId) && (
                       <div className="hint">{boonSummary(p.slots, p.hiddenBoonId)}</div>
                     )}
+                    <CounterList player={p} />
                     {!p.alive && (
                       <div className="warning">
                         Fell on floor {p.diedOnFloor} · locked out {p.lockoutDays} days

@@ -689,3 +689,25 @@ button.link {
 .character-loot summary {
   cursor: pointer;
 }
+
+/* Phase 7: slot recovery and boon counters. */
+.recovery,
+.counters {
+  margin-top: 0.3rem;
+}
+
+.counters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+  align-items: center;
+}
+
+.counter-add {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.counter-add input {
+  min-width: 14rem;
+}
