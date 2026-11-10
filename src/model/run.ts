@@ -65,6 +65,8 @@ export interface Run {
   loot?: RunLoot
   /** What the party kept on extraction: items picked and assigned, plus the credits payout. */
   lootShare?: LootShare | null
+  /** Thils's Vault is open (after the floor 5 boss, before the run ends). */
+  vaultOpen?: boolean
 }
 
 export interface RunPlayer {
@@ -110,6 +112,12 @@ export interface RunPlayer {
   hiddenSight?: boolean
   /** The floor Hidden Sight was last used on. */
   hiddenSightFloor?: number | null
+  /** Relics this character already owns (captured at run start; never offered again). */
+  relicsOwned?: string[]
+  /** Thils's Vault: the relics offered, until the player takes one. */
+  vaultOffer?: string[] | null
+  /** Thils's Vault: the relic taken. */
+  vaultRelic?: string | null
   diedOnFloor: number | null
   lockoutDays: number | null
   lockoutRolls: number[] | null
