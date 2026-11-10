@@ -150,6 +150,98 @@ for (const row of classTags.classes) {
   if (new Set(all).size !== all.length) fail(`${where}: a tag is listed twice`)
 }
 
+// Encounters and bosses (Phase 5).
+function loadObject<T>(file: string): T {
+  return JSON.parse(readFileSync(new URL(`../src/data/${file}`, import.meta.url), 'utf8').replace(/^﻿/, '')) as T
+}
+interface EnemyData {
+  families: { id: string; name: string; floorWeights: Record<string, number>; twist: string }[]
+  roles: Record<string, string[]>
+  creatures: { id: string; name: string; family: string; role: string; cr: number; reskin: string }[]
+}
+const enemies = loadObject<EnemyData>('enemies.json')
+const budgets = loadObject<{
+  floors: { floor: number; budget: string }[]
+  budgets: { level: number; low: number; moderate: number; high: number }[]
+  creatureXp: Record<string, number>
+  maxCreatureCr: number
+}>('encounter-budgets.json')
+const benchmarks = loadObject<{ benchmarks: { cr: number }[] }>('cr-benchmarks.json').benchmarks
+const bossData = loadObject<{
+  scaling: { floors: { floor: number }[] }
+  bosses: {
+    id: string
+    name: string
+    floor: number
+    attacks: { name: string; percent: number; count: number; die?: string }[]
+    specials?: { text: string }[]
+    legendaryOptions?: { text: string }[]
+    shiftAction: { name: string; text: string }
+  }[]
+}>('bosses.json')
+
+const familyIds = new Set(enemies.families.map((f) => f.id))
+const allRoles = Object.values(enemies.roles).flat()
+for (const f of enemies.families) {
+  for (const floor of Object.keys(f.floorWeights)) {
+    if (!['1', '2', '3', '4'].includes(floor)) fail(`enemies.json family "${f.id}": unknown floor "${floor}"`)
+  }
+}
+for (let floor = 1; floor <= 4; floor++) {
+  if (!enemies.families.some((f) => f.floorWeights[floor])) fail(`enemies.json: no family appears on floor ${floor}`)
+}
+const creatureIds = new Set<string>()
+for (const c of enemies.creatures) {
+  const where = `enemies.json creature "${c.id}"`
+  if (creatureIds.has(c.id)) fail(`${where}: id used twice`)
+  creatureIds.add(c.id)
+  if (!familyIds.has(c.family)) fail(`${where}: unknown family "${c.family}"`)
+  if (!allRoles.includes(c.role)) fail(`${where}: role "${c.role}" isn't listed in roles`)
+  if (budgets.creatureXp[String(c.cr)] === undefined) fail(`${where}: no XP value for CR ${c.cr}`)
+}
+for (const f of enemies.families) {
+  if (!enemies.creatures.some((c) => c.family === f.id)) fail(`enemies.json family "${f.id}": has no creatures`)
+}
+budgets.budgets.forEach((row, i) => {
+  if (row.level !== i + 1) fail(`encounter-budgets.json: budget rows must run 1, 2, 3... (row ${i + 1} says ${row.level})`)
+})
+for (let cr = 1; cr <= budgets.maxCreatureCr; cr++) {
+  if (budgets.creatureXp[String(cr)] === undefined) fail(`encounter-budgets.json: no XP value for CR ${cr}`)
+}
+benchmarks.forEach((row, i) => {
+  if (row.cr !== i + 1) fail(`cr-benchmarks.json: rows must run CR 1, 2, 3... (row ${i + 1} says ${row.cr})`)
+})
+const bossIds = new Set<string>()
+const PLACEHOLDER = /\{([a-z]+)(?::[\d.]+(?::d\d+)?)?\}/g
+for (const b of bossData.bosses) {
+  const where = `bosses.json "${b.id}"`
+  if (bossIds.has(b.id)) fail(`${where}: id used twice`)
+  bossIds.add(b.id)
+  if (!bossData.scaling.floors.some((f) => f.floor === b.floor)) fail(`${where}: unknown floor ${b.floor}`)
+  if (!b.attacks?.length) fail(`${where}: needs at least one attack`)
+  for (const a of b.attacks ?? []) {
+    if (!(a.percent > 0) || !(a.count >= 1)) fail(`${where}: attack "${a.name}" needs a percent and count`)
+    if (!/^d(6|8|10|12)$/.test(a.die ?? '')) fail(`${where}: attack "${a.name}" needs a die (d6, d8, d10 or d12; bible: Damage dice)`)
+  }
+  if (!b.shiftAction?.name || !b.shiftAction.text) fail(`${where}: needs a Shift Action`)
+  const texts = [...(b.specials ?? []), ...(b.legendaryOptions ?? []), ...b.attacks, b.shiftAction].map((t) => ('text' in t ? t.text : ''))
+  for (const text of texts) {
+    for (const m of text.matchAll(PLACEHOLDER)) {
+      if (!['dmg', 'hp', 'bpb', 'dc'].includes(m[1])) fail(`${where}: unknown placeholder "${m[0]}"`)
+    }
+  }
+}
+for (let floor = 1; floor <= 5; floor++) {
+  const count = bossData.bosses.filter((b) => b.floor === floor).length
+  if (count < 1) fail(`bosses.json: no boss for floor ${floor}`)
+}
+const LORE_WORDS = /sonder|lorebook|thilsavrass/i
+for (const file of ['enemies.json', 'bosses.json']) {
+  if (LORE_WORDS.test(readFileSync(new URL(`../src/data/${file}`, import.meta.url), 'utf8'))) {
+    fail(`${file}: mentions campaign lore that must stay out of the app (Content safety)`)
+  }
+}
+
 // firestore.rules carries a generated copy of upgrade prices and track caps.
 const rulesText = readFileSync(new URL('../firestore.rules', import.meta.url), 'utf8').replace(/\r\n/g, '\n')
 if (withGeneratedBlock(rulesText) !== rulesText) {
@@ -163,5 +255,5 @@ if (errors.length) {
 }
 
 console.log(
-  `Data OK: ${boons.length} boons, ${evolutions.length} evolutions, ${combinations.length} combinations, ${hiddenBoons.length} hidden boons.`,
+  `Data OK: ${boons.length} boons, ${evolutions.length} evolutions, ${combinations.length} combinations, ${hiddenBoons.length} hidden boons, ${enemies.creatures.length} creatures, ${bossData.bosses.length} bosses.`,
 )

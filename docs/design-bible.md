@@ -1,6 +1,6 @@
 # The Shifting Basalts: Design Bible
 
-Updated Nov 8, 2026 · @Brian Mahy
+Updated Nov 9, 2026 · @Brian Mahy
 
 ## Overview
 
@@ -978,7 +978,7 @@ AC and HP adjust the benchmark; attack percentages are shares of benchmark DPR. 
 | The Lattice Spinner | AC +1, HP ×0.9. Climb speed; walks on walls and ceilings. | Bite at 40%, plus a Con save or Poisoned. Web Shot (recharge 5–6): Dex save or Restrained. | Transit Cable (bonus action): strings a cable between two columns within 60 ft, up to 4 at once. Crossing one deals 25% lightning damage and teleports the creature 15 ft toward the Spinner. | 1 Legendary Resistance. |
 | The Stride Core | AC −1, HP ×1. Hovers. Immune to force damage. | Rift Barrage: three ranged spell attacks at 25% force, each leaving a pool of raw stride energy. | Surge Aura: 15% force damage to creatures starting a turn within 10 ft. When Bloodied, three Quantum Basalt shards crystallize on its shell (AC 15, 5 × Boss PB HP each); breaking all three Stuns it until the end of its next turn. | 2 LA: Pulse (aura damage again), Drift (move half speed). 1 LR. |
 | General Vane of the Tenth Stride | AC +2, HP ×1.2. | Three Halberd strikes at 30% each, reach 10 ft. | Phalanx Stance: resistance to damage from the front, and ranged attacks that miss him rebound at the attacker. Stampede Stance: +20 ft speed, moves through creatures (Str save or prone and 15% damage). Swaps stance as a bonus action. | 2 LA: Shield Bash (15% and push 10 ft), Swap Stance, March (move half speed). 1 LR. |
-| The Glass Hydra | AC +0, HP ×1.3. | One Bite per head at 25% (fire, lightning or cold); light-heads bite at 15% radiant. | A head is severed by 8 × PB damage in one turn (the players' PB), leaving an Elemental Residue puddle; two light-heads grow back at the end of its turn, up to 6 heads. Light-heads never regrow. | 2 LA: Bite (one head), Refract (move 10 ft). 1 LR. |
+| The Glass Hydra | AC +0, HP ×1.3. | One Bite per head at 25% (fire, lightning or cold); light-heads bite at 15% radiant. | Starts with 3 heads, one each for fire, lightning and cold. A head is severed by 8 × PB damage in one turn (the players' PB), leaving an Elemental Residue puddle; two light-heads grow back at the end of its turn, up to 6 heads. Light-heads never regrow. | 2 LA: Bite (one head), Refract (move 10 ft). 1 LR. |
 | The Blind Architect | AC +1, HP ×1. | Two Seam Cuts at 40% force, melee or ranged 60 ft. | Unseen Seams: attacks from creatures looking at it have disadvantage. A creature can avert its eyes, becoming Blinded to the Architect alone until the start of its next turn. Fold (recharge 5–6): one creature within 60 ft makes a Cha save or is teleported to a space the Architect chooses. | 2 LA: Seam Cut, Fold (costs 2), Shift Sight (move 30 ft without provoking). 2 LR. |
 | The Chorus of Unseen Angles | Three members with shared HP ×1.1, each AC +1. | Each member fires an Angle Ray at 33% psychic, range 120 ft. | Immune to damage from any creature that moved closer to that member this turn. | 2 LA: Ray (one member), Reposition (one member teleports 30 ft). 2 LR. |
 | The Inverted Reliquary | AC +2, HP ×1. Hovers 20 ft. | Three Ward Lashes at 30% force, reach 15 ft. | Attunement: at the start of each round, gains corrupted versions of the party's two most common tags' Resonance riders. Erasure (recharge 5–6): 30 ft sphere, Wis save, 50% necrotic damage, and one non-evolved boon is suppressed until the end of the target's next turn. | 2 LA: Ward Lash, Re-attune. 2 LR. |
@@ -987,6 +987,37 @@ AC and HP adjust the benchmark; attack percentages are shares of benchmark DPR. 
 | The Gatewright | AC +1, HP ×1.5. | Phase 1: two Builder's Strikes at 35% force; each hit raises a 10 ft wall segment within 30 ft. | Phase 1: triggers two floor 4 room tricks each round on initiative 0. Phase 2 (Bloodied): three portals open, and it makes three attacks at 30% force, each fired from any portal. | 3 LA: Strike, Raise Wall, Shift Portal. 3 LR. |
 
 **Worked example:** a party of 4 at level 10 on floor 3 meets General Vane at CR 12. He has AC 19, 292 HP, +8 to hit and DC 17, and each of his three Halberd strikes deals about 23 damage (3d10 + 7).
+
+### Damage dice
+
+Each attack's die sets its feel; the template's percentage sets its average. Build every attack the same way:
+
+1. **Target damage:** the attack's percentage of the benchmark DPR.
+2. **Number of dice:** 0.75 × target ÷ the die's average, rounded down, minimum 1.
+3. **Flat bonus:** whatever's left, so the average lands on the target. For Vane at CR 12: 30% of 78 is 23.4, so 3d10 (16.5) + 7 = 23.5.
+
+Dice averages: d6 = 3.5, d8 = 4.5, d10 = 5.5, d12 = 6.5.
+
+| Boss | Attack and die |
+| --- | --- |
+| The Tessellated Warden | Columnar Slam d10 bludgeoning |
+| Choir of the Hollow Column | Resonant Blast d8 thunder; Hymn Aura d6 thunder |
+| Gilded Excavation Herd | Golem Slam d10 bludgeoning; hound Bite d8 piercing |
+| Kaelen and Vyr | Kaelen's Cleave d12 slashing; Vyr's Ricochet Bolt d10 force |
+| Senior Tracker Halvard Quill | Hunting Blade d8 slashing; Longshot d8 piercing |
+| The Lattice Spinner | Bite d8 piercing; Transit Cable d6 lightning |
+| The Stride Core | Rift Barrage d10 force; Surge Aura d6 force |
+| General Vane of the Tenth Stride | Halberd d10 slashing; Shield Bash and Stampede d6 bludgeoning |
+| The Glass Hydra | Elemental Bite d10 fire, lightning or cold; light-head Bite d6 radiant |
+| The Blind Architect | Seam Cut d8 force |
+| The Chorus of Unseen Angles | Angle Ray d8 psychic |
+| The Inverted Reliquary | Ward Lash d8 force; Erasure d6 necrotic |
+| Ophaniel of the Inverted Bloom | Wings of Petrified Light d10 radiant; Inverted Gravity Beam d8 force |
+| The Sun-Eater's Husk | Antler Rake d12 slashing; Core Flare d8 radiant |
+| The Gatewright | Builder's Strike d10 force, including Phase 2 portal shots |
+
+- **Area and aura attacks:** use smaller dice (d6 or d8), since they hit several creatures.
+- **Shift Actions and room tricks:** keep the dice written in their entries, which scale with the players' PB.
 
 ## Room tricks
 
@@ -1323,6 +1354,20 @@ Everything rolled for a room is DM-only until revealed, and the DM gets a reveal
 - **Reprieve:** each Reprieve owner rolls their chance when a floor starts. Any success makes room 2 or 3 the floor's single Reprieve; more successes don't add more. The party can decline it and fight that room instead.
 - **Hidden Sight:** once per floor, the owner chooses a room and sees its hint on their own screen only.
 - **Flavor and oddities ship in the app:** an exception to Content safety. They're player-facing by design, so the DM accepts that a curious player could read them in the app's files. Boss lore, Campaign context truths and Sonder still stay out.
+
+### Encounter and boss defaults *(proposed)*
+
+- **Family odds:** every family allowed on a floor starts at 1; the families a floor "leans" toward count ×3. Floor 1: Wardstones and Mazework evenly. Floor 2: Wardstones, Mazework, the Lost and Absorbed Echoes evenly. Floor 3: Gate-Born and Echoes ×3. Floor 4: Inverted Paradise and Gate-Born ×3.
+- **Filling the budget:** start with one brute or elite, add up to 2 support roles, then fill the rest, never going over the budget. Each remaining slot aims at an even share of what's left: minions while they're at least half that share, otherwise the family's closest fit, so high tiers get elites in multiples. At most 2 creatures per living player, no creature's CR above the encounter level, and none above CR 20.
+- **Pushing CR:** if budget is left over, push creatures' CR up with the benchmarks, lowest CR first, so the push spreads evenly.
+- **Splash:** 1 room in 4 swaps one creature for one from a second family allowed on that floor, inside the budget.
+- **Elite rooms:** a coin flip between adding one creature from the next floor's families and pushing one creature 2 CR higher, on top of the budget. Floor 4 always pushes.
+- **Who counts:** XP budgets and boss HP use the living players when the room is generated. Encounter levels and boss CRs never go below 1.
+- **Absorbed Echoes:** each echo carries a random Level 1 or 2 boon from the boon pool, never a Payoff.
+- **Picking the boss:** one of the floor's three is chosen when the floor starts. The DM sees it and can reroll it; players see its name once its room starts.
+- **Damage dice:** see Damage dice under Bosses. A secondary hit the table doesn't list, Kaelen's Cleave splash, uses d6.
+- **Heavy Crown on floors 1 and 2:** a boss without listed Legendary Actions can use the extra one to make one of its attacks or move half its speed without provoking.
+- **Restless Stone:** each non-boss room rolls one of the three Shift Actions belonging to its floor's bosses, using the floor's boss save DC.
 
 ### Hidden Sight hints
 
