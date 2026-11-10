@@ -76,3 +76,14 @@ export function shortenedLockout(rolledDays: number, reduction: number): number 
 export function costOfEverything(): number {
   return UPGRADES.reduce((sum, u) => sum + u.costs.reduce((a, b) => a + b, 0), 0)
 }
+
+/**
+ * The Healing Font in a post-boss room (Phase 7 defaults): living owners, and
+ * the temp HP each player gains (+5 per owner beyond the first). Null when no
+ * living player owns it.
+ */
+export function healingFont(players: { alive: boolean; healingFontOwner?: boolean }[]): { owners: number; tempHp: number } | null {
+  const owners = players.filter((p) => p.alive && p.healingFontOwner).length
+  if (owners === 0) return null
+  return { owners, tempHp: (owners - 1) * data.healingFontTempHpPerExtraOwner }
+}

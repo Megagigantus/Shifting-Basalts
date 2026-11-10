@@ -4,6 +4,7 @@ import type { RunState } from '../model/run'
 import { declineReprieve, enterRoom, rerollBoss, rerollRoom, reveal, startFloor } from '../rules/roomFlow'
 import { bossOf } from '../rules/bosses'
 import { DmFight } from './DmFight'
+import { HealingFontNote } from './HealingFontNote'
 import { roomConditionMet } from '../rules/draftFlow'
 import {
   conditionOf,
@@ -50,6 +51,7 @@ export function DmRoom({ state, busy, act }: Props) {
     return (
       <div className="room-stage">
         <h3>Post-boss room</h3>
+        <HealingFontNote state={state} />
         <p className="hint">Use any Forge or Healing Font here, then descend or extract.</p>
       </div>
     )

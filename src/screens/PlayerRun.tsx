@@ -12,6 +12,7 @@ import { submitChoice, useChoices, useLootRequests } from '../runStore'
 import { PlayerLoot } from './LootScreens'
 import { RecoveryPanel } from './RecoveryPanel'
 import { CounterList } from './CountersPanel'
+import { HealingFontNote } from './HealingFontNote'
 
 interface Props {
   state: RunState
@@ -52,6 +53,8 @@ export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
         Loot kept if the party extracts now:{' '}
         {canExtract(state) ? `${lootKeptIfExtracting(state)}%` : 'extraction opens after a boss'}
       </p>
+
+      <HealingFontNote state={state} />
 
       <PlayerRoom
         key={`${run.floor}-${run.room}`}
