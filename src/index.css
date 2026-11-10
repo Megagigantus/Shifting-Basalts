@@ -599,6 +599,110 @@ button.link {
   border-color: #c9a35a;
 }
 
+/* Room card: shape banner, lighting tint and icon rows (src/screens/RoomCard.tsx). */
+.room-card {
+  margin: 0 0 0.75rem;
+}
+
+.room-banner {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  aspect-ratio: 16 / 9;
+  max-height: 22rem;
+  background: #15141a;
+}
+
+.room-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Lighting tints sit over the picture, so no lighting art is needed. */
+.room-banner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.room-banner.light-dim-seam-light::after {
+  background: rgb(10 10 20 / 0.45);
+}
+
+.room-banner.light-golden-light::after {
+  background: linear-gradient(to top, rgb(230 170 60 / 0.35), transparent 70%);
+}
+
+.room-banner.light-flickering::after {
+  background: rgb(10 10 20 / 0.55);
+  animation: room-flicker 3s steps(2, jump-none) infinite;
+}
+
+.room-banner.light-magical-darkness::after {
+  background:
+    radial-gradient(circle at 25% 35%, rgb(0 0 0 / 0.85) 0 18%, transparent 30%),
+    radial-gradient(circle at 70% 65%, rgb(0 0 0 / 0.85) 0 15%, transparent 27%);
+}
+
+@keyframes room-flicker {
+  to {
+    opacity: 0.2;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .room-banner.light-flickering::after {
+    animation: none;
+  }
+}
+
+.room-banner figcaption {
+  position: absolute;
+  left: 0.5rem;
+  bottom: 0.5rem;
+  z-index: 1;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  background: rgb(20 19 24 / 0.8);
+  font-size: 0.85rem;
+}
+
+.room-icons {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.room-icons li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 4.5rem;
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.room-icons img {
+  width: 3rem;
+  height: 3rem;
+  object-fit: contain;
+}
+
+.room-icons li.is-hidden {
+  opacity: 0.4;
+}
+
+.room-exits img {
+  width: 2rem;
+  height: 2rem;
+}
+
 .room-facts {
   display: grid;
   grid-template-columns: max-content 1fr;

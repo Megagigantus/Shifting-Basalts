@@ -5,6 +5,7 @@ import { declineReprieve, enterRoom, rerollBoss, rerollRoom, reveal, startFloor 
 import { bossOf } from '../rules/bosses'
 import { DmFight } from './DmFight'
 import { HealingFontNote } from './HealingFontNote'
+import { RoomCard } from './RoomCard'
 import { roomConditionMet } from '../rules/draftFlow'
 import {
   conditionOf,
@@ -75,6 +76,10 @@ export function DmRoom({ state, busy, act }: Props) {
   const shape = shapeOf(room.shape)
   const numbers = trickNumbers(room.floor, run.partyLevel)
   const falseWall = room.terrain.includes('false-wall')
+  const hiddenIcons = new Set([
+    ...(falseWall && !room.revealed.falseWall ? ['false-wall'] : []),
+    ...room.tricks.filter((t) => !t.revealed).map((t) => t.id),
+  ])
 
   return (
     <div className={`room-stage kind-${room.kind}`}>
@@ -92,6 +97,17 @@ export function DmRoom({ state, busy, act }: Props) {
           Reroll room
         </button>
       </div>
+
+      <RoomCard
+        shape={room.shape}
+        size={room.size}
+        lighting={room.lighting}
+        exits={room.exits}
+        trueExit={room.trueExit}
+        terrain={room.terrain}
+        tricks={room.tricks.map((t) => t.id)}
+        hidden={hiddenIcons}
+      />
 
       {state.dm?.bossId && (
         <p className="hint">

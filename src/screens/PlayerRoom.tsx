@@ -18,6 +18,7 @@ import {
 import { submitChoice, usePrivateHints } from '../runStore'
 import { creatureOf } from '../rules/encounters'
 import { bossOf, floorBossDc } from '../rules/bosses'
+import { RoomCard } from './RoomCard'
 
 const KIND_LABELS = { combat: 'Room', elite: 'Elite room', reprieve: 'Reprieve', boss: 'Boss room' }
 
@@ -53,6 +54,15 @@ export function PlayerRoom({ state, me, readOnly = false }: Props) {
         {KIND_LABELS[view.kind]} · floor {view.floor}
         {view.kind !== 'boss' && `, room ${view.room}`}
       </h3>
+      <RoomCard
+        shape={view.shape}
+        size={view.size}
+        lighting={view.lighting}
+        exits={view.exits}
+        trueExit={view.trueExit}
+        terrain={view.terrain}
+        tricks={view.tricks}
+      />
       {view.bossId && (
         <p className="boss-name">
           <strong>{bossOf(view.bossId).name}</strong>
