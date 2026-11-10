@@ -1324,6 +1324,19 @@ Everything rolled for a room is DM-only until revealed, and the DM gets a reveal
 - **Hidden Sight:** once per floor, the owner chooses a room and sees its hint on their own screen only.
 - **Flavor and oddities ship in the app:** an exception to Content safety. They're player-facing by design, so the DM accepts that a curious player could read them in the app's files. Boss lore, Campaign context truths and Sonder still stay out.
 
+### Encounter and boss defaults *(proposed)*
+
+- **Family odds:** every family allowed on a floor starts at 1; the families a floor "leans" toward count ×3. Floor 1: Wardstones and Mazework evenly. Floor 2: Wardstones, Mazework, the Lost and Absorbed Echoes evenly. Floor 3: Gate-Born and Echoes ×3. Floor 4: Inverted Paradise and Gate-Born ×3.
+- **Filling the budget:** start with one brute or elite, add support roles, then fill with minions, never going over the budget. At most 2 creatures per living player, and no creature's CR above the encounter level. If a family can't reach the budget, push a creature's CR up with the benchmarks.
+- **Splash:** 1 room in 4 swaps one creature for one from a second family allowed on that floor, inside the budget.
+- **Elite rooms:** a coin flip between adding one creature from the next floor's families and pushing one creature 2 CR higher, on top of the budget. Floor 4 always pushes.
+- **Who counts:** XP budgets and boss HP use the living players when the room is generated. Encounter levels and boss CRs never go below 1.
+- **Absorbed Echoes:** each echo carries a random Level 1 or 2 boon from the boon pool, never a Payoff.
+- **Picking the boss:** one of the floor's three is chosen when the floor starts. The DM sees it and can reroll it; players see its name once its room starts.
+- **Damage dice:** each attack's share of DPR is about 30% flat bonus and the rest dice of the template's die size (General Vane: 23 → 3d10 + 7).
+- **Heavy Crown on floors 1 and 2:** a boss without listed Legendary Actions can use the extra one to make one of its attacks or move half its speed without provoking.
+- **Restless Stone:** each non-boss room rolls one of the three Shift Actions belonging to its floor's bosses, using the floor's boss save DC.
+
 ### Hidden Sight hints
 
 | d20 | Condition | Hint |
