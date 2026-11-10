@@ -65,6 +65,8 @@ export interface Run {
 export interface RunPlayer {
   characterId: string
   name: string
+  /** Character level at run start (sets this player's share of each XP budget). */
+  level?: number
   alive: boolean
   /** Boss Quantum Basalts banked this run, before Pressure bonuses. Lost on death. */
   quantumBasaltsEarned: number
@@ -114,6 +116,8 @@ export interface DmRunState {
   floorPlan: RoomKind[]
   /** The full current room, hidden parts included (null in the post-boss room). */
   room: Room | null
+  /** The boss waiting at the end of this floor, picked when the floor starts. */
+  bossId?: string | null
 }
 
 export interface RunState {

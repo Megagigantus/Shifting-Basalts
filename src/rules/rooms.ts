@@ -10,6 +10,7 @@ import upgrades from '../data/upgrades.json'
 import type { RoomKind } from '../model/run'
 import { proficiencyBonus } from './proficiency'
 import type { Random } from './draft'
+import { encounterView, type Encounter } from './encounters'
 
 export const SHAPES = layouts.shapes
 export const TERRAIN = layouts.terrain
@@ -44,6 +45,15 @@ export interface Room {
   condition: number | null
   /** What the DM has shown players so far. */
   revealed: { trueExit: boolean; falseWall: boolean; oddity: boolean; condition: boolean }
+  /** Combat and elite rooms: the generated fight. */
+  encounter?: Encounter | null
+  /** Boss rooms: which boss, and the living party size it was built for. */
+  boss?: { id: string; partySize: number } | null
+  /**
+   * Shift Actions in play, by the boss they belong to: the boss's own in a boss
+   * room, or Restless Stone's in other rooms. Hidden until triggered.
+   */
+  shifts?: { bossId: string; revealed: boolean }[]
 }
 
 const roll = (sides: number, random: Random) => 1 + Math.floor(random() * sides)
@@ -228,6 +238,12 @@ export interface RoomView {
   tricks: string[]
   /** The secret condition, only once met or revealed. */
   condition: number | null
+  /** Revealed enemies: names and counts only, never stats. */
+  enemies?: { creatureId: string; count: number }[]
+  /** The boss's name is shown once its room starts. */
+  bossId?: string | null
+  /** Shift Actions the DM has triggered, by the boss they belong to. */
+  shifts?: string[]
 }
 
 export function playerView(room: Room): RoomView {
@@ -247,5 +263,8 @@ export function playerView(room: Room): RoomView {
     oddity: room.revealed.oddity ? room.oddity : null,
     tricks: room.tricks.filter((t) => t.revealed).map((t) => t.id),
     condition: room.revealed.condition ? room.condition : null,
+    enemies: encounterView(room.encounter),
+    bossId: room.boss?.id ?? null,
+    shifts: (room.shifts ?? []).filter((s) => s.revealed).map((s) => s.bossId),
   }
 }

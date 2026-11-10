@@ -61,6 +61,7 @@ export function newRunState(id: string, joinCode: string, party: Character[], pr
     players: party.map((c) => ({
       characterId: c.id,
       name: c.name,
+      level: c.level,
       alive: true,
       quantumBasaltsEarned: 0,
       quantumBasaltsPassed: 0,
