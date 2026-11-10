@@ -5,6 +5,7 @@ import type { Random } from './draft'
 import { chooseHidden, chooseOffer, passDraft, passHidden, rerollDraft } from './draftFlow'
 import { spendForge, type ForgeAction } from './forge'
 import { chooseRelic } from './vault'
+import { recoverSlot, spendSurge } from './recovery'
 
 export type DraftChoice =
   | { action: 'take'; index: number; replaceSlot?: number | null }
@@ -17,6 +18,10 @@ export type DraftChoice =
   | { action: 'hiddenSight' }
   /** Take a relic from Thils's Vault. */
   | { action: 'relic'; relicId: string }
+  /** Spend slot recovery points on a spell slot of this level. */
+  | { action: 'recover'; slotLevel: number }
+  /** Spend 1 slot recovery point on Leyline Surge. */
+  | { action: 'surge' }
 
 /**
  * Identifies the exact offer a choice was made against. If the offer changes
@@ -48,6 +53,10 @@ export function applyChoice(state: RunState, characterId: string, choice: DraftC
       throw new Error('Hidden Sight is applied separately.')
     case 'relic':
       return chooseRelic(state, characterId, choice.relicId)
+    case 'recover':
+      return recoverSlot(state, characterId, choice.slotLevel)
+    case 'surge':
+      return spendSurge(state, characterId)
   }
 }
 

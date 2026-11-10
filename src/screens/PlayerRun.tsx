@@ -8,8 +8,11 @@ import { canExtract, isBossRoom, lootKeptIfExtracting } from '../rules/runFlow'
 import { BoonList } from './BoonList'
 import { PlayerDraft } from './PlayerDraft'
 import { PlayerRoom } from './PlayerRoom'
-import { useChoices, useLootRequests } from '../runStore'
+import { submitChoice, useChoices, useLootRequests } from '../runStore'
 import { PlayerLoot } from './LootScreens'
+import { RecoveryPanel } from './RecoveryPanel'
+import { CounterList } from './CountersPanel'
+import { HealingFontNote } from './HealingFontNote'
 
 interface Props {
   state: RunState
@@ -51,6 +54,8 @@ export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
         {canExtract(state) ? `${lootKeptIfExtracting(state)}%` : 'extraction opens after a boss'}
       </p>
 
+      <HealingFontNote state={state} />
+
       <PlayerRoom
         key={`${run.floor}-${run.room}`}
         state={state}
@@ -62,6 +67,17 @@ export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
         .filter((p) => myCharacterIds.includes(p.characterId))
         .map((p) => (
           <PlayerDraft key={p.characterId} state={state} player={p} sent={choices[p.characterId]} readOnly={readOnly} />
+        ))}
+
+      {players
+        .filter((p) => myCharacterIds.includes(p.characterId))
+        .map((p) => (
+          <RecoveryPanel
+            key={p.characterId}
+            player={p}
+            busy={readOnly || Boolean(choices[p.characterId] && !choices[p.characterId].error)}
+            onSpend={(choice) => submitChoice(run.id, p.characterId, choice, null)}
+          />
         ))}
 
       <PlayerLoot state={state} myCharacterIds={myCharacterIds} requests={requests} readOnly={readOnly} />
@@ -88,6 +104,7 @@ export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
                     {boonSummary(p.slots, p.hiddenBoonId) && (
                       <div className="hint">{boonSummary(p.slots, p.hiddenBoonId)}</div>
                     )}
+                    <CounterList player={p} />
                     {!p.alive && (
                       <div className="warning">
                         Fell on floor {p.diedOnFloor} · locked out {p.lockoutDays} days

@@ -13,6 +13,7 @@ import { StatTracks } from './StatTracks'
 import { UpgradeShop } from './UpgradeShop'
 import { DraftPreferences } from './DraftPreferences'
 import { CharacterLoot } from './LootScreens'
+import { RunHistory } from './RunHistory'
 
 const className = (id: string) => classes.find((c) => c.id === id)?.name ?? id
 
@@ -94,6 +95,8 @@ export function PlayerHome({ email, readOnly = false }: Props) {
           ))}
         </ul>
       </section>
+
+      {mine.length > 0 && <RunHistory characterIds={myIds} title="Your past runs" />}
     </>
   )
 }

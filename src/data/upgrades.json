@@ -153,6 +153,7 @@
   "deepPocketsPerRank": 5,
   "quickReturnDaysPerRank": 1,
   "minimumLockoutDays": 1,
+  "healingFontTempHpPerExtraOwner": 5,
   "reprieveChancePercent": [
     20,
     35,

@@ -27,6 +27,8 @@ const ACTION_LABELS: Record<ChoiceDoc['action'], string> = {
   forge: 'your Forge use',
   hiddenSight: 'your Hidden Sight request',
   relic: 'your relic pick',
+  recover: 'your slot recovery',
+  surge: 'your Leyline Surge',
 }
 
 export function PlayerDraft({ state, player, sent, readOnly = false }: Props) {

@@ -16,6 +16,8 @@ import {
 import { classTriggerMet, rerollsLeft } from '../rules/draftFlow'
 import { finishRoom } from '../rules/progress'
 import { DmLootPanel, ExtractPanel, VaultPanel } from './LootScreens'
+import { RecoveryPanel } from './RecoveryPanel'
+import { CounterList, CountersEditor } from './CountersPanel'
 import { useLootRequests } from '../runStore'
 import { applyChoice } from '../rules/draftChoice'
 import { classHiddenBoon } from '../rules/draft'
@@ -188,6 +190,7 @@ export function RunTracker({ state, characters, onEnded }: Props) {
             </button>
           </>
         )}
+        {busy && <span className="hint saving">Saving…</span>}
       </div>
 
       {extracting && run.awaitingChoice && (
@@ -234,6 +237,12 @@ export function RunTracker({ state, characters, onEnded }: Props) {
                       <div className="hint">{boonSummary(p.slots, p.hiddenBoonId)}</div>
                     )}
                     {sent?.error && <div className="warning">Their last choice failed: {sent.error}</div>}
+                    <CounterList player={p} />
+                    <RecoveryPanel
+                      player={p}
+                      busy={busy}
+                      onSpend={(choice) => act((s) => applyChoice(s, p.characterId, choice, Math.random))}
+                    />
                     {!p.alive && (
                       <div className="warning">
                         Fell on floor {p.diedOnFloor} · locked out {p.lockoutDays} days (rolled{' '}
@@ -291,7 +300,10 @@ export function RunTracker({ state, characters, onEnded }: Props) {
                   <tr className="boons-row">
                     <td colSpan={5}>
                       {open.kind === 'boons' ? (
-                        <PlayerBoons player={p} character={character} busy={busy} act={act} />
+                        <>
+                          <PlayerBoons player={p} character={character} busy={busy} act={act} />
+                          <CountersEditor player={p} busy={busy} act={act} />
+                        </>
                       ) : (
                         <DraftOffers
                           player={p}

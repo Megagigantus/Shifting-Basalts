@@ -235,8 +235,8 @@ service cloud.firestore {
         allow read: if isInvited();
         allow write: if isDM();
         allow create, update: if ownsRunCharacter(runId, characterId)
-          && request.resource.data.keys().hasOnly(['action', 'index', 'replaceSlot', 'hiddenBoonId', 'forgeKind', 'slotIndex', 'combinationId', 'relicId', 'draftKey', 'createdAt'])
-          && request.resource.data.action in ['take', 'pass', 'reroll', 'hidden', 'passHidden', 'forge', 'hiddenSight', 'relic']
+          && request.resource.data.keys().hasOnly(['action', 'index', 'replaceSlot', 'hiddenBoonId', 'forgeKind', 'slotIndex', 'combinationId', 'relicId', 'slotLevel', 'draftKey', 'createdAt'])
+          && request.resource.data.action in ['take', 'pass', 'reroll', 'hidden', 'passHidden', 'forge', 'hiddenSight', 'relic', 'recover', 'surge']
           && request.resource.data.createdAt == request.time;
         allow delete: if ownsRunCharacter(runId, characterId);
       }

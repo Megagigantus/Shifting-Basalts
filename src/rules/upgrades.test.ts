@@ -72,3 +72,13 @@ describe('personal effects', () => {
     expect(shortenedLockout(2, 3)).toBe(1)
   })
 })
+
+describe('the Healing Font', () => {
+  it('needs a living owner, and adds 5 temp HP per owner beyond the first', async () => {
+    const { healingFont } = await import('./upgrades')
+    expect(healingFont([{ alive: true }, { alive: true, healingFontOwner: false }])).toBeNull()
+    expect(healingFont([{ alive: false, healingFontOwner: true }])).toBeNull()
+    expect(healingFont([{ alive: true, healingFontOwner: true }])).toEqual({ owners: 1, tempHp: 0 })
+    expect(healingFont([1, 2, 3].map(() => ({ alive: true, healingFontOwner: true })))).toEqual({ owners: 3, tempHp: 10 })
+  })
+})
