@@ -282,7 +282,7 @@
         { "name": "Beam (costs 2)", "text": "Inverted Gravity Beam." },
         { "name": "Bloom", "text": "Regains {hp:5} HP." }
       ],
-      "shiftAction": { "name": "Paradise Bleed", "text": "Half the arena becomes paradise, where creatures regain HP each turn but take double damage; the other half becomes airless shattered stone with Silence and necrotic damage. The halves swap or rotate every round." }
+      "shiftAction": { "name": "Paradise Bleed", "text": "Half the arena becomes a golden meadow, where creatures regain HP each turn but take double damage; the other half becomes airless shattered stone with Silence and necrotic damage. The halves swap or rotate every round." }
     },
     {
       "id": "sun-eaters-husk",

@@ -1,7 +1,7 @@
 // Checks the game-content files in src/data for mistakes.
 // Run with: npm run check-data
 // Exits with an error if anything is wrong, so it can also guard builds.
-import { readFileSync } from 'node:fs'
+import { readdirSync, readFileSync } from 'node:fs'
 import type { Boon, Combination, Evolution, HiddenBoon } from '../src/data/types.ts'
 import { withGeneratedBlock } from './rules-generated.ts'
 
@@ -235,10 +235,82 @@ for (let floor = 1; floor <= 5; floor++) {
   const count = bossData.bosses.filter((b) => b.floor === floor).length
   if (count < 1) fail(`bosses.json: no boss for floor ${floor}`)
 }
-const LORE_WORDS = /sonder|lorebook|thilsavrass/i
-for (const file of ['enemies.json', 'bosses.json']) {
-  if (LORE_WORDS.test(readFileSync(new URL(`../src/data/${file}`, import.meta.url), 'utf8'))) {
-    fail(`${file}: mentions campaign lore that must stay out of the app (Content safety)`)
+// Loot (Phase 6).
+const lootRolls = loadObject<{
+  rarities: { id: string }[]
+  floorRoll: { floor: number; table: { upTo: number; kind: string }[] }[]
+  amounts: { floor: number; rarity: Record<string, { base: string; onSix?: string }> }[]
+}>('loot-rolls.json')
+const lootItems = loadObject<{
+  trinkets: string[]
+  consumables: { id: string; name: string; effect: string }[]
+  gear: { id: string; name: string; property: string }[]
+  wondrous: Record<string, { id: string; name: string; effect: string }[]>
+  trophies: { bossId: string; id: string; name: string; rarity: string; effect: string }[]
+}>('loot-items.json')
+const relicData = loadObject<{ relics: { id: string; name: string; tags: string[]; dormant: string; woken: string }[] }>('relics.json')
+const rarityIds = lootRolls.rarities.map((r) => r.id)
+const LOOT_KINDS = ['credits', 'trinket', 'consumable', 'gear', 'wondrous', 'basalts']
+for (let floor = 1; floor <= 4; floor++) {
+  const row = lootRolls.floorRoll.find((r) => r.floor === floor)
+  if (!row) fail(`loot-rolls.json: no floor roll for floor ${floor}`)
+  else {
+    if (row.table[row.table.length - 1]?.upTo !== 100) fail(`loot-rolls.json floor ${floor}: the d100 table must end at 100`)
+    for (const r of row.table) if (!LOOT_KINDS.includes(r.kind)) fail(`loot-rolls.json floor ${floor}: unknown kind "${r.kind}"`)
+  }
+  const amounts = lootRolls.amounts.find((a) => a.floor === floor)
+  if (!amounts) fail(`loot-rolls.json: no amounts for floor ${floor}`)
+  for (const tier of ['1', '2', '3']) {
+    const r = amounts?.rarity[tier]
+    if (!r || !rarityIds.includes(r.base) || (r.onSix && !rarityIds.includes(r.onSix))) {
+      fail(`loot-rolls.json floor ${floor}: tier ${tier} needs known rarities`)
+    }
+  }
+}
+if (lootItems.trinkets.length !== 20) fail(`loot-items.json: expected 20 trinkets (d20), found ${lootItems.trinkets.length}`)
+if (lootItems.consumables.length !== 12) fail(`loot-items.json: expected 12 consumables (d12)`)
+if (lootItems.gear.length !== 12) fail(`loot-items.json: expected 12 gear items (d12)`)
+for (const id of rarityIds) if (!lootItems.wondrous[id]?.length) fail(`loot-items.json: no wondrous items for ${id}`)
+for (const b of bossData.bosses) {
+  if (!lootItems.trophies.some((t) => t.bossId === b.id)) fail(`loot-items.json: no trophy for boss "${b.id}"`)
+}
+for (const t of lootItems.trophies) {
+  if (!bossIds.has(t.bossId)) fail(`loot-items.json trophy "${t.id}": unknown boss "${t.bossId}"`)
+  if (!rarityIds.includes(t.rarity)) fail(`loot-items.json trophy "${t.id}": unknown rarity "${t.rarity}"`)
+}
+const lootIds = new Set<string>()
+for (const item of [...lootItems.consumables, ...lootItems.gear, ...Object.values(lootItems.wondrous).flat(), ...lootItems.trophies, ...relicData.relics]) {
+  if (lootIds.has(item.id)) fail(`loot: id "${item.id}" is used twice`)
+  lootIds.add(item.id)
+}
+for (const r of relicData.relics) {
+  if (!r.dormant || !r.woken) fail(`relics.json "${r.id}": needs Dormant and Woken text`)
+  for (const t of r.tags) if (!TAGS.includes(t)) fail(`relics.json "${r.id}": unknown tag "${t}"`)
+}
+
+// Lore check (bible: Content safety, Loot defaults). Every data file ships in
+// the app, so campaign truths must stay out. Some words may appear only inside
+// approved names players meet in play.
+const lore = JSON.parse(readFileSync(new URL('./lore-allowlist.json', import.meta.url), 'utf8').replace(/^﻿/, '')) as {
+  bannedEverywhere: string[]
+  bannedExceptNames: string[]
+  approvedNames: string[]
+  approvedIds: string[]
+}
+const approved = [...lore.approvedNames, ...lore.approvedIds].sort((a, b) => b.length - a.length)
+for (const file of readdirSync(new URL('../src/data/', import.meta.url)).filter((f) => f.endsWith('.json'))) {
+  const text = readFileSync(new URL(`../src/data/${file}`, import.meta.url), 'utf8')
+  for (const word of lore.bannedEverywhere) {
+    if (text.toLowerCase().includes(word)) fail(`${file}: mentions "${word}", which must never ship in the app (Content safety)`)
+  }
+  let scrubbed = text
+  for (const name of approved) scrubbed = scrubbed.split(name).join('')
+  for (const word of lore.bannedExceptNames) {
+    for (const line of scrubbed.split('\n')) {
+      if (line.toLowerCase().includes(word)) {
+        fail(`${file}: "${word}" appears outside an approved name (scripts/lore-allowlist.json): ${line.trim().slice(0, 120)}`)
+      }
+    }
   }
 }
 
@@ -255,5 +327,5 @@ if (errors.length) {
 }
 
 console.log(
-  `Data OK: ${boons.length} boons, ${evolutions.length} evolutions, ${combinations.length} combinations, ${hiddenBoons.length} hidden boons, ${enemies.creatures.length} creatures, ${bossData.bosses.length} bosses.`,
+  `Data OK: ${boons.length} boons, ${evolutions.length} evolutions, ${combinations.length} combinations, ${hiddenBoons.length} hidden boons, ${enemies.creatures.length} creatures, ${bossData.bosses.length} bosses, ${lootIds.size} loot items and relics.`,
 )
