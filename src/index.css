@@ -711,3 +711,13 @@ button.link {
 .counter-add input {
   min-width: 14rem;
 }
+
+/* Phase 7: run history. */
+.history-entry {
+  padding: 0.35rem 0;
+  border-bottom: 1px solid #3a3940;
+}
+
+.history-details {
+  margin-top: 0.4rem;
+}

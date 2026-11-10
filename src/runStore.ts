@@ -12,6 +12,7 @@ import {
   increment,
   limit,
   onSnapshot,
+  orderBy,
   query,
   serverTimestamp,
   setDoc,
@@ -314,6 +315,45 @@ export async function cancelRun(state: RunState): Promise<void> {
   batch.delete(doc(db, 'runs', state.run.id, 'dmOnly', 'room'))
   batch.delete(doc(db, 'runs', state.run.id))
   await batch.commit()
+}
+
+// ---------------------------------------------------------------------------
+// Run history: runHistory/{runId}, written when a run ends (saveRunState).
+
+export interface RunHistoryEntry {
+  id: string
+  status: RunState['run']['status']
+  partyLevel: number
+  partySize: number
+  pressures: string[]
+  floorReached: number
+  lastBossFloor: number
+  lootKeptPercent: number | null
+  lootShare?: RunState['run']['lootShare']
+  rooms: { floor: number; room: number; kind: string }[]
+  results: RunResult[]
+  endedAt: Date | null
+}
+
+/** The latest finished runs, newest first. */
+export function useRunHistory(max = 50): { entries: RunHistoryEntry[] | null; error: string | null } {
+  const [entries, setEntries] = useState<RunHistoryEntry[] | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  useEffect(() => {
+    if (!db) return
+    return onSnapshot(
+      query(collection(db, 'runHistory'), orderBy('endedAt', 'desc'), limit(max)),
+      (snapshot) =>
+        setEntries(
+          snapshot.docs.map((d) => {
+            const data = d.data()
+            return { ...(data as Omit<RunHistoryEntry, 'id' | 'endedAt'>), id: d.id, endedAt: data.endedAt?.toDate?.() ?? null }
+          }),
+        ),
+      () => setError('Could not load run history.'),
+    )
+  }, [max])
+  return { entries, error }
 }
 
 // ---------------------------------------------------------------------------

@@ -8,6 +8,7 @@ import { Characters } from './screens/Characters'
 import { RunPanel } from './screens/RunPanel'
 import { PlayerHome } from './screens/PlayerHome'
 import { PlayerPreview } from './screens/PlayerPreview'
+import { RunHistory } from './screens/RunHistory'
 
 function App() {
   const { access, recheck } = useAccess()
@@ -53,6 +54,7 @@ function App() {
             <>
               <RunPanel />
               <Characters />
+              <RunHistory />
               <InviteList myEmail={access.user.email ?? ''} />
               <PlayerPreview />
             </>
