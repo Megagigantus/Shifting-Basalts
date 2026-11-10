@@ -47,25 +47,16 @@ export interface Damage {
 }
 
 /**
- * Turn a damage target into dice: about 30% flat bonus, the rest dice of the
- * given size (General Vane: 23 -> 3d10 + 7). Small amounts step down to a
- * smaller die when the bigger one would miss the target by more than a quarter.
+ * Turn a damage target into dice (design bible: Damage dice). Dice: 0.75 x
+ * target / the die's average, rounded down, at least 1. Flat bonus: whatever's
+ * left, so the average lands on the target (General Vane: 23.4 -> 3d10 + 7).
  */
 export function damageDice(target: number, die = SCALING.defaultDie): Damage {
-  const flat = Math.round(target * SCALING.flatShare)
-  const sizes = [Number(die.slice(1)), 8, 6, 4].filter((s, i, all) => i === 0 || s < all[0])
-  for (const size of sizes) {
-    const avg = (size + 1) / 2
-    const n = Math.round((target - flat) / avg)
-    if (n >= 1 && Math.abs(n * avg + flat - target) <= Math.max(1, target * 0.25)) {
-      return {
-        expression: flat > 0 ? `${n}d${size} + ${flat}` : `${n}d${size}`,
-        average: Math.floor(n * avg + flat),
-      }
-    }
-  }
-  const value = Math.max(1, Math.round(target))
-  return { expression: String(value), average: value }
+  const avg = (Number(die.slice(1)) + 1) / 2
+  const n = Math.max(1, Math.floor((SCALING.diceShare * target) / avg))
+  const flat = Math.round(target - n * avg)
+  const sign = flat > 0 ? ` + ${flat}` : flat < 0 ? ` − ${-flat}` : ''
+  return { expression: `${n}${die}${sign}`, average: Math.max(1, Math.floor(n * avg + flat)) }
 }
 
 export interface BossAttack {

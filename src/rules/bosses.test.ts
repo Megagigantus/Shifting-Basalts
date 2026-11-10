@@ -78,11 +78,36 @@ describe('boss scaling', () => {
   })
 })
 
-describe('damage dice', () => {
-  it('keep about 30% flat and never roll zero dice', () => {
-    expect(damageDice(23.4)).toEqual({ expression: '3d10 + 7', average: 23 })
-    expect(damageDice(4)).toEqual({ expression: '1d6 + 1', average: 4 })
-    expect(damageDice(1).expression).toBe('1')
+describe('damage dice (bible: Damage dice)', () => {
+  it('rolls 0.75 x target in dice, rounded down, with the rest as a flat bonus', () => {
+    expect(damageDice(23.4, 'd10')).toEqual({ expression: '3d10 + 7', average: 23 })
+    expect(damageDice(27.3, 'd12')).toEqual({ expression: '3d12 + 8', average: 27 })
+    expect(damageDice(4, 'd6')).toEqual({ expression: '1d6 + 1', average: 4 })
+  })
+
+  it('always rolls at least one die, even when that leaves a negative bonus', () => {
+    expect(damageDice(3, 'd10')).toEqual({ expression: '1d10 − 2', average: 3 })
+  })
+
+  it('uses each attack\'s die from the bible\'s table', () => {
+    const die = (bossId: string, attack: string) =>
+      buildBoss(bossId, 10, 4, []).attacks.find((a) => a.name === attack)!.damage.expression.match(/d\d+/)![0]
+    expect(die('kaelen-and-vyr', 'Cleave')).toBe('d12')
+    expect(die('halvard-quill', 'Longshot')).toBe('d8')
+    expect(die('glass-hydra', 'Bite (light-head)')).toBe('d6')
+    expect(die('sun-eaters-husk', 'Antler Rake')).toBe('d12')
+    expect(die('gatewright', 'Portal Strike')).toBe('d10')
+  })
+
+  it('uses smaller dice for auras and area attacks', () => {
+    const special = (bossId: string, name: string) =>
+      buildBoss(bossId, 10, 4, []).specials.find((s) => s.name.startsWith(name))!.text
+    expect(special('choir-hollow-column', 'Hymn Aura')).toMatch(/d6/)
+    expect(special('sun-eaters-husk', 'Core Flare')).toMatch(/d8/)
+  })
+
+  it('the Glass Hydra starts with 3 heads', () => {
+    expect(buildBoss('glass-hydra', 10, 4, []).specials[0].text).toMatch(/^Starts with 3 heads, one each for fire, lightning and cold\./)
   })
 })
 

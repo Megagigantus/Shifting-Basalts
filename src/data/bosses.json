@@ -1,5 +1,5 @@
 {
-  "_source": "docs/design-bible.md: Bosses (Role and mechanics, Shift Action columns only; no Lore), Boss stat scaling, Boss templates, Encounter and boss defaults. Placeholders in text: {dmg:N} = N% of benchmark DPR as dice, {hp:N} = N% of the boss's max HP, {bpb:N} = N x Boss PB, {dc} = the boss's save DC. Attack dice default to defaultDie; set \"die\" on an attack to change it.",
+  "_source": "docs/design-bible.md: Bosses (Role and mechanics, Shift Action columns only; no Lore), Boss stat scaling, Boss templates, Damage dice, Encounter and boss defaults. Placeholders in text: {dmg:N:dX} = N% of benchmark DPR as dice of size dX (d6 if left out), {hp:N} = N% of the boss's max HP, {bpb:N} = N x Boss PB, {dc} = the boss's save DC. Every attack sets its own \"die\" (bible: Damage dice).",
   "status": "proposed",
   "scaling": {
     "floors": [
@@ -17,7 +17,7 @@
       "heavy-crown-2": { "legendaryActions": 1, "legendaryResistances": 1 }
     },
     "defaultDie": "d10",
-    "flatShare": 0.3,
+    "diceShare": 0.75,
     "genericLegendaryActions": [
       { "name": "Attack", "text": "Makes one of its attacks." },
       { "name": "Move", "text": "Moves up to half its speed without provoking opportunity attacks." }
@@ -33,7 +33,7 @@
       "hpMultiplier": 1,
       "traits": ["Resistance to piercing damage."],
       "attacks": [
-        { "name": "Columnar Slam", "count": 2, "percent": 40, "type": "bludgeoning", "kind": "melee", "text": "Pushes the target 10 ft and raises a 5 ft pillar in its old space." }
+        { "name": "Columnar Slam", "die": "d10", "count": 2, "percent": 40, "type": "bludgeoning", "kind": "melee", "text": "Pushes the target 10 ft and raises a 5 ft pillar in its old space." }
       ],
       "specials": [
         { "name": "Magnetic Pull (recharge 5-6)", "text": "30 ft line. DC {dc} Str save or be pulled adjacent to it with speed 0 until its next turn." },
@@ -51,10 +51,10 @@
       "parts": [{ "name": "Pipe cluster", "count": 4, "hpShare": 0.25 }],
       "traits": ["Speed 0."],
       "attacks": [
-        { "name": "Resonant Blast", "count": 1, "percent": 60, "type": "thunder", "kind": "save", "save": "Con", "text": "30 ft cone. On a failed save, also Deafened and pushed 10 ft. Each destroyed cluster cuts this damage by a quarter." }
+        { "name": "Resonant Blast", "die": "d8", "count": 1, "percent": 60, "type": "thunder", "kind": "save", "save": "Con", "text": "30 ft cone. On a failed save, also Deafened and pushed 10 ft. Each destroyed cluster cuts this damage by a quarter." }
       ],
       "specials": [
-        { "name": "Hymn Aura", "text": "Creatures starting a turn within 5 ft per surviving cluster take {dmg:15} thunder damage." }
+        { "name": "Hymn Aura", "text": "Creatures starting a turn within 5 ft per surviving cluster take {dmg:15:d6} thunder damage." }
       ],
       "shiftAction": { "name": "Acoustic Shift", "text": "The outer walls slide into new chambers. Creatures within 10 ft of a wall make a DC {dc} Con save or take PB d6 thunder damage and are pushed 15 ft toward the center." }
     },
@@ -70,8 +70,8 @@
         { "name": "Hound", "count": 2, "acAdjust": -1, "hpMultiplier": 0.15 }
       ],
       "attacks": [
-        { "name": "Golem Slam", "count": 1, "percent": 30, "type": "bludgeoning", "kind": "melee", "text": "" },
-        { "name": "Hound Bite", "count": 2, "percent": 20, "type": "piercing", "kind": "melee", "text": "One per hound. DC {dc} Str save or prone." }
+        { "name": "Golem Slam", "die": "d10", "count": 1, "percent": 30, "type": "bludgeoning", "kind": "melee", "text": "" },
+        { "name": "Hound Bite", "die": "d8", "count": 2, "percent": 20, "type": "piercing", "kind": "melee", "text": "One per hound. DC {dc} Str save or prone." }
       ],
       "specials": [
         { "name": "Tether Beam (bonus action, recharge 4-6)", "text": "60 ft. DC {dc} Dex save or be tethered to the nearest pillar, limited to 15 ft of it, until the pillar is smashed (AC 15, {bpb:10} HP)." }
@@ -91,8 +91,8 @@
         { "name": "Vyr", "count": 1, "acAdjust": -1 }
       ],
       "attacks": [
-        { "name": "Cleave", "group": "Kaelen", "count": 2, "percent": 35, "type": "slashing", "kind": "melee", "text": "Splashes {dmg:10} onto a second creature within 5 ft. DC {dc} Str save or Topple (prone)." },
-        { "name": "Ricochet Bolt", "group": "Vyr", "count": 1, "percent": 50, "type": "force", "kind": "ranged", "text": "Bounces to a second target for half damage." }
+        { "name": "Cleave", "group": "Kaelen", "die": "d12", "count": 2, "percent": 35, "type": "slashing", "kind": "melee", "text": "Splashes {dmg:10} onto a second creature within 5 ft. DC {dc} Str save or Topple (prone)." },
+        { "name": "Ricochet Bolt", "group": "Vyr", "die": "d10", "count": 1, "percent": 50, "type": "force", "kind": "ranged", "text": "Bounces to a second target for half damage." }
       ],
       "specials": [
         { "name": "Form Swap", "text": "Swaps forms at the start of each turn, or when it takes {hp:25} damage in one turn." },
@@ -108,8 +108,8 @@
       "acAdjust": 1,
       "hpMultiplier": 0.9,
       "attacks": [
-        { "name": "Hunting Blade", "group": "Close in", "count": 2, "percent": 30, "type": "slashing", "kind": "melee", "text": "" },
-        { "name": "Longshot", "group": "Or at range", "count": 2, "percent": 30, "type": "piercing", "kind": "ranged", "text": "Range 150 ft." }
+        { "name": "Hunting Blade", "group": "Close in", "die": "d8", "count": 2, "percent": 30, "type": "slashing", "kind": "melee", "text": "" },
+        { "name": "Longshot", "group": "Or at range", "die": "d8", "count": 2, "percent": 30, "type": "piercing", "kind": "ranged", "text": "Range 150 ft." }
       ],
       "specials": [
         { "name": "Snare Shard (bonus action)", "text": "Next round it arms as a random floor 1 or 2 room trick." },
@@ -127,11 +127,11 @@
       "hpMultiplier": 0.9,
       "traits": ["Climb speed; walks on walls and ceilings."],
       "attacks": [
-        { "name": "Bite", "count": 1, "percent": 40, "type": "piercing", "kind": "melee", "text": "DC {dc} Con save or Poisoned." }
+        { "name": "Bite", "die": "d8", "count": 1, "percent": 40, "type": "piercing", "kind": "melee", "text": "DC {dc} Con save or Poisoned." }
       ],
       "specials": [
         { "name": "Web Shot (recharge 5-6)", "text": "DC {dc} Dex save or Restrained." },
-        { "name": "Transit Cable (bonus action)", "text": "Strings a cable between two columns within 60 ft, up to 4 at once. Crossing one deals {dmg:25} lightning damage and teleports the creature 15 ft toward the Spinner." }
+        { "name": "Transit Cable (bonus action)", "text": "Strings a cable between two columns within 60 ft, up to 4 at once. Crossing one deals {dmg:25:d6} lightning damage and teleports the creature 15 ft toward the Spinner." }
       ],
       "shiftAction": { "name": "Loom Rotation", "text": "Every column shifts 15 ft clockwise, dragging its cables along. Creatures in the sweep make a DC {dc} Dex save." }
     },
@@ -144,10 +144,10 @@
       "hpMultiplier": 1,
       "traits": ["Hovers.", "Immune to force damage."],
       "attacks": [
-        { "name": "Rift Barrage", "count": 3, "percent": 25, "type": "force", "kind": "ranged", "text": "Ranged spell attacks. Each leaves a pool of raw stride energy: difficult terrain that Restrains creatures ending their turn in it." }
+        { "name": "Rift Barrage", "die": "d10", "count": 3, "percent": 25, "type": "force", "kind": "ranged", "text": "Ranged spell attacks. Each leaves a pool of raw stride energy: difficult terrain that Restrains creatures ending their turn in it." }
       ],
       "specials": [
-        { "name": "Surge Aura", "text": "Creatures starting a turn within 10 ft take {dmg:15} force damage." },
+        { "name": "Surge Aura", "text": "Creatures starting a turn within 10 ft take {dmg:15:d6} force damage." },
         { "name": "Crystallize (Bloodied)", "text": "Three Quantum Basalt shards form on its shell (AC 15, {bpb:5} HP each). Breaking all three Stuns it until the end of its next turn." }
       ],
       "legendaryOptions": [
@@ -164,7 +164,7 @@
       "acAdjust": 2,
       "hpMultiplier": 1.2,
       "attacks": [
-        { "name": "Halberd", "count": 3, "percent": 30, "type": "slashing", "kind": "melee", "text": "Reach 10 ft." }
+        { "name": "Halberd", "die": "d10", "count": 3, "percent": 30, "type": "slashing", "kind": "melee", "text": "Reach 10 ft." }
       ],
       "specials": [
         { "name": "Phalanx Stance", "text": "Resistance to damage from the front, and ranged attacks that miss him rebound at the attacker." },
@@ -186,11 +186,11 @@
       "acAdjust": 0,
       "hpMultiplier": 1.3,
       "attacks": [
-        { "name": "Bite (elemental head)", "count": 1, "percent": 25, "type": "fire, lightning or cold", "kind": "melee", "text": "One per elemental head." },
-        { "name": "Bite (light-head)", "count": 1, "percent": 15, "type": "radiant", "kind": "melee", "text": "One per light-head." }
+        { "name": "Bite (elemental head)", "die": "d10", "count": 1, "percent": 25, "type": "fire, lightning or cold", "kind": "melee", "text": "One per elemental head." },
+        { "name": "Bite (light-head)", "die": "d6", "count": 1, "percent": 15, "type": "radiant", "kind": "melee", "text": "One per light-head." }
       ],
       "specials": [
-        { "name": "Severing", "text": "A head is severed by 8 x PB damage in one turn (the players' PB), leaving an Elemental Residue puddle. Two light-heads grow back at the end of its turn, up to 6 heads. Light-heads never regrow." }
+        { "name": "Severing", "text": "Starts with 3 heads, one each for fire, lightning and cold. A head is severed by 8 x PB damage in one turn (the players' PB), leaving an Elemental Residue puddle. Two light-heads grow back at the end of its turn, up to 6 heads. Light-heads never regrow." }
       ],
       "legendaryOptions": [
         { "name": "Bite", "text": "One head bites." },
@@ -206,7 +206,7 @@
       "acAdjust": 1,
       "hpMultiplier": 1,
       "attacks": [
-        { "name": "Seam Cut", "count": 2, "percent": 40, "type": "force", "kind": "melee", "text": "Melee, or ranged 60 ft." }
+        { "name": "Seam Cut", "die": "d8", "count": 2, "percent": 40, "type": "force", "kind": "melee", "text": "Melee, or ranged 60 ft." }
       ],
       "specials": [
         { "name": "Unseen Seams", "text": "Attacks from creatures looking at it have disadvantage. A creature can avert its eyes, becoming Blinded to the Architect alone until the start of its next turn." },
@@ -229,7 +229,7 @@
       "sharedHp": true,
       "parts": [{ "name": "Member", "count": 3, "acAdjust": 1 }],
       "attacks": [
-        { "name": "Angle Ray", "count": 3, "percent": 33, "type": "psychic", "kind": "ranged", "text": "One per member. Range 120 ft." }
+        { "name": "Angle Ray", "die": "d8", "count": 3, "percent": 33, "type": "psychic", "kind": "ranged", "text": "One per member. Range 120 ft." }
       ],
       "specials": [
         { "name": "Unseen Angles", "text": "Each member is immune to damage from any creature that moved closer to it this turn." }
@@ -249,11 +249,11 @@
       "hpMultiplier": 1,
       "traits": ["Hovers 20 ft."],
       "attacks": [
-        { "name": "Ward Lash", "count": 3, "percent": 30, "type": "force", "kind": "melee", "text": "Reach 15 ft." }
+        { "name": "Ward Lash", "die": "d8", "count": 3, "percent": 30, "type": "force", "kind": "melee", "text": "Reach 15 ft." }
       ],
       "specials": [
         { "name": "Attunement", "text": "At the start of each round, gains corrupted versions of the party's two most common tags' Resonance riders." },
-        { "name": "Erasure (recharge 5-6)", "text": "30 ft sphere. DC {dc} Wis save or take {dmg:50} necrotic damage, and one non-evolved boon is suppressed until the end of the target's next turn." }
+        { "name": "Erasure (recharge 5-6)", "text": "30 ft sphere. DC {dc} Wis save or take {dmg:50:d6} necrotic damage, and one non-evolved boon is suppressed until the end of the target's next turn." }
       ],
       "legendaryOptions": [
         { "name": "Ward Lash", "text": "One Ward Lash." },
@@ -270,8 +270,8 @@
       "hpMultiplier": 1.5,
       "phase2ExtraLegendaryActions": 1,
       "attacks": [
-        { "name": "Wings of Petrified Light", "count": 2, "percent": 35, "type": "radiant", "kind": "melee", "text": "Reach 15 ft." },
-        { "name": "Inverted Gravity Beam", "count": 1, "percent": 50, "type": "force", "kind": "save", "save": "Dex", "text": "60 ft line. On a failed save, the target also falls upward 20 ft." }
+        { "name": "Wings of Petrified Light", "die": "d10", "count": 2, "percent": 35, "type": "radiant", "kind": "melee", "text": "Reach 15 ft." },
+        { "name": "Inverted Gravity Beam", "die": "d8", "count": 1, "percent": 50, "type": "force", "kind": "save", "save": "Dex", "text": "60 ft line. On a failed save, the target also falls upward 20 ft." }
       ],
       "specials": [
         { "name": "Paradise Spores (recharge 5-6)", "text": "30 ft cone. DC {dc} Wis save or Charmed and moving toward it." },
@@ -293,12 +293,12 @@
       "hpMultiplier": 1.6,
       "traits": ["Gargantuan."],
       "attacks": [
-        { "name": "Antler Rake", "count": 2, "percent": 45, "type": "slashing", "kind": "save", "save": "Dex", "text": "20 ft cone. On a failed save, also Topple (prone) and push 15 ft." }
+        { "name": "Antler Rake", "die": "d12", "count": 2, "percent": 45, "type": "slashing", "kind": "save", "save": "Dex", "text": "20 ft cone. On a failed save, also Topple (prone) and push 15 ft." }
       ],
       "specials": [
         { "name": "Devour Light (bonus action)", "text": "Ends one magical effect or light source within 60 ft and regains {hp:5} HP." },
         { "name": "Supernova Core (Phase 2, Bloodied)", "text": "The shell shatters and its AC drops by 2. A Gravitational Pulse pulls everyone 15 ft toward it at the start of its turn." },
-        { "name": "Core Flare (Phase 2, recharge 5-6)", "text": "20 ft sphere. DC {dc} save or take {dmg:60} radiant damage." }
+        { "name": "Core Flare (Phase 2, recharge 5-6)", "text": "20 ft sphere. DC {dc} save or take {dmg:60:d8} radiant damage." }
       ],
       "legendaryOptions": [
         { "name": "Rake", "text": "One Antler Rake." },
@@ -315,8 +315,8 @@
       "acAdjust": 1,
       "hpMultiplier": 1.5,
       "attacks": [
-        { "name": "Builder's Strike", "group": "Phase 1", "count": 2, "percent": 35, "type": "force", "kind": "melee", "text": "Each hit raises a 10 ft wall segment within 30 ft." },
-        { "name": "Portal Strike", "group": "Phase 2 (Bloodied)", "count": 3, "percent": 30, "type": "force", "kind": "ranged", "text": "Each fired from any of its three portals." }
+        { "name": "Builder's Strike", "group": "Phase 1", "die": "d10", "count": 2, "percent": 35, "type": "force", "kind": "melee", "text": "Each hit raises a 10 ft wall segment within 30 ft." },
+        { "name": "Portal Strike", "group": "Phase 2 (Bloodied)", "die": "d10", "count": 3, "percent": 30, "type": "force", "kind": "ranged", "text": "Each fired from any of its three portals." }
       ],
       "specials": [
         { "name": "The Master Builder (Phase 1)", "text": "Triggers two floor 4 room tricks each round on initiative count 0." },

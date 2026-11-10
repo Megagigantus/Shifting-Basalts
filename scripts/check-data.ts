@@ -173,7 +173,7 @@ const bossData = loadObject<{
     id: string
     name: string
     floor: number
-    attacks: { name: string; percent: number; count: number }[]
+    attacks: { name: string; percent: number; count: number; die?: string }[]
     specials?: { text: string }[]
     legendaryOptions?: { text: string }[]
     shiftAction: { name: string; text: string }
@@ -219,7 +219,10 @@ for (const b of bossData.bosses) {
   bossIds.add(b.id)
   if (!bossData.scaling.floors.some((f) => f.floor === b.floor)) fail(`${where}: unknown floor ${b.floor}`)
   if (!b.attacks?.length) fail(`${where}: needs at least one attack`)
-  for (const a of b.attacks ?? []) if (!(a.percent > 0) || !(a.count >= 1)) fail(`${where}: attack "${a.name}" needs a percent and count`)
+  for (const a of b.attacks ?? []) {
+    if (!(a.percent > 0) || !(a.count >= 1)) fail(`${where}: attack "${a.name}" needs a percent and count`)
+    if (!/^d(6|8|10|12)$/.test(a.die ?? '')) fail(`${where}: attack "${a.name}" needs a die (d6, d8, d10 or d12; bible: Damage dice)`)
+  }
   if (!b.shiftAction?.name || !b.shiftAction.text) fail(`${where}: needs a Shift Action`)
   const texts = [...(b.specials ?? []), ...(b.legendaryOptions ?? []), ...b.attacks, b.shiftAction].map((t) => ('text' in t ? t.text : ''))
   for (const text of texts) {
