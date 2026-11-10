@@ -1,0 +1,333 @@
+{
+  "_source": "docs/design-bible.md: Bosses (Role and mechanics, Shift Action columns only; no Lore), Boss stat scaling, Boss templates, Encounter and boss defaults. Placeholders in text: {dmg:N} = N% of benchmark DPR as dice, {hp:N} = N% of the boss's max HP, {bpb:N} = N x Boss PB, {dc} = the boss's save DC. Attack dice default to defaultDie; set \"die\" on an attack to change it.",
+  "status": "proposed",
+  "scaling": {
+    "floors": [
+      { "floor": 1, "crOffset": -1, "legendaryActions": 0, "legendaryResistances": 0 },
+      { "floor": 2, "crOffset": 1, "legendaryActions": 0, "legendaryResistances": 1 },
+      { "floor": 3, "crOffset": 2, "legendaryActions": 2, "legendaryResistances": 1 },
+      { "floor": 4, "crOffset": 4, "legendaryActions": 2, "legendaryResistances": 2 },
+      { "floor": 5, "crOffset": 7, "legendaryActions": 3, "legendaryResistances": 3 }
+    ],
+    "basePartySize": 4,
+    "bigPartySize": 6,
+    "bigPartyExtraLegendaryActions": 1,
+    "pressures": {
+      "heavy-crown": { "legendaryActions": 1, "legendaryResistances": 0 },
+      "heavy-crown-2": { "legendaryActions": 1, "legendaryResistances": 1 }
+    },
+    "defaultDie": "d10",
+    "flatShare": 0.3,
+    "genericLegendaryActions": [
+      { "name": "Attack", "text": "Makes one of its attacks." },
+      { "name": "Move", "text": "Moves up to half its speed without provoking opportunity attacks." }
+    ]
+  },
+  "bosses": [
+    {
+      "id": "tessellated-warden",
+      "name": "The Tessellated Warden",
+      "floor": 1,
+      "role": "Heavy tank and zone controller.",
+      "acAdjust": 2,
+      "hpMultiplier": 1,
+      "traits": ["Resistance to piercing damage."],
+      "attacks": [
+        { "name": "Columnar Slam", "count": 2, "percent": 40, "type": "bludgeoning", "kind": "melee", "text": "Pushes the target 10 ft and raises a 5 ft pillar in its old space." }
+      ],
+      "specials": [
+        { "name": "Magnetic Pull (recharge 5-6)", "text": "30 ft line. DC {dc} Str save or be pulled adjacent to it with speed 0 until its next turn." },
+        { "name": "Lens Flare (Bloodied)", "text": "One creature looking at it makes a DC {dc} Wis save or is Charmed until the end of its next turn, drawn toward it." }
+      ],
+      "shiftAction": { "name": "Piston Floor", "text": "Three 10 ft hex sections rise 15 ft into pillars or drop 10 ft into pits. Creatures on them make a DC {dc} Dex save or fall prone." }
+    },
+    {
+      "id": "choir-hollow-column",
+      "name": "Choir of the Hollow Column",
+      "floor": 1,
+      "role": "Stationary artillery with 4 destructible pipe clusters.",
+      "acAdjust": 0,
+      "hpMultiplier": 1.2,
+      "parts": [{ "name": "Pipe cluster", "count": 4, "hpShare": 0.25 }],
+      "traits": ["Speed 0."],
+      "attacks": [
+        { "name": "Resonant Blast", "count": 1, "percent": 60, "type": "thunder", "kind": "save", "save": "Con", "text": "30 ft cone. On a failed save, also Deafened and pushed 10 ft. Each destroyed cluster cuts this damage by a quarter." }
+      ],
+      "specials": [
+        { "name": "Hymn Aura", "text": "Creatures starting a turn within 5 ft per surviving cluster take {dmg:15} thunder damage." }
+      ],
+      "shiftAction": { "name": "Acoustic Shift", "text": "The outer walls slide into new chambers. Creatures within 10 ft of a wall make a DC {dc} Con save or take PB d6 thunder damage and are pushed 15 ft toward the center." }
+    },
+    {
+      "id": "gilded-excavation-herd",
+      "name": "Gilded Excavation Herd",
+      "floor": 1,
+      "role": "Summoner and pack controller: a golem and two hounds.",
+      "acAdjust": 0,
+      "hpMultiplier": 1,
+      "parts": [
+        { "name": "Golem", "count": 1, "acAdjust": 1, "hpMultiplier": 0.7 },
+        { "name": "Hound", "count": 2, "acAdjust": -1, "hpMultiplier": 0.15 }
+      ],
+      "attacks": [
+        { "name": "Golem Slam", "count": 1, "percent": 30, "type": "bludgeoning", "kind": "melee", "text": "" },
+        { "name": "Hound Bite", "count": 2, "percent": 20, "type": "piercing", "kind": "melee", "text": "One per hound. DC {dc} Str save or prone." }
+      ],
+      "specials": [
+        { "name": "Tether Beam (bonus action, recharge 4-6)", "text": "60 ft. DC {dc} Dex save or be tethered to the nearest pillar, limited to 15 ft of it, until the pillar is smashed (AC 15, {bpb:10} HP)." }
+      ],
+      "shiftAction": { "name": "Conveyor Shift", "text": "Two 15 ft strips of floor slide 20 ft in opposite directions, carrying creatures and pillars and breaking or stretching tethers." }
+    },
+    {
+      "id": "kaelen-and-vyr",
+      "name": "Kaelen and Vyr, the Fractured Striders",
+      "floor": 2,
+      "role": "Dual-form skirmisher that swaps forms each round or after heavy damage.",
+      "acAdjust": 0,
+      "hpMultiplier": 1.1,
+      "sharedHp": true,
+      "parts": [
+        { "name": "Kaelen", "count": 1, "acAdjust": 1 },
+        { "name": "Vyr", "count": 1, "acAdjust": -1 }
+      ],
+      "attacks": [
+        { "name": "Cleave", "group": "Kaelen", "count": 2, "percent": 35, "type": "slashing", "kind": "melee", "text": "Splashes {dmg:10} onto a second creature within 5 ft. DC {dc} Str save or Topple (prone)." },
+        { "name": "Ricochet Bolt", "group": "Vyr", "count": 1, "percent": 50, "type": "force", "kind": "ranged", "text": "Bounces to a second target for half damage." }
+      ],
+      "specials": [
+        { "name": "Form Swap", "text": "Swaps forms at the start of each turn, or when it takes {hp:25} damage in one turn." },
+        { "name": "High Ground", "text": "As Vyr, teleports 30 ft to high ground as a bonus action." }
+      ],
+      "shiftAction": { "name": "Echo Swap", "text": "The walls rotate 90 degrees, carrying creatures within 5 ft of them, and the active form leaves a crystal afterimage that explodes for force damage at the end of the round." }
+    },
+    {
+      "id": "halvard-quill",
+      "name": "Senior Tracker Halvard Quill",
+      "floor": 2,
+      "role": "Trap-setter and single-target executioner.",
+      "acAdjust": 1,
+      "hpMultiplier": 0.9,
+      "attacks": [
+        { "name": "Hunting Blade", "group": "Close in", "count": 2, "percent": 30, "type": "slashing", "kind": "melee", "text": "" },
+        { "name": "Longshot", "group": "Or at range", "count": 2, "percent": 30, "type": "piercing", "kind": "ranged", "text": "Range 150 ft." }
+      ],
+      "specials": [
+        { "name": "Snare Shard (bonus action)", "text": "Next round it arms as a random floor 1 or 2 room trick." },
+        { "name": "Lethality Contract", "text": "The lowest-HP player takes +{bpb:1} damage from him, and he regains {hp:10} HP when they drop." },
+        { "name": "Lodge Escape (reaction, once)", "text": "Below a quarter HP, he moves half his speed without provoking." }
+      ],
+      "shiftAction": { "name": "Trophy Gallery", "text": "Four statues slide across the arena on floor tracks. Creatures in their path take PB d8 bludgeoning damage (DC {dc} Dex save halves), and the statues block line of sight." }
+    },
+    {
+      "id": "lattice-spinner",
+      "name": "The Lattice Spinner",
+      "floor": 2,
+      "role": "High-mobility controller.",
+      "acAdjust": 1,
+      "hpMultiplier": 0.9,
+      "traits": ["Climb speed; walks on walls and ceilings."],
+      "attacks": [
+        { "name": "Bite", "count": 1, "percent": 40, "type": "piercing", "kind": "melee", "text": "DC {dc} Con save or Poisoned." }
+      ],
+      "specials": [
+        { "name": "Web Shot (recharge 5-6)", "text": "DC {dc} Dex save or Restrained." },
+        { "name": "Transit Cable (bonus action)", "text": "Strings a cable between two columns within 60 ft, up to 4 at once. Crossing one deals {dmg:25} lightning damage and teleports the creature 15 ft toward the Spinner." }
+      ],
+      "shiftAction": { "name": "Loom Rotation", "text": "Every column shifts 15 ft clockwise, dragging its cables along. Creatures in the sweep make a DC {dc} Dex save." }
+    },
+    {
+      "id": "stride-core",
+      "name": "The Stride Core",
+      "floor": 3,
+      "role": "Artillery and hazard generator.",
+      "acAdjust": -1,
+      "hpMultiplier": 1,
+      "traits": ["Hovers.", "Immune to force damage."],
+      "attacks": [
+        { "name": "Rift Barrage", "count": 3, "percent": 25, "type": "force", "kind": "ranged", "text": "Ranged spell attacks. Each leaves a pool of raw stride energy: difficult terrain that Restrains creatures ending their turn in it." }
+      ],
+      "specials": [
+        { "name": "Surge Aura", "text": "Creatures starting a turn within 10 ft take {dmg:15} force damage." },
+        { "name": "Crystallize (Bloodied)", "text": "Three Quantum Basalt shards form on its shell (AC 15, {bpb:5} HP each). Breaking all three Stuns it until the end of its next turn." }
+      ],
+      "legendaryOptions": [
+        { "name": "Pulse", "text": "Its Surge Aura deals damage again." },
+        { "name": "Drift", "text": "Moves half its speed." }
+      ],
+      "shiftAction": { "name": "Tilt the Gate", "text": "The room tilts 20 degrees in a random direction. Every creature makes a DC {dc} Str or Dex save or slides 15 ft downhill, and the pools slide with it." }
+    },
+    {
+      "id": "general-vane",
+      "name": "General Vane of the Tenth Stride",
+      "floor": 3,
+      "role": "Stance-switching juggernaut.",
+      "acAdjust": 2,
+      "hpMultiplier": 1.2,
+      "attacks": [
+        { "name": "Halberd", "count": 3, "percent": 30, "type": "slashing", "kind": "melee", "text": "Reach 10 ft." }
+      ],
+      "specials": [
+        { "name": "Phalanx Stance", "text": "Resistance to damage from the front, and ranged attacks that miss him rebound at the attacker." },
+        { "name": "Stampede Stance", "text": "+20 ft speed; moves through creatures' spaces (DC {dc} Str save or prone and {dmg:15} damage)." },
+        { "name": "Swap Stance", "text": "Bonus action." }
+      ],
+      "legendaryOptions": [
+        { "name": "Shield Bash", "text": "{dmg:15} damage and pushes 10 ft." },
+        { "name": "Swap Stance", "text": "Changes stance." },
+        { "name": "March", "text": "Moves half his speed." }
+      ],
+      "shiftAction": { "name": "Marching Columns", "text": "A phalanx of stone walls rises at one end and marches 15 ft each round, crushing anyone caught against the room's edge." }
+    },
+    {
+      "id": "glass-hydra",
+      "name": "The Glass Hydra",
+      "floor": 3,
+      "role": "Multi-headed brawler.",
+      "acAdjust": 0,
+      "hpMultiplier": 1.3,
+      "attacks": [
+        { "name": "Bite (elemental head)", "count": 1, "percent": 25, "type": "fire, lightning or cold", "kind": "melee", "text": "One per elemental head." },
+        { "name": "Bite (light-head)", "count": 1, "percent": 15, "type": "radiant", "kind": "melee", "text": "One per light-head." }
+      ],
+      "specials": [
+        { "name": "Severing", "text": "A head is severed by 8 x PB damage in one turn (the players' PB), leaving an Elemental Residue puddle. Two light-heads grow back at the end of its turn, up to 6 heads. Light-heads never regrow." }
+      ],
+      "legendaryOptions": [
+        { "name": "Bite", "text": "One head bites." },
+        { "name": "Refract", "text": "Moves 10 ft." }
+      ],
+      "shiftAction": { "name": "Refraction Shift", "text": "Floor panels flip to polished mirrors. Any beam, line or ranged spell this round reflects to hit a second random creature within 15 ft." }
+    },
+    {
+      "id": "blind-architect",
+      "name": "The Blind Architect",
+      "floor": 4,
+      "role": "Control and sight manipulation.",
+      "acAdjust": 1,
+      "hpMultiplier": 1,
+      "attacks": [
+        { "name": "Seam Cut", "count": 2, "percent": 40, "type": "force", "kind": "melee", "text": "Melee, or ranged 60 ft." }
+      ],
+      "specials": [
+        { "name": "Unseen Seams", "text": "Attacks from creatures looking at it have disadvantage. A creature can avert its eyes, becoming Blinded to the Architect alone until the start of its next turn." },
+        { "name": "Fold (recharge 5-6)", "text": "One creature within 60 ft makes a DC {dc} Cha save or is teleported to a space the Architect chooses." }
+      ],
+      "legendaryOptions": [
+        { "name": "Seam Cut", "text": "One Seam Cut." },
+        { "name": "Fold (costs 2)", "text": "Uses Fold, if available." },
+        { "name": "Shift Sight", "text": "Moves 30 ft without provoking." }
+      ],
+      "shiftAction": { "name": "Fold Space", "text": "The room folds in half or swaps its north and south halves, changing who is adjacent and breaking line of sight." }
+    },
+    {
+      "id": "chorus-unseen-angles",
+      "name": "The Chorus of Unseen Angles",
+      "floor": 4,
+      "role": "Shared-HP trio in different corners.",
+      "acAdjust": 1,
+      "hpMultiplier": 1.1,
+      "sharedHp": true,
+      "parts": [{ "name": "Member", "count": 3, "acAdjust": 1 }],
+      "attacks": [
+        { "name": "Angle Ray", "count": 3, "percent": 33, "type": "psychic", "kind": "ranged", "text": "One per member. Range 120 ft." }
+      ],
+      "specials": [
+        { "name": "Unseen Angles", "text": "Each member is immune to damage from any creature that moved closer to it this turn." }
+      ],
+      "legendaryOptions": [
+        { "name": "Ray", "text": "One member fires an Angle Ray." },
+        { "name": "Reposition", "text": "One member teleports 30 ft." }
+      ],
+      "shiftAction": { "name": "Perspective Collapse", "text": "Gravity reorients to the wall nearest the member with the most HP, dropping creatures up to 20 ft onto the new floor." }
+    },
+    {
+      "id": "inverted-reliquary",
+      "name": "The Inverted Reliquary",
+      "floor": 4,
+      "role": "Mimics the party's builds.",
+      "acAdjust": 2,
+      "hpMultiplier": 1,
+      "traits": ["Hovers 20 ft."],
+      "attacks": [
+        { "name": "Ward Lash", "count": 3, "percent": 30, "type": "force", "kind": "melee", "text": "Reach 15 ft." }
+      ],
+      "specials": [
+        { "name": "Attunement", "text": "At the start of each round, gains corrupted versions of the party's two most common tags' Resonance riders." },
+        { "name": "Erasure (recharge 5-6)", "text": "30 ft sphere. DC {dc} Wis save or take {dmg:50} necrotic damage, and one non-evolved boon is suppressed until the end of the target's next turn." }
+      ],
+      "legendaryOptions": [
+        { "name": "Ward Lash", "text": "One Ward Lash." },
+        { "name": "Re-attune", "text": "Re-rolls its Attunement." }
+      ],
+      "shiftAction": { "name": "Slot Scramble", "text": "The floor breaks into 4 islands over 15 ft chasms of void, and each player has one random non-evolved boon suppressed until they cross to a different island." }
+    },
+    {
+      "id": "ophaniel",
+      "name": "Ophaniel of the Inverted Bloom",
+      "floor": 5,
+      "role": "The Wounded Idol, then The Gate Opens at Bloodied.",
+      "acAdjust": 1,
+      "hpMultiplier": 1.5,
+      "phase2ExtraLegendaryActions": 1,
+      "attacks": [
+        { "name": "Wings of Petrified Light", "count": 2, "percent": 35, "type": "radiant", "kind": "melee", "text": "Reach 15 ft." },
+        { "name": "Inverted Gravity Beam", "count": 1, "percent": 50, "type": "force", "kind": "save", "save": "Dex", "text": "60 ft line. On a failed save, the target also falls upward 20 ft." }
+      ],
+      "specials": [
+        { "name": "Paradise Spores (recharge 5-6)", "text": "30 ft cone. DC {dc} Wis save or Charmed and moving toward it." },
+        { "name": "The Gate Opens (Phase 2, Bloodied)", "text": "All its damage gains a 20% radiant or necrotic rider, and it gains 1 extra Legendary Action." }
+      ],
+      "legendaryOptions": [
+        { "name": "Wing", "text": "One Wing attack." },
+        { "name": "Beam (costs 2)", "text": "Inverted Gravity Beam." },
+        { "name": "Bloom", "text": "Regains {hp:5} HP." }
+      ],
+      "shiftAction": { "name": "Paradise Bleed", "text": "Half the arena becomes paradise, where creatures regain HP each turn but take double damage; the other half becomes airless shattered stone with Silence and necrotic damage. The halves swap or rotate every round." }
+    },
+    {
+      "id": "sun-eaters-husk",
+      "name": "The Sun-Eater's Husk",
+      "floor": 5,
+      "role": "Starving Gold, then Supernova Core at Bloodied.",
+      "acAdjust": 2,
+      "hpMultiplier": 1.6,
+      "traits": ["Gargantuan."],
+      "attacks": [
+        { "name": "Antler Rake", "count": 2, "percent": 45, "type": "slashing", "kind": "save", "save": "Dex", "text": "20 ft cone. On a failed save, also Topple (prone) and push 15 ft." }
+      ],
+      "specials": [
+        { "name": "Devour Light (bonus action)", "text": "Ends one magical effect or light source within 60 ft and regains {hp:5} HP." },
+        { "name": "Supernova Core (Phase 2, Bloodied)", "text": "The shell shatters and its AC drops by 2. A Gravitational Pulse pulls everyone 15 ft toward it at the start of its turn." },
+        { "name": "Core Flare (Phase 2, recharge 5-6)", "text": "20 ft sphere. DC {dc} save or take {dmg:60} radiant damage." }
+      ],
+      "legendaryOptions": [
+        { "name": "Rake", "text": "One Antler Rake." },
+        { "name": "Pulse", "text": "Gravitational Pulse." },
+        { "name": "Devour Light", "text": "Uses Devour Light." }
+      ],
+      "shiftAction": { "name": "Eclipse Cycle", "text": "Rounds alternate between Blinding Zenith (2 x PB radiant damage and Blinded for creatures out of cover) and Total Umbra (magical darkness beyond 10 ft of the boss, with 2 x PB cold or necrotic damage in the dark)." }
+    },
+    {
+      "id": "gatewright",
+      "name": "The Gatewright",
+      "floor": 5,
+      "role": "The Master Builder, then The Fractured Horizon at Bloodied.",
+      "acAdjust": 1,
+      "hpMultiplier": 1.5,
+      "attacks": [
+        { "name": "Builder's Strike", "group": "Phase 1", "count": 2, "percent": 35, "type": "force", "kind": "melee", "text": "Each hit raises a 10 ft wall segment within 30 ft." },
+        { "name": "Portal Strike", "group": "Phase 2 (Bloodied)", "count": 3, "percent": 30, "type": "force", "kind": "ranged", "text": "Each fired from any of its three portals." }
+      ],
+      "specials": [
+        { "name": "The Master Builder (Phase 1)", "text": "Triggers two floor 4 room tricks each round on initiative count 0." },
+        { "name": "The Fractured Horizon (Phase 2, Bloodied)", "text": "Three portals open across the arena." }
+      ],
+      "legendaryOptions": [
+        { "name": "Strike", "text": "One attack." },
+        { "name": "Raise Wall", "text": "Raises a 10 ft wall segment within 30 ft." },
+        { "name": "Shift Portal", "text": "Moves one portal." }
+      ],
+      "shiftAction": { "name": "Grand Reconstruction", "text": "The arena cycles through the geometry of floors 1 to 4 each round, triggering that floor's signature hazard." }
+    }
+  ]
+}

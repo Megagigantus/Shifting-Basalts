@@ -1,0 +1,83 @@
+{
+  "_source": "docs/design-bible.md: Enemy roster, How the generator builds an encounter, Encounter and boss defaults. Names, roles, CRs, reskins and twists only; family lore stays in the bible. floorWeights: a family appears on a floor only if listed; leaning families count 3.",
+  "status": "proposed",
+  "families": [
+    {
+      "id": "wardstones",
+      "name": "Wardstones",
+      "floorWeights": { "1": 1, "2": 1, "3": 1 },
+      "twist": "Once per fight, each can step into one column and out of another within 30 ft."
+    },
+    {
+      "id": "mazework",
+      "name": "Mazework",
+      "floorWeights": { "1": 1, "2": 1, "3": 1, "4": 1 },
+      "twist": "When one drops, it arms a room trick in its space."
+    },
+    {
+      "id": "the-lost",
+      "name": "The Lost",
+      "floorWeights": { "2": 1, "3": 1, "4": 1 },
+      "twist": "They're easy to lose track of: they gain advantage on Stealth and can Hide as a bonus action."
+    },
+    {
+      "id": "absorbed-echoes",
+      "name": "Absorbed Echoes",
+      "floorWeights": { "2": 1, "3": 3, "4": 1 },
+      "twist": "Each echo fights with one Level 1 or 2 boon from the pool, rolled by the generator.",
+      "carriesBoon": true
+    },
+    {
+      "id": "gate-born",
+      "name": "Gate-Born",
+      "floorWeights": { "3": 3, "4": 3 },
+      "twist": "They deal force damage and leave a pool of raw stride energy when they drop."
+    },
+    {
+      "id": "inverted-paradise",
+      "name": "Inverted Paradise",
+      "floorWeights": { "4": 3 },
+      "twist": "Their healing harms the party, and they regain HP when they deal radiant or necrotic damage."
+    }
+  ],
+  "roles": {
+    "anchor": ["Brute", "Elite"],
+    "support": ["Skirmisher", "Controller", "Ambusher", "Artillery"],
+    "filler": ["Minion"]
+  },
+  "creatures": [
+    { "id": "hexling", "name": "Hexling", "family": "wardstones", "role": "Minion", "cr": 1, "reskin": "Animated Armor" },
+    { "id": "column-sentinel", "name": "Column Sentinel", "family": "wardstones", "role": "Brute", "cr": 2, "reskin": "Gargoyle" },
+    { "id": "basalt-hound", "name": "Basalt Hound", "family": "wardstones", "role": "Skirmisher", "cr": 3, "reskin": "Hell Hound, with force breath" },
+    { "id": "maze-warden", "name": "Maze Warden", "family": "wardstones", "role": "Controller", "cr": 7, "reskin": "Shield Guardian" },
+    { "id": "monolith-keeper", "name": "Monolith Keeper", "family": "wardstones", "role": "Elite", "cr": 10, "reskin": "Stone Golem" },
+    { "id": "labyrinth-colossus", "name": "Labyrinth Colossus", "family": "wardstones", "role": "Elite", "cr": 16, "reskin": "Iron Golem" },
+    { "id": "lost-thing-mimic", "name": "Lost-Thing Mimic", "family": "mazework", "role": "Ambusher", "cr": 2, "reskin": "Mimic" },
+    { "id": "corner-bull", "name": "Corner Bull", "family": "mazework", "role": "Brute", "cr": 3, "reskin": "Minotaur" },
+    { "id": "snarecrawler", "name": "Snarecrawler", "family": "mazework", "role": "Controller", "cr": 3, "reskin": "Phase Spider" },
+    { "id": "wrong-turn-stalker", "name": "Wrong-Turn Stalker", "family": "mazework", "role": "Skirmisher", "cr": 6, "reskin": "Invisible Stalker" },
+    { "id": "doorcloak", "name": "Doorcloak", "family": "mazework", "role": "Ambusher", "cr": 8, "reskin": "Cloaker" },
+    { "id": "the-overlooked", "name": "The Overlooked", "family": "the-lost", "role": "Minion", "cr": 1, "reskin": "Specter" },
+    { "id": "hollow-pilgrim", "name": "Hollow Pilgrim", "family": "the-lost", "role": "Brute", "cr": 2, "reskin": "Ghast" },
+    { "id": "forgotten-one", "name": "Forgotten One", "family": "the-lost", "role": "Skirmisher", "cr": 2, "reskin": "Nothic" },
+    { "id": "mourning-wanderer", "name": "Mourning Wanderer", "family": "the-lost", "role": "Controller", "cr": 4, "reskin": "Banshee" },
+    { "id": "lost-regent", "name": "Lost Regent", "family": "the-lost", "role": "Elite", "cr": 5, "reskin": "Wraith" },
+    { "id": "echo-scout", "name": "Echo Scout", "family": "absorbed-echoes", "role": "Skirmisher", "cr": 0.5, "reskin": "Scout" },
+    { "id": "echo-duelist", "name": "Echo Duelist", "family": "absorbed-echoes", "role": "Skirmisher", "cr": 3, "reskin": "Knight" },
+    { "id": "echo-gladiator", "name": "Echo Gladiator", "family": "absorbed-echoes", "role": "Brute", "cr": 5, "reskin": "Gladiator" },
+    { "id": "echo-arcanist", "name": "Echo Arcanist", "family": "absorbed-echoes", "role": "Artillery", "cr": 6, "reskin": "Mage" },
+    { "id": "echo-assassin", "name": "Echo Assassin", "family": "absorbed-echoes", "role": "Elite", "cr": 8, "reskin": "Assassin" },
+    { "id": "echo-archmage", "name": "Echo Archmage", "family": "absorbed-echoes", "role": "Elite", "cr": 12, "reskin": "Archmage" },
+    { "id": "stride-wisp", "name": "Stride Wisp", "family": "gate-born", "role": "Artillery", "cr": 2, "reskin": "Will-o'-Wisp" },
+    { "id": "blinkstalker", "name": "Blinkstalker", "family": "gate-born", "role": "Skirmisher", "cr": 3, "reskin": "Displacer Beast" },
+    { "id": "rift-elemental", "name": "Rift Elemental", "family": "gate-born", "role": "Brute", "cr": 5, "reskin": "Air Elemental, dealing force damage" },
+    { "id": "gate-glass-golem", "name": "Gate-Glass Golem", "family": "gate-born", "role": "Elite", "cr": 9, "reskin": "Clay Golem" },
+    { "id": "cable-wyrm", "name": "Cable Wyrm", "family": "gate-born", "role": "Elite", "cr": 11, "reskin": "Behir" },
+    { "id": "wilting-dryad", "name": "Wilting Dryad", "family": "inverted-paradise", "role": "Controller", "cr": 1, "reskin": "Dryad" },
+    { "id": "bloomrot-mound", "name": "Bloomrot Mound", "family": "inverted-paradise", "role": "Brute", "cr": 5, "reskin": "Shambling Mound" },
+    { "id": "inverted-unicorn", "name": "Inverted Unicorn", "family": "inverted-paradise", "role": "Skirmisher", "cr": 5, "reskin": "Unicorn" },
+    { "id": "inverted-treant", "name": "Inverted Treant", "family": "inverted-paradise", "role": "Brute", "cr": 9, "reskin": "Treant" },
+    { "id": "hollow-seraph", "name": "Hollow Seraph", "family": "inverted-paradise", "role": "Elite", "cr": 10, "reskin": "Deva" },
+    { "id": "fallen-planetar", "name": "Fallen Planetar", "family": "inverted-paradise", "role": "Elite", "cr": 16, "reskin": "Planetar" }
+  ]
+}
