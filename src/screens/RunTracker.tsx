@@ -16,6 +16,7 @@ import {
 import { classTriggerMet, rerollsLeft } from '../rules/draftFlow'
 import { finishRoom } from '../rules/progress'
 import { DmLootPanel, ExtractPanel, VaultPanel } from './LootScreens'
+import { RecoveryPanel } from './RecoveryPanel'
 import { useLootRequests } from '../runStore'
 import { applyChoice } from '../rules/draftChoice'
 import { classHiddenBoon } from '../rules/draft'
@@ -234,6 +235,11 @@ export function RunTracker({ state, characters, onEnded }: Props) {
                       <div className="hint">{boonSummary(p.slots, p.hiddenBoonId)}</div>
                     )}
                     {sent?.error && <div className="warning">Their last choice failed: {sent.error}</div>}
+                    <RecoveryPanel
+                      player={p}
+                      busy={busy}
+                      onSpend={(choice) => act((s) => applyChoice(s, p.characterId, choice, Math.random))}
+                    />
                     {!p.alive && (
                       <div className="warning">
                         Fell on floor {p.diedOnFloor} · locked out {p.lockoutDays} days (rolled{' '}

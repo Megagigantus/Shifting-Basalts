@@ -186,6 +186,8 @@ export interface ChoiceDoc {
   combinationId?: string
   /** Thils's Vault: the relic taken. */
   relicId?: string
+  /** Slot recovery: the spell slot level to recover. */
+  slotLevel?: number
   /** The offer this choice was made against (null for hidden-offer choices). */
   draftKey: string | null
   /** Set by the DM's app when the choice couldn't be applied. */
@@ -202,6 +204,7 @@ export async function submitChoice(runId: string, characterId: string, choice: D
   }
   if (choice.action === 'hidden') data.hiddenBoonId = choice.hiddenBoonId
   if (choice.action === 'relic') data.relicId = choice.relicId
+  if (choice.action === 'recover') data.slotLevel = choice.slotLevel
   if (choice.action === 'forge') {
     data.forgeKind = choice.forge.kind
     if (choice.forge.kind === 'combine') data.combinationId = choice.forge.combinationId
@@ -238,6 +241,8 @@ function choiceFromDoc(c: ChoiceDoc): DraftChoice {
       return { action: 'hidden', hiddenBoonId: c.hiddenBoonId ?? '' }
     case 'relic':
       return { action: 'relic', relicId: c.relicId ?? '' }
+    case 'recover':
+      return { action: 'recover', slotLevel: c.slotLevel ?? 0 }
     case 'forge':
       return {
         action: 'forge',
@@ -267,7 +272,8 @@ export async function applyChoiceDoc(state: RunState, characterId: string, choic
     await applyHiddenSight(state, characterId, choiceRef)
     return
   }
-  const answersOffer = parsed.action !== 'forge' && parsed.action !== 'relic'
+  // Only boon draft and hidden-offer answers depend on an open offer.
+  const answersOffer = ['take', 'pass', 'reroll', 'hidden', 'passHidden'].includes(parsed.action)
   if (player && answersOffer && !player.draft && !player.hiddenOffer) {
     await deleteDoc(choiceRef)
     return

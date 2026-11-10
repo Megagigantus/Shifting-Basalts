@@ -470,6 +470,14 @@ describe('Thils\'s Vault and loot requests', () => {
     })
   })
 
+  it('a player can spend their own slot recovery points', async () => {
+    const ref = doc(as(PLAYER), 'runs', 'live', 'choices', OWNED)
+    await assertSucceeds(setDoc(ref, { action: 'recover', slotLevel: 3, draftKey: null, createdAt: now() }))
+    await assertSucceeds(setDoc(ref, { action: 'surge', draftKey: null, createdAt: now() }))
+    await assertFails(setDoc(doc(as(PLAYER), 'runs', 'live', 'choices', OTHERS), { action: 'surge', draftKey: null, createdAt: now() }))
+    await assertFails(setDoc(ref, { action: 'recover', slotLevel: 3, points: 99, draftKey: null, createdAt: now() }))
+  })
+
   it('a player can take a relic for their own character', async () => {
     const choiceRef = (id: string) => doc(as(PLAYER), 'runs', 'live', 'choices', id)
     await assertSucceeds(setDoc(choiceRef(OWNED), { action: 'relic', relicId: 'breakers-wraps', draftKey: null, createdAt: now() }))

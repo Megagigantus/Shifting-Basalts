@@ -6,6 +6,7 @@ import type { Slot } from '../rules/boons'
 import type { DraftCharacter, Offer } from '../rules/draft'
 import type { Room, RoomView } from '../rules/rooms'
 import type { LootItem, LootShare, RunLoot } from '../rules/loot'
+import type { Recovery } from '../rules/recovery'
 
 /** A player's open draft. */
 export interface DraftOffer {
@@ -112,6 +113,14 @@ export interface RunPlayer {
   hiddenSight?: boolean
   /** The floor Hidden Sight was last used on. */
   hiddenSightFloor?: number | null
+  /** Spell slot levels the character has (captured at run start; for slot recovery). */
+  slotLevels?: number[]
+  /** Slot recovery for the current room: points left, slots bought, Leyline Surge points spent. */
+  recovery?: Recovery | null
+  /** Boon counters the DM keeps, e.g. "Banked echoes" -> 2. */
+  counters?: Record<string, number>
+  /** Owns the Healing Font upgrade (each owner beyond the first adds temp HP). */
+  healingFontOwner?: boolean
   /** Relics this character already owns (captured at run start; never offered again). */
   relicsOwned?: string[]
   /** Thils's Vault: the relics offered, until the player takes one. */
