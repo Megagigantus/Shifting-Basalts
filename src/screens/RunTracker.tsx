@@ -8,7 +8,6 @@ import { floorInfo, LAST_FLOOR, PRESSURES, passQuantumBasalts } from '../rules/r
 import {
   canExtract,
   descend,
-  extract,
   isBossRoom,
   lootKeptIfExtracting,
   markDead,
@@ -16,6 +15,8 @@ import {
 } from '../rules/runFlow'
 import { classTriggerMet, rerollsLeft } from '../rules/draftFlow'
 import { finishRoom } from '../rules/progress'
+import { DmLootPanel, ExtractPanel, VaultPanel } from './LootScreens'
+import { useLootRequests } from '../runStore'
 import { applyChoice } from '../rules/draftChoice'
 import { classHiddenBoon } from '../rules/draft'
 import { applyChoiceDoc, cancelRun, saveRunState, useChoices } from '../runStore'
@@ -40,7 +41,9 @@ export function RunTracker({ state, characters, onEnded }: Props) {
   // Which player's boons or draft panel is open, if any.
   const [open, setOpen] = useState<{ id: string; kind: 'boons' | 'draft' } | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [extracting, setExtracting] = useState(false)
   const { run, players } = state
+  const requests = useLootRequests(run.id)
   const floor = floorInfo(run.floor)
   const bossRoom = isBossRoom(state)
   const waiting = waitingOn(state)
@@ -156,14 +159,8 @@ export function RunTracker({ state, characters, onEnded }: Props) {
                 Descend to floor {run.floor + 1}
               </button>
             )}
-            <button
-              type="button"
-              disabled={busy}
-              onClick={() =>
-                act(extract, `Extract now? The party keeps ${lootKeptIfExtracting(state)}% of its loot and the run ends.`)
-              }
-            >
-              Extract (keep {lootKeptIfExtracting(state)}%)
+            <button type="button" disabled={busy || extracting} onClick={() => setExtracting(true)}>
+              {run.floor >= LAST_FLOOR ? 'Finish the full clear…' : `Extract (keep ${lootKeptIfExtracting(state)}%)…`}
             </button>
           </>
         ) : bossRoom ? (
@@ -193,7 +190,15 @@ export function RunTracker({ state, characters, onEnded }: Props) {
         )}
       </div>
 
+      {extracting && run.awaitingChoice && (
+        <ExtractPanel state={state} busy={busy} act={act} requests={requests} onClose={() => setExtracting(false)} />
+      )}
+
+      <VaultPanel state={state} busy={busy} act={act} />
+
       <DmRoom state={state} busy={busy} act={act} />
+
+      <DmLootPanel state={state} busy={busy} act={act} requests={requests} />
 
       <ForgePanel
         players={players}

@@ -18,6 +18,7 @@ import { CharacterForm } from './CharacterForm'
 import { StatTracks } from './StatTracks'
 import { UpgradeShop } from './UpgradeShop'
 import { DraftPreferences } from './DraftPreferences'
+import { CharacterLoot } from './LootScreens'
 import { UPGRADES } from '../rules/upgrades'
 
 /** e.g. "Forge · Extra Boon Slot 2", for upgrades owned. */
@@ -149,6 +150,7 @@ export function Characters() {
                 )}
                 <DraftPreferences character={c} />
                 {upgradeSummary(c) && <span className="hint">Upgrades: {upgradeSummary(c)}</span>}
+                <CharacterLoot loot={c.loot} />
                 {open?.id === c.id && open.kind === 'tracks' && (
                   <StatTracks character={c} onClose={() => setOpen(null)} />
                 )}
