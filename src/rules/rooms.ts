@@ -11,6 +11,7 @@ import type { RoomKind } from '../model/run'
 import { proficiencyBonus } from './proficiency'
 import type { Random } from './draft'
 import { encounterView, type Encounter } from './encounters'
+import type { HpShown, HpState } from './hp'
 
 export const SHAPES = layouts.shapes
 export const TERRAIN = layouts.terrain
@@ -54,9 +55,13 @@ export interface Room {
    * room, or Restless Stone's in other rooms. Hidden until triggered.
    */
   shifts?: { bossId: string; revealed: boolean }[]
+  /** HP tracking (DM only): damage taken and the boss's Bloodied override. */
+  hp?: HpState
+  /** The Bloodied facts players may see, refreshed on every save (see roomFlow). */
+  hpShown?: HpShown
 }
 
-const roll = (sides: number, random: Random) => 1 + Math.floor(random() * sides)
+const roll =(sides: number, random: Random) => 1 + Math.floor(random() * sides)
 const pick = <T,>(items: T[], random: Random): T => items[Math.floor(random() * items.length)]
 
 // ---------------------------------------------------------------------------
@@ -238,10 +243,12 @@ export interface RoomView {
   tricks: string[]
   /** The secret condition, only once met or revealed. */
   condition: number | null
-  /** Revealed enemies: names and counts only, never stats. */
-  enemies?: { creatureId: string; count: number }[]
+  /** Revealed enemies: names, counts and how many are Bloodied; never stats. */
+  enemies?: { creatureId: string; count: number; bloodied?: number }[]
   /** The boss's name is shown once its room starts. */
   bossId?: string | null
+  /** The boss is Bloodied (players see this, never its HP). */
+  bossBloodied?: boolean
   /** Shift Actions the DM has triggered, by the boss they belong to. */
   shifts?: string[]
 }
@@ -263,8 +270,9 @@ export function playerView(room: Room): RoomView {
     oddity: room.revealed.oddity ? room.oddity : null,
     tricks: room.tricks.filter((t) => t.revealed).map((t) => t.id),
     condition: room.revealed.condition ? room.condition : null,
-    enemies: encounterView(room.encounter),
+    enemies: encounterView(room.encounter, room.hpShown?.enemyBloodied),
     bossId: room.boss?.id ?? null,
+    bossBloodied: Boolean(room.boss && room.hpShown?.boss),
     shifts: (room.shifts ?? []).filter((s) => s.revealed).map((s) => s.bossId),
   }
 }

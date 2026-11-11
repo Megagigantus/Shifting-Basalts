@@ -276,14 +276,22 @@ export function pushedStats(group: EncounterGroup) {
   return { cr: group.cr, attack: b.attack, dpr: b.dpr, dc: b.dc, ac: s.ac, hp: s.hp }
 }
 
-/** What players may see of an encounter: revealed creatures' names and counts only. */
-export function encounterView(encounter: Encounter | null | undefined): { creatureId: string; count: number }[] {
+/**
+ * What players may see of an encounter: revealed creatures' names and counts,
+ * and how many of them are Bloodied (per group index, from hpShown). Never stats.
+ */
+export function encounterView(
+  encounter: Encounter | null | undefined,
+  bloodiedByGroup: Record<string, number> = {},
+): { creatureId: string; count: number; bloodied: number }[] {
   if (!encounter) return []
-  const shown = new Map<string, number>()
-  for (const g of encounter.groups) {
-    if (g.revealed) shown.set(g.creatureId, (shown.get(g.creatureId) ?? 0) + g.count)
-  }
-  return [...shown].map(([creatureId, count]) => ({ creatureId, count }))
+  const shown = new Map<string, { count: number; bloodied: number }>()
+  encounter.groups.forEach((g, i) => {
+    if (!g.revealed) return
+    const row = shown.get(g.creatureId) ?? { count: 0, bloodied: 0 }
+    shown.set(g.creatureId, { count: row.count + g.count, bloodied: row.bloodied + (bloodiedByGroup[i] ?? 0) })
+  })
+  return [...shown].map(([creatureId, row]) => ({ creatureId, ...row }))
 }
 
 export function crLabel(cr: number): string {

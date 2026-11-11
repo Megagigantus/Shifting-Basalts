@@ -162,6 +162,13 @@ describe('the player view of an encounter', () => {
     const e = generateEncounter(1, false, [5, 5, 5, 5], 5, seeded(3))
     expect(encounterView(e)).toEqual([])
     e.groups[0].revealed = true
-    expect(encounterView(e)).toEqual([{ creatureId: e.groups[0].creatureId, count: e.groups[0].count }])
+    expect(encounterView(e)).toEqual([{ creatureId: e.groups[0].creatureId, count: e.groups[0].count, bloodied: 0 }])
+  })
+
+  it('counts Bloodied creatures only in revealed groups', () => {
+    const e = generateEncounter(1, false, [5, 5, 5, 5], 5, seeded(3))
+    expect(encounterView(e, { 0: 1 })).toEqual([])
+    e.groups[0].revealed = true
+    expect(encounterView(e, { 0: 1 })[0].bloodied).toBe(1)
   })
 })

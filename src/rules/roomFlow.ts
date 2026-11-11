@@ -9,12 +9,16 @@ import { floorInfo } from './run'
 import { isBossRoom } from './runFlow'
 import { generateEncounter } from './encounters'
 import { pickBoss, restlessShiftActions } from './bosses'
+import { applyHp, emptyHp, hpShown, hpTrackers } from './hp'
 
 function withRoom(state: RunState, room: Room | null, floorPlan = state.dm?.floorPlan ?? []): RunState {
+  // Refresh the Bloodied facts players may see before building their view.
+  const ctx = { partyLevel: state.run.partyLevel, pressures: state.run.pressures }
+  const full = room ? { ...room, hp: room.hp ?? emptyHp(), hpShown: hpShown(room, ctx) } : null
   return {
     ...state,
-    run: { ...state.run, roomView: room ? playerView(room) : null },
-    dm: { ...state.dm, floorPlan, room },
+    run: { ...state.run, roomView: full ? playerView(full) : null },
+    dm: { ...state.dm, floorPlan, room: full },
   }
 }
 
@@ -29,6 +33,8 @@ function restlessCount(pressures: string[]): number {
 function populate(state: RunState, room: Room, random: Random): Room {
   const { run } = state
   const living = state.players.filter((p) => p.alive)
+  // A new fight starts unhurt.
+  room = { ...room, hp: emptyHp() }
   if (room.kind === 'reprieve') return { ...room, encounter: null, boss: null, shifts: [] }
   if (room.kind === 'boss') {
     const id = state.dm?.bossId ?? pickBoss(run.floor, random)
@@ -76,7 +82,12 @@ export function rerollBoss(state: RunState, random: Random): RunState {
   const next: RunState = { ...state, dm: { floorPlan: [], room: null, ...state.dm, bossId } }
   const room = next.dm?.room
   if (room?.kind === 'boss') {
-    return withRoom(next, { ...room, boss: { id: bossId, partySize: room.boss?.partySize ?? 0 }, shifts: [{ bossId, revealed: false }] })
+    return withRoom(next, {
+      ...room,
+      boss: { id: bossId, partySize: room.boss?.partySize ?? 0 },
+      shifts: [{ bossId, revealed: false }],
+      hp: emptyHp(),
+    })
   }
   return next
 }
@@ -110,6 +121,27 @@ export function reveal(state: RunState, target: RevealTarget): RunState {
     next = { ...room, revealed: { ...room.revealed, [target]: true } }
   }
   return withRoom(state, next)
+}
+
+/**
+ * Damage (positive) or heal (negative) one HP tracker in the current room.
+ * `key` comes from hpTrackers (e.g. "enemy:0:1", "boss", "part:Hound:0").
+ */
+export function changeHp(state: RunState, key: string, amount: number): RunState {
+  const room = state.dm?.room
+  if (!room) throw new Error('There\'s no room to track HP in.')
+  const ctx = { partyLevel: state.run.partyLevel, pressures: state.run.pressures }
+  const t = hpTrackers(room, ctx).find((x) => x.key === key)
+  if (!t) throw new Error('That creature isn\'t in this room.')
+  if (!Number.isFinite(amount) || amount === 0) return state
+  return withRoom(state, { ...room, hp: applyHp(room.hp, key, t.max, amount) })
+}
+
+/** The DM's Bloodied button for the boss: true or false by hand, or null to follow its HP. */
+export function setBossBloodied(state: RunState, value: boolean | null): RunState {
+  const room = state.dm?.room
+  if (!room?.boss) throw new Error('There\'s no boss in this room.')
+  return withRoom(state, { ...room, hp: { ...(room.hp ?? emptyHp()), bossBloodied: value } })
 }
 
 /** The party turns down the Reprieve and fights that room instead. */
