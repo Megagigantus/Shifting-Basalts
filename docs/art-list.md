@@ -7,7 +7,8 @@ Save each file as `src/art/<folder>/<file name>` with a `.webp`, `.png`, `.jpg` 
 Descriptions come from the data files. "Based on" names the Monster Manual creature a monster
 borrows its stat block from. Use it as a hint for size and silhouette only. Don't copy WotC art.
 
-**Total: 90 pictures** (8 shapes, 20 terrain, 12 tricks, 2 exits, 33 creatures, 15 bosses).
+**Total: 90 pictures the app shows now** (8 shapes, 20 terrain, 12 tricks, 2 exits, 33 creatures, 15 bosses),
+**plus 15 extras** for later (section 7).
 Start with the shapes and terrain: those 28 alone give you a picture of every room.
 
 ## Style notes
@@ -164,9 +165,33 @@ Spoiler warning: these files ship with the app, so a determined player could fin
 
 ---
 
-## Not used by the app yet
-Make these only if you want them for later. The app needs a small code change before it can show them.
+## 7. Extras the app doesn't show yet (15)
+The app needs a small code change before it shows these. You can save them now under these
+names: the app ignores folders it doesn't use yet, and the code change will use these names.
 
-- Second-phase pictures for the three floor 5 bosses.
-- Boss part tokens: Pipe cluster (Choir), Golem and Hound (Excavation Herd), Kaelen and Vyr, and Chorus members.
-- Family banners for the 6 enemy families.
+### Boss second phases, `bosses/` (3)
+1024px square, the same style as the boss portraits. Shown once the boss is Bloodied.
+
+- [ ] `ophaniel-phase-2`: **Ophaniel, The Gate Opens.** Its attacks gain a radiant or necrotic edge and it grows stronger. Show the gate opening behind or within it.
+- [ ] `sun-eaters-husk-phase-2`: **The Sun-Eater's Husk, Supernova Core.** The outer shell has shattered to expose a blazing core that pulls everything toward it. Gargantuan.
+- [ ] `gatewright-phase-2`: **The Gatewright, The Fractured Horizon.** Three portals have opened across the arena. Show the boss among the portals.
+
+### Boss part tokens, `boss-parts/` (6)
+256px square, shown as circles like the creatures. For bosses made of several pieces, so the DM can tell the pieces apart.
+
+- [ ] `choir-hollow-column-pipe-cluster`: **Pipe cluster** (Choir of the Hollow Column, 4 of them). A destructible cluster of resonating stone pipes that blasts thunder. The Choir can't move.
+- [ ] `gilded-excavation-herd-golem`: **Golem** (Gilded Excavation Herd). A gilded digging golem with a heavy slam. The tougher piece.
+- [ ] `gilded-excavation-herd-hound`: **Hound** (Gilded Excavation Herd, 2 of them). Small, fast biting hounds that run with the golem. One picture is used for both.
+- [ ] `kaelen-and-vyr-kaelen`: **Kaelen** (the Fractured Striders). The close-range form: armoured, with a cleaving weapon.
+- [ ] `kaelen-and-vyr-vyr`: **Vyr** (the Fractured Striders). The ranged form: lighter, fires ricocheting force bolts and teleports to high ground.
+- [ ] `chorus-unseen-angles-member`: **Chorus member** (The Chorus of Unseen Angles, 3 of them, each in a different corner). Fires psychic rays. One picture is used for all three.
+
+### Enemy family banners, `families/` (6)
+512px square or a wide banner. A group picture or emblem for the whole family, for the DM's encounter panel.
+
+- [ ] `wardstones`: **Wardstones.** Living hex-basalt stone that steps into one column and out of another.
+- [ ] `mazework`: **Mazework.** Trap and maze creatures. When one drops, it arms a room trick where it fell.
+- [ ] `the-lost`: **The Lost.** Faded travelers you can barely see, slipping out of sight.
+- [ ] `absorbed-echoes`: **Absorbed Echoes.** Ghostly copies of adventurers, each carrying a boon.
+- [ ] `gate-born`: **Gate-Born.** Creatures of force and rift energy that leave glowing pools when they drop.
+- [ ] `inverted-paradise`: **Inverted Paradise.** Holy and natural things turned wrong: wilted, upside down, healing that hurts.
