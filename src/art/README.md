@@ -15,7 +15,11 @@ Any id without a file just shows text, so you can add art a bit at a time.
 | `tricks/` | `room-tricks.json` → `tricks` (e.g. `snap-pillar.svg`) | 128px square icon |
 | `exits/` | `exit.svg` and `true-exit.svg` | 64px square icon |
 | `creatures/` | `enemies.json` → `creatures` (e.g. `hexling.webp`) | 512px square |
-| `bosses/` | `bosses.json` → `bosses` (e.g. `tessellated-warden.webp`) | 1024px square |
+| `bosses/` | `bosses.json` → `bosses` (e.g. `tessellated-warden.webp`), plus `<id>-phase-2` for a second phase | 1024px square |
+| `boss-parts/` | boss id + part name in lower case with dashes (e.g. `choir-hollow-column-pipe-cluster.webp`) | 256px square |
+| `families/` | `enemies.json` → `families` (e.g. `wardstones.webp`) | 512px square |
+
+The full list with descriptions is in `docs/art-list.md`.
 
 If a new picture doesn't show up while the dev server is running, restart it.
 

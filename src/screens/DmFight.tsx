@@ -8,6 +8,7 @@ import { bossOf, buildBoss, floorBossDc, type BossStats } from '../rules/bosses'
 import { boon } from '../rules/boons'
 import { rerollEncounter, reveal } from '../rules/roomFlow'
 import { Art } from './Art'
+import { artUrl, partArtId, phase2ArtId } from '../art'
 
 type Step = (s: RunState) => RunState
 type Act = (step: Step, confirmText?: string) => void
@@ -97,9 +98,12 @@ export function EncounterPanel({ encounter, busy, act }: { encounter: Encounter;
         })}
       </ul>
       {families.map((f) => (
-        <p key={f.id} className="hint">
-          {f.name} twist: {f.twist}
-        </p>
+        <div key={f.id} className="with-portrait family-row">
+          <Art kind="families" id={f.id} alt={f.name} />
+          <p className="hint">
+            {f.name} twist: {f.twist}
+          </p>
+        </div>
       ))}
     </div>
   )
@@ -111,9 +115,23 @@ const attackLine = (a: BossStats['attacks'][number], boss: BossStats) =>
     : `+${boss.attack} to hit (${a.kind}), ${a.damage.average} (${a.damage.expression}) ${a.type} damage`
 
 export function BossBlock({ boss, revealed, busy, onTrigger }: { boss: BossStats; revealed: boolean; busy: boolean; onTrigger?: () => void }) {
+  const hasPhase2 = Boolean(artUrl('bosses', phase2ArtId(boss.bossId)))
   return (
     <div className="fight boss-block">
-      <Art kind="bosses" id={boss.bossId} alt={boss.name} className="boss-portrait" />
+      {hasPhase2 ? (
+        <div className="boss-phases">
+          <figure>
+            <Art kind="bosses" id={boss.bossId} alt={`${boss.name}, phase 1`} className="boss-portrait" />
+            <figcaption className="hint">Phase 1</figcaption>
+          </figure>
+          <figure>
+            <Art kind="bosses" id={phase2ArtId(boss.bossId)} alt={`${boss.name}, phase 2`} className="boss-portrait" />
+            <figcaption className="hint">Phase 2 (Bloodied)</figcaption>
+          </figure>
+        </div>
+      ) : (
+        <Art kind="bosses" id={boss.bossId} alt={boss.name} className="boss-portrait" />
+      )}
       <h4>
         {boss.name} <span className="hint">CR {boss.cr}</span>
       </h4>
@@ -125,10 +143,13 @@ export function BossBlock({ boss, revealed, busy, onTrigger }: { boss: BossStats
           {boss.parts.length > 0 && (
             <ul className="plain-list">
               {boss.parts.map((p) => (
-                <li key={p.name}>
-                  {p.count > 1 && `${p.count} × `}
-                  {p.name}: AC {p.ac}
-                  {p.hp !== null && `, ${p.hp} HP${p.count > 1 ? ' each' : ''}`}
+                <li key={p.name} className="with-portrait part-row">
+                  <Art kind="boss-parts" id={partArtId(boss.bossId, p.name)} alt={p.name} />
+                  <span>
+                    {p.count > 1 && `${p.count} × `}
+                    {p.name}: AC {p.ac}
+                    {p.hp !== null && `, ${p.hp} HP${p.count > 1 ? ' each' : ''}`}
+                  </span>
                 </li>
               ))}
             </ul>

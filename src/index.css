@@ -723,6 +723,45 @@ button.link {
   object-fit: cover;
 }
 
+.family-row {
+  align-items: center;
+  margin: 0.4rem 0 0;
+}
+
+.family-row p {
+  margin: 0;
+}
+
+.family-row > img {
+  border-radius: 8px;
+}
+
+.part-row {
+  align-items: center;
+}
+
+.part-row > img {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.boss-phases {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0 0 0.5rem;
+}
+
+.boss-phases figure {
+  margin: 0;
+  flex: 1 1 12rem;
+  max-width: 16rem;
+}
+
+.boss-phases .boss-portrait {
+  margin: 0 0 0.25rem;
+}
+
 .boss-portrait {
   display: block;
   width: 100%;
