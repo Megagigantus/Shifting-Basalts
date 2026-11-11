@@ -2,17 +2,20 @@ import { describe, expect, it } from 'vitest'
 import { emptyDungeonLayer, emptyProfile, type Character } from '../model/character'
 import type { RunState } from '../model/run'
 import {
+  changeHp,
   declineReprieve,
   enterRoom,
   rerollBoss,
   rerollEncounter,
   reveal,
+  setBossBloodied,
   spendHiddenSight,
   startFloor,
 } from './roomFlow'
 import { conditionOf } from './rooms'
 import { clearRoom, defeatBoss, descend, markDead, newRunState } from './runFlow'
 import { bossesOnFloor } from './bosses'
+import { hpTrackers } from './hp'
 
 function seeded(seed: number) {
   let s = seed
@@ -142,7 +145,7 @@ describe('encounters and bosses', () => {
     let state = start()
     const groups = state.dm!.room!.encounter!.groups
     state = reveal(state, { enemy: 0 })
-    expect(state.run.roomView?.enemies?.[0]).toEqual({ creatureId: groups[0].creatureId, count: groups[0].count })
+    expect(state.run.roomView?.enemies?.[0]).toEqual({ creatureId: groups[0].creatureId, count: groups[0].count, bloodied: 0 })
     state = reveal(state, 'enemies')
     const shown = state.run.roomView!.enemies!.reduce((s, e) => s + e.count, 0)
     expect(shown).toBe(groups.reduce((s, g) => s + g.count, 0))
@@ -233,5 +236,68 @@ describe('the DM-only part of a run', () => {
     state = spendForge(state, 'a', { kind: 'level', slotIndex: 0 })
     expect(state.dm?.floorPlan).toEqual(plan)
     expect(state.dm?.bossId).toBe(bossId)
+  })
+})
+
+describe('HP tracking', () => {
+  const bossRoom = (chars = [char('a'), char('b')]) => {
+    let state = start(chars)
+    for (let i = 0; i < 4; i++) state = enterRoom(clearRoom(state, 'combat'), seeded(70 + i))
+    return state
+  }
+  const ctx = (s: RunState) => ({ partyLevel: s.run.partyLevel, pressures: s.run.pressures })
+
+  it('tracks each creature separately, Bloodied at half HP, and players see only the count', () => {
+    let state = reveal(start(), 'enemies')
+    const t = hpTrackers(state.dm!.room!, ctx(state))
+    expect(t.length).toBe(state.dm!.room!.encounter!.groups.reduce((s, g) => s + g.count, 0))
+    const first = t[0]
+    state = changeHp(state, first.key, Math.ceil(first.max / 2))
+    const after = hpTrackers(state.dm!.room!, ctx(state))[0]
+    expect(after.bloodied).toBe(true)
+    expect(after.current).toBe(first.max - Math.ceil(first.max / 2))
+    expect(state.run.roomView!.enemies!.find((e) => e.creatureId === state.dm!.room!.encounter!.groups[0].creatureId)!.bloodied).toBe(1)
+    expect(JSON.stringify(state.run.roomView)).not.toMatch(/"hp"|"damage"|"max"|"current"/)
+  })
+
+  it('keeps HP between 0 and max, and healing clears Bloodied', () => {
+    let state = start()
+    const t = hpTrackers(state.dm!.room!, ctx(state))[0]
+    state = changeHp(state, t.key, t.max * 5)
+    expect(hpTrackers(state.dm!.room!, ctx(state))[0]).toMatchObject({ current: 0, down: true })
+    state = changeHp(state, t.key, -t.max * 5)
+    expect(hpTrackers(state.dm!.room!, ctx(state))[0]).toMatchObject({ current: t.max, bloodied: false })
+    expect(state.dm!.room!.hp!.damage).toEqual({})
+  })
+
+  it('a boss is Bloodied at half its pool, and the DM button overrides it either way', () => {
+    let state = bossRoom()
+    expect(state.run.roomView!.bossBloodied).toBe(false)
+    const pool = hpTrackers(state.dm!.room!, ctx(state))
+    const total = pool.reduce((s, t) => s + t.max, 0)
+    // Damage spread over the parts (or the single pool) until half is gone.
+    let left = Math.ceil(total / 2)
+    for (const t of pool) {
+      const hit = Math.min(left, t.max)
+      if (hit > 0) state = changeHp(state, t.key, hit)
+      left -= hit
+    }
+    expect(state.run.roomView!.bossBloodied).toBe(true)
+    state = setBossBloodied(state, false)
+    expect(state.run.roomView!.bossBloodied).toBe(false)
+    state = setBossBloodied(state, null)
+    expect(state.run.roomView!.bossBloodied).toBe(true)
+  })
+
+  it('rerolling the encounter or the boss starts the fight unhurt', () => {
+    let state = start()
+    const t = hpTrackers(state.dm!.room!, ctx(state))[0]
+    state = rerollEncounter(changeHp(state, t.key, 5), seeded(9))
+    expect(state.dm!.room!.hp!.damage).toEqual({})
+    let boss = bossRoom()
+    boss = setBossBloodied(boss, true)
+    boss = rerollBoss(boss, seeded(91))
+    expect(boss.dm!.room!.hp).toEqual({ damage: {}, bossBloodied: null })
+    expect(boss.run.roomView!.bossBloodied).toBe(false)
   })
 })

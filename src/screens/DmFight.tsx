@@ -3,10 +3,15 @@
 // built from the benchmarks. Players never receive any of this.
 import type { RunState } from '../model/run'
 import type { Room } from '../rules/rooms'
-import { crLabel, creatureOf, creatureXp, familyOf, pushedStats, type Encounter } from '../rules/encounters'
-import { bossOf, buildBoss, floorBossDc, type BossStats } from '../rules/bosses'
+import { crLabel, creatureOf, creatureStats, creatureXp, familyOf, pushedStats, type Encounter } from '../rules/encounters'
+import { bossBloodied, hpTrackers, type Tracker } from '../rules/hp'
+import { BloodiedControl, HpList, StatLine } from './HpTracker'
+import { bossOf, buildBoss, floorBossDc, type AbilityProfile, type BossStats } from '../rules/bosses'
+import { ABILITIES, type Ability } from '../rules/encounters'
 import { boon } from '../rules/boons'
-import { rerollEncounter, reveal } from '../rules/roomFlow'
+import { changeHp, rerollEncounter, reveal, setBossBloodied } from '../rules/roomFlow'
+import { Art } from './Art'
+import { artUrl, partArtId, phase2ArtId } from '../art'
 
 type Step = (s: RunState) => RunState
 type Act = (step: Step, confirmText?: string) => void
@@ -24,7 +29,18 @@ function RevealButton({ shown, busy, onReveal, label = 'Reveal' }: { shown: bool
   )
 }
 
-export function EncounterPanel({ encounter, busy, act }: { encounter: Encounter; busy: boolean; act: Act }) {
+export function EncounterPanel({
+  encounter,
+  trackers = [],
+  busy,
+  act,
+}: {
+  encounter: Encounter
+  /** HP rows for this room's creatures (from hpTrackers). */
+  trackers?: Tracker[]
+  busy: boolean
+  act: Act
+}) {
   const family = familyOf(encounter.family)
   const families = [family, ...(encounter.splashFamily ? [familyOf(encounter.splashFamily)] : [])]
   const total = encounter.groups.reduce((s, g) => s + creatureXp(g.cr) * g.count, 0)
@@ -63,7 +79,9 @@ export function EncounterPanel({ encounter, busy, act }: { encounter: Encounter;
           const c = creatureOf(g.creatureId)
           const pushed = pushedStats(g)
           return (
-            <li key={`${g.creatureId}-${g.cr}-${i}`}>
+            <li key={`${g.creatureId}-${g.cr}-${i}`} className="with-portrait">
+              <Art kind="creatures" id={g.creatureId} alt={c.name} />
+              <div>
               <strong>
                 {g.count} × {c.name}
               </strong>{' '}
@@ -76,7 +94,7 @@ export function EncounterPanel({ encounter, busy, act }: { encounter: Encounter;
               {pushed && (
                 <div className="hint">
                   Pushed from CR {crLabel(c.cr)}: use AC {pushed.ac}, HP {pushed.hp}, +{pushed.attack} to hit, about {pushed.dpr}{' '}
-                  damage per round, save DC {pushed.dc}.
+                  damage per round, save DC {pushed.dc}. The saves below include the higher PB.
                 </div>
               )}
               {g.boons?.map((b, j) => {
@@ -88,14 +106,24 @@ export function EncounterPanel({ encounter, busy, act }: { encounter: Encounter;
                   </div>
                 )
               })}
+              <StatLine {...creatureStats(g)} />
+              <HpList
+                trackers={trackers.filter((t) => t.group === i)}
+                busy={busy}
+                onChange={(key, amount) => act((s) => changeHp(s, key, amount))}
+              />
+              </div>
             </li>
           )
         })}
       </ul>
       {families.map((f) => (
-        <p key={f.id} className="hint">
-          {f.name} twist: {f.twist}
-        </p>
+        <div key={f.id} className="with-portrait family-row">
+          <Art kind="families" id={f.id} alt={f.name} />
+          <p className="hint">
+            {f.name} twist: {f.twist}
+          </p>
+        </div>
       ))}
     </div>
   )
@@ -106,13 +134,59 @@ const attackLine = (a: BossStats['attacks'][number], boss: BossStats) =>
     ? `DC ${boss.dc} ${a.save} save, ${a.damage.average} (${a.damage.expression}) ${a.type} damage`
     : `+${boss.attack} to hit (${a.kind}), ${a.damage.average} (${a.damage.expression}) ${a.type} damage`
 
-export function BossBlock({ boss, revealed, busy, onTrigger }: { boss: BossStats; revealed: boolean; busy: boolean; onTrigger?: () => void }) {
+/** HP tracking for a boss block (DM's live fight only). */
+interface BossHp {
+  trackers: Tracker[]
+  bloodied: boolean
+  override: boolean | null
+  onChange: (key: string, amount: number) => void
+  onSetBloodied: (value: boolean | null) => void
+}
+
+const scoresOf = (p: AbilityProfile) => Object.fromEntries(ABILITIES.map((a) => [a, p[a].score])) as Record<Ability, number>
+const savesOf = (p: AbilityProfile) => Object.fromEntries(ABILITIES.map((a) => [a, p[a].save])) as Record<Ability, number>
+
+export function BossBlock({
+  boss,
+  revealed,
+  busy,
+  onTrigger,
+  hp,
+}: {
+  boss: BossStats
+  revealed: boolean
+  busy: boolean
+  onTrigger?: () => void
+  hp?: BossHp
+}) {
+  const hasPhase2 = Boolean(artUrl('bosses', phase2ArtId(boss.bossId)))
+  const bloodied = hp?.bloodied ?? false
   return (
     <div className="fight boss-block">
+      {hasPhase2 ? (
+        <div className="boss-phases">
+          <figure className={hp && !bloodied ? 'is-current' : undefined}>
+            <Art kind="bosses" id={boss.bossId} alt={`${boss.name}, phase 1`} className="boss-portrait" />
+            <figcaption className="hint">Phase 1</figcaption>
+          </figure>
+          <figure className={hp && bloodied ? 'is-current' : undefined}>
+            <Art kind="bosses" id={phase2ArtId(boss.bossId)} alt={`${boss.name}, phase 2`} className="boss-portrait" />
+            <figcaption className="hint">Phase 2 (Bloodied)</figcaption>
+          </figure>
+        </div>
+      ) : (
+        <Art kind="bosses" id={boss.bossId} alt={boss.name} className="boss-portrait" />
+      )}
       <h4>
         {boss.name} <span className="hint">CR {boss.cr}</span>
       </h4>
       <p className="hint">{boss.role}</p>
+      {hp && (
+        <div className="boss-hp">
+          <BloodiedControl bloodied={hp.bloodied} override={hp.override} busy={busy} onSet={hp.onSetBloodied} />
+          <HpList trackers={hp.trackers} busy={busy} onChange={hp.onChange} />
+        </div>
+      )}
       <dl className="room-facts">
         <dt>Defense</dt>
         <dd>
@@ -120,14 +194,28 @@ export function BossBlock({ boss, revealed, busy, onTrigger }: { boss: BossStats
           {boss.parts.length > 0 && (
             <ul className="plain-list">
               {boss.parts.map((p) => (
-                <li key={p.name}>
-                  {p.count > 1 && `${p.count} × `}
-                  {p.name}: AC {p.ac}
-                  {p.hp !== null && `, ${p.hp} HP${p.count > 1 ? ' each' : ''}`}
+                <li key={p.name} className="with-portrait part-row">
+                  <Art kind="boss-parts" id={partArtId(boss.bossId, p.name)} alt={p.name} />
+                  <span>
+                    {p.count > 1 && `${p.count} × `}
+                    {p.name}: AC {p.ac}
+                    {p.hp !== null && `, ${p.hp} HP${p.count > 1 ? ' each' : ''}`}
+                  </span>
                 </li>
               ))}
             </ul>
           )}
+        </dd>
+        <dt>Abilities</dt>
+        <dd>
+          <StatLine abilities={scoresOf(boss.abilities)} saves={savesOf(boss.abilities)} />
+          {boss.partAbilities.map((p) => (
+            <div key={p.name}>
+              <span className="hint">{p.name}:</span>
+              <StatLine abilities={scoresOf(p.abilities)} saves={savesOf(p.abilities)} />
+            </div>
+          ))}
+          {boss.profileNote && <div className="hint">{boss.profileNote}</div>}
         </dd>
         <dt>Numbers</dt>
         <dd>
@@ -177,7 +265,7 @@ export function BossBlock({ boss, revealed, busy, onTrigger }: { boss: BossStats
             <>
               {boss.legendaryActions} Legendary Action{boss.legendaryActions === 1 ? '' : 's'}
               {boss.phase2ExtraLegendaryActions > 0 && ` (+${boss.phase2ExtraLegendaryActions} in phase 2)`}:{' '}
-              {boss.legendaryOptions.map((o) => `${o.name} (${o.text})`).join('; ')}
+              {boss.legendaryOptions.map((o) => `${o.name} (${o.text})`).join('; ')}. {boss.legendaryRefresh}
             </>
           ) : (
             'No Legendary Actions'
@@ -227,6 +315,9 @@ export function RestlessShifts({ room, partyLevel, busy, act }: { room: Room; pa
 /** The fight for a room, as the DM sees it. */
 export function DmFight({ state, room, busy, act }: { state: RunState; room: Room; busy: boolean; act: Act }) {
   const { run } = state
+  const ctx = { partyLevel: run.partyLevel, pressures: run.pressures }
+  const trackers = hpTrackers(room, ctx)
+  const onChange = (key: string, amount: number) => act((s) => changeHp(s, key, amount))
   if (room.boss) {
     const boss = buildBoss(room.boss.id, run.partyLevel, room.boss.partySize, run.pressures)
     const shift = room.shifts?.find((s) => s.bossId === room.boss!.id)
@@ -236,6 +327,13 @@ export function DmFight({ state, room, busy, act }: { state: RunState; room: Roo
         revealed={Boolean(shift?.revealed)}
         busy={busy}
         onTrigger={() => act((s) => reveal(s, { shift: room.boss!.id }))}
+        hp={{
+          trackers,
+          bloodied: bossBloodied(room, ctx),
+          override: room.hp?.bossBloodied ?? null,
+          onChange,
+          onSetBloodied: (value) => act((s) => setBossBloodied(s, value)),
+        }}
       />
     )
   }
@@ -247,7 +345,7 @@ export function DmFight({ state, room, busy, act }: { state: RunState; room: Roo
           Roll the encounter
         </button>
       )}
-      {room.encounter && <EncounterPanel encounter={room.encounter} busy={busy} act={act} />}
+      {room.encounter && <EncounterPanel encounter={room.encounter} trackers={trackers} busy={busy} act={act} />}
       <RestlessShifts room={room} partyLevel={run.partyLevel} busy={busy} act={act} />
     </>
   )

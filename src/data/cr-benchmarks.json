@@ -1,6 +1,7 @@
 {
   "_source": "docs/design-bible.md: CR benchmarks (2014 Dungeon Master's Guide monster-building benchmarks; HP and DPR are the middle of each band).",
   "benchmarks": [
+    { "cr": 0.5, "pb": 2, "ac": 13, "hp": 60, "attack": 3, "dpr": 5, "dc": 13 },
     { "cr": 1, "pb": 2, "ac": 13, "hp": 78, "attack": 3, "dpr": 12, "dc": 13 },
     { "cr": 2, "pb": 2, "ac": 13, "hp": 93, "attack": 3, "dpr": 18, "dc": 13 },
     { "cr": 3, "pb": 2, "ac": 13, "hp": 108, "attack": 4, "dpr": 24, "dc": 13 },

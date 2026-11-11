@@ -31,13 +31,30 @@ describe('boss scaling', () => {
     expect(buildBoss('general-vane', 10, 2, []).hp).toBe(Math.round(243 * 1.2 * 0.5))
   })
 
-  it('Heavy Crown gives floor 1 bosses a Legendary Action with generic options', () => {
+  it('Heavy Crown gives floor 1 bosses a Legendary Action with their own options', () => {
     const plain = buildBoss('tessellated-warden', 8, 4, [])
     expect(plain.legendaryActions).toBe(0)
     expect(plain.legendaryOptions).toEqual([])
     const crowned = buildBoss('tessellated-warden', 8, 4, ['heavy-crown'])
     expect(crowned.legendaryActions).toBe(1)
-    expect(crowned.legendaryOptions.map((o) => o.name)).toEqual(['Attack', 'Move'])
+    expect(crowned.legendaryOptions.map((o) => o.name)).toEqual(['Slam', 'Raise Pillar', 'Pull (costs 2)'])
+  })
+
+  it('builds boss ability scores and saves from ranks and the CR band', () => {
+    // Floor 3 at party level 10: CR 12, band 11-16 (primary 6, strong 4, average 1), PB 4.
+    const vane = buildBoss('general-vane', 10, 4, [])
+    expect(vane.cr).toBe(12)
+    expect(vane.abilities.str).toEqual({ score: 22, mod: 6, save: 10, proficient: true })
+    expect(vane.abilities.cha).toEqual({ score: 18, mod: 4, save: 4, proficient: false })
+    expect(vane.abilities.wis).toEqual({ score: 12, mod: 1, save: 5, proficient: true })
+    expect(vane.partAbilities).toEqual([])
+  })
+
+  it('gives the Herd hounds and Vyr their own ability profiles', () => {
+    expect(buildBoss('gilded-excavation-herd', 6, 4, []).partAbilities.map((p) => p.name)).toEqual(['Hound'])
+    const kv = buildBoss('kaelen-and-vyr', 6, 4, [])
+    expect(kv.partAbilities.map((p) => p.name)).toEqual(['Vyr'])
+    expect(kv.profileNote).toMatch(/active form/)
   })
 
   it('Heavy Crown II adds a Legendary Action and a Legendary Resistance', () => {

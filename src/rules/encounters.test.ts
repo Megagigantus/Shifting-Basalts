@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import boonData from '../data/boons.json'
 import {
+  benchmark,
   creatureOf,
+  creatureStats,
   creatureXp,
   encounterBudget,
   encounterLevel,
@@ -84,10 +86,22 @@ describe('generating encounters', () => {
     }
   })
 
-  it('shows benchmark numbers for pushed creatures', () => {
+  it('pushes creatures with benchmark offence, scaled HP and their own AC', () => {
     const pushed = { creatureId: 'hexling', cr: 6, count: 1, revealed: false }
-    expect(pushedStats(pushed)).toMatchObject({ cr: 6, ac: 15, hp: 153 })
+    // HP: CR 6 benchmark 153 x Hexling hpMult 0.42 = 64. AC stays the Hexling's 18.
+    expect(pushedStats(pushed)).toMatchObject({ cr: 6, ac: 18, hp: 64, attack: 6, dpr: 42, dc: 15 })
     expect(pushedStats({ ...pushed, cr: 1 })).toBeNull()
+  })
+
+  it('uses Monster Manual stats at base CR and raises saves by PB when pushed', () => {
+    expect(creatureStats({ creatureId: 'hexling', cr: 1 })).toMatchObject({ ac: 18, hp: 33, saves: { str: 2, wis: -4 } })
+    // CR 1 PB 2 -> CR 6 PB 3: every save +1.
+    expect(creatureStats({ creatureId: 'hexling', cr: 6 }).saves).toEqual({ str: 3, dex: 1, con: 2, int: -4, wis: -3, cha: -4 })
+  })
+
+  it('has a CR 1/2 benchmark row', () => {
+    expect(benchmark(0.5)).toMatchObject({ cr: 0.5, hp: 60, pb: 2 })
+    expect(benchmark(1)).toMatchObject({ cr: 1, hp: 78 })
   })
 
   it('gives every Absorbed Echo a Level 1 or 2 boon, never a Payoff', () => {
@@ -148,6 +162,13 @@ describe('the player view of an encounter', () => {
     const e = generateEncounter(1, false, [5, 5, 5, 5], 5, seeded(3))
     expect(encounterView(e)).toEqual([])
     e.groups[0].revealed = true
-    expect(encounterView(e)).toEqual([{ creatureId: e.groups[0].creatureId, count: e.groups[0].count }])
+    expect(encounterView(e)).toEqual([{ creatureId: e.groups[0].creatureId, count: e.groups[0].count, bloodied: 0 }])
+  })
+
+  it('counts Bloodied creatures only in revealed groups', () => {
+    const e = generateEncounter(1, false, [5, 5, 5, 5], 5, seeded(3))
+    expect(encounterView(e, { 0: 1 })).toEqual([])
+    e.groups[0].revealed = true
+    expect(encounterView(e, { 0: 1 })[0].bloodied).toBe(1)
   })
 })

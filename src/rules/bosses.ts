@@ -3,9 +3,18 @@
 // built from the benchmarks; the content lives in data/bosses.json.
 import bossData from '../data/bosses.json'
 import type { Random } from './draft'
-import { benchmark } from './encounters'
+import { ABILITIES, benchmark, type Ability } from './encounters'
 
-type BossTemplate = (typeof bossData.bosses)[number] & {
+type Rank = 'primary' | 'strong' | 'average' | 'weak'
+interface ProfileData {
+  abilityRanks: Record<Ability, Rank>
+  proficientSaves: Ability[]
+}
+
+type BossTemplate = Omit<(typeof bossData.bosses)[number], 'abilityRanks' | 'proficientSaves' | 'partProfiles'> &
+  ProfileData & {
+  partProfiles?: Record<string, ProfileData>
+  profileNote?: string
   parts?: { name: string; count: number; acAdjust?: number; hpMultiplier?: number; hpShare?: number }[]
   sharedHp?: boolean
   traits?: string[]
@@ -13,7 +22,7 @@ type BossTemplate = (typeof bossData.bosses)[number] & {
   phase2ExtraLegendaryActions?: number
 }
 
-export const BOSSES = bossData.bosses as BossTemplate[]
+export const BOSSES = bossData.bosses as unknown as BossTemplate[]
 const SCALING = bossData.scaling
 
 export const bossOf = (id: string) => BOSSES.find((b) => b.id === id)!
@@ -78,6 +87,33 @@ export interface BossPart {
   hp: number | null
 }
 
+/** One ability: score, modifier and save bonus. */
+export interface AbilityLine {
+  score: number
+  mod: number
+  save: number
+  proficient: boolean
+}
+export type AbilityProfile = Record<Ability, AbilityLine>
+
+/**
+ * A boss's ability scores and saves (stats sheet rules): the modifier comes
+ * from the ability band containing its CR and the ability's rank; score =
+ * 10 + 2 x modifier; save = modifier + PB when proficient.
+ */
+export function abilityProfile(data: ProfileData, cr: number): AbilityProfile {
+  const bands = SCALING.abilityBands
+  const band = bands.find((b) => cr >= b.minCr && cr <= b.maxCr) ?? (cr < bands[0].minCr ? bands[0] : bands[bands.length - 1])
+  const pb = benchmark(cr).pb
+  return Object.fromEntries(
+    ABILITIES.map((a) => {
+      const mod = band[data.abilityRanks[a]]
+      const proficient = data.proficientSaves.includes(a)
+      return [a, { score: 10 + 2 * mod, mod, save: mod + (proficient ? pb : 0), proficient }]
+    }),
+  ) as AbilityProfile
+}
+
 export interface BossStats {
   bossId: string
   name: string
@@ -99,6 +135,14 @@ export interface BossStats {
   legendaryResistances: number
   phase2ExtraLegendaryActions: number
   legendaryOptions: { name: string; text: string }[]
+  /** "Regains spent Legendary Actions at the start of its turn." */
+  legendaryRefresh: string
+  /** The boss's own ability scores and saves. */
+  abilities: AbilityProfile
+  /** Parts with their own profile (the Herd's hounds, Vyr). */
+  partAbilities: { name: string; abilities: AbilityProfile }[]
+  /** How to read the profiles, e.g. Kaelen and Vyr's active form. */
+  profileNote: string | null
   shiftAction: { name: string; text: string }
 }
 
@@ -188,6 +232,10 @@ export function buildBoss(bossId: string, partyLevel: number, partySize: number,
       la > 0
         ? (t.legendaryOptions ?? SCALING.genericLegendaryActions).map((o) => ({ name: o.name, text: fillText(o.text) }))
         : [],
+    legendaryRefresh: SCALING.legendaryRefresh,
+    abilities: abilityProfile(t, cr),
+    partAbilities: Object.entries(t.partProfiles ?? {}).map(([name, data]) => ({ name, abilities: abilityProfile(data, cr) })),
+    profileNote: t.profileNote ?? null,
     shiftAction: { name: t.shiftAction.name, text: fillText(t.shiftAction.text) },
   }
 }

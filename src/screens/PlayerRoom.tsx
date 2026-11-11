@@ -18,6 +18,13 @@ import {
 import { submitChoice, usePrivateHints } from '../runStore'
 import { creatureOf } from '../rules/encounters'
 import { bossOf, floorBossDc } from '../rules/bosses'
+import { RoomCard } from './RoomCard'
+import { Art } from './Art'
+import { artUrl, phase2ArtId } from '../art'
+
+/** "Bloodied" for one creature, "2 Bloodied" for some of a group, "all Bloodied" for the whole group. */
+const bloodiedLabel = (count: number, bloodied: number) =>
+  count === 1 ? 'Bloodied' : bloodied >= count ? 'all Bloodied' : `${bloodied} Bloodied`
 
 const KIND_LABELS = { combat: 'Room', elite: 'Elite room', reprieve: 'Reprieve', boss: 'Boss room' }
 
@@ -53,16 +60,57 @@ export function PlayerRoom({ state, me, readOnly = false }: Props) {
         {KIND_LABELS[view.kind]} · floor {view.floor}
         {view.kind !== 'boss' && `, room ${view.room}`}
       </h3>
+      <RoomCard
+        shape={view.shape}
+        size={view.size}
+        lighting={view.lighting}
+        exits={view.exits}
+        trueExit={view.trueExit}
+        terrain={view.terrain}
+        tricks={view.tricks}
+      />
       {view.bossId && (
-        <p className="boss-name">
-          <strong>{bossOf(view.bossId).name}</strong>
-        </p>
+        <>
+          {view.bossBloodied && artUrl('bosses', phase2ArtId(view.bossId)) ? (
+            <Art kind="bosses" id={phase2ArtId(view.bossId)} alt={bossOf(view.bossId).name} className="boss-portrait" />
+          ) : (
+            <Art kind="bosses" id={view.bossId} alt={bossOf(view.bossId).name} className="boss-portrait" />
+          )}
+          <p className="boss-name">
+            <strong>{bossOf(view.bossId).name}</strong>
+            {view.bossBloodied && <span className="bloodied-tag">Bloodied</span>}
+          </p>
+        </>
       )}
       {(view.enemies?.length ?? 0) > 0 && (
-        <p>
-          <strong>Enemies:</strong>{' '}
-          {view.enemies!.map((e) => `${e.count > 1 ? `${e.count} × ` : ''}${creatureOf(e.creatureId).name}`).join(', ')}
-        </p>
+        <>
+          <p>
+            <strong>Enemies:</strong>{' '}
+            {view.enemies!.map((e, i) => (
+              <span key={`${e.creatureId}-${i}`}>
+                {i > 0 && ', '}
+                {e.count > 1 && `${e.count} × `}
+                {creatureOf(e.creatureId).name}
+                {(e.bloodied ?? 0) > 0 && <span className="bloodied-tag">{bloodiedLabel(e.count, e.bloodied!)}</span>}
+              </span>
+            ))}
+          </p>
+          {/* Only revealed creatures are in view.enemies, so only their portraits show. */}
+          {view.enemies!.some((e) => artUrl('creatures', e.creatureId)) && (
+            <ul className="room-icons portraits">
+              {view.enemies!.map((e, i) => (
+                <li key={`${e.creatureId}-${i}`}>
+                  <Art kind="creatures" id={e.creatureId} alt={creatureOf(e.creatureId).name} />
+                  <span>
+                    {e.count > 1 && `${e.count} × `}
+                    {creatureOf(e.creatureId).name}
+                  </span>
+                  {(e.bloodied ?? 0) > 0 && <span className="bloodied-tag">{bloodiedLabel(e.count, e.bloodied!)}</span>}
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
       )}
       {view.shifts?.map((id) => {
         const action = bossOf(id).shiftAction
