@@ -157,8 +157,23 @@ function loadObject<T>(file: string): T {
 interface EnemyData {
   families: { id: string; name: string; floorWeights: Record<string, number>; twist: string }[]
   roles: Record<string, string[]>
-  creatures: { id: string; name: string; family: string; role: string; cr: number; reskin: string }[]
+  creatures: {
+    id: string
+    name: string
+    family: string
+    role: string
+    cr: number
+    reskin: string
+    ac: number
+    hp: number
+    hpMult: number
+    abilities: Record<string, number>
+    saves: Record<string, number>
+  }[]
 }
+const ABILITY_KEYS = ['str', 'dex', 'con', 'int', 'wis', 'cha']
+const sameKeys = (o: Record<string, unknown> | undefined) =>
+  !!o && Object.keys(o).length === 6 && ABILITY_KEYS.every((k) => k in o)
 const enemies = loadObject<EnemyData>('enemies.json')
 const budgets = loadObject<{
   floors: { floor: number; budget: string }[]
@@ -168,11 +183,15 @@ const budgets = loadObject<{
 }>('encounter-budgets.json')
 const benchmarks = loadObject<{ benchmarks: { cr: number }[] }>('cr-benchmarks.json').benchmarks
 const bossData = loadObject<{
-  scaling: { floors: { floor: number }[] }
+  scaling: { floors: { floor: number; proficientSaves: number }[]; abilityBands: { minCr: number; maxCr: number }[] }
   bosses: {
     id: string
     name: string
     floor: number
+    abilityRanks: Record<string, string>
+    proficientSaves: string[]
+    parts?: { name: string }[]
+    partProfiles?: Record<string, { abilityRanks: Record<string, string>; proficientSaves: string[] }>
     attacks: { name: string; percent: number; count: number; die?: string }[]
     specials?: { text: string }[]
     legendaryOptions?: { text: string }[]
@@ -198,6 +217,8 @@ for (const c of enemies.creatures) {
   if (!familyIds.has(c.family)) fail(`${where}: unknown family "${c.family}"`)
   if (!allRoles.includes(c.role)) fail(`${where}: role "${c.role}" isn't listed in roles`)
   if (budgets.creatureXp[String(c.cr)] === undefined) fail(`${where}: no XP value for CR ${c.cr}`)
+  if (!(c.ac > 0) || !(c.hp > 0) || !(c.hpMult > 0)) fail(`${where}: needs ac, hp and hpMult`)
+  if (!sameKeys(c.abilities) || !sameKeys(c.saves)) fail(`${where}: abilities and saves need str, dex, con, int, wis and cha`)
 }
 for (const f of enemies.families) {
   if (!enemies.creatures.some((c) => c.family === f.id)) fail(`enemies.json family "${f.id}": has no creatures`)
@@ -208,8 +229,10 @@ budgets.budgets.forEach((row, i) => {
 for (let cr = 1; cr <= budgets.maxCreatureCr; cr++) {
   if (budgets.creatureXp[String(cr)] === undefined) fail(`encounter-budgets.json: no XP value for CR ${cr}`)
 }
-benchmarks.forEach((row, i) => {
-  if (row.cr !== i + 1) fail(`cr-benchmarks.json: rows must run CR 1, 2, 3... (row ${i + 1} says ${row.cr})`)
+// An optional CR 1/2 row first, then CR 1, 2, 3...
+const wholeRows = benchmarks[0]?.cr === 0.5 ? benchmarks.slice(1) : benchmarks
+wholeRows.forEach((row, i) => {
+  if (row.cr !== i + 1) fail(`cr-benchmarks.json: rows must run CR 1/2 (optional), 1, 2, 3... (found ${row.cr} where ${i + 1} belongs)`)
 })
 const bossIds = new Set<string>()
 const PLACEHOLDER = /\{([a-z]+)(?::[\d.]+(?::d\d+)?)?\}/g
@@ -224,6 +247,18 @@ for (const b of bossData.bosses) {
     if (!/^d(6|8|10|12)$/.test(a.die ?? '')) fail(`${where}: attack "${a.name}" needs a die (d6, d8, d10 or d12; bible: Damage dice)`)
   }
   if (!b.shiftAction?.name || !b.shiftAction.text) fail(`${where}: needs a Shift Action`)
+  const RANKS = ['primary', 'strong', 'average', 'weak']
+  const profiles = [['', b], ...Object.entries(b.partProfiles ?? {})] as const
+  for (const [part, prof] of profiles) {
+    const label = part ? `${where} part "${part}"` : where
+    if (!sameKeys(prof.abilityRanks) || !Object.values(prof.abilityRanks).every((r) => RANKS.includes(r))) {
+      fail(`${label}: abilityRanks needs str, dex, con, int, wis and cha, each primary, strong, average or weak`)
+    }
+    if (!prof.proficientSaves.every((s) => ABILITY_KEYS.includes(s))) fail(`${label}: unknown ability in proficientSaves`)
+    if (part && !(b.parts ?? []).some((p) => p.name === part)) fail(`${label}: no part with that name`)
+  }
+  const floorSaves = bossData.scaling.floors.find((f) => f.floor === b.floor)?.proficientSaves
+  if (b.proficientSaves.length !== floorSaves) fail(`${where}: floor ${b.floor} bosses are proficient in ${floorSaves} saves, not ${b.proficientSaves.length}`)
   const texts = [...(b.specials ?? []), ...(b.legendaryOptions ?? []), ...b.attacks, b.shiftAction].map((t) => ('text' in t ? t.text : ''))
   for (const text of texts) {
     for (const m of text.matchAll(PLACEHOLDER)) {

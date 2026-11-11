@@ -66,10 +66,11 @@ export function encounterBudget(levels: number[], floor: number): number {
   return levels.reduce((sum, level) => sum + budgetData.budgets[encounterLevel(level, floor) - 1][kind], 0)
 }
 
-/** Benchmark numbers for a CR (pushed creatures and bosses). */
+/** Benchmark numbers for a CR (pushed creatures and bosses). CR 1/2 has its own row. */
 export function benchmark(cr: number) {
   const rows = benchmarkData.benchmarks
-  return rows[Math.min(rows.length, Math.max(1, Math.round(cr))) - 1]
+  const top = rows[rows.length - 1].cr
+  return rows.find((r) => r.cr === cr) ?? rows.find((r) => r.cr === Math.min(top, Math.max(1, Math.round(cr))))!
 }
 
 /** Families allowed on a floor, with their odds. */
@@ -239,9 +240,40 @@ export function generateEncounter(
 }
 
 /** Benchmark numbers to use for a group pushed above its roster CR (null if not pushed). */
+export type Ability = 'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha'
+export const ABILITIES: Ability[] = ['str', 'dex', 'con', 'int', 'wis', 'cha']
+
+export interface CreatureStats {
+  ac: number
+  hp: number
+  abilities: Record<Ability, number>
+  saves: Record<Ability, number>
+}
+
+/**
+ * A creature's stats at the CR it fights at (2024 Monster Manual numbers from
+ * enemies.json). Pushed up CR: HP = the new CR's benchmark HP x hpMult, and
+ * each save rises by the proficiency bonus difference; AC and ability scores
+ * stay the same.
+ */
+export function creatureStats(group: Pick<EncounterGroup, 'creatureId' | 'cr'>): CreatureStats {
+  const c = creatureOf(group.creatureId)
+  if (group.cr <= c.cr) return { ac: c.ac, hp: c.hp, abilities: c.abilities, saves: c.saves }
+  const pbUp = benchmark(group.cr).pb - benchmark(c.cr).pb
+  const saves = Object.fromEntries(ABILITIES.map((a) => [a, c.saves[a] + pbUp])) as Record<Ability, number>
+  return { ac: c.ac, hp: Math.round(benchmark(group.cr).hp * c.hpMult), abilities: c.abilities, saves }
+}
+
+/**
+ * Pushed creatures: the new CR's attack bonus, damage per round and save DC
+ * (benchmarks), plus HP and saves from creatureStats. Null when not pushed.
+ */
 export function pushedStats(group: EncounterGroup) {
   const base = creatureOf(group.creatureId).cr
-  return group.cr > base ? benchmark(group.cr) : null
+  if (group.cr <= base) return null
+  const b = benchmark(group.cr)
+  const s = creatureStats(group)
+  return { cr: group.cr, attack: b.attack, dpr: b.dpr, dc: b.dc, ac: s.ac, hp: s.hp }
 }
 
 /** What players may see of an encounter: revealed creatures' names and counts only. */

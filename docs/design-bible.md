@@ -925,7 +925,17 @@ Boss stats are built at the table from four inputs: party level, party size, flo
 - **Pressures:** Heavy Crown adds 1 Legendary Action on every floor, including floors 1 and 2.
 - **DPR:** each template splits the benchmark damage per round across its attacks as percentages. Round each attack to the nearest dice expression.
 - **Shift Actions:** use the boss's save DC.
-- **Roster creatures:** when the generator needs a creature above what the roster offers, push it up CR with the same benchmarks.
+- **Roster creatures:** when the generator needs a creature above what the roster offers, push it up CR with the same benchmarks. A pushed creature uses the new CR's attack bonus, damage per round and save DC. Its HP is the new CR's benchmark HP × its HP multiplier (its Monster Manual HP ÷ its own CR's benchmark HP), and each save rises by the difference in proficiency bonus. Its AC and ability scores stay the same. Room creatures never take the boss party-size HP multiplier.
+- **Ability scores and saves:** each boss template ranks its six abilities as primary, strong, average or weak. The ability band for the boss's CR turns each rank into a modifier (table below). Score = 10 + 2 × modifier. Save = modifier, plus PB in the saves the template is proficient in. Floor 1 and 2 bosses are proficient in 2 saves, floors 3 and 4 in 3, floor 5 in 4. Parts with their own profile (the Herd's hounds, Vyr) use their own ranks.
+- **Legendary Actions:** a boss regains spent Legendary Actions at the start of its turn. Floor 1 and 2 templates list their own options, used only when Heavy Crown or a party of 6+ grants Legendary Actions.
+
+| CR | Primary | Strong | Average | Weak |
+| --- | --- | --- | --- | --- |
+| 1–4 | +4 | +2 | +0 | −2 |
+| 5–10 | +5 | +3 | +1 | −1 |
+| 11–16 | +6 | +4 | +1 | −1 |
+| 17–22 | +7 | +5 | +2 | +0 |
+| 23–30 | +8 | +6 | +3 | +1 |
 
 ### CR benchmarks
 
@@ -933,6 +943,7 @@ These are the monster-building benchmarks from the 2014 Dungeon Master's Guide, 
 
 | CR | Prof. | AC | HP | Attack | DPR | Save DC |
 | --- | --- | --- | --- | --- | --- | --- |
+| 1/2 | +2 | 13 | 60 | +3 | 5 | 13 |
 | 1 | +2 | 13 | 78 | +3 | 12 | 13 |
 | 2 | +2 | 13 | 93 | +3 | 18 | 13 |
 | 3 | +2 | 13 | 108 | +4 | 24 | 13 |
@@ -1346,7 +1357,7 @@ Everything rolled for a room is DM-only until revealed, and the DM gets a reveal
 
 - **Lore never ships to players:** content tables in the app bundle can be read with browser dev tools, so they carry names and mechanics only. Boss lore, the Campaign context truths and anything about Sonder stay in this Bible and the Campaign Lorebook, outside the app.
 - **No Lorebook in the repo:** every table the generator needs is in this Bible, so the Lorebook isn't needed, and keeping it out protects spoilers.
-- **Monster stat blocks:** store each creature's name, CR, reskin source and twist; the DM pulls up the 2024 Monster Manual stat block. Boss stats are original, built from the benchmarks.
+- **Monster stat blocks:** store each creature's name, CR, reskin source and twist, plus its 2024 Monster Manual AC, HP, ability scores and saves for HP tracking; the DM pulls up the Monster Manual stat block for everything else. Boss stats are original, built from the benchmarks.
 
 ### Room generator defaults *(proposed)*
 
