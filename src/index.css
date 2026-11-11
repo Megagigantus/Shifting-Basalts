@@ -723,6 +723,141 @@ button.link {
   object-fit: cover;
 }
 
+/* HP tracking and stat lines (src/screens/HpTracker.tsx). DM only. */
+.stat-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem 0.9rem;
+  margin: 0.3rem 0 0;
+  font-size: 0.82rem;
+  opacity: 0.85;
+}
+
+.stat-name {
+  font-weight: 600;
+  opacity: 0.7;
+}
+
+.hp-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.4rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.hp-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.6rem;
+  font-size: 0.9rem;
+}
+
+.hp-label {
+  min-width: 7rem;
+}
+
+.hp-numbers {
+  font-variant-numeric: tabular-nums;
+  min-width: 4.5rem;
+}
+
+.hp-bar {
+  position: relative;
+  width: 6rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: #3a3840;
+  overflow: hidden;
+}
+
+.hp-bar > span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: #6ab98a;
+}
+
+.hp-row.is-bloodied .hp-bar > span {
+  background: #c96a5a;
+}
+
+.hp-row.is-down {
+  opacity: 0.55;
+}
+
+.tag.hp-bloodied {
+  background: #5a2a26;
+  color: #f2c4bb;
+}
+
+.tag.hp-down {
+  background: #3a3840;
+}
+
+.hp-controls {
+  display: flex;
+  gap: 0.3rem;
+  align-items: center;
+}
+
+.hp-controls input {
+  width: 4.5rem;
+  font: inherit;
+  padding: 0.25rem 0.4rem;
+  border-radius: 6px;
+  border: 1px solid #6b665c;
+  background: #1c1b1f;
+  color: inherit;
+}
+
+.hp-controls button {
+  padding: 0.25rem 0.6rem;
+}
+
+.boss-hp {
+  margin: 0.25rem 0 0.75rem;
+}
+
+.bloodied-control {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.8rem;
+}
+
+.segmented {
+  display: inline-flex;
+  gap: 0.25rem;
+}
+
+.segmented button {
+  padding: 0.2rem 0.7rem;
+}
+
+.segmented button.is-active {
+  border-color: #c9a35a;
+  background: #3b3326;
+}
+
+.boss-phases figure.is-current .boss-portrait {
+  outline: 2px solid #c9a35a;
+  outline-offset: 2px;
+}
+
+/* Player view: Bloodied tag on revealed enemies and the boss. */
+.bloodied-tag {
+  display: inline-block;
+  margin-left: 0.35rem;
+  padding: 0 0.4rem;
+  border-radius: 4px;
+  background: #5a2a26;
+  color: #f2c4bb;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
 .family-row {
   align-items: center;
   margin: 0.4rem 0 0;
