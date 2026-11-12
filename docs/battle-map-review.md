@@ -14,8 +14,8 @@ make), **you** (art or a decision), or **your call** (either works; pick one).
 
 ## Must fix
 
-1. **"Sonder" in a portal name (you decide the new name).** The Gatewright's phase 2 portal is called "Portal to Sonder's negative space". Sonder must never appear in the app (bible: Content safety). Suggestion: "Portal to negative space", or just "Void portal". Also check whether "Portal to the Archive" gives anything away; if so, call it "West portal" or similar.
-2. **The Gatewright phase 1 arena (you, repaint).** It's painted as a 4 × 4 grid of walled cells full of furniture, but the boss is designed around open floor (Builder's Strike walls, Grand Reconstruction). The boss's start square and the south entrance both sit on partition walls. It needs an open-floor repaint.
+1. **Spoilers in the Gatewright's portal names (decided: rename all three).** "Portal to Sonder's negative space" names Sonder, and "Portal to paradise" names the DM-only truth that the Basalts is a fractured stridegate to paradise. *This review first caught only the Sonder one; the DM caught the paradise one.* New names: **Gilded portal**, **Void portal** and **Archive portal**. "Archive" already ships in a loot item ("a destination the Archive has no record of"), so it gives nothing new away. For the record, the lore checker (`scripts/check-data.ts`) bans "sonder" everywhere and "paradise" outside approved names, so it would have stopped both at build time once the data moved into the app.
+2. **The Gatewright phase 1 arena (repainted 2026-11-11).** It was a 4 × 4 grid of walled cells; it's been repainted as open floor. Re-checking the art against the layout.
 
 ## Art doesn't match the layout
 
@@ -31,9 +31,9 @@ My suggestion: **treat the painting as the truth for walls and fixed features, a
 | Chorus of Unseen Angles | The south edge is a wall strip; the central 2 × 2 column isn't painted | **me**: the entrance moves up a row; the column stays an object (needs `tall-column` art, below) |
 | Inverted Reliquary | Plinths painted about 2.5 × 2.5 squares; the data has 1 × 1 | **me**: plinths become 2 × 2 in the data and use the painting (no plinth art needed) |
 | Glass Hydra | Floor tiles don't line up with 5 ft squares; no distinct mirror panels painted | **me**: nothing to change, the mirror panels are objects already |
-| Kaelen and Vyr | One raised ledge with stairs painted in the NW corner; the data has ledges in both back corners | **your call**: repaint a second ledge NE, or I change the data to the one painted ledge |
-| Lattice Spinner | 8 columns painted into the floor; the data has 6 column objects, and Loom Rotation has to move them, which painted columns can't do | **your call**: repaint without columns (recommended, then they're movable objects), or I use the 8 painted columns and the DM narrates the rotation |
-| Choir of the Hollow Column | A big organ on a central dais is painted in the middle; the data calls the centre open and safest | **your call**: repaint without it, or keep it as a big central obstacle and I update the notes |
+| Kaelen and Vyr | One raised ledge with stairs painted in the NW corner; the data has ledges in both back corners | **repainted 2026-11-11**, re-checking |
+| Lattice Spinner | 8 columns painted into the floor; the data has 6 column objects, and Loom Rotation has to move them | **repainted 2026-11-11** without columns, re-checking |
+| Choir of the Hollow Column | A big organ on a central dais is painted in the middle; the data calls the centre open and safest | **repainted 2026-11-11**, re-checking |
 
 **Entrances vary per arena** (e.g. the Chorus and the Gatewright phase 1). I'll give each arena its own entrance in the data instead of one shared one.
 
@@ -59,17 +59,18 @@ Rooms roll 1 to 4 exits, plus the way the party came in. Only **hex-hall** and *
 have painted doorways (4 each). Column-forest, honeycomb, split-chamber,
 switchback and twisted-vault have none, and **tiered-stair** has no north or south wall.
 
-**Suggested default (me):** the party always enters from the south edge, and the app draws
-doorway markers on the edges using the existing exit icons, placed on open floor. Nothing
-to repaint. On hex-hall and ring, the markers sit in the painted openings.
+**Decided:** the party enters from the south edge, **except in the split chamber, where it
+enters from the east** (the chasm runs north to south). The app draws doorway markers on
+the edges using the existing exit icons, placed on open floor. Nothing to repaint. On
+hex-hall and ring, the markers sit in the painted openings.
 
-**Your call:**
-- In tiered-stair, can creatures climb between tiers freely, or only at the middle recesses?
-- In split-chamber, is the chasm a jump (and how far) or impassable away from the bridge?
+**Decided, and added to the bible (Size, elevation, exits and lighting):**
+- **Tiered stair:** tiers are 10 ft apart. Climbing up a tier costs extra movement (5 ft of climbing costs 10 ft of movement); the middle recesses work as stairs at normal cost. Climbing down is free.
+- **Split chamber:** the chasm is 10 ft across. A running long jump clears it with Strength 10 or more; anyone who falls short falls in. The bridge stays worth fighting over.
 
 ## Data decisions
 
-1. **Boss part names (your call).** Your file renames parts: "Pipe Cluster", "Survey Golem", "Basalt Hound" (the Herd's hounds) and "Unseen Angle" (the Chorus members). Fine by me, except **"Basalt Hound" clashes with the roster creature of the same name**, which will confuse the DM screen. Suggest "Survey Hound", or keep "Hound". The art file names stay as they are either way.
+1. **Boss part names (decided).** "Pipe Cluster", "Survey Golem", **"Survey Hound"** (not "Basalt Hound", which clashes with the roster creature) and "Unseen Angle". The art file names stay as they are.
 2. **Kaelen and Vyr as one token (me).** Your file makes them one token that swaps art with the active form. That works with the art you already have (`kaelen-and-vyr-kaelen`, `kaelen-and-vyr-vyr`). I'll add a "swap form" button for the DM. Each form keeps its own AC and ability profile.
 3. **Walls don't block movement (default).** The app won't stop tokens at walls. Walls are only what's painted, and the DM judges. That keeps the very different wall thicknesses across the art from mattering.
 

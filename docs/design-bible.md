@@ -1147,6 +1147,9 @@ The generator builds each room from a shape, a size, an elevation, two or three 
 - **Elevation (d4):** 1, flat; 2, one 10 ft ledge; 3, columns of varied heights to climb; 4, a 20 ft pit.
 - **Exits (d3):** 1 to 3 doorways. Only one leads on; the others loop back, like every maze of Thils. Spotting the true exit takes a Survival check (DC 10 + floor number), and Ulma's Thread finds it automatically.
 - **Lighting (d6):** 1 to 3, dim seam-light; 4, bright rune-light; 5, flickering, which alternates dim and dark each round; 6, patches of magical darkness. On floor 4, a 5 or 6 becomes golden light from below instead.
+- **Entrance:** the party enters from the south edge of the battle map, except in a Split chamber, where the chasm runs north to south and the party enters from the east edge.
+- **Tiered stair:** each tier is 10 ft above the one below. Climbing up a tier costs extra movement (5 ft of climbing costs 10 ft of movement); the middle recesses work as stairs at normal cost. Climbing down a tier costs nothing extra.
+- **Split chamber:** the chasm is 10 ft across. A running long jump clears it with Strength 10 or more; anyone who comes up short falls in. The bridge is the only other way across, which keeps it worth fighting over.
 
 ### Terrain features (d20)
 

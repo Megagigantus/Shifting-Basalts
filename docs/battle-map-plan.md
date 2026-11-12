@@ -26,6 +26,35 @@ Status: **plan, not built**. Each phase below is its own branch and PR.
 - **Summons and companions:** characters marked "has a summon" get one extra token they control.
 - **Token size:** Medium takes 1 square, Large 2 × 2, Huge 3 × 3, Gargantuan 4 × 4.
 
+## Boss phase art
+
+Bosses with a second phase change it at **Bloodied**, which the app already tracks, either
+automatically from HP or by the DM's Bloodied button. One switch drives everything below.
+
+| Where | Phase 1 | Phase 2 (Bloodied) | Status |
+| --- | --- | --- | --- |
+| DM boss block | Both portraits side by side, the current phase outlined | Same, outline moves to phase 2 | Built |
+| Player room screen | Phase 1 portrait | Switches to the phase 2 portrait, plus a Bloodied tag | Built |
+| Map token | Round crop of the phase 1 portrait | Swaps to the phase 2 portrait | Phase 4 |
+| Arena | Phase 1 arena | **The Husk and the Gatewright** swap to their phase 2 arena. Phase 1 objects that don't belong in phase 2 hide (the Husk's columns and braziers), and phase 2 objects appear (the Gatewright's portals) | Phase 4 |
+| Phase reveal (proposed) | | Players get a one-time full-width reveal of the phase 2 portrait with its name, e.g. "The Gate Opens". It closes with a tap or after a few seconds | Phase 4 |
+
+- **Which bosses:** Ophaniel, the Sun-Eater's Husk and the Gatewright have phase 2 portraits; the Husk and the Gatewright also have phase 2 arenas. Other bosses with Bloodied effects (e.g. the Tessellated Warden's Lens Flare) keep one portrait.
+- **Kaelen and Vyr** use the same token-swap idea for their forms. The DM gets a "Swap form" button, and the token switches between the Kaelen and Vyr art. Each form keeps its own AC and ability profile.
+- **Going back:** if the DM turns Bloodied off, everything returns to phase 1.
+
+## Portals in the Gatewright's phase 2 arena
+
+- **Painted portals stay visible.** The three portals painted into the phase 2 arena are fixed features. The app draws only a thin outline and a name label on them, never the portal object image, so players can see the three different gates.
+- **Names (no spoilers):** Gilded portal, Void portal and Archive portal.
+- **The `portal` object** is for portals the DM places somewhere else. If the Gatewright's Shift Portal moves one, it appears at the new spot as the portal object, and its painted spot gets a dimmed "closed" outline.
+
+## Entrances
+
+- The party enters from the south edge, **except in the split chamber, where it enters from the east** (the chasm runs north to south).
+- Each boss arena gets its own entrance in the data, matched to its painting.
+- Room movement rules for the tiered stair and split chamber are in the bible (Size, elevation, exits and lighting).
+
 ## Phases
 
 1. **Map foundation (DM only).**
