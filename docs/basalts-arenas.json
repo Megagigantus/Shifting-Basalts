@@ -1,0 +1,971 @@
+{
+  "grid": {
+    "widthSquares": 14,
+    "heightSquares": 14,
+    "squareFt": 5,
+    "origin": "top-left (0,0)",
+    "entrance": {
+      "x": 6,
+      "y": 13,
+      "w": 2,
+      "h": 1
+    },
+    "note": "Boss rooms are always large (70 ft). North is y = 0; the party enters from the south. x and y are a token's top-left square; footprint comes from size."
+  },
+  "arenas": {
+    "tessellated-warden": {
+      "boss": [
+        {
+          "part": "warden",
+          "x": 6,
+          "y": 3
+        }
+      ],
+      "objects": [
+        {
+          "id": "tall-column",
+          "name": "Tall column",
+          "x": 3,
+          "y": 3,
+          "w": 1,
+          "h": 1,
+          "cover": "full"
+        },
+        {
+          "id": "tall-column",
+          "name": "Tall column",
+          "x": 10,
+          "y": 3,
+          "w": 1,
+          "h": 1,
+          "cover": "full"
+        },
+        {
+          "id": "tall-column",
+          "name": "Tall column",
+          "x": 3,
+          "y": 9,
+          "w": 1,
+          "h": 1,
+          "cover": "full"
+        },
+        {
+          "id": "tall-column",
+          "name": "Tall column",
+          "x": 10,
+          "y": 9,
+          "w": 1,
+          "h": 1,
+          "cover": "full"
+        }
+      ],
+      "floor": "hex",
+      "notes": "Open hex floor so Columnar Slam pillars and Piston Floor sections have room. Slam pillars are added during the fight."
+    },
+    "choir-of-the-hollow-column": {
+      "boss": [
+        {
+          "part": "pipe-cluster",
+          "x": 6,
+          "y": 2
+        },
+        {
+          "part": "pipe-cluster",
+          "x": 10,
+          "y": 6
+        },
+        {
+          "part": "pipe-cluster",
+          "x": 6,
+          "y": 10
+        },
+        {
+          "part": "pipe-cluster",
+          "x": 2,
+          "y": 6
+        }
+      ],
+      "objects": [],
+      "floor": "stone",
+      "notes": "4 pipe clusters in a diamond, 15 ft from the centre. The centre is safest from the cones but deepest in the Hymn Auras."
+    },
+    "gilded-excavation-herd": {
+      "boss": [
+        {
+          "part": "golem",
+          "x": 6,
+          "y": 3
+        },
+        {
+          "part": "hound",
+          "x": 4,
+          "y": 4
+        },
+        {
+          "part": "hound",
+          "x": 9,
+          "y": 4
+        }
+      ],
+      "objects": [
+        {
+          "id": "tether-pillar",
+          "name": "Tether pillar",
+          "x": 3,
+          "y": 7,
+          "w": 1,
+          "h": 1,
+          "cover": "half",
+          "ac": 15,
+          "hp": "10 * bossPB",
+          "destructible": true
+        },
+        {
+          "id": "tether-pillar",
+          "name": "Tether pillar",
+          "x": 10,
+          "y": 7,
+          "w": 1,
+          "h": 1,
+          "cover": "half",
+          "ac": 15,
+          "hp": "10 * bossPB",
+          "destructible": true
+        },
+        {
+          "id": "tether-pillar",
+          "name": "Tether pillar",
+          "x": 5,
+          "y": 10,
+          "w": 1,
+          "h": 1,
+          "cover": "half",
+          "ac": 15,
+          "hp": "10 * bossPB",
+          "destructible": true
+        },
+        {
+          "id": "tether-pillar",
+          "name": "Tether pillar",
+          "x": 8,
+          "y": 10,
+          "w": 1,
+          "h": 1,
+          "cover": "half",
+          "ac": 15,
+          "hp": "10 * bossPB",
+          "destructible": true
+        }
+      ],
+      "floor": "stone",
+      "notes": "Golem at the back with a hound on each side. 4 pillars for Tether Beam."
+    },
+    "kaelen-and-vyr": {
+      "boss": [
+        {
+          "part": "kaelen-and-vyr",
+          "x": 6,
+          "y": 5
+        }
+      ],
+      "objects": [
+        {
+          "id": "ledge",
+          "name": "Ledge",
+          "x": 0,
+          "y": 0,
+          "w": 4,
+          "h": 3,
+          "elevationFt": 10
+        },
+        {
+          "id": "ledge",
+          "name": "Ledge",
+          "x": 10,
+          "y": 0,
+          "w": 4,
+          "h": 3,
+          "elevationFt": 10
+        },
+        {
+          "id": "low-column",
+          "name": "Low column",
+          "x": 4,
+          "y": 8,
+          "w": 1,
+          "h": 1,
+          "cover": "half"
+        },
+        {
+          "id": "low-column",
+          "name": "Low column",
+          "x": 9,
+          "y": 8,
+          "w": 1,
+          "h": 1,
+          "cover": "half"
+        }
+      ],
+      "floor": "stone",
+      "notes": "Two 10 ft ledges in the back corners give Vyr high ground to teleport to. Kaelen starts on the floor between them."
+    },
+    "halvard-quill": {
+      "boss": [
+        {
+          "part": "halvard",
+          "x": 6,
+          "y": 2
+        }
+      ],
+      "objects": [
+        {
+          "id": "statue-track",
+          "name": "Statue track",
+          "x": 0,
+          "y": 5,
+          "w": 14,
+          "h": 1
+        },
+        {
+          "id": "statue-track",
+          "name": "Statue track",
+          "x": 0,
+          "y": 9,
+          "w": 14,
+          "h": 1
+        },
+        {
+          "id": "victim-statue",
+          "name": "Victim statue",
+          "x": 2,
+          "y": 5,
+          "w": 1,
+          "h": 1,
+          "blocksSight": true
+        },
+        {
+          "id": "victim-statue",
+          "name": "Victim statue",
+          "x": 10,
+          "y": 5,
+          "w": 1,
+          "h": 1,
+          "blocksSight": true
+        },
+        {
+          "id": "victim-statue",
+          "name": "Victim statue",
+          "x": 3,
+          "y": 9,
+          "w": 1,
+          "h": 1,
+          "blocksSight": true
+        },
+        {
+          "id": "victim-statue",
+          "name": "Victim statue",
+          "x": 11,
+          "y": 9,
+          "w": 1,
+          "h": 1,
+          "blocksSight": true
+        }
+      ],
+      "floor": "stone",
+      "notes": "Two floor tracks cross east to west, two statues on each. Halvard starts behind them with long sightlines. Snare Shards are added during the fight."
+    },
+    "lattice-spinner": {
+      "boss": [
+        {
+          "part": "spinner",
+          "x": 6,
+          "y": 5,
+          "onCeiling": true
+        }
+      ],
+      "objects": [
+        {
+          "id": "tall-column",
+          "name": "Tall column",
+          "x": 11,
+          "y": 6,
+          "w": 1,
+          "h": 1,
+          "cover": "full"
+        },
+        {
+          "id": "tall-column",
+          "name": "Tall column",
+          "x": 9,
+          "y": 2,
+          "w": 1,
+          "h": 1,
+          "cover": "full"
+        },
+        {
+          "id": "tall-column",
+          "name": "Tall column",
+          "x": 4,
+          "y": 2,
+          "w": 1,
+          "h": 1,
+          "cover": "full"
+        },
+        {
+          "id": "tall-column",
+          "name": "Tall column",
+          "x": 1,
+          "y": 6,
+          "w": 1,
+          "h": 1,
+          "cover": "full"
+        },
+        {
+          "id": "tall-column",
+          "name": "Tall column",
+          "x": 4,
+          "y": 11,
+          "w": 1,
+          "h": 1,
+          "cover": "full"
+        },
+        {
+          "id": "tall-column",
+          "name": "Tall column",
+          "x": 9,
+          "y": 11,
+          "w": 1,
+          "h": 1,
+          "cover": "full"
+        }
+      ],
+      "floor": "stone",
+      "startingCables": 0,
+      "notes": "6 columns in a ring 25 ft from the centre, so every pair is within 60 ft for Transit Cables and Loom Rotation can turn the ring."
+    },
+    "stride-core": {
+      "boss": [
+        {
+          "part": "core",
+          "x": 6,
+          "y": 6
+        }
+      ],
+      "objects": [],
+      "floor": "grated",
+      "notes": "Core hovers 10 ft over the centre of an open grated floor. Rift Barrage pools are added during the fight; Tilt the Gate slides them."
+    },
+    "general-vane": {
+      "boss": [
+        {
+          "part": "vane",
+          "x": 6,
+          "y": 1
+        }
+      ],
+      "objects": [
+        {
+          "id": "low-column",
+          "name": "Low column",
+          "x": 3,
+          "y": 6,
+          "w": 1,
+          "h": 1,
+          "cover": "half"
+        },
+        {
+          "id": "low-column",
+          "name": "Low column",
+          "x": 10,
+          "y": 6,
+          "w": 1,
+          "h": 1,
+          "cover": "half"
+        },
+        {
+          "id": "low-column",
+          "name": "Low column",
+          "x": 3,
+          "y": 10,
+          "w": 1,
+          "h": 1,
+          "cover": "half"
+        },
+        {
+          "id": "low-column",
+          "name": "Low column",
+          "x": 10,
+          "y": 10,
+          "w": 1,
+          "h": 1,
+          "cover": "half"
+        }
+      ],
+      "floor": "stone",
+      "marchingColumnsStartRow": 0,
+      "notes": "Vane holds the north end, where Marching Columns rise and march south 15 ft a round. Low columns give cover from his rebounds."
+    },
+    "glass-hydra": {
+      "boss": [
+        {
+          "part": "hydra",
+          "x": 5,
+          "y": 2
+        }
+      ],
+      "objects": [
+        {
+          "id": "mirror-panel",
+          "name": "Mirror panel",
+          "x": 2,
+          "y": 7,
+          "w": 2,
+          "h": 2
+        },
+        {
+          "id": "mirror-panel",
+          "name": "Mirror panel",
+          "x": 6,
+          "y": 7,
+          "w": 2,
+          "h": 2
+        },
+        {
+          "id": "mirror-panel",
+          "name": "Mirror panel",
+          "x": 10,
+          "y": 7,
+          "w": 2,
+          "h": 2
+        },
+        {
+          "id": "mirror-panel",
+          "name": "Mirror panel",
+          "x": 6,
+          "y": 10,
+          "w": 2,
+          "h": 2
+        }
+      ],
+      "floor": "glass",
+      "startingHeads": 3,
+      "notes": "Hydra at the north end. 4 floor panels flip to mirrors on Refraction Shift. Residue puddles are added when heads are severed."
+    },
+    "blind-architect": {
+      "boss": [
+        {
+          "part": "architect",
+          "x": 6,
+          "y": 4
+        }
+      ],
+      "objects": [
+        {
+          "id": "floating-shard",
+          "name": "Floating basalt shard",
+          "x": 3,
+          "y": 3,
+          "w": 1,
+          "h": 1,
+          "cover": "half",
+          "hoverFt": 5
+        },
+        {
+          "id": "floating-shard",
+          "name": "Floating basalt shard",
+          "x": 10,
+          "y": 3,
+          "w": 1,
+          "h": 1,
+          "cover": "half",
+          "hoverFt": 5
+        },
+        {
+          "id": "floating-shard",
+          "name": "Floating basalt shard",
+          "x": 3,
+          "y": 10,
+          "w": 1,
+          "h": 1,
+          "cover": "half",
+          "hoverFt": 5
+        },
+        {
+          "id": "floating-shard",
+          "name": "Floating basalt shard",
+          "x": 10,
+          "y": 10,
+          "w": 1,
+          "h": 1,
+          "cover": "half",
+          "hoverFt": 5
+        }
+      ],
+      "floor": "stone",
+      "notes": "Architect centre-north, ringed by 4 floating shards. Fold Space swaps halves, so the layout stays roughly symmetrical."
+    },
+    "chorus-of-unseen-angles": {
+      "boss": [
+        {
+          "part": "angle",
+          "x": 1,
+          "y": 1
+        },
+        {
+          "part": "angle",
+          "x": 12,
+          "y": 1
+        },
+        {
+          "part": "angle",
+          "x": 12,
+          "y": 12
+        }
+      ],
+      "objects": [
+        {
+          "id": "tall-column",
+          "name": "Tall column",
+          "x": 6,
+          "y": 6,
+          "w": 2,
+          "h": 2,
+          "cover": "full"
+        }
+      ],
+      "floor": "stone",
+      "notes": "Members in 3 corners (NW, NE, SE), so players can't close on one without moving away from another. A central column breaks sightlines."
+    },
+    "inverted-reliquary": {
+      "boss": [
+        {
+          "part": "reliquary",
+          "x": 6,
+          "y": 6
+        }
+      ],
+      "objects": [
+        {
+          "id": "plinth",
+          "name": "Broken reliquary plinth",
+          "x": 3,
+          "y": 3,
+          "w": 1,
+          "h": 1,
+          "cover": "half"
+        },
+        {
+          "id": "plinth",
+          "name": "Broken reliquary plinth",
+          "x": 10,
+          "y": 3,
+          "w": 1,
+          "h": 1,
+          "cover": "half"
+        },
+        {
+          "id": "plinth",
+          "name": "Broken reliquary plinth",
+          "x": 3,
+          "y": 10,
+          "w": 1,
+          "h": 1,
+          "cover": "half"
+        },
+        {
+          "id": "plinth",
+          "name": "Broken reliquary plinth",
+          "x": 10,
+          "y": 10,
+          "w": 1,
+          "h": 1,
+          "cover": "half"
+        }
+      ],
+      "floor": "stone",
+      "islands": [
+        {
+          "x": 0,
+          "y": 0,
+          "w": 7,
+          "h": 7
+        },
+        {
+          "x": 7,
+          "y": 0,
+          "w": 7,
+          "h": 7
+        },
+        {
+          "x": 0,
+          "y": 7,
+          "w": 7,
+          "h": 7
+        },
+        {
+          "x": 7,
+          "y": 7,
+          "w": 7,
+          "h": 7
+        }
+      ],
+      "notes": "Reliquary hovers 20 ft over the centre. Slot Scramble splits the floor into the 4 quadrant islands along the centre lines; one plinth per island."
+    },
+    "ophaniel": {
+      "boss": [
+        {
+          "part": "ophaniel",
+          "x": 5,
+          "y": 1
+        }
+      ],
+      "objects": [
+        {
+          "id": "glass-pillar",
+          "name": "Golden glass pillar",
+          "x": 2,
+          "y": 6,
+          "w": 1,
+          "h": 1,
+          "cover": "full"
+        },
+        {
+          "id": "glass-pillar",
+          "name": "Golden glass pillar",
+          "x": 11,
+          "y": 6,
+          "w": 1,
+          "h": 1,
+          "cover": "full"
+        },
+        {
+          "id": "glass-pillar",
+          "name": "Golden glass pillar",
+          "x": 4,
+          "y": 10,
+          "w": 1,
+          "h": 1,
+          "cover": "full"
+        },
+        {
+          "id": "glass-pillar",
+          "name": "Golden glass pillar",
+          "x": 9,
+          "y": 10,
+          "w": 1,
+          "h": 1,
+          "cover": "full"
+        }
+      ],
+      "floor": "stone",
+      "halves": {
+        "a": {
+          "x": 0,
+          "y": 0,
+          "w": 7,
+          "h": 14
+        },
+        "b": {
+          "x": 7,
+          "y": 0,
+          "w": 7,
+          "h": 14
+        }
+      },
+      "notes": "Ophaniel fills the north end. Paradise Bleed splits the arena into west and east halves that swap or rotate each round."
+    },
+    "sun-eaters-husk": {
+      "boss": [
+        {
+          "part": "husk",
+          "x": 5,
+          "y": 0
+        }
+      ],
+      "objects": [
+        {
+          "id": "tall-column",
+          "name": "Tall column",
+          "x": 2,
+          "y": 5,
+          "w": 1,
+          "h": 1,
+          "cover": "full"
+        },
+        {
+          "id": "tall-column",
+          "name": "Tall column",
+          "x": 11,
+          "y": 5,
+          "w": 1,
+          "h": 1,
+          "cover": "full"
+        },
+        {
+          "id": "tall-column",
+          "name": "Tall column",
+          "x": 4,
+          "y": 9,
+          "w": 1,
+          "h": 1,
+          "cover": "full"
+        },
+        {
+          "id": "tall-column",
+          "name": "Tall column",
+          "x": 9,
+          "y": 9,
+          "w": 1,
+          "h": 1,
+          "cover": "full"
+        },
+        {
+          "id": "tall-column",
+          "name": "Tall column",
+          "x": 6,
+          "y": 11,
+          "w": 1,
+          "h": 1,
+          "cover": "full"
+        },
+        {
+          "id": "brazier",
+          "name": "Brazier",
+          "x": 0,
+          "y": 13,
+          "w": 1,
+          "h": 1,
+          "lightSource": true
+        },
+        {
+          "id": "brazier",
+          "name": "Brazier",
+          "x": 13,
+          "y": 13,
+          "w": 1,
+          "h": 1,
+          "lightSource": true
+        },
+        {
+          "id": "brazier",
+          "name": "Brazier",
+          "x": 0,
+          "y": 6,
+          "w": 1,
+          "h": 1,
+          "lightSource": true
+        },
+        {
+          "id": "brazier",
+          "name": "Brazier",
+          "x": 13,
+          "y": 6,
+          "w": 1,
+          "h": 1,
+          "lightSource": true
+        }
+      ],
+      "floor": "stone",
+      "notes": "The Husk is fused into the north wall. Columns are the cover Blinding Zenith rewards; braziers are light sources Devour Light can eat to heal."
+    },
+    "gatewright": {
+      "boss": [
+        {
+          "part": "gatewright",
+          "x": 6,
+          "y": 3
+        }
+      ],
+      "objects": [
+        {
+          "id": "gate-core",
+          "name": "Gate core",
+          "x": 6,
+          "y": 0,
+          "w": 2,
+          "h": 1,
+          "blocksMovement": true
+        }
+      ],
+      "portalsPhase2": [
+        {
+          "id": "portal-archive",
+          "name": "Archive portal",
+          "x": 0,
+          "y": 6,
+          "w": 1,
+          "h": 2
+        },
+        {
+          "id": "portal-gilded",
+          "name": "Gilded portal",
+          "x": 13,
+          "y": 6,
+          "w": 1,
+          "h": 2
+        },
+        {
+          "id": "portal-void",
+          "name": "Void portal",
+          "x": 6,
+          "y": 13,
+          "w": 2,
+          "h": 1
+        }
+      ],
+      "floor": "stone",
+      "notes": "Open floor so Builder's Strike walls and Grand Reconstruction have room. Portals open on Bloodied: west, east and south (behind the party)."
+    }
+  },
+  "trickTerrain": {
+    "snap-pillar": {
+      "floor": 1,
+      "shapes": [
+        "hex-hall",
+        "honeycomb"
+      ],
+      "features": [
+        "hex-dais",
+        "polished-floor"
+      ],
+      "place": "a hex seam in open floor, often near a dais"
+    },
+    "static-vent": {
+      "floor": 1,
+      "shapes": [
+        "split-chamber",
+        "column-forest"
+      ],
+      "features": [
+        "fissure",
+        "broken-column-field"
+      ],
+      "place": "along a fissure or crack"
+    },
+    "shatter-step": {
+      "floor": 1,
+      "shapes": [
+        "hex-hall",
+        "ring"
+      ],
+      "features": [
+        "polished-floor"
+      ],
+      "place": "a long open run of tiles players will want to cross quickly"
+    },
+    "crushing-columns": {
+      "floor": 2,
+      "shapes": [
+        "switchback",
+        "split-chamber",
+        "column-forest"
+      ],
+      "features": [
+        "tall-columns",
+        "collapsed-archway",
+        "narrow-catwalk"
+      ],
+      "place": "a 10 ft lane between two rows of columns"
+    },
+    "ricochet-monolith": {
+      "floor": 2,
+      "shapes": [
+        "hex-hall",
+        "column-forest"
+      ],
+      "features": [
+        "gate-glass-shards",
+        "hex-dais"
+      ],
+      "place": "near where ranged attackers will stand, such as a dais or ledge"
+    },
+    "magnetic-floor": {
+      "floor": 2,
+      "shapes": [
+        "ring",
+        "hex-hall"
+      ],
+      "features": [
+        "hex-dais"
+      ],
+      "place": "centred on the room, with the lodestone in the middle"
+    },
+    "gate-shear": {
+      "floor": 3,
+      "shapes": [
+        "split-chamber",
+        "hex-hall"
+      ],
+      "features": [
+        "fissure",
+        "tall-columns"
+      ],
+      "place": "a line across the room, ideally beside a column to topple as a bridge"
+    },
+    "stride-vent": {
+      "floor": 3,
+      "shapes": [
+        "column-forest",
+        "twisted-vault"
+      ],
+      "features": [
+        "pool-of-raw-stride-energy",
+        "transit-rune-pair"
+      ],
+      "place": "near pools or runes where casters stand"
+    },
+    "gravity-inversion-tile": {
+      "floor": 3,
+      "shapes": [
+        "twisted-vault",
+        "tiered-stair"
+      ],
+      "features": [
+        "tall-columns",
+        "hanging-cables"
+      ],
+      "place": "at the foot of a column, so a stuck creature crawls off along it"
+    },
+    "unseen-aperture": {
+      "floor": 4,
+      "shapes": [
+        "switchback",
+        "honeycomb",
+        "hex-hall"
+      ],
+      "features": [
+        "dead-end-alcoves",
+        "tall-columns"
+      ],
+      "place": "corners and alcoves out of allies' sight"
+    },
+    "looping-corridor": {
+      "floor": 4,
+      "shapes": [
+        "ring",
+        "hex-hall"
+      ],
+      "features": [
+        "echoing-chamber"
+      ],
+      "avoidShapes": [
+        "split-chamber"
+      ],
+      "place": "the outer boundary of an open room"
+    },
+    "memory-drain": {
+      "floor": 4,
+      "shapes": [
+        "column-forest",
+        "honeycomb"
+      ],
+      "features": [
+        "shrine-to-thils",
+        "dead-end-alcoves",
+        "strider-remains"
+      ],
+      "place": "a weeping statue beside a shrine or alcove"
+    }
+  },
+  "trickTerrainNote": "Prefer rooms with a matching shape or feature, then a square near that feature. If nothing matches, place it anywhere legal."
+}
