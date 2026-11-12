@@ -37,16 +37,16 @@ My suggestion: **treat the painting as the truth for walls and fixed features, a
 
 **Entrances vary per arena** (e.g. the Chorus and the Gatewright phase 1). I'll give each arena its own entrance in the data instead of one shared one.
 
-## Art you still need to make
+## Missing object art (all 6 added 2026-11-11)
 
-Object types the layout uses that have no art. Same spec as before: 256 × 256, top-down, transparent background.
+All 256 × 256 with transparent backgrounds.
 
-- [ ] `tall-column`: a tall basalt column, full cover (Warden, Spinner, Chorus centre at 2 × 2, Husk)
-- [ ] `low-column`: a waist-high column stump, half cover (Kaelen and Vyr, General Vane)
-- [ ] `floating-shard`: a floating basalt shard, half cover (Blind Architect)
-- [ ] `glass-pillar`: a golden glass pillar, full cover (Ophaniel)
-- [ ] `brazier`: a lit brazier, a light source (Sun-Eater's Husk)
-- [ ] `gate-core`: the gate core, blocks movement, 2 × 1 (Gatewright), unless you'd rather paint it into the repainted phase 1 arena
+- [x] `tall-column`: a tall basalt column, full cover (Warden, Spinner, Chorus centre at 2 × 2, Husk)
+- [x] `low-column`: a waist-high column stump, half cover (Kaelen and Vyr, General Vane)
+- [x] `floating-shard`: a floating basalt shard, half cover (Blind Architect)
+- [x] `glass-pillar`: a golden glass pillar, full cover (Ophaniel)
+- [x] `brazier`: a lit brazier, a light source (Sun-Eater's Husk)
+- [x] `gate-core`: the gate core, blocks movement, 2 × 1 (Gatewright)
 
 No art needed:
 - `victim-statue`: reuse the existing `statue`
