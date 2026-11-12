@@ -35,6 +35,22 @@ My suggestion: **treat the painting as the truth for walls and fixed features, a
 | Lattice Spinner | 8 columns painted into the floor; the data has 6 column objects, and Loom Rotation has to move them | **repainted 2026-11-11** without columns, re-checking |
 | Choir of the Hollow Column | A big organ on a central dais is painted in the middle; the data calls the centre open and safest | **repainted 2026-11-11**, re-checking |
 
+### Re-check of the 4 repainted arenas (2026-11-11)
+
+All 4 fixed their main problem: two ledges for Kaelen and Vyr, a column-free floor for the
+Spinner, open floor for the Gatewright, and an open centre for the Choir. What's left:
+
+| Arena | Still off | Fix |
+| --- | --- | --- |
+| Kaelen and Vyr | The painted ledges sit inside a wall band, at about x 2–4 and 9–12, y 1–3, not flush in the corners like the data's (0,0) and (10,0) | **me**: move the ledges to the painted spots |
+| Choir | The south pipe cluster at (6,10) overlaps the painted south entrance arch | **me**: move it up to (6,9) |
+| Lattice Spinner | A sunken ring is painted around the centre; the column at (11,6) lands on it and doesn't mirror (1,6), which touches a wall pillar | **me**: re-place the 6 columns symmetrically on clear floor just outside the ring |
+| Gatewright phase 1 | A low kerb crosses row 3 where the boss starts. Furniture lines all the walls 1–2 squares deep. A big arched doorway is painted in the north wall | **me**: boss starts at (6,4), and the gate core sits in the north arch. Furniture is scenery (walls and scenery don't block movement in the app) |
+| Spinner, Choir, Gatewright | Each has a painted north opening | **your call**: sealed during the fight (default), or a real way on to the post-boss room |
+| Spinner, Choir | Strong outward perspective on columns | optional, cosmetic |
+
+The Gatewright phase 2 arena wasn't repainted. That's fine: its painted portals are what the plan now uses.
+
 **Entrances vary per arena** (e.g. the Chorus and the Gatewright phase 1). I'll give each arena its own entrance in the data instead of one shared one.
 
 ## Missing object art (all 6 added 2026-11-11)
