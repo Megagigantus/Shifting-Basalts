@@ -1,11 +1,9 @@
 // The list of characters on the left of the Characters screens: portrait,
 // name, level and class, banked Quantum Basalts, and a lockout warning.
-import type { Character } from '../model/character'
-import classes from '../data/classes.json'
+import { buildOf, type Character } from '../model/character'
+import { buildSummary } from '../rules/build'
 import { Avatar } from './LookPicker'
 import { cx } from '../ui/tone'
-
-const className = (id: string) => classes.find((c) => c.id === id)?.name ?? id
 
 interface Props {
   characters: Character[]
@@ -36,7 +34,7 @@ export function Roster({ characters, selectedId, onSelect, title = 'Strider rost
               <span className="shrink-0 font-mono text-[0.6875rem] font-bold text-purple-300">{c.bankedQuantumBasalts} QB</span>
             </span>
             <span className="truncate text-[0.6875rem] text-stone-400">
-              Lv {c.level} {className(c.classId)}
+              Lv {c.level} · {buildSummary({ ...c, ...buildOf(c) })}
             </span>
             {c.lockoutDays > 0 && <span className="text-[0.6875rem] font-semibold text-rose-300">Locked out {c.lockoutDays} days</span>}
           </span>
