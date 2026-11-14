@@ -10,7 +10,7 @@ export const FIELD_LABEL = 'block space-y-1 text-xs font-semibold text-stone-300
 
 /** Main action: solid amber. */
 export const PRIMARY_BUTTON =
-  'inline-flex w-full items-center justify-center gap-2 rounded-lg border-0 bg-amber-500 px-4 py-2 text-sm font-bold text-stone-950 hover:bg-amber-400 disabled:opacity-60 cursor-pointer'
+  'inline-flex items-center justify-center gap-2 rounded-lg border-0 bg-amber-500 px-4 py-2 text-sm font-bold text-stone-950 hover:bg-amber-400 disabled:opacity-60 cursor-pointer'
 
 /** Secondary action: dark with a border. */
 export const QUIET_BUTTON =
