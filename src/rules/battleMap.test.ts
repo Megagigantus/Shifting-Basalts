@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { emptyDungeonLayer, emptyProfile, type Character } from '../model/character'
 import { newRunState } from './runFlow'
 import { layOutMap, moveMapPiece, rerollEncounter, startFloor } from './roomFlow'
-import { entranceSquares, footprint, movePiece, placeMap, type BattleMap } from './battleMap'
+import { avoidSquares, entranceSquares, footprint, movePiece, placeMap, type BattleMap } from './battleMap'
 import { generateRoom, type Room } from './rooms'
 import { generateEncounter } from './encounters'
 
@@ -73,6 +73,21 @@ describe('laying out a battle map', () => {
   it('enters from the south, except the split chamber, which enters from the east', () => {
     expect(placeMap(room(3, { shape: 'hex-hall' }), seeded(4))!.entrance).toBe('south')
     expect(placeMap(room(3, { shape: 'split-chamber' }), seeded(4))!.entrance).toBe('east')
+  })
+
+  it('keeps pieces out of painted hazards: the split chamber chasm (bridge excepted) and the ring pit', () => {
+    for (let seed = 1; seed <= 40; seed++) {
+      for (const shape of ['split-chamber', 'ring']) {
+        const r = room(seed, { size: seed % 2 ? 'medium' : 'large', shape })
+        const map = placeMap(r, seeded(seed + 500))!
+        const bad = new Set(avoidSquares(shape, map.squares).map((q) => `${q.x},${q.y}`))
+        expect(bad.size).toBeGreaterThan(0)
+        for (const p of map.pieces) {
+          const s = footprint(p)
+          for (let dy = 0; dy < s; dy++) for (let dx = 0; dx < s; dx++) expect(bad).not.toContain(`${p.x + dx},${p.y + dy}`)
+        }
+      }
+    }
   })
 
   it('puts enemies in the half away from the entrance when there is room', () => {

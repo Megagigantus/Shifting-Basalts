@@ -275,6 +275,7 @@ const battleMap = loadObject<{
   roomSquares: Record<string, number>
   sizeSquares: Record<string, number>
   entrance: { default: string; shapes: Record<string, string> }
+  avoid?: Record<string, { x: number; y: number; w: number; h: number }[]>
   trickTerrain: Record<string, { floor: number; shapes: string[]; features: string[]; avoidShapes?: string[] }>
 }>('battle-map.json')
 const mapLayouts = loadObject<{ shapes: { id: string }[]; sizes: { id: string }[]; terrain: { id: string }[] }>('room-layouts.json')
@@ -286,6 +287,13 @@ for (const s of mapLayouts.sizes) {
   if (!(battleMap.roomSquares[s.id] > 0)) fail(`battle-map.json: roomSquares needs a square count for room size "${s.id}"`)
 }
 if (!SIDES.includes(battleMap.entrance.default)) fail(`battle-map.json: entrance.default must be north, south, east or west`)
+for (const [shape, areas] of Object.entries(battleMap.avoid ?? {})) {
+  if (!shapeIds.has(shape)) fail(`battle-map.json avoid: unknown shape "${shape}"`)
+  for (const a of areas) {
+    const ok = [a.x, a.y, a.w, a.h].every((v) => v >= 0 && v <= 1) && a.x + a.w <= 1 && a.y + a.h <= 1
+    if (!ok) fail(`battle-map.json avoid "${shape}": areas are fractions of the map, from 0 to 1`)
+  }
+}
 for (const [shape, side] of Object.entries(battleMap.entrance.shapes)) {
   if (!shapeIds.has(shape)) fail(`battle-map.json entrance: unknown shape "${shape}"`)
   if (!SIDES.includes(side)) fail(`battle-map.json entrance "${shape}": side must be north, south, east or west`)

@@ -6,6 +6,7 @@ import { bossOf } from '../rules/bosses'
 import { DmFight } from './DmFight'
 import { HealingFontNote } from './HealingFontNote'
 import { RoomCard } from './RoomCard'
+import { DmBattleMap } from './DmBattleMap'
 import { roomConditionMet } from '../rules/draftFlow'
 import {
   conditionOf,
@@ -108,6 +109,8 @@ export function DmRoom({ state, busy, act }: Props) {
         tricks={room.tricks.map((t) => t.id)}
         hidden={hiddenIcons}
       />
+
+      <DmBattleMap state={state} room={room} busy={busy} act={act} />
 
       {state.dm?.bossId && (
         <p className="hint">

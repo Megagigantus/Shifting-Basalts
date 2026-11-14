@@ -34,6 +34,21 @@ export interface BattleMap {
 }
 
 const TRICK_TERRAIN = mapData.trickTerrain as Record<string, { features: string[]; shapes: string[] }>
+const AVOID = mapData.avoid as Record<string, { x: number; y: number; w: number; h: number }[]>
+
+/** Squares whose centre falls in a painted no-placement area (a chasm, a pit) for this shape. */
+export function avoidSquares(shape: string, n: number): { x: number; y: number }[] {
+  const out: { x: number; y: number }[] = []
+  for (const r of AVOID[shape] ?? []) {
+    for (let y = 0; y < n; y++)
+      for (let x = 0; x < n; x++) {
+        const cx = (x + 0.5) / n
+        const cy = (y + 0.5) / n
+        if (cx >= r.x && cx <= r.x + r.w && cy >= r.y && cy <= r.y + r.h) out.push({ x, y })
+      }
+  }
+  return out
+}
 
 export const roomSquares = (size: string) => (mapData.roomSquares as Record<string, number>)[size] ?? 10
 export const entranceSide = (shape: string): Side =>
@@ -151,6 +166,7 @@ export function placeMap(room: Room, random: Random, keep?: BattleMap | null): B
   const grid = new Grid(n)
   const inside = { x0: 1, y0: 1, x1: n - 2, y1: n - 2 }
   for (const sq of entranceSquares(n, entrance)) grid.mark(sq.x, sq.y, 1)
+  for (const sq of avoidSquares(room.shape, n)) grid.mark(sq.x, sq.y, 1)
 
   const kept = keep && keep.squares === n ? keep.pieces.filter((p) => p.kind !== 'enemy') : null
   const pieces: MapPiece[] = []

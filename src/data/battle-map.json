@@ -21,6 +21,31 @@
       "split-chamber": "east"
     }
   },
+  "avoidNote": "Painted areas no piece is placed on at first, as fractions of the map (0 to 1, from the top-left). The DM can still drag pieces there.",
+  "avoid": {
+    "split-chamber": [
+      {
+        "x": 0.44,
+        "y": 0,
+        "w": 0.12,
+        "h": 0.62
+      },
+      {
+        "x": 0.44,
+        "y": 0.76,
+        "w": 0.12,
+        "h": 0.24
+      }
+    ],
+    "ring": [
+      {
+        "x": 0.26,
+        "y": 0.27,
+        "w": 0.48,
+        "h": 0.45
+      }
+    ]
+  },
   "trickTerrain": {
     "snap-pillar": {
       "floor": 1,

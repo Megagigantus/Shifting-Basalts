@@ -3,7 +3,21 @@
 // nothing (no failed download) and the screens just show text as before.
 // See src/art/README.md for the folder layout.
 
-export type ArtKind = 'shapes' | 'terrain' | 'tricks' | 'exits' | 'creatures' | 'bosses' | 'boss-parts' | 'families'
+export type ArtKind =
+  | 'shapes'
+  | 'terrain'
+  | 'tricks'
+  | 'exits'
+  | 'creatures'
+  | 'bosses'
+  | 'boss-parts'
+  | 'families'
+  | 'maps'
+  | 'arenas'
+  | 'objects'
+  | 'summons'
+  | 'portraits'
+  | 'rooms'
 
 const files = import.meta.glob<string>('./art/*/*.{webp,png,jpg,jpeg,svg}', {
   eager: true,
