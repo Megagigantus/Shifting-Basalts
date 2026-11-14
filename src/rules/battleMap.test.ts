@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { emptyDungeonLayer, emptyProfile, type Character } from '../model/character'
 import { newRunState } from './runFlow'
-import { layOutMap, moveMapPiece, rerollEncounter, startFloor } from './roomFlow'
-import { avoidSquares, entranceSquares, footprint, movePiece, placeMap, type BattleMap } from './battleMap'
+import { changeHp, layOutMap, moveMapPiece, rerollEncounter, reveal, startFloor } from './roomFlow'
+import { avoidSquares, entranceSquares, footprint, movePiece, placeMap, playerMap, startSquares, type BattleMap } from './battleMap'
+import { hpTrackers } from './hp'
 import { generateRoom, type Room } from './rooms'
 import { generateEncounter } from './encounters'
 
@@ -117,6 +118,53 @@ describe('laying out a battle map', () => {
     expect(placeMap(r, seeded(12))).toEqual(placeMap(r, seeded(12)))
     expect(placeMap({ ...r, kind: 'boss' }, seeded(12))).toBeNull()
     expect(placeMap({ ...r, kind: 'reprieve' }, seeded(12))).toBeNull()
+  })
+})
+
+describe('what players see of the map', () => {
+  const start = () => startFloor(newRunState('r', 'X', [char('a'), char('b')], []), seeded(41))
+
+  it('shows doorways and visible terrain, but no hidden enemies, unsprung tricks or false wall', () => {
+    const r = room(42, { size: 'large', terrain: ['fissure', 'false-wall'], tricks: [{ id: 'static-vent', revealed: false }] })
+    const withMap = { ...r, map: placeMap(r, seeded(43)) }
+    const seen = playerMap(withMap)!
+    const kinds = seen.pieces.map((p) => p.kind)
+    expect(kinds).toContain('exit')
+    expect(seen.pieces.map((p) => p.id)).toContain('fissure')
+    expect(seen.pieces.map((p) => p.id)).not.toContain('false-wall')
+    expect(kinds).not.toContain('trick')
+    expect(kinds).not.toContain('enemy')
+    const shown = playerMap({
+      ...withMap,
+      revealed: { ...withMap.revealed, falseWall: true },
+      tricks: [{ id: 'static-vent', revealed: true }],
+      encounter: { ...withMap.encounter!, groups: withMap.encounter!.groups.map((g) => ({ ...g, revealed: true })) },
+    })!
+    expect(shown.pieces.map((p) => p.id)).toContain('false-wall')
+    expect(shown.pieces.some((p) => p.kind === 'trick')).toBe(true)
+    expect(shown.pieces.filter((p) => p.kind === 'enemy')).toHaveLength(withMap.map!.pieces.filter((p) => p.kind === 'enemy').length)
+  })
+
+  it('marks revealed enemies Bloodied or Down in the player view, never with HP', () => {
+    let state = reveal(start(), 'enemies')
+    const ctx = { partyLevel: state.run.partyLevel, pressures: state.run.pressures }
+    const [first, second] = hpTrackers(state.dm!.room!, ctx)
+    state = changeHp(state, first.key, first.max)
+    if (second) state = changeHp(state, second.key, Math.ceil(second.max / 2))
+    const pieces = state.run.roomView!.map!.pieces
+    expect(pieces.find((p) => p.key === first.key)!.state).toBe('down')
+    if (second) expect(pieces.find((p) => p.key === second.key)!.state).toBe('bloodied')
+    expect(JSON.stringify(state.run.roomView!.map)).not.toMatch(/"hp"|"max"|"current"|"damage"/)
+  })
+
+  it('starts player tokens on the entrance, then the nearest free squares', () => {
+    const map = placeMap(room(44, { size: 'medium', shape: 'hex-hall' }), seeded(45))!
+    const spots = startSquares(map, 6)
+    expect(spots).toHaveLength(6)
+    const door = entranceSquares(map.squares, map.entrance).map((q) => `${q.x},${q.y}`)
+    expect(door).toContain(`${spots[0].x},${spots[0].y}`)
+    expect(new Set(spots.map((q) => `${q.x},${q.y}`)).size).toBe(6)
+    for (const q of spots) expect(q.y).toBeGreaterThanOrEqual(map.squares - 3)
   })
 })
 

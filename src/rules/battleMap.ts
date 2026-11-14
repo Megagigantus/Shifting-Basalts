@@ -215,6 +215,73 @@ export function placeMap(room: Room, random: Random, keep?: BattleMap | null): B
   return { squares: n, entrance, pieces }
 }
 
+/** A piece as players see it: no hidden things, and for enemies only Bloodied or Down. */
+export interface PlayerPiece extends MapPiece {
+  state: 'bloodied' | 'down' | null
+}
+
+export interface PlayerMap {
+  squares: number
+  entrance: Side
+  pieces: PlayerPiece[]
+}
+
+/**
+ * The battle map players may see (bible: Player view visibility). Doorways
+ * always; terrain except an unfound false wall; only revealed tricks; only
+ * revealed enemies. Which doorway is the true exit comes from the room view's
+ * own trueExit (null until revealed), never from the map.
+ */
+export function playerMap(room: Room): PlayerMap | null {
+  const map = room.map
+  if (!map) return null
+  const marks = room.hpShown?.tokens ?? {}
+  const shown = (p: MapPiece): boolean => {
+    if (p.kind === 'exit') return true
+    if (p.kind === 'terrain') return p.id !== 'false-wall' || room.revealed.falseWall
+    if (p.kind === 'trick') return Boolean(room.tricks.find((t) => t.id === p.id)?.revealed)
+    const group = Number(p.key.split(':')[1])
+    return Boolean(room.encounter?.groups[group]?.revealed)
+  }
+  return {
+    squares: map.squares,
+    entrance: map.entrance,
+    pieces: map.pieces.filter(shown).map((p) => ({ ...p, state: p.kind === 'enemy' ? (marks[p.key] ?? null) : null })),
+  }
+}
+
+/**
+ * Where player tokens start in a room: the entrance squares first, then the
+ * nearest free squares going inward, skipping squares other pieces cover.
+ */
+export function startSquares(map: Pick<BattleMap, 'squares' | 'entrance' | 'pieces'>, count: number): { x: number; y: number }[] {
+  const n = map.squares
+  const taken = new Set<string>()
+  for (const p of map.pieces) {
+    const s = footprint(p)
+    for (let dy = 0; dy < s; dy++) for (let dx = 0; dx < s; dx++) taken.add(`${p.x + dx},${p.y + dy}`)
+  }
+  const out: { x: number; y: number }[] = []
+  const seen = new Set<string>()
+  const queue = entranceSquares(n, map.entrance)
+  for (const q of queue) seen.add(`${q.x},${q.y}`)
+  while (queue.length && out.length < count) {
+    const q = queue.shift()!
+    if (!taken.has(`${q.x},${q.y}`)) out.push(q)
+    for (const [dx, dy] of [[0, -1], [-1, 0], [1, 0], [0, 1]]) {
+      const nx = q.x + dx
+      const ny = q.y + dy
+      const k = `${nx},${ny}`
+      if (nx < 0 || ny < 0 || nx >= n || ny >= n || seen.has(k)) continue
+      seen.add(k)
+      queue.push({ x: nx, y: ny })
+    }
+  }
+  // A packed room: stack the rest on the entrance.
+  while (out.length < count) out.push(entranceSquares(n, map.entrance)[out.length % 4])
+  return out
+}
+
 /** Move one piece, kept on the grid. Pieces may share squares; the DM decides. */
 export function movePiece(map: BattleMap, key: string, x: number, y: number): BattleMap {
   const piece = map.pieces.find((p) => p.key === key)

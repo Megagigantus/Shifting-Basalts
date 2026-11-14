@@ -20,6 +20,8 @@ export interface HpShown {
   /** Bloodied creatures per encounter group index (only groups with any). */
   enemyBloodied: Record<string, number>
   boss: boolean
+  /** Per enemy token (tracker key): Bloodied or Down, for the battle map. Unhurt ones are left out. */
+  tokens?: Record<string, 'bloodied' | 'down'>
 }
 
 export interface Tracker {
@@ -86,10 +88,12 @@ export function bossBloodied(room: Room, ctx: FightContext): boolean {
 /** The Bloodied facts players may see. */
 export function hpShown(room: Room, ctx: FightContext): HpShown {
   const enemyBloodied: Record<string, number> = {}
+  const tokens: Record<string, 'bloodied' | 'down'> = {}
   for (const t of hpTrackers(room, ctx)) {
     if (t.group !== undefined && t.bloodied) enemyBloodied[t.group] = (enemyBloodied[t.group] ?? 0) + 1
+    if (t.group !== undefined && (t.down || t.bloodied)) tokens[t.key] = t.down ? 'down' : 'bloodied'
   }
-  return { enemyBloodied, boss: bossBloodied(room, ctx) }
+  return { enemyBloodied, boss: bossBloodied(room, ctx), tokens }
 }
 
 /** Apply damage (positive) or healing (negative) to one tracker, kept between 0 and its max. */
