@@ -140,11 +140,11 @@ export function RunTracker({ state, characters, onEnded }: Props) {
   const openCharacter = openPlayer ? characters.find((c) => c.id === openPlayer.characterId) : undefined
 
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col gap-4">
       {/* Run banner: where the party is, the rules in force, and the room buttons. */}
       <Panel hero tone="amber">
         <div className="flex flex-wrap items-start justify-between gap-3">
-          <div className="min-w-0 space-y-1.5">
+          <div className="min-w-0 flex flex-col gap-1.5">
             <div className="flex flex-wrap items-center gap-1.5">
               <Pill tone="amber">
                 Floor {run.floor} of {LAST_FLOOR}
@@ -227,7 +227,7 @@ export function RunTracker({ state, characters, onEnded }: Props) {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
         {/* Main column: the open player panel, then the room and the party's shared things. */}
-        <div className="min-w-0 space-y-4 lg:col-span-8">
+        <div className="min-w-0 flex flex-col gap-4 lg:col-span-8">
           {openPlayer && open && (
             <Panel
               tone={open.kind === 'draft' ? 'violet' : 'stone'}
@@ -275,7 +275,7 @@ export function RunTracker({ state, characters, onEnded }: Props) {
 
           {run.log.length > 0 && (
             <Panel title={`Rooms cleared (${run.log.length})`}>
-              <ol className="m-0 max-h-40 space-y-0.5 overflow-y-auto pl-5 font-mono text-[11px] text-stone-400">
+              <ol className="m-0 max-h-40 flex flex-col gap-0.5 overflow-y-auto pl-5 font-mono text-[11px] text-stone-400">
                 {run.log.map((entry, i) => (
                   <li key={i}>
                     Floor {entry.floor}, {entry.kind === 'boss' ? 'boss' : `room ${entry.room}`}: {ROOM_LABELS[entry.kind]}
@@ -287,7 +287,7 @@ export function RunTracker({ state, characters, onEnded }: Props) {
         </div>
 
         {/* Sidebar: one card per player. */}
-        <aside className="min-w-0 space-y-3 lg:col-span-4" aria-label="Party">
+        <aside className="min-w-0 flex flex-col gap-3 lg:col-span-4" aria-label="Party">
           {players.map((p) => (
             <PlayerCard
               key={p.characterId}
@@ -332,7 +332,7 @@ function PlayerCard({ player: p, character, sent, open, floor, busy, act, onTogg
   return (
     <section
       className={cx(
-        'space-y-2.5 rounded-xl border bg-stone-900/90 p-3.5 text-stone-100',
+        'flex flex-col gap-2.5 rounded-xl border bg-stone-900/90 p-3.5 text-stone-100',
         p.alive ? 'border-stone-800' : 'border-rose-500/30 opacity-75',
       )}
     >

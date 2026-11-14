@@ -123,7 +123,7 @@ export function SignIn() {
         <span className="h-px flex-1 bg-stone-800" />
       </div>
 
-      <form className="space-y-3" onSubmit={submit}>
+      <form className="flex flex-col gap-3" onSubmit={submit}>
         <h2 className="m-0 text-sm font-bold text-stone-200">
           {mode === 'signIn' ? 'Sign in with email' : mode === 'create' ? 'Create an account' : 'Reset your password'}
         </h2>

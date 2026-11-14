@@ -60,7 +60,7 @@ function LightboxView({ art, onClose }: { art: LightboxArt; onClose: () => void 
           <X size={16} />
         </button>
         <img src={src} alt={art.title} className="max-h-[70vh] w-full bg-stone-950 object-contain" />
-        <div className="space-y-2 p-4">
+        <div className="flex flex-col gap-2 p-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
               <h2 className="m-0 text-base font-bold text-amber-300">{art.title}</h2>

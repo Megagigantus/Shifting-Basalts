@@ -1,6 +1,8 @@
 // DM screen: the fight in the current room. An encounter's creatures (with
 // roster CR, reskin source, twist and echo boons) or a boss's full stat block
 // built from the benchmarks. Players never receive any of this.
+import type { ReactNode } from 'react'
+import { Crown, Skull, Swords, Zap } from 'lucide-react'
 import type { RunState } from '../model/run'
 import type { Room } from '../rules/rooms'
 import { crLabel, creatureOf, creatureStats, creatureXp, familyOf, pushedStats, type Encounter } from '../rules/encounters'
@@ -10,22 +12,39 @@ import { bossOf, buildBoss, floorBossDc, type AbilityProfile, type BossStats } f
 import { ABILITIES, type Ability } from '../rules/encounters'
 import { boon } from '../rules/boons'
 import { changeHp, rerollEncounter, reveal, setBossBloodied } from '../rules/roomFlow'
-import { Art } from './Art'
-import { artUrl, partArtId, phase2ArtId } from '../art'
+import { artUrl, partArtId, phase2ArtId, type ArtKind } from '../art'
+import { RevealControl } from './RevealControl'
+import { ConfirmButton } from '../ui/ConfirmButton'
+import { useLightbox } from '../ui/lightboxContext'
+import { Panel, SectionLabel } from '../ui/Panel'
+import { Pill } from '../ui/Pill'
+import { PRIMARY_BUTTON, SMALL_BUTTON, WELL } from '../ui/styles'
+import { cx, initials } from '../ui/tone'
 
 type Step = (s: RunState) => RunState
 type Act = (step: Step, confirmText?: string) => void
 
-function RevealButton({ shown, busy, onReveal, label = 'Reveal' }: { shown: boolean; busy: boolean; onReveal: () => void; label?: string }) {
-  return shown ? (
-    <span className="tag shown">shown to players</span>
-  ) : (
-    <>
-      <span className="tag hidden-tag">hidden</span>
-      <button type="button" className="quiet" disabled={busy} onClick={onReveal}>
-        {label}
-      </button>
-    </>
+/** A round (or rounded-square) portrait that enlarges on click, or initials when there's no art. */
+function Portrait({ kind, id, name, size = 'h-12 w-12', square }: { kind: ArtKind; id: string; name: string; size?: string; square?: boolean }) {
+  const showArt = useLightbox()
+  const url = artUrl(kind, id)
+  const shape = square ? 'rounded-lg' : 'rounded-full'
+  if (!url) {
+    return (
+      <span className={cx(size, shape, 'flex shrink-0 items-center justify-center border border-stone-700 bg-stone-800 font-mono text-xs font-bold text-stone-400')}>
+        {initials(name)}
+      </span>
+    )
+  }
+  return (
+    <button
+      type="button"
+      onClick={() => showArt({ src: url, title: name })}
+      aria-label={`Enlarge ${name}`}
+      className={cx(size, shape, 'box-border shrink-0 cursor-pointer overflow-hidden border border-stone-700 bg-stone-950 p-0')}
+    >
+      <img src={url} alt="" className="h-full w-full object-cover" />
+    </button>
   )
 }
 
@@ -46,86 +65,84 @@ export function EncounterPanel({
   const total = encounter.groups.reduce((s, g) => s + creatureXp(g.cr) * g.count, 0)
   const allShown = encounter.groups.every((g) => g.revealed)
   return (
-    <div className="fight">
-      <div className="panel-header">
-        <h4>
-          Encounter: {family.name}
-          {encounter.splashFamily && ` + ${familyOf(encounter.splashFamily).name}`}
-        </h4>
-        <span className="row-actions">
+    <Panel
+      tone="rose"
+      icon={<Swords size={15} />}
+      title={`DM encounter: ${family.name}${encounter.splashFamily ? ` + ${familyOf(encounter.splashFamily).name}` : ''}`}
+      subtitle={
+        <>
+          Budget {encounter.budget.toLocaleString()} XP · used {encounter.xp.toLocaleString()} XP
+          {encounter.elite &&
+            ` · elite extra (${encounter.elite === 'push' ? 'one creature +2 CR' : "a next floor's creature"}): ${total.toLocaleString()} XP in all`}{' '}
+          · CR cap {encounter.maxCr}
+        </>
+      }
+      actions={
+        <>
           {!allShown && (
-            <button type="button" className="quiet" disabled={busy} onClick={() => act((s) => reveal(s, 'enemies'))}>
+            <button type="button" className={SMALL_BUTTON} disabled={busy} onClick={() => act((s) => reveal(s, 'enemies'))}>
               Reveal all
             </button>
           )}
-          <button
-            type="button"
-            className="quiet"
-            disabled={busy}
-            onClick={() => act((s) => rerollEncounter(s, Math.random), 'Roll this encounter again?')}
-          >
+          <ConfirmButton tone="amber" disabled={busy} confirmLabel="Yes, reroll" onConfirm={() => act((s) => rerollEncounter(s, Math.random))}>
             Reroll encounter
-          </button>
-        </span>
-      </div>
-      <p className="hint">
-        Budget {encounter.budget.toLocaleString()} XP · used {encounter.xp.toLocaleString()} XP
-        {encounter.elite &&
-          ` · elite extra (${encounter.elite === 'push' ? 'one creature +2 CR' : "a next floor's creature"}): ${total.toLocaleString()} XP in all`}
-        {' '}· CR cap {encounter.maxCr}
-      </p>
-      <ul className="plain-list creatures">
+          </ConfirmButton>
+        </>
+      }
+    >
+      <div className="flex flex-col gap-2">
         {encounter.groups.map((g, i) => {
           const c = creatureOf(g.creatureId)
           const pushed = pushedStats(g)
           return (
-            <li key={`${g.creatureId}-${g.cr}-${i}`} className="with-portrait">
-              <Art kind="creatures" id={g.creatureId} alt={c.name} />
-              <div>
-              <strong>
-                {g.count} × {c.name}
-              </strong>{' '}
-              <span className="hint">
-                {c.role}, CR {crLabel(g.cr)} · reskin of {c.reskin}
-                {g.source === 'splash' && ' · splash'}
-                {g.source === 'elite' && ' · elite extra'}
-              </span>{' '}
-              <RevealButton shown={g.revealed} busy={busy} onReveal={() => act((s) => reveal(s, { enemy: i }))} />
-              {pushed && (
-                <div className="hint">
-                  Pushed from CR {crLabel(c.cr)}: use AC {pushed.ac}, HP {pushed.hp}, +{pushed.attack} to hit, about {pushed.dpr}{' '}
-                  damage per round, save DC {pushed.dc}. The saves below include the higher PB.
+            <div key={`${g.creatureId}-${g.cr}-${i}`} className={cx(WELL, 'flex flex-col gap-2', !g.revealed && 'border-dashed')}>
+              <div className="flex items-start gap-3">
+                <Portrait kind="creatures" id={g.creatureId} name={c.name} />
+                <div className="min-w-0 flex-1 flex flex-col gap-1">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <strong className="text-sm text-stone-100">
+                      {g.count} × {c.name}
+                    </strong>
+                    <Pill tone="amber" mono>
+                      CR {crLabel(g.cr)}
+                    </Pill>
+                    <Pill>{c.role}</Pill>
+                    {g.source === 'splash' && <Pill tone="violet">Splash</Pill>}
+                    {g.source === 'elite' && <Pill tone="amber">Elite extra</Pill>}
+                  </div>
+                  <div className="text-[11px] text-stone-400">Reskin of {c.reskin}</div>
                 </div>
+                <RevealControl shown={g.revealed} busy={busy} onReveal={() => act((s) => reveal(s, { enemy: i }))} />
+              </div>
+              {pushed && (
+                <p className="m-0 rounded-md border border-amber-500/25 bg-amber-500/10 px-2 py-1 text-[11px] text-amber-100">
+                  Pushed from CR {crLabel(c.cr)}: use AC {pushed.ac}, HP {pushed.hp}, +{pushed.attack} to hit, about {pushed.dpr} damage per
+                  round, save DC {pushed.dc}. The saves below include the higher PB.
+                </p>
               )}
               {g.boons?.map((b, j) => {
                 const data = boon(b.id)
                 return (
-                  <div key={j} className="hint">
-                    Echo {g.count > 1 ? j + 1 : ''} carries <strong>{data.name}</strong> (Level {b.level}):{' '}
-                    {data.levels.slice(0, b.level).join(' ')}
-                  </div>
+                  <p key={j} className="m-0 rounded-md border border-violet-500/25 bg-violet-500/10 px-2 py-1 text-[11px] text-violet-100">
+                    Echo {g.count > 1 ? j + 1 : ''} carries <strong>{data.name}</strong> (Level {b.level}): {data.levels.slice(0, b.level).join(' ')}
+                  </p>
                 )
               })}
               <StatLine {...creatureStats(g)} />
-              <HpList
-                trackers={trackers.filter((t) => t.group === i)}
-                busy={busy}
-                onChange={(key, amount) => act((s) => changeHp(s, key, amount))}
-              />
-              </div>
-            </li>
+              <HpList trackers={trackers.filter((t) => t.group === i)} busy={busy} onChange={(key, amount) => act((s) => changeHp(s, key, amount))} />
+            </div>
           )
         })}
-      </ul>
+      </div>
       {families.map((f) => (
-        <div key={f.id} className="with-portrait family-row">
-          <Art kind="families" id={f.id} alt={f.name} />
-          <p className="hint">
-            {f.name} twist: {f.twist}
+        <div key={f.id} className="flex items-center gap-3 rounded-lg border border-amber-500/20 bg-stone-950/60 p-2">
+          <Portrait kind="families" id={f.id} name={f.name} size="h-9 w-9" square />
+          <p className="m-0 text-[11px] text-stone-300">
+            <strong className="text-amber-200">{f.name} twist:</strong> {f.twist}
           </p>
         </div>
       ))}
-    </div>
+    </Panel>
   )
 }
 
@@ -146,6 +163,16 @@ interface BossHp {
 const scoresOf = (p: AbilityProfile) => Object.fromEntries(ABILITIES.map((a) => [a, p[a].score])) as Record<Ability, number>
 const savesOf = (p: AbilityProfile) => Object.fromEntries(ABILITIES.map((a) => [a, p[a].save])) as Record<Ability, number>
 
+/** One labelled block inside the boss card. */
+function Fact({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div className="flex flex-col gap-1">
+      <SectionLabel>{label}</SectionLabel>
+      <div className="text-xs text-stone-300">{children}</div>
+    </div>
+  )
+}
+
 export function BossBlock({
   boss,
   revealed,
@@ -159,129 +186,139 @@ export function BossBlock({
   onTrigger?: () => void
   hp?: BossHp
 }) {
-  const hasPhase2 = Boolean(artUrl('bosses', phase2ArtId(boss.bossId)))
+  const showArt = useLightbox()
+  const mainArt = artUrl('bosses', boss.bossId)
+  const phase2Art = artUrl('bosses', phase2ArtId(boss.bossId))
   const bloodied = hp?.bloodied ?? false
+  const current = hp && bloodied && phase2Art ? phase2Art : mainArt
   return (
-    <div className="fight boss-block">
-      {hasPhase2 ? (
-        <div className="boss-phases">
-          <figure className={hp && !bloodied ? 'is-current' : undefined}>
-            <Art kind="bosses" id={boss.bossId} alt={`${boss.name}, phase 1`} className="boss-portrait" />
-            <figcaption className="hint">Phase 1</figcaption>
-          </figure>
-          <figure className={hp && bloodied ? 'is-current' : undefined}>
-            <Art kind="bosses" id={phase2ArtId(boss.bossId)} alt={`${boss.name}, phase 2`} className="boss-portrait" />
-            <figcaption className="hint">Phase 2 (Bloodied)</figcaption>
-          </figure>
-        </div>
-      ) : (
-        <Art kind="bosses" id={boss.bossId} alt={boss.name} className="boss-portrait" />
-      )}
-      <h4>
-        {boss.name} <span className="hint">CR {boss.cr}</span>
-      </h4>
-      <p className="hint">{boss.role}</p>
-      {hp && (
-        <div className="boss-hp">
-          <BloodiedControl bloodied={hp.bloodied} override={hp.override} busy={busy} onSet={hp.onSetBloodied} />
-          <HpList trackers={hp.trackers} busy={busy} onChange={hp.onChange} />
-        </div>
-      )}
-      <dl className="room-facts">
-        <dt>Defense</dt>
-        <dd>
-          AC {boss.ac} · {boss.hp} HP{boss.sharedHp && ' (shared)'}
-          {boss.parts.length > 0 && (
-            <ul className="plain-list">
-              {boss.parts.map((p) => (
-                <li key={p.name} className="with-portrait part-row">
-                  <Art kind="boss-parts" id={partArtId(boss.bossId, p.name)} alt={p.name} />
-                  <span>
-                    {p.count > 1 && `${p.count} × `}
-                    {p.name}: AC {p.ac}
-                    {p.hp !== null && `, ${p.hp} HP${p.count > 1 ? ' each' : ''}`}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </dd>
-        <dt>Abilities</dt>
-        <dd>
-          <StatLine abilities={scoresOf(boss.abilities)} saves={savesOf(boss.abilities)} />
-          {boss.partAbilities.map((p) => (
-            <div key={p.name}>
-              <span className="hint">{p.name}:</span>
-              <StatLine abilities={scoresOf(p.abilities)} saves={savesOf(p.abilities)} />
+    <Panel tone="rose" hero icon={<Crown size={16} />} title={boss.name} subtitle={boss.role} actions={<Pill tone="rose" mono>CR {boss.cr}</Pill>}>
+      <div className="flex flex-col gap-4 sm:flex-row">
+        {current && (
+          <div className="w-full shrink-0 flex flex-col gap-1.5 sm:w-48">
+            <button
+              type="button"
+              onClick={() =>
+                showArt({
+                  src: mainArt ?? current,
+                  title: boss.name,
+                  subtitle: boss.role,
+                  primaryLabel: 'Phase 1',
+                  alternate: phase2Art ? { label: 'Phase 2', src: phase2Art } : undefined,
+                })
+              }
+              aria-label={`Enlarge ${boss.name}`}
+              className="box-border block aspect-square w-full cursor-pointer overflow-hidden rounded-xl border border-rose-500/40 bg-stone-950 p-0"
+            >
+              <img src={current} alt="" className="h-full w-full object-cover" />
+            </button>
+            {phase2Art && (
+              <p className="m-0 text-center text-[11px] text-stone-400">
+                {hp && bloodied ? 'Phase 2 (Bloodied)' : 'Phase 1'} · click for both
+              </p>
+            )}
+          </div>
+        )}
+        <div className="min-w-0 flex-1 flex flex-col gap-3">
+          {hp && (
+            <div className="flex flex-col gap-2 rounded-lg border border-rose-500/25 bg-stone-950/60 p-2.5">
+              <BloodiedControl bloodied={hp.bloodied} override={hp.override} busy={busy} onSet={hp.onSetBloodied} />
+              <HpList trackers={hp.trackers} busy={busy} onChange={hp.onChange} />
             </div>
-          ))}
-          {boss.profileNote && <div className="hint">{boss.profileNote}</div>}
-        </dd>
-        <dt>Numbers</dt>
-        <dd>
-          +{boss.attack} to hit · save DC {boss.dc} · Boss PB +{boss.pb} · about {boss.dpr} damage per round
-        </dd>
-        {boss.traits.length > 0 && (
-          <>
-            <dt>Traits</dt>
-            <dd>{boss.traits.join(' ')}</dd>
-          </>
-        )}
-        <dt>Attacks</dt>
-        <dd>
-          <ul className="plain-list">
-            {boss.attacks.map((a, i) => {
-              const heading = a.group && a.group !== boss.attacks[i - 1]?.group ? a.group : null
-              return (
-                <li key={a.name}>
-                  {heading && <div className="hint">{heading}:</div>}
-                  <strong>
-                    {a.name}
-                    {a.count > 1 && ` ×${a.count}`}
-                  </strong>
-                  : {attackLine(a, boss)}. {a.text}
-                </li>
-              )
-            })}
-          </ul>
-        </dd>
-        {boss.specials.length > 0 && (
-          <>
-            <dt>Specials</dt>
-            <dd>
-              <ul className="plain-list">
-                {boss.specials.map((s) => (
-                  <li key={s.name}>
-                    <strong>{s.name}</strong>: {s.text}
-                  </li>
-                ))}
-              </ul>
-            </dd>
-          </>
-        )}
-        <dt>Legendary</dt>
-        <dd>
-          {boss.legendaryActions > 0 ? (
-            <>
-              {boss.legendaryActions} Legendary Action{boss.legendaryActions === 1 ? '' : 's'}
-              {boss.phase2ExtraLegendaryActions > 0 && ` (+${boss.phase2ExtraLegendaryActions} in phase 2)`}:{' '}
-              {boss.legendaryOptions.map((o) => `${o.name} (${o.text})`).join('; ')}. {boss.legendaryRefresh}
-            </>
-          ) : (
-            'No Legendary Actions'
           )}
-          {' · '}
-          {boss.legendaryResistances > 0
-            ? `${boss.legendaryResistances} Legendary Resistance${boss.legendaryResistances === 1 ? '' : 's'}`
-            : 'no Legendary Resistances'}
-        </dd>
-        <dt>Shift Action</dt>
-        <dd>
-          <strong>{boss.shiftAction.name}</strong> (initiative count 20): {boss.shiftAction.text}{' '}
-          {onTrigger && <RevealButton shown={revealed} busy={busy} onReveal={onTrigger} label="Trigger Shift Action" />}
-        </dd>
-      </dl>
-    </div>
+          <Fact label="Defense">
+            AC {boss.ac} · {boss.hp} HP{boss.sharedHp && ' (shared)'}
+            {boss.parts.length > 0 && (
+              <div className="mt-1.5 grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+                {boss.parts.map((p) => (
+                  <div key={p.name} className="flex items-center gap-2 rounded-lg border border-fuchsia-500/25 bg-stone-950/60 p-1.5">
+                    <Portrait kind="boss-parts" id={partArtId(boss.bossId, p.name)} name={p.name} size="h-8 w-8" square />
+                    <span className="text-[11px]">
+                      {p.count > 1 && `${p.count} × `}
+                      <strong className="text-fuchsia-200">{p.name}</strong>: AC {p.ac}
+                      {p.hp !== null && `, ${p.hp} HP${p.count > 1 ? ' each' : ''}`}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </Fact>
+          <Fact label="Numbers">
+            +{boss.attack} to hit · save DC {boss.dc} · Boss PB +{boss.pb} · about {boss.dpr} damage per round
+          </Fact>
+        </div>
+      </div>
+
+      <Fact label="Abilities">
+        <StatLine abilities={scoresOf(boss.abilities)} saves={savesOf(boss.abilities)} />
+        {boss.partAbilities.map((p) => (
+          <div key={p.name} className="mt-1.5 flex flex-col gap-1">
+            <span className="text-[11px] text-stone-400">{p.name}:</span>
+            <StatLine abilities={scoresOf(p.abilities)} saves={savesOf(p.abilities)} />
+          </div>
+        ))}
+        {boss.profileNote && <p className="m-0 mt-1 text-[11px] text-stone-500">{boss.profileNote}</p>}
+      </Fact>
+
+      {boss.traits.length > 0 && <Fact label="Traits">{boss.traits.join(' ')}</Fact>}
+
+      <Fact label="Attacks">
+        <ul className="m-0 list-none flex flex-col gap-1.5 p-0">
+          {boss.attacks.map((a, i) => {
+            const heading = a.group && a.group !== boss.attacks[i - 1]?.group ? a.group : null
+            return (
+              <li key={a.name}>
+                {heading && <div className="text-[11px] font-semibold text-stone-500">{heading}:</div>}
+                <strong className="text-stone-100">
+                  {a.name}
+                  {a.count > 1 && ` ×${a.count}`}
+                </strong>
+                : {attackLine(a, boss)}. {a.text}
+              </li>
+            )
+          })}
+        </ul>
+      </Fact>
+
+      {boss.specials.length > 0 && (
+        <Fact label="Specials">
+          <ul className="m-0 list-none flex flex-col gap-1.5 p-0">
+            {boss.specials.map((s) => (
+              <li key={s.name}>
+                <strong className="text-stone-100">{s.name}</strong>: {s.text}
+              </li>
+            ))}
+          </ul>
+        </Fact>
+      )}
+
+      <Fact label="Legendary">
+        {boss.legendaryActions > 0 ? (
+          <>
+            {boss.legendaryActions} Legendary Action{boss.legendaryActions === 1 ? '' : 's'}
+            {boss.phase2ExtraLegendaryActions > 0 && ` (+${boss.phase2ExtraLegendaryActions} in phase 2)`}:{' '}
+            {boss.legendaryOptions.map((o) => `${o.name} (${o.text})`).join('; ')}. {boss.legendaryRefresh}
+          </>
+        ) : (
+          'No Legendary Actions'
+        )}
+        {' · '}
+        {boss.legendaryResistances > 0
+          ? `${boss.legendaryResistances} Legendary Resistance${boss.legendaryResistances === 1 ? '' : 's'}`
+          : 'no Legendary Resistances'}
+      </Fact>
+
+      <div className="flex flex-col gap-1.5 rounded-lg border border-amber-500/30 bg-amber-500/10 p-2.5">
+        <div className="flex flex-wrap items-center justify-between gap-1.5">
+          <strong className="flex items-center gap-1.5 text-xs text-amber-200">
+            <Zap size={13} /> Shift Action: {boss.shiftAction.name}
+            <span className="font-normal text-stone-400">(initiative count 20)</span>
+          </strong>
+          {onTrigger && <RevealControl shown={revealed} busy={busy} onReveal={onTrigger} label="Trigger Shift Action" shownLabel="Triggered" />}
+        </div>
+        <p className="m-0 text-xs text-stone-200">{boss.shiftAction.text}</p>
+      </div>
+    </Panel>
   )
 }
 
@@ -290,25 +327,26 @@ export function RestlessShifts({ room, partyLevel, busy, act }: { room: Room; pa
   if (!room.shifts?.length || room.kind === 'boss') return null
   const dc = floorBossDc(room.floor, partyLevel)
   return (
-    <div className="fight">
-      <h4>Restless Stone</h4>
-      <ul className="plain-list">
-        {room.shifts.map((s) => {
-          const action = bossOf(s.bossId).shiftAction
-          return (
-            <li key={s.bossId}>
-              <strong>{action.name}</strong>: {action.text.replace(/\{dc\}/g, String(dc))}{' '}
-              <RevealButton
+    <Panel tone="amber" icon={<Zap size={15} />} title="Restless Stone">
+      {room.shifts.map((s) => {
+        const action = bossOf(s.bossId).shiftAction
+        return (
+          <div key={s.bossId} className={cx(WELL, 'flex flex-col gap-1')}>
+            <div className="flex flex-wrap items-center justify-between gap-1.5">
+              <strong className="text-xs text-amber-200">{action.name}</strong>
+              <RevealControl
                 shown={s.revealed}
                 busy={busy}
                 label="Trigger Shift Action"
+                shownLabel="Triggered"
                 onReveal={() => act((st) => reveal(st, { shift: s.bossId }))}
               />
-            </li>
-          )
-        })}
-      </ul>
-    </div>
+            </div>
+            <p className="m-0 text-[11px] text-stone-300">{action.text.replace(/\{dc\}/g, String(dc))}</p>
+          </div>
+        )
+      })}
+    </Panel>
   )
 }
 
@@ -341,9 +379,11 @@ export function DmFight({ state, room, busy, act }: { state: RunState; room: Roo
   return (
     <>
       {needsEncounter && (
-        <button type="button" disabled={busy} onClick={() => act((s) => rerollEncounter(s, Math.random))}>
-          Roll the encounter
-        </button>
+        <Panel tone="rose" icon={<Skull size={15} />} title="No encounter yet">
+          <button type="button" disabled={busy} className={`${PRIMARY_BUTTON} self-start`} onClick={() => act((s) => rerollEncounter(s, Math.random))}>
+            Roll the encounter
+          </button>
+        </Panel>
       )}
       {room.encounter && <EncounterPanel encounter={room.encounter} trackers={trackers} busy={busy} act={act} />}
       <RestlessShifts room={room} partyLevel={run.partyLevel} busy={busy} act={act} />

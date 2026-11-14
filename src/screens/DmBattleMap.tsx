@@ -13,6 +13,11 @@ import { moveToken, roomKeyOf, useTokens } from '../runStore'
 import { artUrl } from '../art'
 import { BattleBoard } from './BattleBoard'
 import { playerPieces, roomPieces, spotAfterMove, tokenOwner, useLooks } from './mapPieces'
+import { Grid3x3 } from 'lucide-react'
+import { ConfirmButton } from '../ui/ConfirmButton'
+import { Panel } from '../ui/Panel'
+import { Pill } from '../ui/Pill'
+import { FIELD, PRIMARY_BUTTON, SMALL_BUTTON } from '../ui/styles'
 
 type Step = (s: RunState) => RunState
 type Act = (step: Step, confirmText?: string) => void
@@ -33,12 +38,12 @@ export function DmBattleMap({ state, room, busy, act }: Props) {
   if (room.kind !== 'combat' && room.kind !== 'elite' && room.kind !== 'boss') return null
   if (!map) {
     return (
-      <div className="battle-map-panel">
-        <p className="hint">This room was made before battle maps existed.</p>
-        <button type="button" disabled={busy} onClick={() => act((s) => layOutMap(s, Math.random))}>
+      <Panel title="Battle map" icon={<Grid3x3 size={15} />}>
+        <p className="m-0 text-xs text-stone-400">This room was made before battle maps existed.</p>
+        <button type="button" disabled={busy} className={`${PRIMARY_BUTTON} self-start`} onClick={() => act((s) => layOutMap(s, Math.random))}>
           Lay out the battle map
         </button>
-      </div>
+      </Panel>
     )
   }
 
@@ -104,33 +109,36 @@ export function DmBattleMap({ state, room, busy, act }: Props) {
   }
 
   return (
-    <div className="battle-map-panel">
-      <div className="panel-header">
-        <h4>
+    <Panel
+      tone={map.arena ? 'rose' : 'sky'}
+      icon={<Grid3x3 size={15} />}
+      title={
+        <>
           {map.arena ? 'Boss arena' : 'Battle map'}
-          {map.arena && phase === 2 && <span className="tag">phase 2</span>}
-        </h4>
-        <span className="row-actions">
+          <span className="font-normal text-stone-400">
+            {map.squares} × {map.squares} ({map.squares * 5} ft)
+          </span>
+          {map.arena && phase === 2 && <Pill tone="rose">Phase 2</Pill>}
+        </>
+      }
+      actions={
+        <>
           {form && (
-            <button type="button" className="quiet" disabled={busy} onClick={() => act((s) => swapBossForm(s))}>
+            <button type="button" className={SMALL_BUTTON} disabled={busy} onClick={() => act((s) => swapBossForm(s))}>
               Swap form (now {form === 'vyr' ? 'Vyr' : 'Kaelen'})
             </button>
           )}
-          <button
-            type="button"
-            className="quiet"
+          <ConfirmButton
+            tone="amber"
             disabled={busy}
-            onClick={() =>
-              act(
-                (s) => layOutMap(s, Math.random),
-                map.arena ? 'Put the arena back the way it starts?' : 'Place every doorway, feature, trick and enemy again?',
-              )
-            }
+            confirmLabel={map.arena ? 'Yes, reset the arena' : 'Yes, place everything again'}
+            onConfirm={() => act((s) => layOutMap(s, Math.random))}
           >
             {map.arena ? 'Reset arena' : 'Lay out again'}
-          </button>
-        </span>
-      </div>
+          </ConfirmButton>
+        </>
+      }
+    >
       <BattleBoard
         squares={map.squares}
         entrance={map.entrance}
@@ -142,10 +150,10 @@ export function DmBattleMap({ state, room, busy, act }: Props) {
         onMove={onMove}
         onRemove={(key) => act((s) => removeMapObject(s, key))}
       />
-      <div className="map-palette">
-        <label>
-          Drop an object{' '}
-          <select value={toDrop} onChange={(e) => setToDrop(e.target.value)} disabled={busy}>
+      <div className="flex flex-wrap items-center gap-2">
+        <label className="flex items-center gap-2 text-xs text-stone-300">
+          Drop an object
+          <select value={toDrop} onChange={(e) => setToDrop(e.target.value)} disabled={busy} className={FIELD}>
             {PALETTE.map((p) => (
               <option key={p.art} value={p.art}>
                 {p.name}
@@ -154,16 +162,15 @@ export function DmBattleMap({ state, room, busy, act }: Props) {
             ))}
           </select>
         </label>
-        <button type="button" className="quiet" disabled={busy || !toDrop} onClick={() => act((s) => dropMapObject(s, toDrop))}>
+        <button type="button" className={SMALL_BUTTON} disabled={busy || !toDrop} onClick={() => act((s) => dropMapObject(s, toDrop))}>
           Drop in the middle
         </button>
       </div>
-      <p className="hint">
+      <p className="m-0 text-[11px] text-stone-500">
         Drag any piece, or select it and use the arrow keys. Select an object and press × (or Delete) to remove it. Dashed and faded pieces
-        are hidden from players. Gold rings are the players; each player can move only their own. The shaded squares are the entrance.{' '}
-        {map.squares} × {map.squares} squares ({map.squares * 5} ft).
+        are hidden from players. Gold rings are the players; each player can move only their own. The shaded squares are the entrance.
       </p>
-      {arena?.notes && <p className="hint">Arena: {arena.notes}</p>}
-    </div>
+      {arena?.notes && <p className="m-0 text-[11px] text-stone-400">Arena: {arena.notes}</p>}
+    </Panel>
   )
 }
