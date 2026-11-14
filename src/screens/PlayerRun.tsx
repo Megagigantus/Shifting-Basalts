@@ -12,7 +12,7 @@ import { submitChoice, useChoices, useLootRequests } from '../runStore'
 import { PlayerLoot } from './LootScreens'
 import { RecoveryPanel } from './RecoveryPanel'
 import { CounterList } from './CountersPanel'
-import { HealingFontNote } from './HealingFontNote'
+import { PostBossScene } from './Scene'
 import { MiniPortrait } from './LookPicker'
 import { useLooks } from './mapPieces'
 
@@ -57,7 +57,7 @@ export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
         {canExtract(state) ? `${lootKeptIfExtracting(state)}%` : 'extraction opens after a boss'}
       </p>
 
-      <HealingFontNote state={state} />
+      <PostBossScene state={state} />
 
       <PlayerRoom
         key={`${run.floor}-${run.room}`}
