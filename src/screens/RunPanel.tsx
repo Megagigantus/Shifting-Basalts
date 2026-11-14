@@ -18,7 +18,7 @@ export function RunPanel() {
   const [ended, setEnded] = useState<{ results: RunResult[]; state: RunState } | null>(null)
 
   return (
-    <div className="mt-6 space-y-4">
+    <div className="mt-6 flex flex-col gap-4">
       {loading && <p className="text-sm text-stone-400">Loading…</p>}
       {error && <p className="text-sm text-rose-300">{error}</p>}
 
@@ -61,7 +61,7 @@ function RunSummary({ results, state, onDone }: { results: RunResult[]; state: R
     >
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         {results.map((r) => (
-          <div key={r.characterId} className="space-y-2 rounded-xl border border-stone-800 bg-stone-950/70 p-3">
+          <div key={r.characterId} className="flex flex-col gap-2 rounded-xl border border-stone-800 bg-stone-950/70 p-3">
             <div className="flex items-center justify-between gap-2">
               <span className="text-sm font-bold text-stone-100">{r.name}</span>
               {r.survived ? <Pill tone="emerald">Made it out</Pill> : <Pill tone="rose">Fell on floor {r.deepestFloor}</Pill>}

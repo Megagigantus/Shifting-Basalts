@@ -68,7 +68,7 @@ export function InviteList({ myEmail }: { myEmail: string }) {
   const me = myEmail.toLowerCase()
 
   return (
-    <div className="space-y-3 text-sm">
+    <div className="flex flex-col gap-3 text-sm">
       <p className="m-0 text-xs text-stone-400">
         Only these accounts can use the app. The email must match the account the player signs in with.
       </p>
@@ -76,7 +76,7 @@ export function InviteList({ myEmail }: { myEmail: string }) {
       {invites === null && !error && <p className="m-0 text-stone-400">Loading…</p>}
 
       {invites && (
-        <ul className="m-0 list-none space-y-1.5 p-0">
+        <ul className="m-0 list-none flex flex-col gap-1.5 p-0">
           {invites.map((invite) => (
             <li
               key={invite.email}

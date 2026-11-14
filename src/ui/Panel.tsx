@@ -24,7 +24,7 @@ export function Panel({ title, subtitle, icon, actions, tone = 'stone', hero, cl
   return (
     <section
       className={cx(
-        'border bg-stone-900/90 p-4 space-y-3 text-stone-100',
+        'border bg-stone-900/90 p-4 flex flex-col gap-3 text-stone-100',
         hero ? 'rounded-2xl shadow-2xl shadow-black/40' : 'rounded-xl',
         toneClasses[tone].border,
         className,
