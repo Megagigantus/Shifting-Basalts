@@ -249,6 +249,11 @@ describe('player spending Devotions', () => {
   it('must stamp the server time', async () => {
     await assertFails(updateDoc(owned(), { 'trackDevotions.max-hp': 3, bankedDevotions: 9, updatedAt: new Date(0) }))
   })
+
+  it('cannot spend while the character is in a run', async () => {
+    await seedCharacters({ activeRunId: 'run-1' })
+    await assertFails(updateDoc(owned(), { 'trackDevotions.max-hp': 5, bankedDevotions: 7, updatedAt: now() }))
+  })
 })
 
 describe('player buying upgrades', () => {
@@ -276,6 +281,11 @@ describe('player buying upgrades', () => {
       updateDoc(owned(), { 'upgrades.forge': 1, 'upgrades.reroll': 2, bankedQuantumBasalts: 0, updatedAt: now() }),
     )
     await assertFails(updateDoc(owned(), { 'upgrades.reroll': 0, bankedQuantumBasalts: 60, updatedAt: now() }))
+  })
+
+  it('cannot buy while the character is in a run', async () => {
+    await seedCharacters({ activeRunId: 'run-1' })
+    await assertFails(updateDoc(owned(), { 'upgrades.reroll': 2, bankedQuantumBasalts: 30, updatedAt: now() }))
   })
 })
 
