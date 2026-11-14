@@ -1,7 +1,9 @@
 // The sticky bar at the top of every signed-in screen: title, the DM's tabs
 // and tools, who is signed in, and Sign out.
 import { useEffect, useState, type ReactNode } from 'react'
-import { BookOpen, Eye, FlaskConical, ClockArrowLeft, Link2, LogOut, Shield, Swords, User, Users } from 'lucide-react'
+import { BookOpen, Download, Eye, FlaskConical, ClockArrowLeft, Link2, LogOut, Shield, Swords, User, Users } from 'lucide-react'
+import { db } from '../firebase'
+import { downloadBackup } from '../backup'
 import { cx } from '../ui/tone'
 import { DM_TABS, type DmTab } from './dmTabs'
 
@@ -95,6 +97,7 @@ export function AppHeader({ email, role, testMode, dm, onSignOut }: Props) {
                 <Users size={13} /> Invites
               </button>
               <CopyLinkButton />
+              <BackupButton />
             </>
           ) : (
             role === 'player' && (
@@ -113,6 +116,42 @@ export function AppHeader({ email, role, testMode, dm, onSignOut }: Props) {
         </div>
       </div>
     </header>
+  )
+}
+
+/** Downloads a JSON copy of everything the app stores (characters, invites, runs, history). */
+function BackupButton() {
+  const [state, setState] = useState<'idle' | 'saving' | 'done' | 'failed'>('idle')
+
+  useEffect(() => {
+    if (state !== 'done' && state !== 'failed') return
+    const timer = setTimeout(() => setState('idle'), 3000)
+    return () => clearTimeout(timer)
+  }, [state])
+
+  async function save() {
+    if (!db) return
+    setState('saving')
+    try {
+      await downloadBackup(db)
+      setState('done')
+    } catch (err) {
+      console.error('Backup failed', err)
+      setState('failed')
+    }
+  }
+
+  const label = { idle: 'Backup', saving: 'Saving…', done: 'Downloaded', failed: 'Backup failed' }[state]
+  return (
+    <button
+      type="button"
+      onClick={save}
+      disabled={state === 'saving'}
+      title="Download a JSON backup of characters, invites, runs and run history"
+      className={cx(SMALL_BUTTON, state === 'failed' ? 'border-rose-500/40 bg-rose-500/10 text-rose-200' : QUIET)}
+    >
+      <Download size={13} /> {label}
+    </button>
   )
 }
 

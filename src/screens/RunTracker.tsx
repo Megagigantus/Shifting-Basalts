@@ -220,7 +220,8 @@ export function RunTracker({ state, characters, onEnded }: Props) {
           </span>
         </div>
         <p className="m-0 text-[0.6875rem] text-stone-500">
-          Cancelling deletes the run: nobody gets rewards, Devotions or lockouts from it.
+          Cancelling rolls the run back: it's deleted, and nobody gets its Basalts, Devotions, loot or lockouts. Characters are left
+          as they were before it started, except anything a player spent from their bank during the run.
         </p>
         {error && <p className="m-0 text-xs text-rose-300">{error}</p>}
       </Panel>

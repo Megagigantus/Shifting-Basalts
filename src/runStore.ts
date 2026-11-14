@@ -302,7 +302,13 @@ export async function applyChoiceDoc(state: RunState, characterId: string, choic
   await batch.commit()
 }
 
-/** Throw away a run without applying any results (for mistakes and test runs). */
+/**
+ * Throw away a run without applying any results (for mistakes and test runs).
+ * This is a full rollback of the run: Quantum Basalts, Devotions, deepest
+ * floor, lockouts and loot only reach characters in the batch that ends a run
+ * (saveRunState), so a cancelled run never touched them. Devotions or Basalts
+ * a player spent from their bank during the run stay spent (their own choice).
+ */
 export async function cancelRun(state: RunState): Promise<void> {
   if (!db) throw new Error('Firebase is not set up.')
   const batch = writeBatch(db)
@@ -310,6 +316,8 @@ export async function cancelRun(state: RunState): Promise<void> {
     batch.delete(doc(db, 'runs', state.run.id, 'players', player.characterId))
     batch.delete(doc(db, 'runs', state.run.id, 'choices', player.characterId))
     batch.delete(doc(db, 'runs', state.run.id, 'requests', player.characterId))
+    batch.delete(doc(db, 'runs', state.run.id, 'tokens', player.characterId))
+    batch.delete(doc(db, 'runs', state.run.id, 'private', player.characterId))
     batch.update(doc(db, 'characters', player.characterId), { activeRunId: null, updatedAt: serverTimestamp() })
   }
   batch.delete(doc(db, 'runs', state.run.id, 'dmOnly', 'room'))
