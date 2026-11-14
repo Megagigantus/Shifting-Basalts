@@ -111,6 +111,7 @@ Each player starts with 3 boon slots and can buy up to 5 with Quantum Basalts. E
 - **Combine:** two specific Level 3 boons fuse into one, opening a slot for a new boon. The new boon starts at Level 1, so the build gains variety but carries a weak boon into harder floors.
 - **Combinations are final** *(proposed)***:** they can't evolve further, which keeps Evolution's ceiling higher.
 - **Gating** *(proposed)***:** Evolutions and Combinations happen at a Forge room or through the wildcard offer.
+- **Full slots first:** the wildcard never offers an Evolution or Combination while a player has an empty boon slot. After a Combination frees a slot, that slot must be filled before the next wildcard Evolution or Combination. This stops a player from leveling one boon three rooms in a row and evolving it on room 4.
 
 ### Stat tracks
 
@@ -1248,7 +1249,7 @@ The DM hosts the run; players join on their own devices with a lighter view.
 
 Rules the app follows where the rest of the Bible implies an answer without spelling it out.
 
-1. **Leveling:** drafting a boon you already hold raises it 1 level, up to Level 3, and so does the Forge. The guaranteed held-boon offer picks from boons below Level 3; if all of a player's boons are maxed, that slot becomes the wildcard.
+1. **Leveling:** drafting a boon you already hold raises it 1 level, up to Level 3, and so does the Forge. The held-boon offer draws from boons below Level 3 and, while the player has empty slots, from those empty slots too (see Offer weighting); once every slot is full and every boon is maxed, that slot becomes the wildcard.
 2. **Upgrade scope:** party-wide, with each extra owner adding more: Forge (+1 use per owner), Healing Font (+temp HP per extra owner), Extra Pressures (+5% rewards per owner) and Reprieve (every owner rolls). Party-wide at the highest rank only: Deep Pockets. Personal: Extra Boon Slot, Reroll, Banish, Starting Boon, Attunement, Hidden Sight, Quick Return and Extra Loot (its owner's Basalts only).
 3. **Party level:** the average of the party's levels, rounded down. It sets boss CR, room trick DCs, the entry multiplier (one per party) and loot rarity. Encounter XP budgets add up from each player's own level, and PB-based boon numbers use each player's own PB.
 4. **Payoff and Core boons:** they level through drafts and the Forge like other boons, but never evolve or combine.
@@ -1263,9 +1264,9 @@ Every draft is built in three steps.
 
 1. **Filter out ineligible boons.** Spell boons require spells, so non-casters never see them, nor Quick Cantrip, The Archivist's Index or Leyline Surge. Bond boons require a summon or companion. Payoffs require at least 1 rank in their track. Held boons (they have their own slot) and banished boons never appear.
 2. **Build the 4 offers.**
-   - **Slot 1, held boon:** a boon you hold below Level 3. If you hold none, it becomes a weighted roll; if all of yours are maxed, it becomes a wildcard.
+   - **Slot 1, held boon:** one draw among your boons below Level 3 and your empty boon slots. A held boon offers that boon (to level it); an empty slot offers a new weighted roll. Example: 1 boon at Level 1 with 2 empty slots levels it 1 time in 3 and offers a new boon 2 times in 3. With every slot full, it always offers a held boon below Level 3. If you hold no plain boons, it's a weighted roll; if every slot is full and every boon is maxed, it becomes a wildcard.
    - **Slots 2 and 3, weighted rolls:** drawn using the weights below.
-   - **Slot 4, wildcard:** an Evolution or Combination you qualify for, or else one eligible boon at even odds.
+   - **Slot 4, wildcard:** an Evolution or Combination you qualify for, or else one eligible boon at even odds. Evolutions and Combinations only appear once every boon slot is filled.
    - **Variety cap:** no more than 2 boons from the same tag in one draft.
    - **Narrow Seam:** drops a weighted slot first; Narrow Seam II drops the wildcard next.
 3. **Weight the rolls.** Every eligible boon starts at 1, and these multiply: a primary tag for the character's class ×3, a secondary tag ×2, and a tag the player already holds ×2. Core boons stay at 1.
