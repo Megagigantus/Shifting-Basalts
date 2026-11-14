@@ -113,7 +113,7 @@ describe('floor progress', () => {
     expect(state.run.status).toBe('extracted')
     expect(state.run.lootKeptPercent).toBe(100)
     expect(state.players[0].quantumBasaltsEarned).toBe(65)
-    expect(state.players[0].devotions).toBe(21)
+    expect(state.players[0].devotions).toBe(20 + 3) // 20 rooms and bosses on floors 1 to 4, then 3 for the legendary boss
   })
 })
 
