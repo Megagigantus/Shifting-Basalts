@@ -270,6 +270,40 @@ for (let floor = 1; floor <= 5; floor++) {
   const count = bossData.bosses.filter((b) => b.floor === floor).length
   if (count < 1) fail(`bosses.json: no boss for floor ${floor}`)
 }
+// Battle map (creature sizes, room grid, trick placement).
+const battleMap = loadObject<{
+  roomSquares: Record<string, number>
+  sizeSquares: Record<string, number>
+  entrance: { default: string; shapes: Record<string, string> }
+  trickTerrain: Record<string, { floor: number; shapes: string[]; features: string[]; avoidShapes?: string[] }>
+}>('battle-map.json')
+const mapLayouts = loadObject<{ shapes: { id: string }[]; sizes: { id: string }[]; terrain: { id: string }[] }>('room-layouts.json')
+const mapTricks = loadObject<{ tricks: { id: string; floor: number }[] }>('room-tricks.json').tricks
+const SIDES = ['north', 'south', 'east', 'west']
+const shapeIds = new Set(mapLayouts.shapes.map((s) => s.id))
+const terrainIds = new Set(mapLayouts.terrain.map((t) => t.id))
+for (const s of mapLayouts.sizes) {
+  if (!(battleMap.roomSquares[s.id] > 0)) fail(`battle-map.json: roomSquares needs a square count for room size "${s.id}"`)
+}
+if (!SIDES.includes(battleMap.entrance.default)) fail(`battle-map.json: entrance.default must be north, south, east or west`)
+for (const [shape, side] of Object.entries(battleMap.entrance.shapes)) {
+  if (!shapeIds.has(shape)) fail(`battle-map.json entrance: unknown shape "${shape}"`)
+  if (!SIDES.includes(side)) fail(`battle-map.json entrance "${shape}": side must be north, south, east or west`)
+}
+for (const c of enemies.creatures as { id: string; size?: string }[]) {
+  if (!c.size || battleMap.sizeSquares[c.size] === undefined) fail(`enemies.json creature "${c.id}": size "${c.size}" isn't in battle-map.json sizeSquares`)
+}
+for (const t of mapTricks) {
+  const pref = battleMap.trickTerrain[t.id]
+  if (!pref) continue
+  if (pref.floor !== t.floor) fail(`battle-map.json trickTerrain "${t.id}": floor ${pref.floor} but the trick is floor ${t.floor}`)
+}
+for (const [id, pref] of Object.entries(battleMap.trickTerrain)) {
+  if (!mapTricks.some((t) => t.id === id)) fail(`battle-map.json trickTerrain: unknown trick "${id}"`)
+  for (const s of [...pref.shapes, ...(pref.avoidShapes ?? [])]) if (!shapeIds.has(s)) fail(`battle-map.json trickTerrain "${id}": unknown shape "${s}"`)
+  for (const f of pref.features) if (!terrainIds.has(f)) fail(`battle-map.json trickTerrain "${id}": unknown terrain "${f}"`)
+}
+
 // Loot (Phase 6).
 const lootRolls = loadObject<{
   rarities: { id: string }[]

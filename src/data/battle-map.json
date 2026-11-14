@@ -1,0 +1,174 @@
+{
+  "_source": "docs/basalts-stats.json (sizeSquares) and docs/basalts-arenas.json (trickTerrain); design bible: Size, elevation, exits and lighting (entrance). Used to lay out the battle map.",
+  "status": "proposed",
+  "squareFt": 5,
+  "roomSquares": {
+    "small": 6,
+    "medium": 10,
+    "large": 14
+  },
+  "sizeSquares": {
+    "Tiny": 0.5,
+    "Small": 1,
+    "Medium": 1,
+    "Large": 2,
+    "Huge": 3,
+    "Gargantuan": 4
+  },
+  "entrance": {
+    "default": "south",
+    "shapes": {
+      "split-chamber": "east"
+    }
+  },
+  "trickTerrain": {
+    "snap-pillar": {
+      "floor": 1,
+      "shapes": [
+        "hex-hall",
+        "honeycomb"
+      ],
+      "features": [
+        "hex-dais",
+        "polished-floor"
+      ],
+      "place": "a hex seam in open floor, often near a dais"
+    },
+    "static-vent": {
+      "floor": 1,
+      "shapes": [
+        "split-chamber",
+        "column-forest"
+      ],
+      "features": [
+        "fissure",
+        "broken-column-field"
+      ],
+      "place": "along a fissure or crack"
+    },
+    "shatter-step": {
+      "floor": 1,
+      "shapes": [
+        "hex-hall",
+        "ring"
+      ],
+      "features": [
+        "polished-floor"
+      ],
+      "place": "a long open run of tiles players will want to cross quickly"
+    },
+    "crushing-columns": {
+      "floor": 2,
+      "shapes": [
+        "switchback",
+        "split-chamber",
+        "column-forest"
+      ],
+      "features": [
+        "tall-columns",
+        "collapsed-archway",
+        "narrow-catwalk"
+      ],
+      "place": "a 10 ft lane between two rows of columns"
+    },
+    "ricochet-monolith": {
+      "floor": 2,
+      "shapes": [
+        "hex-hall",
+        "column-forest"
+      ],
+      "features": [
+        "gate-glass-shards",
+        "hex-dais"
+      ],
+      "place": "near where ranged attackers will stand, such as a dais or ledge"
+    },
+    "magnetic-floor": {
+      "floor": 2,
+      "shapes": [
+        "ring",
+        "hex-hall"
+      ],
+      "features": [
+        "hex-dais"
+      ],
+      "place": "centred on the room, with the lodestone in the middle"
+    },
+    "gate-shear": {
+      "floor": 3,
+      "shapes": [
+        "split-chamber",
+        "hex-hall"
+      ],
+      "features": [
+        "fissure",
+        "tall-columns"
+      ],
+      "place": "a line across the room, ideally beside a column to topple as a bridge"
+    },
+    "stride-vent": {
+      "floor": 3,
+      "shapes": [
+        "column-forest",
+        "twisted-vault"
+      ],
+      "features": [
+        "pool-of-raw-stride-energy",
+        "transit-rune-pair"
+      ],
+      "place": "near pools or runes where casters stand"
+    },
+    "gravity-inversion-tile": {
+      "floor": 3,
+      "shapes": [
+        "twisted-vault",
+        "tiered-stair"
+      ],
+      "features": [
+        "tall-columns",
+        "hanging-cables"
+      ],
+      "place": "at the foot of a column, so a stuck creature crawls off along it"
+    },
+    "unseen-aperture": {
+      "floor": 4,
+      "shapes": [
+        "switchback",
+        "honeycomb",
+        "hex-hall"
+      ],
+      "features": [
+        "dead-end-alcoves",
+        "tall-columns"
+      ],
+      "place": "corners and alcoves out of allies' sight"
+    },
+    "looping-corridor": {
+      "floor": 4,
+      "shapes": [
+        "ring",
+        "hex-hall"
+      ],
+      "features": [
+        "echoing-chamber"
+      ],
+      "avoidShapes": [
+        "split-chamber"
+      ],
+      "place": "the outer boundary of an open room"
+    },
+    "memory-drain": {
+      "floor": 4,
+      "shapes": [
+        "column-forest",
+        "honeycomb"
+      ],
+      "features": [
+        "shrine-to-thils",
+        "dead-end-alcoves",
+        "strider-remains"
+      ],
+      "place": "a weeping statue beside a shrine or alcove"
+    }
+  }
+}
