@@ -259,7 +259,7 @@ export function rerollableItems(state: RunState): LootItem[] {
   return (state.run.loot?.items ?? []).filter((i) => i.floor === state.run.floor && REROLLABLE.includes(i.source))
 }
 
-/** Shrine to Thils: offer a trinket to reroll one loot roll from this floor. */
+/** Shrine to Thils: offer a trinket to reroll one loot roll from this floor into a new item of the same kind. */
 export function shrineOffering(state: RunState, trinketUid: string, targetUid: string, random: Random): RunState {
   const loot = state.run.loot
   const trinket = loot?.items.find((i) => i.uid === trinketUid)
@@ -271,7 +271,11 @@ export function shrineOffering(state: RunState, trinketUid: string, targetUid: s
     ...state,
     run: { ...state.run, loot: { ...loot!, items: loot!.items.filter((i) => i.uid !== trinketUid && i.uid !== targetUid) } },
   }
-  return applyDrops(without, [floorRoll(state.run, target.floor, random)], 'shrine')
+  const kind = target.kind as 'trinket' | 'consumable' | 'gear' | 'wondrous'
+  // Same kind and rarity, but a different item when the table allows one.
+  let item = rollItem(kind, target.rarity ?? 'common', random)
+  for (let tries = 0; item.ref === target.ref && tries < 20; tries++) item = rollItem(kind, target.rarity ?? 'common', random)
+  return applyDrops(without, [{ kind: 'item', item }], 'shrine')
 }
 
 // ---------------------------------------------------------------------------

@@ -106,6 +106,8 @@ export function PlayerRoom({ state, me, readOnly = false, myCharacterIds }: Prop
             trueExit={view.trueExit}
             terrain={view.terrain}
             tricks={view.tricks}
+            arenaId={view.bossId}
+            arenaName={view.bossId ? `${bossOf(view.bossId).name}'s arena` : undefined}
           />
         )}
 
@@ -174,18 +176,24 @@ export function PlayerRoom({ state, me, readOnly = false, myCharacterIds }: Prop
         })}
 
         <div className="flex flex-wrap gap-1.5">
-          <Pill title={shape.description}>{shape.name}</Pill>
-          <Pill>
-            {sizeOf(view.size).name} ({sizeOf(view.size).feet} ft)
-          </Pill>
-          <Pill>{elevationOf(view.elevation).name}</Pill>
+          {view.bossId ? (
+            <Pill tone="rose">Boss arena · 14 × 14 squares (70 ft)</Pill>
+          ) : (
+            <>
+              <Pill title={shape.description}>{shape.name}</Pill>
+              <Pill>
+                {sizeOf(view.size).name} ({sizeOf(view.size).feet} ft)
+              </Pill>
+              <Pill>{elevationOf(view.elevation).name}</Pill>
+            </>
+          )}
           <Pill tone="amber">{lightingName(view.lighting)}</Pill>
           <Pill tone="sky">
             {view.exits} doorway{view.exits === 1 ? '' : 's'}
             {view.exits > 1 && (view.trueExit ? ` · #${view.trueExit} is the true exit` : ' · only one leads on')}
           </Pill>
         </div>
-        <p className="m-0 text-[0.6875rem] text-stone-400">{shape.description}</p>
+        {!view.bossId && <p className="m-0 text-[0.6875rem] text-stone-400">{shape.description}</p>}
 
         <SectionLabel>Room details</SectionLabel>
         <ul className="m-0 flex list-none flex-col gap-1 p-0 text-xs text-stone-300">
