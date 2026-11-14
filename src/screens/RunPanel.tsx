@@ -3,9 +3,9 @@
 import { useState } from 'react'
 import { Flag, Skull, Trophy } from 'lucide-react'
 import type { RunResult, RunState } from '../model/run'
-import { itemName } from '../rules/loot'
 import { useActiveRun } from '../runStore'
 import { useCharacters } from '../useCharacters'
+import { LootNames } from '../ui/LootNames'
 import { Panel } from '../ui/Panel'
 import { Pill } from '../ui/Pill'
 import { PRIMARY_BUTTON } from '../ui/styles'
@@ -76,7 +76,7 @@ function RunSummary({ results, state, onDone }: { results: RunResult[]; state: R
               {!r.survived && <Pill tone="rose">Locked out {r.lockoutDays} days</Pill>}
             </div>
             <p className="m-0 text-[0.6875rem] text-stone-400">
-              Loot: {(r.loot ?? []).map((i) => itemName(i)).join(', ') || 'none'}
+              Loot: <LootNames items={r.loot} />
             </p>
           </div>
         ))}

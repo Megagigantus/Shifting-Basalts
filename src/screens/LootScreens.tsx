@@ -32,6 +32,7 @@ import { Pill } from '../ui/Pill'
 import { StatStrip } from '../ui/StatStrip'
 import { FIELD, PRIMARY_BUTTON, QUIET_BUTTON, SMALL_BUTTON, WELL } from '../ui/styles'
 import { cx, type Tone } from '../ui/tone'
+import { itemNameClass, relicNameClass } from '../ui/rarity'
 
 type Act = (step: (s: RunState) => RunState, confirmText?: string) => void
 const credits = (n: number) => `${n.toLocaleString()} cr`
@@ -40,7 +41,7 @@ const RARITY_TONES: Record<Rarity, Tone> = {
   common: 'stone',
   uncommon: 'emerald',
   rare: 'sky',
-  'very-rare': 'violet',
+  'very-rare': 'purple',
   legendary: 'amber',
 }
 
@@ -59,7 +60,7 @@ function ItemLine({ item, children }: { item: LootItem; children?: ReactNode }) 
   return (
     <li className={cx(WELL, 'flex flex-col gap-1.5')}>
       <div className="flex flex-wrap items-center gap-1.5">
-        <strong className="mr-1 text-xs text-stone-100">{itemName(item)}</strong>
+        <strong className={cx('mr-1 text-xs', itemNameClass(item))}>{itemName(item)}</strong>
         {kindPill}
         {item.kind !== 'relic' && (
           <Pill tone="purple" mono>
@@ -320,7 +321,7 @@ function RelicCard({ id, partyLevel, children }: { id: string; partyLevel: numbe
   const woken = relicStateFor(partyLevel) === 'woken'
   return (
     <div className="flex flex-col gap-1.5 rounded-xl border border-fuchsia-500/30 bg-stone-950/70 p-3">
-      <strong className="text-sm text-fuchsia-100">{r.name}</strong>
+      <strong className={cx('self-start text-sm', relicNameClass(woken))}>{r.name}</strong>
       <div className="flex flex-wrap gap-1">
         <Pill>{r.build}</Pill>
         <Pill tone={woken ? 'amber' : 'stone'}>{woken ? 'Woken' : 'Dormant'}</Pill>
