@@ -44,7 +44,7 @@ export function DraftOffers({ player, passValue, rerollsLeft, busy, onChoose, wh
                 ? who ? `${who}: Starting Boon` : 'Your Starting Boon'
                 : who ? `${who}: choose a boon` : 'Choose a boon'}
             </h3>
-            <span className="text-[11px] text-stone-400">
+            <span className="text-[0.6875rem] text-stone-400">
               {draft.starting
                 ? 'Before room 1'
                 : `Floor ${draft.floor}, ${draft.elite ? 'elite room' : `room ${draft.room}`}`}

@@ -1571,3 +1571,11 @@
     margin-bottom: 0.3rem;
   }
 }
+
+/* Players on phones: slightly larger text. Sizes in the redesign are in rem,
+   so they all grow together. (App.tsx adds the class for players.) */
+@media (max-width: 639px) {
+  html.player-ui {
+    font-size: 112.5%;
+  }
+}

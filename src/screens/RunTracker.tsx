@@ -158,7 +158,7 @@ export function RunTracker({ state, characters, onEnded }: Props) {
               ))}
             </div>
             <h2 className="m-0 text-base font-bold text-stone-50">{where}</h2>
-            <p className="m-0 text-[11px] text-stone-400">
+            <p className="m-0 text-[0.6875rem] text-stone-400">
               Party level {run.partyLevel} · rewards ×{run.entryMultiplier}
               {run.pressureBonusPercent > 0 && ` · Pressures +${run.pressureBonusPercent}%`}
               {(run.extraPressuresBonusPercent ?? 0) > 0 && ` · Extra Pressures +${run.extraPressuresBonusPercent}%`}
@@ -174,7 +174,7 @@ export function RunTracker({ state, characters, onEnded }: Props) {
             className="rounded-xl border border-stone-800 bg-stone-950/80 px-3 py-1.5 text-center"
             title="Players find this run automatically when they sign in"
           >
-            <div className="text-[10px] font-semibold uppercase tracking-wider text-stone-500">Join code</div>
+            <div className="text-[0.625rem] font-semibold uppercase tracking-wider text-stone-500">Join code</div>
             <div className="font-mono text-base font-bold tracking-widest text-amber-300">{run.joinCode}</div>
           </div>
         </div>
@@ -219,7 +219,7 @@ export function RunTracker({ state, characters, onEnded }: Props) {
             </ConfirmButton>
           </span>
         </div>
-        <p className="m-0 text-[11px] text-stone-500">
+        <p className="m-0 text-[0.6875rem] text-stone-500">
           Cancelling deletes the run: nobody gets rewards, Devotions or lockouts from it.
         </p>
         {error && <p className="m-0 text-xs text-rose-300">{error}</p>}
@@ -275,7 +275,7 @@ export function RunTracker({ state, characters, onEnded }: Props) {
 
           {run.log.length > 0 && (
             <Panel title={`Rooms cleared (${run.log.length})`}>
-              <ol className="m-0 max-h-40 flex flex-col gap-0.5 overflow-y-auto pl-5 font-mono text-[11px] text-stone-400">
+              <ol className="m-0 max-h-40 flex flex-col gap-0.5 overflow-y-auto pl-5 font-mono text-[0.6875rem] text-stone-400">
                 {run.log.map((entry, i) => (
                   <li key={i}>
                     Floor {entry.floor}, {entry.kind === 'boss' ? 'boss' : `room ${entry.room}`}: {ROOM_LABELS[entry.kind]}
@@ -356,7 +356,7 @@ function PlayerCard({ player: p, character, sent, open, floor, busy, act, onTogg
             )}
           </div>
           {character && (
-            <div className="text-[11px] text-stone-400">
+            <div className="text-[0.6875rem] text-stone-400">
               Lv {character.level} · PB +{proficiencyBonus(character.level)}
             </div>
           )}
@@ -375,13 +375,13 @@ function PlayerCard({ player: p, character, sent, open, floor, busy, act, onTogg
         </Pill>
       </div>
 
-      {summary && <p className="m-0 text-[11px] text-stone-300">{summary}</p>}
-      {sent?.error && <p className="m-0 text-[11px] text-amber-300">Their last choice failed: {sent.error}</p>}
+      {summary && <p className="m-0 text-[0.6875rem] text-stone-300">{summary}</p>}
+      {sent?.error && <p className="m-0 text-[0.6875rem] text-amber-300">Their last choice failed: {sent.error}</p>}
       <CounterList player={p} />
       <RecoveryPanel player={p} busy={busy} onSpend={(choice) => act((s) => applyChoice(s, p.characterId, choice, Math.random))} />
 
       {!p.alive && (
-        <p className="m-0 text-[11px] text-rose-300">
+        <p className="m-0 text-[0.6875rem] text-rose-300">
           Fell on floor {p.diedOnFloor} · locked out {p.lockoutDays} days (rolled {p.lockoutRolls?.join(' + ')}
           {(p.quickReturnDays ?? 0) > 0 && `, Quick Return −${p.quickReturnDays}, minimum 1`})
         </p>
@@ -419,7 +419,7 @@ function PlayerCard({ player: p, character, sent, open, floor, busy, act, onTogg
         </div>
       )}
       {p.alive && (
-        <p className="m-0 text-[10px] text-stone-500">
+        <p className="m-0 text-[0.625rem] text-stone-500">
           Died: expelled, loses this run's boss Basalts, locked out {floor}d4 days.
           {hasClassBoon && ' Class trigger: offers their class hidden boon.'}
         </p>

@@ -68,7 +68,7 @@ function ItemLine({ item, children }: { item: LootItem; children?: ReactNode }) 
         )}
         <Pill mono>F{item.floor}</Pill>
       </div>
-      <p className="m-0 text-[11px] text-stone-400">{itemText(item)}</p>
+      <p className="m-0 text-[0.6875rem] text-stone-400">{itemText(item)}</p>
       {children && <div className="flex flex-wrap items-center gap-1.5">{children}</div>}
     </li>
   )
@@ -278,7 +278,7 @@ export function ExtractPanel({
           Back
         </button>
       </div>
-      {vaultPending(state) && <p className="m-0 text-[11px] text-amber-300">Every survivor takes a relic from Thils's Vault first.</p>}
+      {vaultPending(state) && <p className="m-0 text-[0.6875rem] text-amber-300">Every survivor takes a relic from Thils's Vault first.</p>}
     </Panel>
   )
 }
@@ -325,7 +325,7 @@ function RelicCard({ id, partyLevel, children }: { id: string; partyLevel: numbe
         <Pill>{r.build}</Pill>
         <Pill tone={woken ? 'amber' : 'stone'}>{woken ? 'Woken' : 'Dormant'}</Pill>
       </div>
-      <p className="m-0 flex-1 text-[11px] text-stone-300">
+      <p className="m-0 flex-1 text-[0.6875rem] text-stone-300">
         {r.dormant}
         {woken && ` Woken: ${r.woken}`}
       </p>
@@ -407,7 +407,7 @@ export function PlayerLoot({ state, myCharacterIds, requests, readOnly = false }
           <p className="m-0 text-xs text-stone-500">No items yet.</p>
         )}
         {me && items.length > 0 && (
-          <p className="m-0 text-[11px] text-stone-500">Requests tell the DM what you'd like; the party decides at extraction.</p>
+          <p className="m-0 text-[0.6875rem] text-stone-500">Requests tell the DM what you'd like; the party decides at extraction.</p>
         )}
       </Panel>
     </>

@@ -18,7 +18,7 @@ export function Pill({ tone = 'stone', icon, mono, title, className, children }:
     <span
       title={title}
       className={cx(
-        'inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold leading-4 whitespace-nowrap',
+        'inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[0.6875rem] font-semibold leading-4 whitespace-nowrap',
         mono && 'font-mono',
         toneClasses[tone].pill,
         className,

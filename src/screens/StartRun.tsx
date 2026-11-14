@@ -122,12 +122,12 @@ export function StartRun({ characters }: Props) {
               <span className="min-w-0 flex-1">
                 <span className="flex items-center justify-between gap-2">
                   <span className="truncate text-sm font-bold text-stone-100">{c.name}</span>
-                  <span className="shrink-0 font-mono text-[11px] font-bold text-amber-300">Lv {c.level}</span>
+                  <span className="shrink-0 font-mono text-[0.6875rem] font-bold text-amber-300">Lv {c.level}</span>
                 </span>
-                <span className="block truncate text-[11px] text-stone-400">
+                <span className="block truncate text-[0.6875rem] text-stone-400">
                   {className(c.classId)} · {c.bankedQuantumBasalts} QB
                 </span>
-                {locked && <span className="block text-[11px] font-semibold text-rose-300">Locked out {c.lockoutDays} days</span>}
+                {locked && <span className="block text-[0.6875rem] font-semibold text-rose-300">Locked out {c.lockoutDays} days</span>}
               </span>
             </button>
           )
@@ -172,8 +172,8 @@ export function StartRun({ characters }: Props) {
                 </span>
                 <span className="font-mono text-xs font-bold text-emerald-300">+{p.bonusPercent}%</span>
               </span>
-              <span className="mt-1 block text-[11px] text-stone-400">{p.effect}</span>
-              {!isUnlocked && <span className="mt-1 block text-[11px] text-stone-500">Needs Extra Pressures rank {p.unlockRank}</span>}
+              <span className="mt-1 block text-[0.6875rem] text-stone-400">{p.effect}</span>
+              {!isUnlocked && <span className="mt-1 block text-[0.6875rem] text-stone-500">Needs Extra Pressures rank {p.unlockRank}</span>}
             </button>
           )
         })}

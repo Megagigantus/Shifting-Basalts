@@ -45,7 +45,7 @@ export function ForgePanel({ players, usesLeft, busy, onUse, intro }: Props) {
             <div key={p.characterId} className={cx(WELL, 'flex flex-col gap-1.5')}>
               <strong className="text-xs text-stone-100">{p.name}</strong>
               {options.length === 0 ? (
-                <span className="text-[11px] text-stone-500">Nothing to forge yet.</span>
+                <span className="text-[0.6875rem] text-stone-500">Nothing to forge yet.</span>
               ) : (
                 <div className="flex flex-wrap gap-1.5">
                   {options.map((o, i) => (
