@@ -17,7 +17,7 @@ export function PlayerPreview() {
         tone="sky"
         icon={<Eye size={15} />}
         title="View as player"
-        subtitle={email ? `Read-only preview of ${email}'s screen. Spend buttons are disabled here.` : 'Pick a player to see their screen.'}
+        subtitle={email ? `Preview of ${email}'s screen. Spending is off here, but you can make their draft picks.` : 'Pick a player to see their screen.'}
         actions={
           <select value={email} onChange={(e) => setEmail(e.target.value)} aria-label="Player to preview" className={FIELD}>
             <option value="">Pick a player…</option>
