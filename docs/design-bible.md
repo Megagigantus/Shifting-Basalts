@@ -598,10 +598,11 @@ A Quantum Basalt sells for 1,000 credits, and a portable personal stepgate costs
 | Elite room | 2 rolls. |
 | Strider remains (terrain) | Search with Investigation (DC 10 + floor number): 1 trinket, plus 1 consumable if you beat the DC by 5 or more. |
 | Shrine to Thils (terrain) | Leave any trinket as an offering: one player rerolls one loot roll from this floor. |
-| Boss cache (every boss, floor 5 included) | 2 floor rolls, 1 item one rarity above the floor's, and the boss's trophy on a d6 roll of 5 or 6. |
+| Boss cache (every boss, floor 5 included) | 2 floor rolls, 1 item one rarity above the floor's, and the boss's trophy on a d6 roll of 6. |
 | Full clear | Thils's Vault: every player drafts one relic, on top of the floor 5 boss cache. |
 
 - **Shared pool:** everything but Quantum Basalts goes into the party's run loot. On extraction the party keeps its loot share by credit value and chooses which items make up that share.
+- **Trophies are free:** boss trophies always extract and never count against the loot share. They don't add to the value the share is cut from, and they don't use any of it.
 - **Basalts in loot:** every player receives the amount rolled, banked like boss Basalts: forfeit on death, never cut by the loot share.
 - **Bonuses:** Pressures multiply credits and Basalts, Extra Loot multiplies its owner's Basalts, and every full 50% of bonus also adds 1 roll to each boss cache. Collector's Eye and Deep Pockets still raise the share kept.
 - **Entry tier:** the ×2 and ×4 multipliers apply to credits and Basalts. For items, entry tier raises rarity instead (see the next table).
@@ -764,7 +765,7 @@ Roll on the table for the item's rarity. For variety, the DM can swap in any 202
 
 ### Boss trophies
 
-Every boss has one trophy, found in its cache on a d6 roll of 5 or 6. Trophies keep the rarity below at every entry tier and scale with PB instead, so they stay collectible without outpacing tier 3 loot.
+Every boss has one trophy, found in its cache on a d6 roll of 6. Trophies are free to extract: they never count against the loot share. Trophies keep the rarity below at every entry tier and scale with PB instead, so they stay collectible without outpacing tier 3 loot.
 
 | Floor | Boss | Trophy | Rarity | Effect |
 | --- | --- | --- | --- | --- |

@@ -15,7 +15,7 @@
     "elite": 2,
     "cacheRolls": 2,
     "cacheBonusRarityStep": 1,
-    "trophyOn": [5, 6],
+    "trophyOn": [6],
     "extraCacheRollPerBonusPercent": 50,
     "lastLootFloor": 4
   },

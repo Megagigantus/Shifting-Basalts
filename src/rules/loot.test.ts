@@ -164,7 +164,7 @@ describe('room loot and boss caches', () => {
         expect(trophy).toMatchObject({ ref: 'wardens-cracked-lens', rarity: 'uncommon' })
       }
     }
-    expect(trophies / 300).toBeCloseTo(1 / 3, 1)
+    expect(trophies / 300).toBeCloseTo(1 / 6, 1)
   })
 
   it('floor 5\'s cache uses floor 4\'s tables, its bonus item one rarity above', () => {
@@ -245,6 +245,21 @@ describe('extraction', () => {
       { uid: 'B', characterId: 'b' },
     ])
     expect(share).toMatchObject({ keptPercent: 25, keptValue: 500, itemsValue: 410, creditsPayout: 90 })
+  })
+
+  it('boss trophies are free: they never raise or use up the kept value, and must go home', () => {
+    const items = [
+      item({ uid: 'A', kind: 'gear', ref: 'columnbreaker', rarity: 'uncommon' }), // 400
+      item({ uid: 'T', kind: 'trophy', ref: 'wardens-cracked-lens', rarity: 'uncommon' }), // free
+    ]
+    const state = withPool(run(), items, 1600) // shareable 2,000; 25% kept = 500
+    expect(keptValue(state)).toBe(500)
+    const share = planShare(state, [
+      { uid: 'A', characterId: 'a' },
+      { uid: 'T', characterId: 'b' },
+    ])
+    expect(share).toMatchObject({ itemsValue: 400, creditsPayout: 100 })
+    expect(() => planShare(state, [{ uid: 'A', characterId: 'a' }])).toThrow('always goes home')
   })
 
   it('refuses picks over the kept value, repeats and strangers, but allows fallen characters', () => {
