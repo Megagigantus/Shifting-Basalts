@@ -1,14 +1,18 @@
 // Past runs (design bible: App requirements > Characters, "run history").
 // The DM sees every run; players see the runs their characters were in.
 import { useState } from 'react'
+import { ChevronDown, ChevronRight, ClockArrowLeft } from 'lucide-react'
 import { itemName } from '../rules/loot'
 import { PRESSURES } from '../rules/run'
 import { useRunHistory, type RunHistoryEntry } from '../runStore'
+import { Panel } from '../ui/Panel'
+import { Pill } from '../ui/Pill'
+import { cx, type Tone } from '../ui/tone'
 
-function outcome(e: RunHistoryEntry): string {
-  if (e.status === 'wiped') return `Wiped on floor ${e.floorReached}`
-  if (e.lastBossFloor >= 5) return 'Full clear'
-  return `Extracted after the floor ${e.lastBossFloor} boss (kept ${e.lootKeptPercent ?? 0}%)`
+function outcome(e: RunHistoryEntry): { text: string; tone: Tone } {
+  if (e.status === 'wiped') return { text: `Wiped on floor ${e.floorReached}`, tone: 'rose' }
+  if (e.lastBossFloor >= 5) return { text: 'Full clear', tone: 'amber' }
+  return { text: `Extracted after the floor ${e.lastBossFloor} boss (kept ${e.lootKeptPercent ?? 0}%)`, tone: 'emerald' }
 }
 
 const when = (d: Date | null) =>
@@ -23,65 +27,77 @@ interface Props {
 export function RunHistory({ characterIds, title = 'Run history' }: Props) {
   const { entries, error } = useRunHistory()
   const [open, setOpen] = useState<string | null>(null)
-  const shown = (entries ?? []).filter(
-    (e) => !characterIds || e.results.some((r) => characterIds.includes(r.characterId)),
-  )
+  const shown = (entries ?? []).filter((e) => !characterIds || e.results.some((r) => characterIds.includes(r.characterId)))
   return (
-    <section className="panel">
-      <h2>{title}</h2>
-      {entries === null && !error && <p>Loading…</p>}
-      {error && <p className="error">{error}</p>}
-      {entries && shown.length === 0 && <p className="hint">No finished runs yet.</p>}
-      <ul className="plain-list history-list">
-        {shown.map((e) => (
-          <li key={e.id} className="history-entry">
-            <button type="button" className="link" onClick={() => setOpen(open === e.id ? null : e.id)}>
-              {when(e.endedAt)}: {outcome(e)}
-            </button>{' '}
-            <span className="hint">
-              {e.results.map((r) => r.name).join(', ')} · party level {e.partyLevel}
-            </span>
-            {open === e.id && <HistoryDetails entry={e} />}
-          </li>
-        ))}
+    <Panel className="mt-6" icon={<ClockArrowLeft size={15} />} title={title}>
+      {entries === null && !error && <p className="m-0 text-sm text-stone-400">Loading…</p>}
+      {error && <p className="m-0 text-sm text-rose-300">{error}</p>}
+      {entries && shown.length === 0 && <p className="m-0 text-xs text-stone-500">No finished runs yet.</p>}
+      <ul className="m-0 flex list-none flex-col gap-1.5 p-0">
+        {shown.map((e) => {
+          const o = outcome(e)
+          const isOpen = open === e.id
+          return (
+            <li key={e.id} className="rounded-lg border border-stone-800 bg-stone-950/60">
+              <button
+                type="button"
+                aria-expanded={isOpen}
+                onClick={() => setOpen(isOpen ? null : e.id)}
+                className="flex w-full cursor-pointer flex-wrap items-center gap-2 border-0 bg-transparent p-2.5 text-left"
+              >
+                {isOpen ? <ChevronDown size={14} className="text-stone-400" /> : <ChevronRight size={14} className="text-stone-400" />}
+                <span className="font-mono text-[0.6875rem] text-stone-400">{when(e.endedAt)}</span>
+                <Pill tone={o.tone}>{o.text}</Pill>
+                <span className="min-w-0 flex-1 truncate text-xs text-stone-300">
+                  {e.results.map((r) => r.name).join(', ')} · party level {e.partyLevel}
+                </span>
+              </button>
+              {isOpen && <HistoryDetails entry={e} />}
+            </li>
+          )
+        })}
       </ul>
-    </section>
+    </Panel>
   )
 }
 
 function HistoryDetails({ entry: e }: { entry: RunHistoryEntry }) {
   return (
-    <div className="history-details">
-      <p className="hint">
-        {e.pressures.length
-          ? `Pressures: ${e.pressures.map((id) => PRESSURES.find((p) => p.id === id)?.name ?? id).join(', ')}`
-          : 'No Pressures'}{' '}
-        · {e.rooms.length} rooms cleared, deepest floor {e.floorReached}
-      </p>
-      <table className="party-table">
-        <thead>
-          <tr>
-            <th>Player</th>
-            <th>Quantum Basalts</th>
-            <th>Devotions</th>
-            <th>Loot</th>
-            <th>Outcome</th>
-          </tr>
-        </thead>
-        <tbody>
-          {e.results.map((r) => (
-            <tr key={r.characterId}>
-              <td>{r.name}</td>
-              <td>+{r.quantumBasaltsGained}</td>
-              <td>+{r.devotions}</td>
-              <td>{(r.loot ?? []).map((i) => itemName(i)).join(', ') || 'none'}</td>
-              <td>{r.survived ? 'Made it out' : `Fell on floor ${r.deepestFloor}, locked out ${r.lockoutDays} days`}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="flex flex-col gap-2 border-t border-stone-800 p-2.5">
+      <div className="flex flex-wrap gap-1.5">
+        {e.pressures.length ? (
+          e.pressures.map((id) => (
+            <Pill key={id} tone="rose">
+              {PRESSURES.find((p) => p.id === id)?.name ?? id}
+            </Pill>
+          ))
+        ) : (
+          <Pill>No Pressures</Pill>
+        )}
+        <Pill>{e.rooms.length} rooms cleared</Pill>
+        <Pill>Deepest floor {e.floorReached}</Pill>
+      </div>
+      <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+        {e.results.map((r) => (
+          <div key={r.characterId} className={cx('flex flex-col gap-1 rounded-lg border p-2', r.survived ? 'border-stone-800' : 'border-rose-500/30')}>
+            <div className="flex flex-wrap items-center gap-1.5">
+              <strong className="mr-auto text-xs text-stone-100">{r.name}</strong>
+              <Pill tone="purple" mono>
+                +{r.quantumBasaltsGained} QB
+              </Pill>
+              <Pill tone="indigo" mono>
+                +{r.devotions} Dev
+              </Pill>
+            </div>
+            <span className={cx('text-[0.6875rem]', r.survived ? 'text-emerald-300' : 'text-rose-300')}>
+              {r.survived ? 'Made it out' : `Fell on floor ${r.deepestFloor}, locked out ${r.lockoutDays} days`}
+            </span>
+            <span className="text-[0.6875rem] text-stone-400">Loot: {(r.loot ?? []).map((i) => itemName(i)).join(', ') || 'none'}</span>
+          </div>
+        ))}
+      </div>
       {e.lootShare && (
-        <p className="hint">
+        <p className="m-0 text-[0.6875rem] text-stone-500">
           Kept {e.lootShare.keptPercent}%: {e.lootShare.keptValue.toLocaleString()} credits of value, of which{' '}
           {e.lootShare.creditsPayout.toLocaleString()} was paid out in credits.
         </p>
