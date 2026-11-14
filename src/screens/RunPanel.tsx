@@ -23,17 +23,11 @@ export function RunPanel() {
       {error && <p className="text-sm text-rose-300">{error}</p>}
 
       {state && characters && (
-        // The tracker keeps its old styles until step 3b.
-        <section className="panel">
-          <div className="panel-header">
-            <h2>Run</h2>
-          </div>
-          <RunTracker
-            state={state}
-            characters={characters}
-            onEnded={(results, endedState) => setEnded({ results, state: endedState })}
-          />
-        </section>
+        <RunTracker
+          state={state}
+          characters={characters}
+          onEnded={(results, endedState) => setEnded({ results, state: endedState })}
+        />
       )}
 
       {!state && ended && <RunSummary {...ended} onDone={() => setEnded(null)} />}
