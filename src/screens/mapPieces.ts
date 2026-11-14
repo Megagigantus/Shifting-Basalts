@@ -5,12 +5,25 @@ import { useMemo } from 'react'
 import { useCharacters } from '../useCharacters'
 import { creatureOf } from '../rules/encounters'
 import { terrainOf, trickOf } from '../rules/rooms'
-import { startSquares, type MapPiece } from '../rules/battleMap'
+import { inPhase, startSquares, type MapPiece } from '../rules/battleMap'
 import type { TokenSpot } from '../runStore'
 import { artUrl, type ArtKind } from '../art'
 import type { BoardPiece } from './BattleBoard'
 
-const ART: Record<MapPiece['kind'], ArtKind> = { exit: 'exits', terrain: 'terrain', trick: 'tricks', enemy: 'creatures' }
+const ART: Record<'exit' | 'terrain' | 'trick' | 'enemy', ArtKind> = { exit: 'exits', terrain: 'terrain', trick: 'tricks', enemy: 'creatures' }
+
+/**
+ * Art for a boss token ("<folder>:<file>"). In phase 2 a boss portrait
+ * becomes its phase 2 portrait when one exists.
+ */
+function bossTokenArt(id: string, phase: number): string | null {
+  const [folder, file] = id.split(':') as [ArtKind, string]
+  if (phase === 2 && folder === 'bosses') {
+    const second = artUrl('bosses', `${file}-phase-2`)
+    if (second) return second
+  }
+  return artUrl(folder, file)
+}
 
 const initials = (name: string) =>
   name
@@ -30,14 +43,18 @@ export function roomPieces(
     trueExit: number | null
     groupCounts: number[]
     movable: boolean
+    /** The boss arena phase on show (1, or 2 from Bloodied). Pieces of the other phase are left out. */
+    phase?: number
     hidden?: (p: MapPiece) => boolean
     /** A label to use instead of the name, or undefined to keep the name. */
     label?: (p: MapPiece) => string | undefined
+    /** The DM can remove objects. */
+    removable?: boolean
   },
 ): BoardPiece[] {
-  return pieces.map((p) => {
+  const phase = opts.phase ?? 1
+  return pieces.filter((p) => inPhase(p, phase)).map((p) => {
     const isTrue = p.kind === 'exit' && Number(p.id) === opts.trueExit
-    const artId = p.kind === 'exit' ? (isTrue ? 'true-exit' : 'exit') : p.id
     const name =
       p.kind === 'exit'
         ? `Doorway ${p.id}${isTrue ? ' (true exit)' : ''}`
@@ -45,23 +62,35 @@ export function roomPieces(
           ? terrainOf(p.id).name
           : p.kind === 'trick'
             ? `${trickOf(p.id).name} (trick)`
-            : creatureOf(p.id).name
+            : p.kind === 'enemy'
+              ? creatureOf(p.id).name
+              : (p.name ?? p.id)
+    const art =
+      p.kind === 'boss'
+        ? bossTokenArt(p.id, phase)
+        : p.kind === 'object'
+          ? artUrl('objects', p.id)
+          : artUrl(ART[p.kind], p.kind === 'exit' ? (isTrue ? 'true-exit' : 'exit') : p.id)
     const [, group, index] = p.key.split(':')
     const count = p.kind === 'enemy' ? (opts.groupCounts[Number(group)] ?? 1) : 1
-    return {
+    const piece: BoardPiece = {
       key: p.key,
       kind: p.kind,
       x: p.x,
       y: p.y,
       size: p.size,
-      art: artUrl(ART[p.kind], artId),
+      art,
       label: opts.label?.(p) ?? (p.kind === 'enemy' && count > 1 ? `${name} ${Number(index) + 1}` : name),
       fallback: name.slice(0, 2),
       badge: p.kind === 'exit' ? p.id : p.kind === 'enemy' && count > 1 ? String(Number(index) + 1) : undefined,
       hidden: opts.hidden?.(p) ?? false,
       state: (p as MapPiece & { state?: 'bloodied' | 'down' | null }).state ?? null,
       movable: opts.movable,
+      removable: Boolean(opts.removable && p.kind === 'object'),
     }
+    if (p.w !== undefined) piece.w = p.w
+    if (p.h !== undefined) piece.h = p.h
+    return piece
   })
 }
 

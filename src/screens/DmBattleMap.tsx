@@ -1,10 +1,14 @@
-// DM screen: the room's battle map. Everything is shown, hidden things
-// dashed and faded, and the DM can move any piece, players' tokens included.
+// DM screen: the room's battle map, for combat, elite and boss rooms.
+// Everything is shown, hidden things dashed and faded, and the DM can move
+// any piece (players' tokens included), drop objects from the palette,
+// remove objects, and swap Kaelen and Vyr's form. Boss arenas switch to their
+// phase 2 art and pieces when the boss is Bloodied.
+import { useState } from 'react'
 import type { RunState } from '../model/run'
 import type { Room } from '../rules/rooms'
-import { hpTrackers } from '../rules/hp'
-import type { MapPiece } from '../rules/battleMap'
-import { layOutMap, moveMapPiece } from '../rules/roomFlow'
+import { bossBloodied, hpTrackers } from '../rules/hp'
+import { arenaOf, currentForm, inPhase, mapPhase, PALETTE, type MapPiece } from '../rules/battleMap'
+import { dropMapObject, layOutMap, moveMapPiece, removeMapObject, swapBossForm } from '../rules/roomFlow'
 import { moveToken, roomKeyOf, useTokens } from '../runStore'
 import { artUrl } from '../art'
 import { BattleBoard } from './BattleBoard'
@@ -23,9 +27,10 @@ interface Props {
 export function DmBattleMap({ state, room, busy, act }: Props) {
   const tokens = useTokens(state.run.id)
   const looks = useLooks()
+  const [toDrop, setToDrop] = useState(PALETTE[0]?.art ?? '')
   const map = room.map ?? null
 
-  if (room.kind !== 'combat' && room.kind !== 'elite') return null
+  if (room.kind !== 'combat' && room.kind !== 'elite' && room.kind !== 'boss') return null
   if (!map) {
     return (
       <div className="battle-map-panel">
@@ -37,8 +42,14 @@ export function DmBattleMap({ state, room, busy, act }: Props) {
     )
   }
 
-  const trackers = new Map(hpTrackers(room, { partyLevel: state.run.partyLevel, pressures: state.run.pressures }).map((t) => [t.key, t]))
+  const ctx = { partyLevel: state.run.partyLevel, pressures: state.run.pressures }
+  const trackers = new Map(hpTrackers(room, ctx).map((t) => [t.key, t]))
+  const bloodied = bossBloodied(room, ctx)
+  const phase = mapPhase(map, bloodied)
   const roomKey = roomKeyOf(room)
+  const arena = map.arena ? arenaOf(map.arena) : undefined
+  const form = currentForm(map)
+  const mapArt = map.arena ? (phase === 2 ? artUrl('arenas', `${map.arena}-phase-2`) : null) ?? artUrl('arenas', map.arena) : artUrl('maps', room.shape)
 
   function isHidden(p: MapPiece): boolean {
     if (p.kind === 'terrain') return p.id === 'false-wall' && !room.revealed.falseWall
@@ -47,19 +58,38 @@ export function DmBattleMap({ state, room, busy, act }: Props) {
     return false
   }
 
+  /** HP label and Bloodied/Down for enemies and boss tokens. */
+  function trackerOf(p: MapPiece) {
+    return p.kind === 'enemy' ? trackers.get(p.key) : p.kind === 'boss' && p.hp ? trackers.get(p.hp) : undefined
+  }
+
   const pieces = [
     ...roomPieces(map.pieces, {
       trueExit: room.trueExit,
       groupCounts: room.encounter?.groups.map((g) => g.count) ?? [],
       movable: true,
+      removable: true,
+      phase,
       hidden: isHidden,
       label: (p) => {
-        const t = trackers.get(p.key)
-        return t ? `${t.label}: ${t.current}/${t.max} HP` : undefined
+        const t = trackerOf(p)
+        if (!t) return undefined
+        const who = p.kind === 'boss' ? (p.name ?? t.label) : t.label
+        return `${who}: ${t.current}/${t.max} HP`
       },
     }).map((bp) => {
-      const t = trackers.get(bp.key)
-      return { ...bp, state: t?.down ? ('down' as const) : t?.bloodied ? ('bloodied' as const) : null }
+      const src = map.pieces.find((q) => q.key === bp.key)!
+      const t = trackerOf(src)
+      const state = t?.down
+        ? ('down' as const)
+        : src.kind === 'boss' && src.hp === 'boss'
+          ? bloodied
+            ? ('bloodied' as const)
+            : null
+          : t?.bloodied
+            ? ('bloodied' as const)
+            : null
+      return { ...bp, state }
     }),
     ...playerPieces(state.players, looks, map, tokens, roomKey, () => true, () => false),
   ]
@@ -76,29 +106,64 @@ export function DmBattleMap({ state, room, busy, act }: Props) {
   return (
     <div className="battle-map-panel">
       <div className="panel-header">
-        <h4>Battle map</h4>
-        <button
-          type="button"
-          className="quiet"
-          disabled={busy}
-          onClick={() => act((s) => layOutMap(s, Math.random), 'Place every doorway, feature, trick and enemy again?')}
-        >
-          Lay out again
-        </button>
+        <h4>
+          {map.arena ? 'Boss arena' : 'Battle map'}
+          {map.arena && phase === 2 && <span className="tag">phase 2</span>}
+        </h4>
+        <span className="row-actions">
+          {form && (
+            <button type="button" className="quiet" disabled={busy} onClick={() => act((s) => swapBossForm(s))}>
+              Swap form (now {form === 'vyr' ? 'Vyr' : 'Kaelen'})
+            </button>
+          )}
+          <button
+            type="button"
+            className="quiet"
+            disabled={busy}
+            onClick={() =>
+              act(
+                (s) => layOutMap(s, Math.random),
+                map.arena ? 'Put the arena back the way it starts?' : 'Place every doorway, feature, trick and enemy again?',
+              )
+            }
+          >
+            {map.arena ? 'Reset arena' : 'Lay out again'}
+          </button>
+        </span>
       </div>
       <BattleBoard
         squares={map.squares}
         entrance={map.entrance}
-        mapArt={artUrl('maps', room.shape)}
+        door={map.door}
+        areas={(map.areas ?? []).filter((a) => inPhase(a, phase))}
+        mapArt={mapArt}
         pieces={pieces}
         busy={busy}
         onMove={onMove}
+        onRemove={(key) => act((s) => removeMapObject(s, key))}
       />
+      <div className="map-palette">
+        <label>
+          Drop an object{' '}
+          <select value={toDrop} onChange={(e) => setToDrop(e.target.value)} disabled={busy}>
+            {PALETTE.map((p) => (
+              <option key={p.art} value={p.art}>
+                {p.name}
+                {p.w > 1 || p.h > 1 ? ` (${p.w} × ${p.h})` : ''}
+              </option>
+            ))}
+          </select>
+        </label>
+        <button type="button" className="quiet" disabled={busy || !toDrop} onClick={() => act((s) => dropMapObject(s, toDrop))}>
+          Drop in the middle
+        </button>
+      </div>
       <p className="hint">
-        Drag any piece, or select it and use the arrow keys. Dashed and faded pieces are hidden from players. Gold rings are the players;
-        each player can move only their own. The shaded squares are the entrance ({map.entrance}). {map.squares} × {map.squares} squares (
-        {map.squares * 5} ft).
+        Drag any piece, or select it and use the arrow keys. Select an object and press × (or Delete) to remove it. Dashed and faded pieces
+        are hidden from players. Gold rings are the players; each player can move only their own. The shaded squares are the entrance.{' '}
+        {map.squares} × {map.squares} squares ({map.squares * 5} ft).
       </p>
+      {arena?.notes && <p className="hint">Arena: {arena.notes}</p>}
     </div>
   )
 }

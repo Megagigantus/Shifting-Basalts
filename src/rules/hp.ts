@@ -89,11 +89,16 @@ export function bossBloodied(room: Room, ctx: FightContext): boolean {
 export function hpShown(room: Room, ctx: FightContext): HpShown {
   const enemyBloodied: Record<string, number> = {}
   const tokens: Record<string, 'bloodied' | 'down'> = {}
+  const boss = bossBloodied(room, ctx)
   for (const t of hpTrackers(room, ctx)) {
     if (t.group !== undefined && t.bloodied) enemyBloodied[t.group] = (enemyBloodied[t.group] ?? 0) + 1
     if (t.group !== undefined && (t.down || t.bloodied)) tokens[t.key] = t.down ? 'down' : 'bloodied'
+    // Boss parts follow their own pool; a whole-boss token follows the boss's
+    // Bloodied state (including the DM's override).
+    if (t.part !== undefined && (t.down || t.bloodied)) tokens[t.key] = t.down ? 'down' : 'bloodied'
+    if (t.key === 'boss' && (t.down || boss)) tokens.boss = t.down ? 'down' : 'bloodied'
   }
-  return { enemyBloodied, boss: bossBloodied(room, ctx), tokens }
+  return { enemyBloodied, boss, tokens }
 }
 
 /** Apply damage (positive) or healing (negative) to one tracker, kept between 0 and its max. */

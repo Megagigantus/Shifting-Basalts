@@ -20,6 +20,7 @@ import { creatureOf } from '../rules/encounters'
 import { bossOf, floorBossDc } from '../rules/bosses'
 import { RoomCard } from './RoomCard'
 import { PlayerBattleMap } from './PlayerBattleMap'
+import { PhaseReveal } from './PhaseReveal'
 import { Art } from './Art'
 import { artUrl, phase2ArtId } from '../art'
 
@@ -73,6 +74,7 @@ export function PlayerRoom({ state, me, readOnly = false, myCharacterIds }: Prop
         tricks={view.tricks}
       />
       <PlayerBattleMap state={state} myIds={myCharacterIds ?? (me ? [me.characterId] : [])} readOnly={readOnly} />
+      {view.bossId && !readOnly && <PhaseReveal runId={run.id} bossId={view.bossId} bloodied={Boolean(view.bossBloodied)} />}
       {view.bossId && (
         <>
           {view.bossBloodied && artUrl('bosses', phase2ArtId(view.bossId)) ? (

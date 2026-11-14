@@ -5,6 +5,7 @@
 import type { RunState } from '../model/run'
 import { moveToken, roomKeyOf, useTokens } from '../runStore'
 import { artUrl } from '../art'
+import { inPhase, mapPhase } from '../rules/battleMap'
 import { BattleBoard } from './BattleBoard'
 import { playerPieces, roomPieces, spotAfterMove, tokenOwner, useLooks } from './mapPieces'
 
@@ -32,8 +33,13 @@ export function PlayerBattleMap({ state, myIds, readOnly }: Props) {
     counts[group] = (counts[group] ?? 0) + 1
   }
 
+  const phase = mapPhase(map, Boolean(view.bossBloodied))
+  const mapArt = map.arena
+    ? ((phase === 2 ? artUrl('arenas', `${map.arena}-phase-2`) : null) ?? artUrl('arenas', map.arena))
+    : artUrl('maps', view.shape)
+
   const pieces = [
-    ...roomPieces(map.pieces, { trueExit: view.trueExit, groupCounts: counts, movable: false }),
+    ...roomPieces(map.pieces, { trueExit: view.trueExit, groupCounts: counts, movable: false, phase }),
     ...playerPieces(state.players, looks, map, tokens, roomKey, (id) => !readOnly && mine(id), mine),
   ]
 
@@ -42,7 +48,9 @@ export function PlayerBattleMap({ state, myIds, readOnly }: Props) {
       <BattleBoard
         squares={map.squares}
         entrance={map.entrance}
-        mapArt={artUrl('maps', view.shape)}
+        door={map.door}
+        areas={(map.areas ?? []).filter((a) => inPhase(a, phase))}
+        mapArt={mapArt}
         pieces={pieces}
         busy={false}
         onMove={(key, x, y) => {
