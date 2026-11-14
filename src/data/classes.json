@@ -1,14 +1,127 @@
 [
-  { "id": "barbarian", "name": "Barbarian" },
-  { "id": "bard", "name": "Bard" },
-  { "id": "cleric", "name": "Cleric" },
-  { "id": "druid", "name": "Druid" },
-  { "id": "fighter", "name": "Fighter" },
-  { "id": "monk", "name": "Monk" },
-  { "id": "paladin", "name": "Paladin" },
-  { "id": "ranger", "name": "Ranger" },
-  { "id": "rogue", "name": "Rogue" },
-  { "id": "sorcerer", "name": "Sorcerer" },
-  { "id": "warlock", "name": "Warlock" },
-  { "id": "wizard", "name": "Wizard" }
+  {
+    "id": "barbarian",
+    "name": "Barbarian",
+    "weapons": ["simple", "martial"],
+    "armor": ["light", "medium", "shields"],
+    "multiclass": { "weapons": ["martial"], "armor": ["shields"] },
+    "subclasses": ["Berserker", "Wild Heart", "World Tree", "Zealot"],
+    "mastery": [[1, 2], [4, 3], [10, 4]]
+  },
+  {
+    "id": "bard",
+    "name": "Bard",
+    "weapons": ["simple"],
+    "armor": ["light"],
+    "multiclass": { "weapons": [], "armor": ["light"] },
+    "subclasses": ["Dance", "Glamour", "Lore", "Valor"],
+    "subclassGrants": { "Valor": { "weapons": ["martial"], "armor": ["medium", "shields"] } }
+  },
+  {
+    "id": "cleric",
+    "name": "Cleric",
+    "weapons": ["simple"],
+    "armor": ["light", "medium", "shields"],
+    "multiclass": { "weapons": [], "armor": ["light", "medium", "shields"] },
+    "subclasses": ["Life", "Light", "Trickery", "War"],
+    "order": {
+      "name": "Divine Order",
+      "options": [
+        { "id": "protector", "name": "Protector", "weapons": ["martial"], "armor": ["heavy"] },
+        { "id": "thaumaturge", "name": "Thaumaturge", "weapons": [], "armor": [] }
+      ]
+    }
+  },
+  {
+    "id": "druid",
+    "name": "Druid",
+    "weapons": ["simple"],
+    "armor": ["light", "shields"],
+    "multiclass": { "weapons": [], "armor": ["light", "shields"] },
+    "subclasses": ["Land", "Moon", "Sea", "Stars"],
+    "order": {
+      "name": "Primal Order",
+      "options": [
+        { "id": "warden", "name": "Warden", "weapons": ["martial"], "armor": ["medium"] },
+        { "id": "magician", "name": "Magician", "weapons": [], "armor": [] }
+      ]
+    }
+  },
+  {
+    "id": "fighter",
+    "name": "Fighter",
+    "weapons": ["simple", "martial"],
+    "armor": ["light", "medium", "heavy", "shields"],
+    "multiclass": { "weapons": ["martial"], "armor": ["light", "medium", "shields"] },
+    "subclasses": ["Battle Master", "Champion", "Eldritch Knight", "Psi Warrior"],
+    "mastery": [[1, 3], [4, 4], [10, 5], [16, 6]]
+  },
+  {
+    "id": "monk",
+    "name": "Monk",
+    "weapons": ["simple", "martial-light"],
+    "armor": [],
+    "multiclass": { "weapons": [], "armor": [] },
+    "subclasses": ["Mercy", "Shadow", "Elements", "Open Hand"]
+  },
+  {
+    "id": "paladin",
+    "name": "Paladin",
+    "weapons": ["simple", "martial"],
+    "armor": ["light", "medium", "heavy", "shields"],
+    "multiclass": { "weapons": ["martial"], "armor": ["light", "medium", "shields"] },
+    "subclasses": ["Devotion", "Glory", "Ancients", "Vengeance"],
+    "mastery": [[1, 2]]
+  },
+  {
+    "id": "ranger",
+    "name": "Ranger",
+    "weapons": ["simple", "martial"],
+    "armor": ["light", "medium", "shields"],
+    "multiclass": { "weapons": ["martial"], "armor": ["light", "medium", "shields"] },
+    "subclasses": ["Beast Master", "Fey Wanderer", "Gloom Stalker", "Hunter"],
+    "mastery": [[1, 2]]
+  },
+  {
+    "id": "rogue",
+    "name": "Rogue",
+    "weapons": ["simple", "martial-finesse-or-light"],
+    "armor": ["light"],
+    "multiclass": { "weapons": [], "armor": ["light"] },
+    "subclasses": ["Arcane Trickster", "Assassin", "Soulknife", "Thief"],
+    "mastery": [[1, 2]]
+  },
+  {
+    "id": "sorcerer",
+    "name": "Sorcerer",
+    "weapons": ["simple"],
+    "armor": [],
+    "multiclass": { "weapons": [], "armor": [] },
+    "subclasses": ["Aberrant", "Clockwork", "Draconic", "Wild Magic"]
+  },
+  {
+    "id": "warlock",
+    "name": "Warlock",
+    "weapons": ["simple"],
+    "armor": ["light"],
+    "multiclass": { "weapons": [], "armor": ["light"] },
+    "subclasses": ["Archfey", "Celestial", "Fiend", "Great Old One"]
+  },
+  {
+    "id": "wizard",
+    "name": "Wizard",
+    "weapons": ["simple"],
+    "armor": [],
+    "multiclass": { "weapons": [], "armor": [] },
+    "subclasses": ["Abjurer", "Diviner", "Evoker", "Illusionist"]
+  },
+  {
+    "id": "homebrew",
+    "name": "Homebrew",
+    "homebrew": true,
+    "weapons": [],
+    "armor": [],
+    "multiclass": { "weapons": [], "armor": [] },
+    "subclasses": []
+  }
 ]

@@ -1,7 +1,8 @@
 // How a run moves forward. Each function takes the current run state and
 // returns a new one (it never changes the old one), or throws if the action
 // isn't allowed right now. Screens call these, then save the result.
-import type { Character } from '../model/character'
+import { buildOf, type Character } from '../model/character'
+import { mainClassId, tagWeights } from './build'
 import type { RoomKind, RunPlayer, RunResult, RunState } from '../model/run'
 import {
   bossQuantumBasalts,
@@ -99,8 +100,11 @@ function requireActive(state: RunState) {
 
 /** The draft details a run keeps for a character, captured at run start. */
 export function draftProfileFor(c: Character): NonNullable<RunPlayer['draftProfile']> {
+  const build = { ...c, ...buildOf(c) }
   return {
-    classId: c.classId,
+    // The main class: its class trigger and hidden boon are the character's.
+    classId: mainClassId(build),
+    tagWeights: tagWeights(build),
     casterType: c.casterType,
     hasSummon: c.hasSummon,
     trackDevotions: { ...c.trackDevotions },

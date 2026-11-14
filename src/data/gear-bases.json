@@ -1,0 +1,46 @@
+{
+  "_source": "docs/design-bible.md: Base weapons, Base armor, Weapon mastery key (2024 Player's Handbook). Costs in gp; 1 gp = 1 credit.",
+  "weapons": [
+    { "id": "dagger", "name": "Dagger", "category": "simple", "range": "melee", "damage": "1d4", "damageType": "piercing", "properties": ["Finesse", "Light", "Thrown (20/60)"], "mastery": "Nick", "weight": "1 lb", "cost": 2 },
+    { "id": "dart", "name": "Dart", "category": "simple", "range": "ranged", "damage": "1d4", "damageType": "piercing", "properties": ["Finesse", "Thrown (20/60)"], "mastery": "Vex", "weight": "1/4 lb", "cost": 0.05 },
+    { "id": "handaxe", "name": "Handaxe", "category": "simple", "range": "melee", "damage": "1d6", "damageType": "slashing", "properties": ["Light", "Thrown (20/60)"], "mastery": "Vex", "weight": "2 lb", "cost": 5 },
+    { "id": "javelin", "name": "Javelin", "category": "simple", "range": "melee", "damage": "1d6", "damageType": "piercing", "properties": ["Thrown (30/120)"], "mastery": "Slow", "weight": "2 lb", "cost": 0.5 },
+    { "id": "light-hammer", "name": "Light hammer", "category": "simple", "range": "melee", "damage": "1d4", "damageType": "bludgeoning", "properties": ["Light", "Thrown (20/60)"], "mastery": "Nick", "weight": "2 lb", "cost": 2 },
+    { "id": "sling", "name": "Sling", "category": "simple", "range": "ranged", "damage": "1d4", "damageType": "bludgeoning", "properties": ["Ammunition (30/120, bullet)"], "mastery": "Slow", "weight": "None", "cost": 0.1 },
+    { "id": "spear", "name": "Spear", "category": "simple", "range": "melee", "damage": "1d6", "damageType": "piercing", "properties": ["Thrown (20/60)", "Versatile (1d8)"], "mastery": "Sap", "weight": "3 lb", "cost": 1 },
+    { "id": "glaive", "name": "Glaive", "category": "martial", "range": "melee", "damage": "1d10", "damageType": "slashing", "properties": ["Heavy", "Reach", "Two-Handed"], "mastery": "Graze", "weight": "6 lb", "cost": 20 },
+    { "id": "greatsword", "name": "Greatsword", "category": "martial", "range": "melee", "damage": "2d6", "damageType": "slashing", "properties": ["Heavy", "Two-Handed"], "mastery": "Graze", "weight": "6 lb", "cost": 50 },
+    { "id": "halberd", "name": "Halberd", "category": "martial", "range": "melee", "damage": "1d10", "damageType": "slashing", "properties": ["Heavy", "Reach", "Two-Handed"], "mastery": "Cleave", "weight": "6 lb", "cost": 20 },
+    { "id": "longsword", "name": "Longsword", "category": "martial", "range": "melee", "damage": "1d8", "damageType": "slashing", "properties": ["Versatile (1d10)"], "mastery": "Sap", "weight": "3 lb", "cost": 15 },
+    { "id": "maul", "name": "Maul", "category": "martial", "range": "melee", "damage": "2d6", "damageType": "bludgeoning", "properties": ["Heavy", "Two-Handed"], "mastery": "Topple", "weight": "10 lb", "cost": 10 },
+    { "id": "pike", "name": "Pike", "category": "martial", "range": "melee", "damage": "1d10", "damageType": "piercing", "properties": ["Heavy", "Reach", "Two-Handed"], "mastery": "Push", "weight": "18 lb", "cost": 5 },
+    { "id": "rapier", "name": "Rapier", "category": "martial", "range": "melee", "damage": "1d8", "damageType": "piercing", "properties": ["Finesse"], "mastery": "Vex", "weight": "2 lb", "cost": 25 },
+    { "id": "scimitar", "name": "Scimitar", "category": "martial", "range": "melee", "damage": "1d6", "damageType": "slashing", "properties": ["Finesse", "Light"], "mastery": "Nick", "weight": "3 lb", "cost": 25 },
+    { "id": "shortsword", "name": "Shortsword", "category": "martial", "range": "melee", "damage": "1d6", "damageType": "piercing", "properties": ["Finesse", "Light"], "mastery": "Vex", "weight": "2 lb", "cost": 10 },
+    { "id": "trident", "name": "Trident", "category": "martial", "range": "melee", "damage": "1d8", "damageType": "piercing", "properties": ["Thrown (20/60)", "Versatile (1d10)"], "mastery": "Topple", "weight": "4 lb", "cost": 5 },
+    { "id": "warhammer", "name": "Warhammer", "category": "martial", "range": "melee", "damage": "1d8", "damageType": "bludgeoning", "properties": ["Versatile (1d10)"], "mastery": "Push", "weight": "5 lb", "cost": 15 },
+    { "id": "whip", "name": "Whip", "category": "martial", "range": "melee", "damage": "1d4", "damageType": "slashing", "properties": ["Finesse", "Reach"], "mastery": "Slow", "weight": "3 lb", "cost": 2 }
+  ],
+  "armor": [
+    { "id": "padded", "name": "Padded", "type": "light", "ac": 11, "dex": "full", "strength": null, "stealthDisadvantage": true, "weight": "8 lb", "cost": 5 },
+    { "id": "leather", "name": "Leather", "type": "light", "ac": 11, "dex": "full", "strength": null, "stealthDisadvantage": false, "weight": "10 lb", "cost": 10 },
+    { "id": "studded-leather", "name": "Studded leather", "type": "light", "ac": 12, "dex": "full", "strength": null, "stealthDisadvantage": false, "weight": "13 lb", "cost": 45 },
+    { "id": "hide", "name": "Hide", "type": "medium", "ac": 12, "dex": "max 2", "strength": null, "stealthDisadvantage": false, "weight": "12 lb", "cost": 10 },
+    { "id": "breastplate", "name": "Breastplate", "type": "medium", "ac": 14, "dex": "max 2", "strength": null, "stealthDisadvantage": false, "weight": "20 lb", "cost": 400 },
+    { "id": "ring-mail", "name": "Ring mail", "type": "heavy", "ac": 14, "dex": "none", "strength": null, "stealthDisadvantage": true, "weight": "40 lb", "cost": 30 },
+    { "id": "chain-mail", "name": "Chain mail", "type": "heavy", "ac": 16, "dex": "none", "strength": 13, "stealthDisadvantage": true, "weight": "55 lb", "cost": 75 },
+    { "id": "splint", "name": "Splint", "type": "heavy", "ac": 17, "dex": "none", "strength": 15, "stealthDisadvantage": true, "weight": "60 lb", "cost": 200 },
+    { "id": "plate", "name": "Plate", "type": "heavy", "ac": 18, "dex": "none", "strength": 15, "stealthDisadvantage": true, "weight": "65 lb", "cost": 1500 },
+    { "id": "shield", "name": "Shield", "type": "shields", "ac": 2, "dex": "none", "strength": null, "stealthDisadvantage": false, "weight": "6 lb", "cost": 10 }
+  ],
+  "masteries": {
+    "Cleave": "Once per turn, after a melee hit, attack a second creature within 5 ft of the first; that hit adds no ability modifier to damage.",
+    "Graze": "On a miss, the target still takes damage equal to your attack's ability modifier.",
+    "Nick": "The Light weapon's extra attack becomes part of the Attack action instead of a Bonus Action, once per turn.",
+    "Push": "On a hit, push a Large or smaller creature up to 10 ft straight away from you.",
+    "Sap": "On a hit, the creature has disadvantage on its next attack roll before your next turn.",
+    "Slow": "On a hit that deals damage, the creature's speed drops by 10 ft until your next turn.",
+    "Topple": "On a hit, the creature makes a Constitution save (DC 8 + your ability modifier + PB) or falls Prone.",
+    "Vex": "On a hit that deals damage, you have advantage on your next attack against it before the end of your next turn."
+  }
+}
