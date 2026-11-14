@@ -1,7 +1,8 @@
 // DM screen: look up any table the generators use (design bible: App
 // requirements > DM view, "pull up any table"). Read-only views of the data
 // files, so a change to the data shows up here with no code changes.
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
+import { Table2 } from 'lucide-react'
 import enemyData from '../data/enemies.json'
 import trickData from '../data/room-tricks.json'
 import conditionData from '../data/room-conditions.json'
@@ -10,6 +11,10 @@ import lootItems from '../data/loot-items.json'
 import relicData from '../data/relics.json'
 import { BOSSES } from '../rules/bosses'
 import { crLabel } from '../rules/encounters'
+import { Panel, SectionLabel } from '../ui/Panel'
+import { Pill } from '../ui/Pill'
+import { SMALL_BUTTON, WELL } from '../ui/styles'
+import { cx } from '../ui/tone'
 
 const TABLES = {
   roster: 'Enemy roster',
@@ -26,144 +31,154 @@ type TableId = keyof typeof TABLES
 export function TableViewer() {
   const [table, setTable] = useState<TableId | ''>('')
   return (
-    <section className="panel">
-      <div className="panel-header">
-        <h2>Tables</h2>
-        <select value={table} onChange={(e) => setTable(e.target.value as TableId | '')} aria-label="Pick a table">
-          <option value="">Pick a table…</option>
-          {Object.entries(TABLES).map(([id, name]) => (
-            <option key={id} value={id}>
-              {name}
-            </option>
-          ))}
-        </select>
+    <Panel
+      hero
+      className="mt-6"
+      icon={<Table2 size={16} />}
+      title="Tables"
+      subtitle="Look up any table the generators use. Only you see this."
+    >
+      <div className="flex flex-wrap gap-1.5" role="group" aria-label="Pick a table">
+        {(Object.entries(TABLES) as [TableId, string][]).map(([id, name]) => (
+          <button
+            key={id}
+            type="button"
+            aria-pressed={table === id}
+            onClick={() => setTable(table === id ? '' : id)}
+            className={cx(
+              SMALL_BUTTON,
+              table === id ? 'border-amber-500/40 bg-amber-500/20 text-amber-200' : 'border-stone-700 bg-stone-900 text-stone-200 hover:bg-stone-800',
+            )}
+          >
+            {name}
+          </button>
+        ))}
       </div>
-      {table === '' && <p className="hint">Look up any table the generators use. Only you see this.</p>}
-      <div className="table-view">
-        {table === 'roster' && <Roster />}
-        {table === 'bosses' && <Bosses />}
-        {table === 'tricks' && <Tricks />}
-        {table === 'conditions' && <Conditions />}
-        {table === 'floorRoll' && <FloorRoll />}
-        {table === 'items' && <Items />}
-        {table === 'trophies' && <Trophies />}
-        {table === 'relics' && <Relics />}
-      </div>
-    </section>
+      {table === '' && <p className="m-0 text-xs text-stone-500">Pick a table above.</p>}
+      {table === 'roster' && <Roster />}
+      {table === 'bosses' && <Bosses />}
+      {table === 'tricks' && <Tricks />}
+      {table === 'conditions' && <Conditions />}
+      {table === 'floorRoll' && <FloorRoll />}
+      {table === 'items' && <Items />}
+      {table === 'trophies' && <Trophies />}
+      {table === 'relics' && <Relics />}
+    </Panel>
   )
 }
 
+/** A styled table: header row, then rows; scrolls sideways on narrow screens. */
+function DataTable({ head, children }: { head: string[]; children: ReactNode }) {
+  return (
+    <div className="overflow-x-auto rounded-lg border border-stone-800">
+      <table className="w-full min-w-[36rem] border-collapse text-left text-xs text-stone-200">
+        <thead className="bg-stone-950/80">
+          <tr>
+            {head.map((h) => (
+              <th key={h} className="whitespace-nowrap border-b border-stone-800 px-2.5 py-2 text-[0.625rem] font-bold uppercase tracking-wider text-stone-400">
+                {h}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody className="[&>tr:nth-child(even)]:bg-stone-950/40 [&>tr>td]:border-t [&>tr>td]:border-stone-800/70 [&>tr>td]:px-2.5 [&>tr>td]:py-1.5 [&>tr>td]:align-top">
+          {children}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+/** A numbered list (d-roll tables like trinkets and wondrous items). */
+function RollList({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <SectionLabel>{title}</SectionLabel>
+      <ol className="m-0 flex flex-col gap-1 pl-6 text-xs text-stone-300 marker:font-mono marker:text-stone-500">{children}</ol>
+    </div>
+  )
+}
+
+const Name = ({ children }: { children: ReactNode }) => <strong className="text-stone-50">{children}</strong>
+
 function Roster() {
   return (
-    <>
+    <div className="flex flex-col gap-4">
       {enemyData.families.map((f) => (
-        <div key={f.id}>
-          <h3>
-            {f.name} <span className="hint">floors {Object.keys(f.floorWeights).join(', ')}</span>
-          </h3>
-          <p className="hint">{f.twist}</p>
-          <table className="party-table">
-            <thead>
-              <tr>
-                <th>Creature</th>
-                <th>Role</th>
-                <th>CR</th>
-                <th>Reskin of</th>
-              </tr>
-            </thead>
-            <tbody>
-              {enemyData.creatures
-                .filter((c) => c.family === f.id)
-                .map((c) => (
-                  <tr key={c.id}>
-                    <td>{c.name}</td>
-                    <td>{c.role}</td>
-                    <td>{crLabel(c.cr)}</td>
-                    <td>{c.reskin}</td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
+        <div key={f.id} className="flex flex-col gap-1.5">
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="m-0 text-sm font-bold text-stone-100">{f.name}</h3>
+            <Pill mono>Floors {Object.keys(f.floorWeights).join(', ')}</Pill>
+          </div>
+          <p className="m-0 text-xs text-stone-400">{f.twist}</p>
+          <DataTable head={['Creature', 'Role', 'CR', 'Reskin of']}>
+            {enemyData.creatures
+              .filter((c) => c.family === f.id)
+              .map((c) => (
+                <tr key={c.id}>
+                  <td>
+                    <Name>{c.name}</Name>
+                  </td>
+                  <td>{c.role}</td>
+                  <td className="font-mono">{crLabel(c.cr)}</td>
+                  <td>{c.reskin}</td>
+                </tr>
+              ))}
+          </DataTable>
         </div>
       ))}
-    </>
+    </div>
   )
 }
 
 function Bosses() {
   return (
-    <table className="party-table">
-      <thead>
-        <tr>
-          <th>Floor</th>
-          <th>Boss</th>
-          <th>Role</th>
-          <th>Shift Action</th>
+    <DataTable head={['Floor', 'Boss', 'Role', 'Shift Action']}>
+      {BOSSES.map((b) => (
+        <tr key={b.id}>
+          <td className="font-mono">{b.floor}</td>
+          <td>
+            <Name>{b.name}</Name>
+          </td>
+          <td>{b.role}</td>
+          <td>
+            <strong className="text-amber-200">{b.shiftAction.name}</strong>: {b.shiftAction.text.replace(/DC \{dc\}/g, 'boss-DC')}
+          </td>
         </tr>
-      </thead>
-      <tbody>
-        {BOSSES.map((b) => (
-          <tr key={b.id}>
-            <td>{b.floor}</td>
-            <td>{b.name}</td>
-            <td>{b.role}</td>
-            <td>
-              <strong>{b.shiftAction.name}</strong>: {b.shiftAction.text.replace(/DC \{dc\}/g, 'boss-DC')}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+      ))}
+    </DataTable>
   )
 }
 
 function Tricks() {
   return (
-    <table className="party-table">
-      <thead>
-        <tr>
-          <th>Floor</th>
-          <th>Trick</th>
-          <th>Trigger</th>
-          <th>Effect</th>
-          <th>Counterplay</th>
+    <DataTable head={['Floor', 'Trick', 'Trigger', 'Effect', 'Counterplay']}>
+      {trickData.tricks.map((t) => (
+        <tr key={t.id}>
+          <td className="font-mono">{t.floor}</td>
+          <td>
+            <Name>{t.name}</Name>
+          </td>
+          <td>{t.trigger}</td>
+          <td>{t.effect}</td>
+          <td>{t.counterplay}</td>
         </tr>
-      </thead>
-      <tbody>
-        {trickData.tricks.map((t) => (
-          <tr key={t.id}>
-            <td>{t.floor}</td>
-            <td>{t.name}</td>
-            <td>{t.trigger}</td>
-            <td>{t.effect}</td>
-            <td>{t.counterplay}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+      ))}
+    </DataTable>
   )
 }
 
 function Conditions() {
   return (
-    <table className="party-table">
-      <thead>
-        <tr>
-          <th>d20</th>
-          <th>Condition</th>
-          <th>Hidden Sight hint</th>
+    <DataTable head={['d20', 'Condition', 'Hidden Sight hint']}>
+      {conditionData.conditions.map((c) => (
+        <tr key={c.roll}>
+          <td className="font-mono">{c.roll}</td>
+          <td>{c.condition}</td>
+          <td className="italic text-stone-400">{c.hint}</td>
         </tr>
-      </thead>
-      <tbody>
-        {conditionData.conditions.map((c) => (
-          <tr key={c.roll}>
-            <td>{c.roll}</td>
-            <td>{c.condition}</td>
-            <td>{c.hint}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+      ))}
+    </DataTable>
   )
 }
 
@@ -176,118 +191,92 @@ function FloorRoll() {
     return `${from}–${table[i].upTo}`
   }
   return (
-    <table className="party-table">
-      <thead>
-        <tr>
-          <th>Result</th>
+    <DataTable head={['Result', ...lootRolls.floorRoll.map((r) => `Floor ${r.floor}`)]}>
+      {kinds.map((k) => (
+        <tr key={k}>
+          <td className="capitalize">
+            <Name>{k}</Name>
+          </td>
           {lootRolls.floorRoll.map((r) => (
-            <th key={r.floor}>Floor {r.floor}</th>
+            <td key={r.floor} className="font-mono">
+              {range(r.floor, k)}
+            </td>
           ))}
         </tr>
-      </thead>
-      <tbody>
-        {kinds.map((k) => (
-          <tr key={k}>
-            <td>{k}</td>
-            {lootRolls.floorRoll.map((r) => (
-              <td key={r.floor}>{range(r.floor, k)}</td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
+      ))}
+    </DataTable>
   )
 }
 
 function Items() {
   return (
-    <>
-      <h3>Consumables (d12)</h3>
-      <ol className="table-list">
-        {lootItems.consumables.map((c) => (
-          <li key={c.id}>
-            <strong>{c.name}</strong>: {c.effect}
-          </li>
-        ))}
-      </ol>
-      <h3>Gear (d12)</h3>
-      <ol className="table-list">
-        {lootItems.gear.map((g) => (
-          <li key={g.id}>
-            <strong>{g.name}</strong> ({g.base}): {g.property}
-          </li>
-        ))}
-      </ol>
-      {Object.entries(lootItems.wondrous).map(([rarity, list]) => (
-        <div key={rarity}>
-          <h3>
-            Wondrous, {lootRolls.rarities.find((r) => r.id === rarity)?.name} (d{list.length})
-          </h3>
-          <ol className="table-list">
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <div className={cx(WELL, 'flex flex-col gap-4')}>
+        <RollList title="Consumables (d12)">
+          {lootItems.consumables.map((c) => (
+            <li key={c.id}>
+              <Name>{c.name}</Name>: {c.effect}
+            </li>
+          ))}
+        </RollList>
+        <RollList title="Gear (d12)">
+          {lootItems.gear.map((g) => (
+            <li key={g.id}>
+              <Name>{g.name}</Name> <span className="text-stone-500">({g.base})</span>: {g.property}
+            </li>
+          ))}
+        </RollList>
+        <RollList title="Trinkets (d20)">
+          {lootItems.trinkets.map((t) => (
+            <li key={t}>{t}</li>
+          ))}
+        </RollList>
+      </div>
+      <div className={cx(WELL, 'flex flex-col gap-4')}>
+        {Object.entries(lootItems.wondrous).map(([rarity, list]) => (
+          <RollList key={rarity} title={`Wondrous, ${lootRolls.rarities.find((r) => r.id === rarity)?.name} (d${list.length})`}>
             {list.map((w) => (
               <li key={w.id}>
-                <strong>{w.name}</strong>: {w.effect}
+                <Name>{w.name}</Name>: {w.effect}
               </li>
             ))}
-          </ol>
-        </div>
-      ))}
-      <h3>Trinkets (d20)</h3>
-      <ol className="table-list">
-        {lootItems.trinkets.map((t) => (
-          <li key={t}>{t}</li>
+          </RollList>
         ))}
-      </ol>
-    </>
+      </div>
+    </div>
   )
 }
 
 function Trophies() {
   return (
-    <table className="party-table">
-      <thead>
-        <tr>
-          <th>Boss</th>
-          <th>Trophy</th>
-          <th>Rarity</th>
-          <th>Effect</th>
+    <DataTable head={['Boss', 'Trophy', 'Rarity', 'Effect']}>
+      {lootItems.trophies.map((t) => (
+        <tr key={t.id}>
+          <td>{BOSSES.find((b) => b.id === t.bossId)?.name}</td>
+          <td>
+            <Name>{t.name}</Name>
+          </td>
+          <td className="whitespace-nowrap">{lootRolls.rarities.find((r) => r.id === t.rarity)?.name}</td>
+          <td>{t.effect}</td>
         </tr>
-      </thead>
-      <tbody>
-        {lootItems.trophies.map((t) => (
-          <tr key={t.id}>
-            <td>{BOSSES.find((b) => b.id === t.bossId)?.name}</td>
-            <td>{t.name}</td>
-            <td>{lootRolls.rarities.find((r) => r.id === t.rarity)?.name}</td>
-            <td>{t.effect}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+      ))}
+    </DataTable>
   )
 }
 
 function Relics() {
   return (
-    <table className="party-table">
-      <thead>
-        <tr>
-          <th>Relic</th>
-          <th>Build</th>
-          <th>Dormant</th>
-          <th>Woken (adds)</th>
+    <DataTable head={['Relic', 'Build', 'Dormant', 'Woken (adds)']}>
+      {relicData.relics.map((r) => (
+        <tr key={r.id}>
+          <td>
+            <Name>{r.name}</Name>
+          </td>
+          <td>{r.build}</td>
+          <td>{r.dormant}</td>
+          <td>{r.woken}</td>
         </tr>
-      </thead>
-      <tbody>
-        {relicData.relics.map((r) => (
-          <tr key={r.id}>
-            <td>{r.name}</td>
-            <td>{r.build}</td>
-            <td>{r.dormant}</td>
-            <td>{r.woken}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+      ))}
+    </DataTable>
   )
 }
