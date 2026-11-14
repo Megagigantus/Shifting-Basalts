@@ -11,6 +11,8 @@ import {
 import { MAX_LEVEL, MIN_ENTRY_LEVEL, proficiencyBonus } from '../rules/proficiency'
 import classTags from '../data/class-tags.json'
 import { BOONS } from '../rules/boons'
+import { FIELD, FIELD_LABEL, PRIMARY_BUTTON, QUIET_BUTTON } from '../ui/styles'
+import { cx } from '../ui/tone'
 
 const SLOT_LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 // Tags a subclass might favor (Core and Payoff aren't weighted by class).
@@ -20,12 +22,11 @@ const ordinal = (n: number) => `${n}${n === 1 ? 'st' : n === 2 ? 'nd' : n === 3 
 
 interface Props {
   initial: CharacterProfile
-  title: string
   onSave: (profile: CharacterProfile) => Promise<void>
   onCancel: () => void
 }
 
-export function CharacterForm({ initial, title, onSave, onCancel }: Props) {
+export function CharacterForm({ initial, onSave, onCancel }: Props) {
   const [profile, setProfile] = useState<CharacterProfile>(initial)
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
@@ -75,19 +76,23 @@ export function CharacterForm({ initial, title, onSave, onCancel }: Props) {
     }
   }
 
+  const chip = (on: boolean, disabled = false) =>
+    cx(
+      'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[0.6875rem] font-semibold has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-amber-400',
+      disabled ? 'cursor-not-allowed opacity-60' : 'cursor-pointer',
+      on ? 'border-amber-500/40 bg-amber-500/20 text-amber-200' : 'border-stone-700 bg-stone-950 text-stone-300',
+    )
+
   return (
-    <form className="character-form" onSubmit={submit}>
-      <h3>{title}</h3>
-
-      <label>
-        Name
-        <input value={profile.name} onChange={(e) => set('name', e.target.value)} required />
-      </label>
-
-      <div className="form-row">
-        <label>
-          Class
-          <select value={profile.classId} onChange={(e) => set('classId', e.target.value)}>
+    <form className="flex flex-col gap-3" onSubmit={submit}>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <label className={`${FIELD_LABEL} sm:col-span-2`}>
+          <span>Name</span>
+          <input value={profile.name} onChange={(e) => set('name', e.target.value)} required className={`${FIELD} w-full`} />
+        </label>
+        <label className={FIELD_LABEL}>
+          <span>Class</span>
+          <select value={profile.classId} onChange={(e) => set('classId', e.target.value)} className={`${FIELD} w-full`}>
             {classes.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.name}
@@ -95,15 +100,14 @@ export function CharacterForm({ initial, title, onSave, onCancel }: Props) {
             ))}
           </select>
         </label>
-        <label>
-          Subclass
-          <input value={profile.subclass} onChange={(e) => set('subclass', e.target.value)} />
+        <label className={FIELD_LABEL}>
+          <span>Subclass</span>
+          <input value={profile.subclass} onChange={(e) => set('subclass', e.target.value)} className={`${FIELD} w-full`} />
         </label>
-      </div>
-
-      <div className="form-row">
-        <label>
-          Level
+        <label className={FIELD_LABEL}>
+          <span>
+            Level <span className="font-normal text-stone-500">(PB +{proficiencyBonus(Number.isNaN(profile.level) ? MIN_ENTRY_LEVEL : profile.level)})</span>
+          </span>
           <input
             type="number"
             min={MIN_ENTRY_LEVEL}
@@ -111,18 +115,12 @@ export function CharacterForm({ initial, title, onSave, onCancel }: Props) {
             value={Number.isNaN(profile.level) ? '' : profile.level}
             onChange={(e) => set('level', e.target.valueAsNumber)}
             required
+            className={`${FIELD} w-full`}
           />
         </label>
-        <div className="readout">
-          PB
-          <strong>+{proficiencyBonus(Number.isNaN(profile.level) ? MIN_ENTRY_LEVEL : profile.level)}</strong>
-        </div>
-        <label>
-          Main attack style
-          <select
-            value={profile.attackStyle}
-            onChange={(e) => set('attackStyle', e.target.value as AttackStyle)}
-          >
+        <label className={FIELD_LABEL}>
+          <span>Main attack style</span>
+          <select value={profile.attackStyle} onChange={(e) => set('attackStyle', e.target.value as AttackStyle)} className={`${FIELD} w-full`}>
             {ATTACK_STYLES.map((s) => (
               <option key={s.id} value={s.id}>
                 {s.label}
@@ -130,88 +128,85 @@ export function CharacterForm({ initial, title, onSave, onCancel }: Props) {
             ))}
           </select>
         </label>
+        <label className={FIELD_LABEL}>
+          <span>Caster type</span>
+          <select value={profile.casterType} onChange={(e) => setCasterType(e.target.value as CasterType)} className={`${FIELD} w-full`}>
+            {CASTER_TYPES.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className={FIELD_LABEL}>
+          <span>
+            Player's email <span className="font-normal text-stone-500">(optional)</span>
+          </span>
+          <input
+            type="email"
+            value={profile.playerEmail}
+            onChange={(e) => set('playerEmail', e.target.value)}
+            placeholder="player@gmail.com"
+            className={`${FIELD} w-full`}
+          />
+        </label>
       </div>
 
-      <label>
-        Caster type
-        <select value={profile.casterType} onChange={(e) => setCasterType(e.target.value as CasterType)}>
-          {CASTER_TYPES.map((t) => (
-            <option key={t.id} value={t.id}>
-              {t.label}
-            </option>
-          ))}
-        </select>
-      </label>
-
       {profile.casterType !== 'none' && (
-        <fieldset className="slot-levels">
-          <legend>Spell slot levels available</legend>
-          {SLOT_LEVELS.map((level) => (
-            <label key={level} className="checkbox">
-              <input
-                type="checkbox"
-                checked={profile.slotLevels.includes(level)}
-                onChange={() => toggleSlot(level)}
-              />
-              {ordinal(level)}
-            </label>
-          ))}
+        <fieldset className="m-0 flex flex-col gap-1.5 border-0 p-0">
+          <legend className="mb-1.5 p-0 text-xs font-semibold text-stone-300">Spell slot levels available</legend>
+          <div className="flex flex-wrap gap-1.5">
+            {SLOT_LEVELS.map((level) => (
+              <label key={level} className={chip(profile.slotLevels.includes(level))}>
+                <input type="checkbox" className="sr-only" checked={profile.slotLevels.includes(level)} onChange={() => toggleSlot(level)} />
+                {ordinal(level)}
+              </label>
+            ))}
+          </div>
         </fieldset>
       )}
 
-      <fieldset className="slot-levels">
-        <legend>
-          Extra favored tags <span className="hint">(optional, for subclasses: weighted like the class's primary tags)</span>
+      <fieldset className="m-0 flex flex-col gap-1.5 border-0 p-0">
+        <legend className="mb-1.5 p-0 text-xs font-semibold text-stone-300">
+          Extra favored tags <span className="font-normal text-stone-500">(optional, for subclasses: weighted like the class's primary tags)</span>
         </legend>
-        {FAVORABLE_TAGS.map((tag) => {
-          const fromClass = classTags.classes.find((c) => c.classId === profile.classId)?.primary.includes(tag)
-          return (
-            <label key={tag} className={`checkbox ${fromClass ? 'disabled' : ''}`}>
-              <input
-                type="checkbox"
-                checked={fromClass || profile.favoredTags.includes(tag)}
-                disabled={fromClass}
-                onChange={() =>
-                  set(
-                    'favoredTags',
-                    profile.favoredTags.includes(tag)
-                      ? profile.favoredTags.filter((t) => t !== tag)
-                      : [...profile.favoredTags, tag],
-                  )
-                }
-              />
-              {tag}
-            </label>
-          )
-        })}
+        <div className="flex flex-wrap gap-1.5">
+          {FAVORABLE_TAGS.map((tag) => {
+            const fromClass = Boolean(classTags.classes.find((c) => c.classId === profile.classId)?.primary.includes(tag))
+            const on = fromClass || profile.favoredTags.includes(tag)
+            return (
+              <label key={tag} className={chip(on, fromClass)} title={fromClass ? "Already one of the class's primary tags" : undefined}>
+                <input
+                  type="checkbox"
+                  className="sr-only"
+                  checked={on}
+                  disabled={fromClass}
+                  onChange={() =>
+                    set(
+                      'favoredTags',
+                      profile.favoredTags.includes(tag) ? profile.favoredTags.filter((t) => t !== tag) : [...profile.favoredTags, tag],
+                    )
+                  }
+                />
+                {tag}
+              </label>
+            )
+          })}
+        </div>
       </fieldset>
 
-      <label className="checkbox">
-        <input
-          type="checkbox"
-          checked={profile.hasSummon}
-          onChange={(e) => set('hasSummon', e.target.checked)}
-        />
+      <label className="inline-flex cursor-pointer items-center gap-2 text-xs text-stone-200">
+        <input type="checkbox" checked={profile.hasSummon} onChange={(e) => set('hasSummon', e.target.checked)} />
         Has a summon or companion
       </label>
 
-      <label>
-        Player's Google email <span className="hint">(optional, used when players join)</span>
-        <input
-          type="email"
-          value={profile.playerEmail}
-          onChange={(e) => set('playerEmail', e.target.value)}
-          placeholder="player@gmail.com"
-        />
-      </label>
+      {error && <p className="m-0 text-xs text-rose-300">{error}</p>}
 
-      {error && <p className="error">{error}</p>}
-
-      <div className="form-actions">
-        <button type="submit" disabled={saving}>
+      <div className="flex flex-wrap gap-2">
+        <button type="submit" disabled={saving} className={PRIMARY_BUTTON}>
           {saving ? 'Saving…' : 'Save'}
         </button>
-        <button type="button" onClick={onCancel} disabled={saving}>
+        <button type="button" onClick={onCancel} disabled={saving} className={QUIET_BUTTON}>
           Cancel
         </button>
       </div>

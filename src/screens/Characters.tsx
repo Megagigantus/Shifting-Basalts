@@ -1,61 +1,37 @@
 // DM screen: the character roster. Characters are saved in the
-// "characters" collection and stay in sync live.
+// "characters" collection and stay in sync live. A list on the left, the
+// chosen character's hub (or the form) on the right.
 import { useState } from 'react'
 import { addDoc, collection, deleteDoc, doc, serverTimestamp, updateDoc } from 'firebase/firestore'
+import { LockOpen, Pencil, Trash, UserPlus } from 'lucide-react'
 import { db } from '../firebase'
-import classes from '../data/classes.json'
-import {
-  CASTER_TYPES,
-  emptyDungeonLayer,
-  emptyProfile,
-  profileOf,
-  type Character,
-  type CharacterProfile,
-} from '../model/character'
-import { proficiencyBonus } from '../rules/proficiency'
+import { emptyDungeonLayer, emptyProfile, profileOf, type CharacterProfile } from '../model/character'
 import { useCharacters } from '../useCharacters'
 import { CharacterForm } from './CharacterForm'
-import { StatTracks } from './StatTracks'
-import { UpgradeShop } from './UpgradeShop'
-import { DraftPreferences } from './DraftPreferences'
-import { LookPicker } from './LookPicker'
-import { CharacterLoot } from './LootScreens'
-import { UPGRADES } from '../rules/upgrades'
-
-/** e.g. "Forge · Extra Boon Slot 2", for upgrades owned. */
-function upgradeSummary(c: Character): string {
-  return UPGRADES.filter((u) => (c.upgrades[u.id] ?? 0) > 0)
-    .map((u) => (u.costs.length > 1 ? `${u.name} ${c.upgrades[u.id]}` : u.name))
-    .join(' · ')
-}
-import { rankProgress, STAT_TRACKS } from '../rules/statTracks'
-
-/** e.g. "Max HP 2 · Speed 1", for tracks with at least one rank. */
-function trackSummary(c: Character): string {
-  return STAT_TRACKS.map((t) => ({ name: t.name, rank: rankProgress(c.trackDevotions[t.id] ?? 0).rank }))
-    .filter((t) => t.rank > 0)
-    .map((t) => `${t.name} ${t.rank}`)
-    .join(' · ')
-}
-
-const className = (id: string) => classes.find((c) => c.id === id)?.name ?? id
+import { CharacterHub } from './CharacterHub'
+import { Roster } from './Roster'
+import { ConfirmButton } from '../ui/ConfirmButton'
+import { Panel } from '../ui/Panel'
+import { PRIMARY_BUTTON, SMALL_BUTTON } from '../ui/styles'
 
 export function Characters() {
   const { characters, error: loadError } = useCharacters()
+  const [selected, setSelected] = useState<string | null>(null)
   const [editing, setEditing] = useState<'new' | string | null>(null)
-  // Which character's Stat tracks or Upgrades panel is open, if any.
-  const [open, setOpen] = useState<{ id: string; kind: 'tracks' | 'upgrades' } | null>(null)
   const [error, setError] = useState<string | null>(null)
+
+  const current = characters?.find((c) => c.id === selected) ?? characters?.[0] ?? null
 
   async function create(profile: CharacterProfile) {
     if (!db) return
-    await addDoc(collection(db, 'characters'), {
+    const ref = await addDoc(collection(db, 'characters'), {
       ...profile,
       ...emptyDungeonLayer(),
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     })
     setEditing(null)
+    setSelected(ref.id)
   }
 
   async function update(id: string, profile: CharacterProfile) {
@@ -65,128 +41,88 @@ export function Characters() {
     setEditing(null)
   }
 
-  async function clearLockout(character: Character) {
+  async function clearLockout(id: string, name: string) {
     if (!db) return
-    if (!window.confirm(`Clear ${character.name}'s lockout so they can enter the Basalts again?`)) return
     setError(null)
     try {
-      await updateDoc(doc(db, 'characters', character.id), { lockoutDays: 0, updatedAt: serverTimestamp() })
+      await updateDoc(doc(db, 'characters', id), { lockoutDays: 0, updatedAt: serverTimestamp() })
     } catch {
-      setError(`Could not clear ${character.name}'s lockout.`)
+      setError(`Could not clear ${name}'s lockout.`)
     }
   }
 
-  async function remove(character: Character) {
+  async function remove(id: string, name: string) {
     if (!db) return
-    const sure = window.confirm(
-      `Delete ${character.name}? This removes their saved profile and dungeon progress, and can't be undone.`,
-    )
-    if (!sure) return
     setError(null)
     try {
-      await deleteDoc(doc(db, 'characters', character.id))
+      await deleteDoc(doc(db, 'characters', id))
+      setSelected(null)
     } catch {
-      setError(`Could not delete ${character.name}.`)
+      setError(`Could not delete ${name}.`)
     }
   }
 
   return (
-    <section className="panel">
-      <div className="panel-header">
-        <h2>Characters</h2>
-        {editing === null && (
-          <button type="button" onClick={() => setEditing('new')}>
-            New character
-          </button>
+    <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-12">
+      <div className="flex flex-col gap-3 lg:col-span-3">
+        <button type="button" className={PRIMARY_BUTTON} disabled={editing !== null} onClick={() => setEditing('new')}>
+          <UserPlus size={15} /> New character
+        </button>
+        {characters === null && !loadError && <p className="m-0 text-sm text-stone-400">Loading…</p>}
+        {characters && (
+          <Roster
+            characters={characters}
+            selectedId={editing === 'new' ? null : (current?.id ?? null)}
+            onSelect={(id) => {
+              setSelected(id)
+              setEditing(null)
+            }}
+          />
         )}
+        {characters?.length === 0 && <p className="m-0 text-xs text-stone-500">No characters yet. Add one to get started.</p>}
       </div>
 
-      {editing === 'new' && (
-        <CharacterForm
-          title="New character"
-          initial={emptyProfile()}
-          onSave={create}
-          onCancel={() => setEditing(null)}
-        />
-      )}
+      <div className="flex min-w-0 flex-col gap-4 lg:col-span-9">
+        {(error || loadError) && <p className="m-0 text-sm text-rose-300">{error || loadError}</p>}
 
-      {characters === null && !loadError && <p>Loading…</p>}
-      {characters?.length === 0 && editing !== 'new' && (
-        <p className="hint">No characters yet. Add one to get started.</p>
-      )}
-
-      <ul className="character-list">
-        {characters?.map((c) =>
-          editing === c.id ? (
-            <li key={c.id}>
-              <CharacterForm
-                title={`Edit ${c.name}`}
-                initial={profileOf(c)}
-                onSave={(profile) => update(c.id, profile)}
-                onCancel={() => setEditing(null)}
-              />
-            </li>
-          ) : (
-            <li key={c.id} className="character-row">
-              <div className="character-main">
-                <strong>{c.name}</strong>
-                <span>
-                  {className(c.classId)}
-                  {c.subclass && ` (${c.subclass})`} · Level {c.level} · PB +{proficiencyBonus(c.level)}
-                </span>
-                <span className="hint">
-                  {CASTER_TYPES.find((t) => t.id === c.casterType)?.label}
-                  {c.slotLevels.length > 0 && ` (slots ${c.slotLevels.join(', ')})`}
-                  {c.hasSummon && ' · summon/companion'}
-                  {' · '}
-                  {c.playerEmail || 'no player assigned'}
-                </span>
-                <span className="hint">
-                  {c.bankedQuantumBasalts} Quantum Basalts · {c.bankedDevotions} Devotions banked ·
-                  deepest floor {c.deepestFloor || 'none yet'}
-                </span>
-                {trackSummary(c) && <span className="hint">Stat tracks: {trackSummary(c)}</span>}
-                {c.lockoutDays > 0 && (
-                  <span className="warning">Locked out: {c.lockoutDays} days</span>
-                )}
-                <LookPicker character={c} />
-                <DraftPreferences character={c} />
-                {upgradeSummary(c) && <span className="hint">Upgrades: {upgradeSummary(c)}</span>}
-                <CharacterLoot loot={c.loot} />
-                {open?.id === c.id && open.kind === 'tracks' && (
-                  <StatTracks character={c} onClose={() => setOpen(null)} />
-                )}
-                {open?.id === c.id && open.kind === 'upgrades' && (
-                  <UpgradeShop character={c} onClose={() => setOpen(null)} />
-                )}
-              </div>
-              {editing === null && open?.id !== c.id && (
-                <div className="row-actions">
-                  <button type="button" onClick={() => setOpen({ id: c.id, kind: 'tracks' })}>
-                    Stat tracks
-                  </button>
-                  <button type="button" onClick={() => setOpen({ id: c.id, kind: 'upgrades' })}>
-                    Upgrades
-                  </button>
-                  {c.lockoutDays > 0 && (
-                    <button type="button" onClick={() => clearLockout(c)}>
-                      Clear lockout
-                    </button>
-                  )}
-                  <button type="button" onClick={() => setEditing(c.id)}>
-                    Edit
-                  </button>
-                  <button type="button" onClick={() => remove(c)}>
-                    Delete
-                  </button>
-                </div>
-              )}
-            </li>
-          ),
+        {editing === 'new' && (
+          <Panel hero tone="amber" title="New character">
+            <CharacterForm initial={emptyProfile()} onSave={create} onCancel={() => setEditing(null)} />
+          </Panel>
         )}
-      </ul>
 
-      {(error || loadError) && <p className="error">{error || loadError}</p>}
-    </section>
+        {editing !== 'new' && current && editing === current.id && (
+          <Panel hero tone="amber" title={`Edit ${current.name}`}>
+            <CharacterForm initial={profileOf(current)} onSave={(profile) => update(current.id, profile)} onCancel={() => setEditing(null)} />
+          </Panel>
+        )}
+
+        {editing === null && current && (
+          <CharacterHub
+            key={current.id}
+            character={current}
+            mode="dm"
+            actions={
+              <>
+                <button type="button" className={SMALL_BUTTON} onClick={() => setEditing(current.id)}>
+                  <Pencil size={12} /> Edit
+                </button>
+                {current.lockoutDays > 0 && (
+                  <ConfirmButton tone="emerald" confirmLabel="Yes, clear it" onConfirm={() => clearLockout(current.id, current.name)}>
+                    <LockOpen size={12} /> Clear lockout
+                  </ConfirmButton>
+                )}
+                <ConfirmButton
+                  confirmLabel={`Yes, delete ${current.name} forever`}
+                  onConfirm={() => remove(current.id, current.name)}
+                >
+                  <Trash size={12} /> Delete
+                </ConfirmButton>
+              </>
+            }
+          />
+        )}
+      </div>
+    </div>
   )
 }

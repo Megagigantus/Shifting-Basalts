@@ -4,6 +4,9 @@ import { useState } from 'react'
 import type { Character } from '../model/character'
 import { boon, BOONS } from '../rules/boons'
 import { setAttuneTag, setBanished } from '../characterStore'
+import { Pill } from '../ui/Pill'
+import { FIELD, SMALL_BUTTON } from '../ui/styles'
+import { cx } from '../ui/tone'
 
 const TAGS = [...new Set(BOONS.flatMap((b) => b.tags))]
 
@@ -38,35 +41,39 @@ export function DraftPreferences({ character, canEdit = true }: Props) {
   }
 
   return (
-    <div className="draft-preferences">
-      <strong>Draft preferences</strong>
-      {inRun && <span className="hint"> · locked during a run</span>}
+    <div className="flex flex-col gap-2 rounded-lg border border-stone-800 bg-stone-950/60 p-2.5">
+      <div className="flex flex-wrap items-center gap-1.5">
+        <span className="text-[0.625rem] font-bold uppercase tracking-wider text-stone-400">Draft preferences</span>
+        {inRun && <Pill>Locked during a run</Pill>}
+      </div>
 
       {banishRank > 0 && (
-        <div>
-          <div className="hint">
+        <div className="flex flex-col gap-1.5">
+          <span className="text-[0.6875rem] text-stone-400">
             Banish list ({banished.length} of {banishRank}): these boons never appear in your offers.
-          </div>
-          <div className="chip-row">
-            {banished.map((id) => (
-              <span key={id} className="tag">
-                {boon(id).name}
-                {editable && (
-                  <button
-                    type="button"
-                    className="link"
-                    aria-label={`Remove ${boon(id).name} from the Banish list`}
-                    onClick={() => save(() => setBanished(character.id, banished.filter((b) => b !== id)))}
-                  >
-                    ×
-                  </button>
-                )}
-              </span>
-            ))}
-          </div>
+          </span>
+          {banished.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {banished.map((id) => (
+                <Pill key={id} tone="rose">
+                  {boon(id).name}
+                  {editable && (
+                    <button
+                      type="button"
+                      className="ml-0.5 cursor-pointer border-0 bg-transparent p-0 text-rose-200 hover:text-white"
+                      aria-label={`Remove ${boon(id).name} from the Banish list`}
+                      onClick={() => save(() => setBanished(character.id, banished.filter((b) => b !== id)))}
+                    >
+                      ×
+                    </button>
+                  )}
+                </Pill>
+              ))}
+            </div>
+          )}
           {editable && banished.length < banishRank && (
-            <div className="boon-picker">
-              <select value={adding} onChange={(e) => setAdding(e.target.value)} aria-label="Boon to banish">
+            <div className="flex flex-wrap gap-1.5">
+              <select value={adding} onChange={(e) => setAdding(e.target.value)} aria-label="Boon to banish" className={cx(FIELD, 'min-w-0 flex-1 py-1.5 text-xs')}>
                 <option value="">Banish a boon…</option>
                 {TAGS.map((tag) => (
                   <optgroup key={tag} label={tag}>
@@ -80,6 +87,7 @@ export function DraftPreferences({ character, canEdit = true }: Props) {
               </select>
               <button
                 type="button"
+                className={SMALL_BUTTON}
                 disabled={!adding}
                 onClick={() =>
                   save(async () => {
@@ -96,13 +104,14 @@ export function DraftPreferences({ character, canEdit = true }: Props) {
       )}
 
       {hasAttunement && (
-        <label className="attune">
-          <span className="hint">Attunement: your first offer each run includes this tag.</span>
+        <label className="flex flex-col gap-1">
+          <span className="text-[0.6875rem] text-stone-400">Attunement: your first offer each run includes this tag.</span>
           <select
             value={character.attuneTag ?? ''}
             disabled={!editable}
             onChange={(e) => save(() => setAttuneTag(character.id, e.target.value || null))}
             aria-label="Attunement tag"
+            className={cx(FIELD, 'py-1.5 text-xs')}
           >
             <option value="">No tag chosen</option>
             {TAGS.map((t) => (
@@ -114,7 +123,7 @@ export function DraftPreferences({ character, canEdit = true }: Props) {
         </label>
       )}
 
-      {error && <p className="error">{error}</p>}
+      {error && <p className="m-0 text-xs text-rose-300">{error}</p>}
     </div>
   )
 }

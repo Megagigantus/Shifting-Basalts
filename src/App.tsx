@@ -94,8 +94,8 @@ function SignedIn({ email, role }: { email: string; role: 'dm' | 'player' }) {
     return () => root.classList.remove('player-ui')
   }, [isDm])
 
-  // The Run tab and the player screens are wide: a main column plus the party sidebar.
-  const wide = isDm ? playerView || tab === 'run' : true
+  // Wide screens: the Run tab (main column + party sidebar), Characters (roster + hub) and the player screens.
+  const wide = isDm ? playerView || tab === 'run' || tab === 'characters' : true
 
   return (
     <>

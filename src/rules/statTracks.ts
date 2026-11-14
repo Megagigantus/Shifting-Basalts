@@ -14,6 +14,9 @@ export interface StatTrack {
 export const STAT_TRACKS: StatTrack[] = data.tracks
 export const MAX_RANK = Math.max(...data.rankCosts.map((b) => b.toRank))
 
+/** Cost bands, for screens: e.g. ranks 1 to 5 cost 3 Devotions each. */
+export const RANK_COSTS: { fromRank: number; toRank: number; devotions: number }[] = data.rankCosts
+
 /** Devotions needed to buy one specific rank (e.g. rank 6 costs 5). */
 export function costOfRank(rank: number): number {
   const band = data.rankCosts.find((b) => rank >= b.fromRank && rank <= b.toRank)

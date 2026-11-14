@@ -1,7 +1,10 @@
 // DM tool: see the app exactly as one of your players does, read-only.
 import { useState } from 'react'
+import { Eye } from 'lucide-react'
 import { useCharacters } from '../useCharacters'
 import { PlayerHome } from './PlayerHome'
+import { Panel } from '../ui/Panel'
+import { FIELD } from '../ui/styles'
 
 export function PlayerPreview() {
   const { characters } = useCharacters()
@@ -9,29 +12,26 @@ export function PlayerPreview() {
   const emails = [...new Set((characters ?? []).map((c) => c.playerEmail).filter(Boolean))].sort()
 
   return (
-    <section className="panel preview">
-      <div className="panel-header">
-        <h2>View as player</h2>
-        <select value={email} onChange={(e) => setEmail(e.target.value)} aria-label="Player to preview">
-          <option value="">Pick a player…</option>
-          {emails.map((e) => (
-            <option key={e} value={e}>
-              {e}
-            </option>
-          ))}
-        </select>
-      </div>
-      {emails.length === 0 && (
-        <p className="hint">Set a player email on a character to preview what that player sees.</p>
-      )}
-      {email && (
-        <>
-          <p className="hint">Read-only preview of {email}'s screen. Spend buttons are disabled here.</p>
-          <div className="preview-frame">
-            <PlayerHome email={email} readOnly />
-          </div>
-        </>
-      )}
-    </section>
+    <div className="mt-6 flex flex-col gap-2">
+      <Panel
+        tone="sky"
+        icon={<Eye size={15} />}
+        title="View as player"
+        subtitle={email ? `Read-only preview of ${email}'s screen. Spend buttons are disabled here.` : 'Pick a player to see their screen.'}
+        actions={
+          <select value={email} onChange={(e) => setEmail(e.target.value)} aria-label="Player to preview" className={FIELD}>
+            <option value="">Pick a player…</option>
+            {emails.map((e) => (
+              <option key={e} value={e}>
+                {e}
+              </option>
+            ))}
+          </select>
+        }
+      >
+        {emails.length === 0 && <p className="m-0 text-xs text-stone-400">Set a player email on a character to preview what that player sees.</p>}
+      </Panel>
+      {email && <PlayerHome email={email} readOnly />}
+    </div>
   )
 }
