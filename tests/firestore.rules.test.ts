@@ -398,6 +398,40 @@ describe('player draft choices', () => {
   })
 })
 
+describe('character builds', () => {
+  const owned = () => doc(as(PLAYER), 'characters', OWNED)
+  beforeEach(() => seedCharacters({ classId: 'fighter', classLevel: 7, subclass: '' }))
+  const build = (extra: Record<string, unknown> = {}) => ({
+    classId: 'fighter',
+    subclass: 'Champion',
+    classLevel: 6,
+    secondClassId: 'wizard',
+    secondClassLevel: 3,
+    secondSubclass: 'Evoker',
+    classOrders: {},
+    extraWeapons: ['rapier'],
+    extraArmor: [],
+    masteries: ['longsword', 'greatsword'],
+    homebrewTags: { primary: [], secondary: [] },
+    level: 9,
+    updatedAt: now(),
+    ...extra,
+  })
+
+  it('a player can save their own build between runs, with level the total of both classes', async () => {
+    await assertSucceeds(updateDoc(owned(), build()))
+    await assertSucceeds(updateDoc(owned(), build({ secondClassId: '', secondClassLevel: 0, secondSubclass: '', level: 6 })))
+  })
+
+  it('rejects a wrong total, a run in progress, someone else\'s character or other fields', async () => {
+    await assertFails(updateDoc(owned(), build({ level: 12 })))
+    await assertFails(updateDoc(owned(), build({ bankedQuantumBasalts: 999 })))
+    await assertFails(updateDoc(doc(as(PLAYER), 'characters', OTHERS), build()))
+    await seedCharacters({ activeRunId: 'run-1' })
+    await assertFails(updateDoc(owned(), build()))
+  })
+})
+
 describe('Banish list and Attunement tag', () => {
   const owned = () => doc(as(PLAYER), 'characters', OWNED)
   beforeEach(() => seedCharacters({ upgrades: { banish: 2, attunement: 1 }, banished: [], attuneTag: null }))

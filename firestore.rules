@@ -211,6 +211,32 @@ service cloud.firestore {
         && (tag == null || tag in boonTags());
     }
 
+    // A player saves their character's build (Character setup) between runs:
+    // classes and levels, subclasses, orders, extra training, mastery picks and
+    // homebrew tags. Level must be the total of both classes. The DM reviews
+    // builds at run setup.
+    function isBuildEdit() {
+      let d = request.resource.data;
+      let second = d.get('secondClassId', '');
+      return changedFields().hasOnly(['classId', 'subclass', 'classLevel', 'secondClassId', 'secondClassLevel', 'secondSubclass',
+          'classOrders', 'extraWeapons', 'extraArmor', 'masteries', 'homebrewTags', 'level', 'updatedAt'])
+        && d.updatedAt == request.time
+        && notInRun()
+        && d.classId is string && d.classId.size() <= 40
+        && d.get('subclass', '') is string && d.get('subclass', '').size() <= 60
+        && second is string && second.size() <= 40
+        && d.get('secondSubclass', '') is string && d.get('secondSubclass', '').size() <= 60
+        && d.classLevel is int && d.classLevel >= 1
+        && d.get('secondClassLevel', 0) is int && d.get('secondClassLevel', 0) >= 0
+        && d.level is int && d.level >= 1 && d.level <= 20
+        && d.level == d.classLevel + (second == '' ? 0 : d.get('secondClassLevel', 0))
+        && d.get('classOrders', {}) is map && d.get('classOrders', {}).size() <= 4
+        && d.get('extraWeapons', []) is list && d.get('extraWeapons', []).size() <= 30
+        && d.get('extraArmor', []) is list && d.get('extraArmor', []).size() <= 4
+        && d.get('masteries', []) is list && d.get('masteries', []).size() <= 6
+        && d.get('homebrewTags', {}) is map;
+    }
+
     // A player picks their character's portrait and summon art, any time:
     // short file names (lowercase letters, digits and dashes) or "" for none.
     function isLookEdit() {
@@ -231,7 +257,7 @@ service cloud.firestore {
       allow create, delete: if isDM();
       allow update: if isDM()
         || (ownsCharacter()
-          && (isDevotionSpend() || isUpgradePurchase() || isBanishEdit() || isAttunementEdit() || isLookEdit()));
+          && (isDevotionSpend() || isUpgradePurchase() || isBanishEdit() || isAttunementEdit() || isLookEdit() || isBuildEdit()));
     }
 
     match /runs/{runId} {

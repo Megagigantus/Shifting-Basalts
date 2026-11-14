@@ -6,6 +6,7 @@ import classData from '../data/classes.json'
 import classTagData from '../data/class-tags.json'
 import baseData from '../data/gear-bases.json'
 import type { CharacterProfile } from '../model/character'
+import { MAX_LEVEL } from './proficiency'
 
 export interface TrainingGrant {
   weapons: string[]
@@ -201,4 +202,42 @@ export function buildSummary(b: Build): string {
   const part = (id: string, level: number, sub: string) => `${classInfo(id)?.name ?? id} ${level}${sub ? ` (${sub})` : ''}`
   const first = part(b.classId, b.classLevel, b.subclass)
   return b.secondClassId ? `${first} / ${part(b.secondClassId, b.secondClassLevel, b.secondSubclass)}` : first
+}
+
+export type BuildFields = Pick<
+  CharacterProfile,
+  'classId' | 'subclass' | 'classLevel' | 'secondClassId' | 'secondClassLevel' | 'secondSubclass' | 'classOrders' | 'extraWeapons' | 'extraArmor' | 'masteries' | 'homebrewTags'
+>
+
+/** Drop mastery picks the build no longer qualifies for (training changed, or fewer picks). */
+export function cleanBuild(b: BuildFields): BuildFields {
+  const allowed = new Set(masteryOptions(b).map((w) => w.id))
+  const masteries = b.masteries.filter((id) => allowed.has(id)).slice(0, masteryPicks(b))
+  const secondClassId = b.secondClassId === b.classId ? '' : b.secondClassId
+  return {
+    ...b,
+    masteries,
+    secondClassId,
+    secondClassLevel: secondClassId ? b.secondClassLevel : 0,
+    secondSubclass: secondClassId ? b.secondSubclass : '',
+    subclass: b.subclass.trim(),
+  }
+}
+
+/** Problems with a build before saving, or null when it's fine. */
+export function buildError(b: BuildFields, minTotal: number): string | null {
+  const whole = (n: number) => Number.isInteger(n) && n >= 1
+  if (!whole(b.classLevel)) return 'Class level must be a whole number, 1 or more.'
+  if (b.secondClassId && !whole(b.secondClassLevel)) return 'Second class level must be a whole number, 1 or more.'
+  const total = totalLevel(b)
+  if (total < minTotal || total > MAX_LEVEL) return `Total level must be from ${minTotal} to ${MAX_LEVEL}.`
+  return null
+}
+
+/** Training as short labels: tokens, armor types and specific weapons. */
+export function trainingLabels(b: BuildFields): { weapons: string[]; armor: string[] } {
+  const t = trainingOf(b)
+  const weapons = [...t.weapons].map((id) => WEAPON_TOKENS.find((w) => w.id === id)?.label ?? weaponBase(id)?.name ?? id)
+  const armor = ARMOR_TYPES.filter((a) => t.armor.has(a.id)).map((a) => a.label)
+  return { weapons, armor }
 }

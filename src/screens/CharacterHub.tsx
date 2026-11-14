@@ -4,12 +4,13 @@
 // art banners that open when visited.
 import { useState, type ReactNode } from 'react'
 import { Landmark, LogOut, Store } from 'lucide-react'
-import classes from '../data/classes.json'
-import { CASTER_TYPES, type Character } from '../model/character'
+import { buildOf, CASTER_TYPES, type Character } from '../model/character'
+import { buildSummary } from '../rules/build'
 import { proficiencyBonus } from '../rules/proficiency'
 import { effectAtRank, rankProgress, STAT_TRACKS } from '../rules/statTracks'
 import { UPGRADES } from '../rules/upgrades'
 import { artUrl } from '../art'
+import { BuildPanel } from './BuildPanel'
 import { DraftPreferences } from './DraftPreferences'
 import { Avatar, LookPicker } from './LookPicker'
 import { CharacterLoot } from './LootScreens'
@@ -21,7 +22,6 @@ import { QUIET_BUTTON } from '../ui/styles'
 import { useLightbox } from '../ui/lightboxContext'
 import { cx, toneClasses, type Tone } from '../ui/tone'
 
-const className = (id: string) => classes.find((c) => c.id === id)?.name ?? id
 
 /** What the dungeon adds to this character, as modifiers for their own sheet. */
 function trackEffects(c: Character): string[] {
@@ -67,7 +67,7 @@ export function CharacterHub({ character: c, mode, actions }: Props) {
           {portraitUrl ? (
             <button
               type="button"
-              onClick={() => showArt({ src: portraitUrl, title: c.name, subtitle: `${className(c.classId)} · Level ${c.level}` })}
+              onClick={() => showArt({ src: portraitUrl, title: c.name, subtitle: `${buildSummary({ ...c, ...buildOf(c) })} · Level ${c.level}` })}
               aria-label={`Enlarge ${c.name}'s portrait`}
               className="cursor-pointer rounded-full border-0 bg-transparent p-0"
             >
@@ -83,8 +83,7 @@ export function CharacterHub({ character: c, mode, actions }: Props) {
               {c.activeRunId && <Pill tone="sky">In a run</Pill>}
             </div>
             <p className="m-0 text-xs text-stone-300">
-              {className(c.classId)}
-              {c.subclass && ` (${c.subclass})`} · Level {c.level} · PB +{proficiencyBonus(c.level)}
+              {buildSummary({ ...c, ...buildOf(c) })} · Level {c.level} · PB +{proficiencyBonus(c.level)}
             </p>
             <p className="m-0 text-[0.6875rem] text-stone-500">
               {CASTER_TYPES.find((t) => t.id === c.casterType)?.label}
@@ -133,6 +132,7 @@ export function CharacterHub({ character: c, mode, actions }: Props) {
           )}
         </div>
 
+        <BuildPanel character={c} mode={mode} />
         <DraftPreferences character={c} canEdit={canEdit} />
         <CharacterLoot loot={c.loot} />
       </Panel>
