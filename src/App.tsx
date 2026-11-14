@@ -17,6 +17,7 @@ import { AppHeader } from './screens/AppHeader'
 import { DM_TABS, type DmTab } from './screens/dmTabs'
 import { Backdrop } from './screens/Backdrop'
 import { Modal } from './ui/Modal'
+import { cx } from './ui/tone'
 
 const TAB_KEY = 'sb-dm-tab'
 
@@ -101,8 +102,9 @@ function SignedIn({ email, role }: { email: string; role: 'dm' | 'player' }) {
         }
       />
 
-      {/* The old panels keep their own styles until each step redesigns them. */}
-      <main className="mx-auto max-w-5xl px-4 pb-16">
+      {/* The old panels keep their own styles until each step redesigns them.
+          The DM's Run tab is wider, for the main column plus the party sidebar. */}
+      <main className={cx('mx-auto px-4 pb-16', isDm && !playerView && tab === 'run' ? 'max-w-7xl' : 'max-w-5xl')}>
         {!isDm && <PlayerHome email={email} />}
         {isDm && playerView && <PlayerPreview />}
         {isDm && !playerView && (
