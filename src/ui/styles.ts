@@ -17,8 +17,10 @@ export const QUIET_BUTTON =
   'inline-flex items-center justify-center gap-2 rounded-lg border border-stone-700 bg-stone-900 px-3 py-2 text-xs font-semibold text-stone-200 hover:bg-stone-800 disabled:opacity-60 cursor-pointer'
 
 /** Small secondary action, for rows of tools (Reveal, Reroll…). */
+// Its default colors come from .btn-small (index.css, components layer), so a
+// color class added next to it, like bg-amber-500/20, always wins.
 export const SMALL_BUTTON =
-  'inline-flex items-center justify-center gap-1 rounded-lg border border-stone-700 bg-stone-900 px-2.5 py-1 text-[0.6875rem] font-semibold text-stone-200 hover:bg-stone-800 disabled:opacity-50 cursor-pointer'
+  'btn-small inline-flex items-center justify-center gap-1 rounded-lg border px-2.5 py-1 text-[0.6875rem] font-semibold disabled:opacity-50 cursor-pointer'
 
 /** A dark inner box inside a card, e.g. one terrain feature. */
 export const WELL = 'rounded-lg border border-stone-800 bg-stone-950/70 p-2.5'
