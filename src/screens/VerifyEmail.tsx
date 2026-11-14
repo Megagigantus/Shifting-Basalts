@@ -49,7 +49,7 @@ export function VerifyEmail({ user, recheck }: { user: User; recheck: () => Prom
         We sent a verification link to <strong className="text-stone-100">{user.email}</strong>. Click it, then come back here and
         press the button below. If it's not in your inbox, check your spam folder.
       </p>
-      <button type="button" disabled={busy} onClick={checkAgain} className={PRIMARY_BUTTON}>
+      <button type="button" disabled={busy} onClick={checkAgain} className={`${PRIMARY_BUTTON} w-full`}>
         I've verified my email
       </button>
       <div className="flex flex-wrap gap-2">

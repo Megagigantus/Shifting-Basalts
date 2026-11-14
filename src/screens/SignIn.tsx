@@ -170,7 +170,7 @@ export function SignIn() {
         {error && <p className="m-0 text-xs text-rose-300">{error}</p>}
         {notice && <p className="m-0 text-xs text-emerald-300">{notice}</p>}
 
-        <button type="submit" disabled={busy} className={PRIMARY_BUTTON}>
+        <button type="submit" disabled={busy} className={`${PRIMARY_BUTTON} w-full`}>
           {busy ? 'Please wait…' : mode === 'signIn' ? 'Sign in' : mode === 'create' ? 'Create account' : 'Send reset link'}
         </button>
 
