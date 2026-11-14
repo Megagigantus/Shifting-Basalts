@@ -120,7 +120,7 @@ function SignedIn({ email, role }: { email: string; role: 'dm' | 'player' }) {
           <>
             {tab === 'run' && <RunPanel />}
             {tab === 'characters' && <Characters />}
-            {tab === 'history' && <RunHistory />}
+            {tab === 'history' && <RunHistory canDelete />}
             {tab === 'tables' && <TableViewer />}
           </>
         )}

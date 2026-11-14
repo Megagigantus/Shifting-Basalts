@@ -51,7 +51,14 @@ export function CharacterHub({ character: c, mode, actions }: Props) {
   const owned = upgradesOwned(c)
   const canEdit = mode !== 'preview'
   const canCorrect = mode === 'dm'
-  const canSpend = mode !== 'preview'
+  // The Shrine and Markets are closed while the character is in a run.
+  const inRun = Boolean(c.activeRunId)
+  const canSpend = mode !== 'preview' && !inRun
+  const closedNote = inRun ? (
+    <p className="m-0 rounded-lg border border-sky-500/30 bg-sky-500/10 px-3 py-2 text-xs text-sky-100">
+      Closed while {c.name} is in a run. Spend here once the run ends.
+    </p>
+  ) : null
 
   return (
     <div className="flex flex-col gap-4">
@@ -138,6 +145,7 @@ export function CharacterHub({ character: c, mode, actions }: Props) {
           title="The Basalt Shrine: stat tracks and Devotions"
           onLeave={() => setVisiting(null)}
         >
+          {closedNote}
           <StatTracks character={c} canCorrect={canCorrect} canSpend={canSpend} />
         </Location>
       ) : visiting === 'markets' ? (
@@ -148,6 +156,7 @@ export function CharacterHub({ character: c, mode, actions }: Props) {
           title="The Basalt Markets: permanent upgrades"
           onLeave={() => setVisiting(null)}
         >
+          {closedNote}
           <UpgradeShop character={c} canCorrect={canCorrect} canSpend={canSpend} />
         </Location>
       ) : (

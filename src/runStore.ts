@@ -346,6 +346,15 @@ export interface RunHistoryEntry {
   endedAt: Date | null
 }
 
+/**
+ * DM only: delete one run's history entry. This removes the record only; the
+ * rewards the run already gave its characters stay with them.
+ */
+export async function deleteRunHistory(runId: string): Promise<void> {
+  if (!db) throw new Error('Firebase is not set up.')
+  await deleteDoc(doc(db, 'runHistory', runId))
+}
+
 /** The latest finished runs, newest first. */
 export function useRunHistory(max = 50): { entries: RunHistoryEntry[] | null; error: string | null } {
   const [entries, setEntries] = useState<RunHistoryEntry[] | null>(null)
