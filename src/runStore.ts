@@ -26,6 +26,7 @@ import type { DmRunState, Run, RunPlayer, RunResult, RunState } from './model/ru
 import { spendHiddenSight } from './rules/roomFlow'
 import { runResults } from './rules/runFlow'
 import { applyChoice, draftKey, isDraftChoice, type DraftChoice } from './rules/draftChoice'
+import type { ExitVote, ExitVoteDoc } from './rules/votes'
 
 /**
  * Live view of the run currently in progress, if any. Only the DM's screen
@@ -320,6 +321,7 @@ export async function cancelRun(state: RunState): Promise<void> {
     batch.delete(doc(db, 'runs', state.run.id, 'choices', player.characterId))
     batch.delete(doc(db, 'runs', state.run.id, 'requests', player.characterId))
     batch.delete(doc(db, 'runs', state.run.id, 'tokens', player.characterId))
+    batch.delete(doc(db, 'runs', state.run.id, 'votes', player.characterId))
     batch.delete(doc(db, 'runs', state.run.id, 'private', player.characterId))
     batch.update(doc(db, 'characters', player.characterId), { activeRunId: null, updatedAt: serverTimestamp() })
   }
@@ -375,6 +377,26 @@ export function useRunHistory(max = 50): { entries: RunHistoryEntry[] | null; er
 export async function setLootRequests(runId: string, characterId: string, uids: string[]) {
   if (!db) throw new Error('Firebase is not set up.')
   await setDoc(doc(db, 'runs', runId, 'requests', characterId), { uids, updatedAt: serverTimestamp() })
+}
+
+/** A player's descend-or-extract vote for the floor whose boss was just beaten. */
+export async function setExitVote(runId: string, characterId: string, vote: ExitVote, floor: number) {
+  if (!db) throw new Error('Firebase is not set up.')
+  await setDoc(doc(db, 'runs', runId, 'votes', characterId), { vote, floor, updatedAt: serverTimestamp() })
+}
+
+/** Live map of characterId -> descend-or-extract vote for a run. */
+export function useExitVotes(runId: string | null): Record<string, ExitVoteDoc> {
+  const [loaded, setLoaded] = useState<{ runId: string; votes: Record<string, ExitVoteDoc> } | null>(null)
+  useEffect(() => {
+    if (!db || !runId) return
+    return onSnapshot(collection(db, 'runs', runId, 'votes'), (snapshot) => {
+      const votes: Record<string, ExitVoteDoc> = {}
+      for (const d of snapshot.docs) votes[d.id] = { vote: d.data().vote, floor: d.data().floor }
+      setLoaded({ runId, votes })
+    })
+  }, [runId])
+  return loaded && loaded.runId === runId ? loaded.votes : {}
 }
 
 /** Live map of characterId -> requested item uids for a run. */
