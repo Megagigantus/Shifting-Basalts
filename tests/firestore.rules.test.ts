@@ -492,6 +492,27 @@ describe('Thils\'s Vault and loot requests', () => {
     await assertSucceeds(deleteDoc(ref))
   })
 
+  it('a player can move their own battle map token, and everyone invited can see it', async () => {
+    const ref = doc(as(PLAYER), 'runs', 'live', 'tokens', OWNED)
+    await assertSucceeds(setDoc(ref, { x: 3, y: 9, roomKey: '1-2', updatedAt: now() }))
+    await assertSucceeds(setDoc(ref, { x: 0, y: 13, roomKey: '1-2', updatedAt: now() }))
+    await assertSucceeds(getDoc(doc(as(OTHER_PLAYER), 'runs', 'live', 'tokens', OWNED)))
+    await assertSucceeds(setDoc(doc(as(DM), 'runs', 'live', 'tokens', OWNED), { x: 5, y: 5, roomKey: '1-2', updatedAt: now() }))
+    await assertSucceeds(deleteDoc(ref))
+  })
+
+  it('a token is only a square on the grid, for their own character, in an active run', async () => {
+    const ref = doc(as(PLAYER), 'runs', 'live', 'tokens', OWNED)
+    await assertFails(setDoc(doc(as(PLAYER), 'runs', 'live', 'tokens', OTHERS), { x: 1, y: 1, roomKey: '1-2', updatedAt: now() }))
+    await assertFails(setDoc(doc(as(PLAYER), 'runs', 'over', 'tokens', OWNED), { x: 1, y: 1, roomKey: '1-2', updatedAt: now() }))
+    await assertFails(setDoc(ref, { x: 14, y: 1, roomKey: '1-2', updatedAt: now() }))
+    await assertFails(setDoc(ref, { x: -1, y: 1, roomKey: '1-2', updatedAt: now() }))
+    await assertFails(setDoc(ref, { x: 1.5, y: 1, roomKey: '1-2', updatedAt: now() }))
+    await assertFails(setDoc(ref, { x: 1, y: 1, roomKey: '1-2', hp: 99, updatedAt: now() }))
+    await assertFails(setDoc(ref, { x: 1, y: 1, roomKey: '1-2', updatedAt: new Date(0) }))
+    await assertFails(getDoc(doc(as(STRANGER), 'runs', 'live', 'tokens', OWNED)))
+  })
+
   it('requests are only a list of ids, for their own character, in an active run', async () => {
     const ref = doc(as(PLAYER), 'runs', 'live', 'requests', OWNED)
     await assertFails(setDoc(ref, { uids: ['L1'], assignedTo: OWNED, updatedAt: now() }))
