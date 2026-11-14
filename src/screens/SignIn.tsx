@@ -117,7 +117,7 @@ export function SignIn() {
         <GoogleMark /> Continue with Google
       </button>
 
-      <div className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-wider text-stone-500">
+      <div className="flex items-center gap-3 text-[0.625rem] font-semibold uppercase tracking-wider text-stone-500">
         <span className="h-px flex-1 bg-stone-800" />
         or use your email
         <span className="h-px flex-1 bg-stone-800" />
@@ -163,7 +163,7 @@ export function SignIn() {
               required
               className={`${FIELD} w-full`}
             />
-            <span className="block text-[11px] font-normal text-stone-500">At least {MIN_PASSWORD} characters.</span>
+            <span className="block text-[0.6875rem] font-normal text-stone-500">At least {MIN_PASSWORD} characters.</span>
           </label>
         )}
 

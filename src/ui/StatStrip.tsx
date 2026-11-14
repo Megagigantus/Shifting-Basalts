@@ -21,9 +21,9 @@ export function StatStrip({ stats, className }: { stats: Stat[]; className?: str
     >
       {stats.map((s) => (
         <div key={s.label} className="min-w-0">
-          <dt className="text-[10px] font-semibold uppercase tracking-wider text-stone-500">{s.label}</dt>
+          <dt className="text-[0.625rem] font-semibold uppercase tracking-wider text-stone-500">{s.label}</dt>
           <dd className={cx('m-0 mt-0.5 text-sm font-bold', toneClasses[s.tone ?? 'stone'].text)}>{s.value}</dd>
-          {s.hint && <dd className="m-0 text-[11px] text-stone-500">{s.hint}</dd>}
+          {s.hint && <dd className="m-0 text-[0.6875rem] text-stone-500">{s.hint}</dd>}
         </div>
       ))}
     </dl>

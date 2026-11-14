@@ -110,12 +110,12 @@ export function EncounterPanel({
                     {g.source === 'splash' && <Pill tone="violet">Splash</Pill>}
                     {g.source === 'elite' && <Pill tone="amber">Elite extra</Pill>}
                   </div>
-                  <div className="text-[11px] text-stone-400">Reskin of {c.reskin}</div>
+                  <div className="text-[0.6875rem] text-stone-400">Reskin of {c.reskin}</div>
                 </div>
                 <RevealControl shown={g.revealed} busy={busy} onReveal={() => act((s) => reveal(s, { enemy: i }))} />
               </div>
               {pushed && (
-                <p className="m-0 rounded-md border border-amber-500/25 bg-amber-500/10 px-2 py-1 text-[11px] text-amber-100">
+                <p className="m-0 rounded-md border border-amber-500/25 bg-amber-500/10 px-2 py-1 text-[0.6875rem] text-amber-100">
                   Pushed from CR {crLabel(c.cr)}: use AC {pushed.ac}, HP {pushed.hp}, +{pushed.attack} to hit, about {pushed.dpr} damage per
                   round, save DC {pushed.dc}. The saves below include the higher PB.
                 </p>
@@ -123,7 +123,7 @@ export function EncounterPanel({
               {g.boons?.map((b, j) => {
                 const data = boon(b.id)
                 return (
-                  <p key={j} className="m-0 rounded-md border border-violet-500/25 bg-violet-500/10 px-2 py-1 text-[11px] text-violet-100">
+                  <p key={j} className="m-0 rounded-md border border-violet-500/25 bg-violet-500/10 px-2 py-1 text-[0.6875rem] text-violet-100">
                     Echo {g.count > 1 ? j + 1 : ''} carries <strong>{data.name}</strong> (Level {b.level}): {data.levels.slice(0, b.level).join(' ')}
                   </p>
                 )
@@ -137,7 +137,7 @@ export function EncounterPanel({
       {families.map((f) => (
         <div key={f.id} className="flex items-center gap-3 rounded-lg border border-amber-500/20 bg-stone-950/60 p-2">
           <Portrait kind="families" id={f.id} name={f.name} size="h-9 w-9" square />
-          <p className="m-0 text-[11px] text-stone-300">
+          <p className="m-0 text-[0.6875rem] text-stone-300">
             <strong className="text-amber-200">{f.name} twist:</strong> {f.twist}
           </p>
         </div>
@@ -213,7 +213,7 @@ export function BossBlock({
               <img src={current} alt="" className="h-full w-full object-cover" />
             </button>
             {phase2Art && (
-              <p className="m-0 text-center text-[11px] text-stone-400">
+              <p className="m-0 text-center text-[0.6875rem] text-stone-400">
                 {hp && bloodied ? 'Phase 2 (Bloodied)' : 'Phase 1'} · click for both
               </p>
             )}
@@ -233,7 +233,7 @@ export function BossBlock({
                 {boss.parts.map((p) => (
                   <div key={p.name} className="flex items-center gap-2 rounded-lg border border-fuchsia-500/25 bg-stone-950/60 p-1.5">
                     <Portrait kind="boss-parts" id={partArtId(boss.bossId, p.name)} name={p.name} size="h-8 w-8" square />
-                    <span className="text-[11px]">
+                    <span className="text-[0.6875rem]">
                       {p.count > 1 && `${p.count} × `}
                       <strong className="text-fuchsia-200">{p.name}</strong>: AC {p.ac}
                       {p.hp !== null && `, ${p.hp} HP${p.count > 1 ? ' each' : ''}`}
@@ -253,11 +253,11 @@ export function BossBlock({
         <StatLine abilities={scoresOf(boss.abilities)} saves={savesOf(boss.abilities)} />
         {boss.partAbilities.map((p) => (
           <div key={p.name} className="mt-1.5 flex flex-col gap-1">
-            <span className="text-[11px] text-stone-400">{p.name}:</span>
+            <span className="text-[0.6875rem] text-stone-400">{p.name}:</span>
             <StatLine abilities={scoresOf(p.abilities)} saves={savesOf(p.abilities)} />
           </div>
         ))}
-        {boss.profileNote && <p className="m-0 mt-1 text-[11px] text-stone-500">{boss.profileNote}</p>}
+        {boss.profileNote && <p className="m-0 mt-1 text-[0.6875rem] text-stone-500">{boss.profileNote}</p>}
       </Fact>
 
       {boss.traits.length > 0 && <Fact label="Traits">{boss.traits.join(' ')}</Fact>}
@@ -268,7 +268,7 @@ export function BossBlock({
             const heading = a.group && a.group !== boss.attacks[i - 1]?.group ? a.group : null
             return (
               <li key={a.name}>
-                {heading && <div className="text-[11px] font-semibold text-stone-500">{heading}:</div>}
+                {heading && <div className="text-[0.6875rem] font-semibold text-stone-500">{heading}:</div>}
                 <strong className="text-stone-100">
                   {a.name}
                   {a.count > 1 && ` ×${a.count}`}
@@ -342,7 +342,7 @@ export function RestlessShifts({ room, partyLevel, busy, act }: { room: Room; pa
                 onReveal={() => act((st) => reveal(st, { shift: s.bossId }))}
               />
             </div>
-            <p className="m-0 text-[11px] text-stone-300">{action.text.replace(/\{dc\}/g, String(dc))}</p>
+            <p className="m-0 text-[0.6875rem] text-stone-300">{action.text.replace(/\{dc\}/g, String(dc))}</p>
           </div>
         )
       })}

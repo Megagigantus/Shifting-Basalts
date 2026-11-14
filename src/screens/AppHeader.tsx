@@ -40,7 +40,7 @@ export function AppHeader({ email, role, testMode, dm, onSignOut }: Props) {
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2.5">
         <div className="mr-auto min-w-0">
           <div className="text-lg font-bold leading-tight text-amber-400">Shifting Basalts</div>
-          <div className="text-[11px] text-stone-400">Dungeon tracker &amp; generator</div>
+          <div className="text-[0.6875rem] text-stone-400">Dungeon tracker &amp; generator</div>
         </div>
 
         {dm && !dm.playerView && (
@@ -66,7 +66,7 @@ export function AppHeader({ email, role, testMode, dm, onSignOut }: Props) {
 
         <div className="flex flex-wrap items-center gap-2">
           {testMode && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/15 px-2 py-0.5 text-[11px] font-semibold text-amber-200" title="Using the emulators on this computer, not real data.">
+            <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/15 px-2 py-0.5 text-[0.6875rem] font-semibold text-amber-200" title="Using the emulators on this computer, not real data.">
               <FlaskConical size={12} /> Local test mode
             </span>
           )}
@@ -98,13 +98,13 @@ export function AppHeader({ email, role, testMode, dm, onSignOut }: Props) {
             </>
           ) : (
             role === 'player' && (
-              <span className="inline-flex items-center gap-1 rounded-full border border-sky-500/40 bg-sky-500/20 px-2.5 py-0.5 text-[11px] font-semibold text-sky-200">
+              <span className="inline-flex items-center gap-1 rounded-full border border-sky-500/40 bg-sky-500/20 px-2.5 py-0.5 text-[0.6875rem] font-semibold text-sky-200">
                 <User size={12} /> Player
               </span>
             )
           )}
 
-          {email && <span className="hidden text-[11px] text-stone-400 xl:inline">{email}</span>}
+          {email && <span className="hidden text-[0.6875rem] text-stone-400 xl:inline">{email}</span>}
           {onSignOut && (
             <button type="button" onClick={onSignOut} className={cx(SMALL_BUTTON, QUIET)}>
               <LogOut size={13} /> Sign out

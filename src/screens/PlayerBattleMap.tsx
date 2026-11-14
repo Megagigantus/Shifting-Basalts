@@ -8,6 +8,8 @@ import { artUrl } from '../art'
 import { inPhase, mapPhase } from '../rules/battleMap'
 import { BattleBoard } from './BattleBoard'
 import { playerPieces, roomPieces, spotAfterMove, tokenOwner, useLooks } from './mapPieces'
+import { Grid3x3 } from 'lucide-react'
+import { Panel } from '../ui/Panel'
 
 interface Props {
   state: RunState
@@ -44,7 +46,18 @@ export function PlayerBattleMap({ state, myIds, readOnly }: Props) {
   ]
 
   return (
-    <div className="battle-map-panel">
+    <Panel
+      tone={map.arena ? 'rose' : 'sky'}
+      icon={<Grid3x3 size={15} />}
+      title={
+        <>
+          {map.arena ? 'Boss arena' : 'Battle map'}
+          <span className="font-normal text-stone-400">
+            {map.squares} × {map.squares} ({map.squares * 5} ft)
+          </span>
+        </>
+      }
+    >
       <BattleBoard
         squares={map.squares}
         entrance={map.entrance}
@@ -59,13 +72,13 @@ export function PlayerBattleMap({ state, myIds, readOnly }: Props) {
           moveToken(run.id, owner, spotAfterMove(pieces, key, x, y), roomKey).catch((e) => console.error('Could not move your token', e))
         }}
       />
-      <p className="hint">
+      <p className="m-0 text-[0.6875rem] text-stone-500">
         {readOnly
           ? 'Preview: tokens can\'t be moved here.'
           : myIds.length
             ? 'Drag your tokens (gold outline) and summons, or select one and use the arrow keys.'
             : 'The party\'s battle map.'}
       </p>
-    </div>
+    </Panel>
   )
 }

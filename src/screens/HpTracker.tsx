@@ -22,7 +22,7 @@ export function StatLine({
   abilities: Record<Ability, number>
   saves: Record<Ability, number>
 }) {
-  const chip = 'rounded-md border border-stone-800 bg-stone-950/80 px-1.5 py-0.5 font-mono text-[10px] text-stone-300'
+  const chip = 'rounded-md border border-stone-800 bg-stone-950/80 px-1.5 py-0.5 font-mono text-[0.625rem] text-stone-300'
   return (
     <div className="flex flex-wrap gap-1">
       {ac !== undefined && <span className={cx(chip, 'text-sky-200')}>AC {ac}</span>}
@@ -133,7 +133,7 @@ export function BloodiedControl({
             disabled={busy}
             onClick={() => onSet(o.value)}
             className={cx(
-              'cursor-pointer rounded-md border px-2.5 py-0.5 text-[11px] font-semibold',
+              'cursor-pointer rounded-md border px-2.5 py-0.5 text-[0.6875rem] font-semibold',
               override === o.value ? 'border-rose-500/40 bg-rose-500/20 text-rose-200' : 'border-transparent bg-transparent text-stone-400 hover:text-stone-200',
             )}
           >

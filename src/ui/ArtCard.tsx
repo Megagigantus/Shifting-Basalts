@@ -67,7 +67,7 @@ export function ArtCard({ kind, id, title, subtitle, badge, tone = 'stone', shap
       <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-3 text-left">
         <div className="min-w-0">
           <div className="truncate text-sm font-bold text-stone-50 drop-shadow">{title}</div>
-          {subtitle && <div className="truncate text-[11px] text-stone-300">{subtitle}</div>}
+          {subtitle && <div className="truncate text-[0.6875rem] text-stone-300">{subtitle}</div>}
         </div>
         {badge && <div className="shrink-0">{badge}</div>}
       </div>

@@ -166,11 +166,11 @@ export function DmBattleMap({ state, room, busy, act }: Props) {
           Drop in the middle
         </button>
       </div>
-      <p className="m-0 text-[11px] text-stone-500">
+      <p className="m-0 text-[0.6875rem] text-stone-500">
         Drag any piece, or select it and use the arrow keys. Select an object and press × (or Delete) to remove it. Dashed and faded pieces
         are hidden from players. Gold rings are the players; each player can move only their own. The shaded squares are the entrance.
       </p>
-      {arena?.notes && <p className="m-0 text-[11px] text-stone-400">Arena: {arena.notes}</p>}
+      {arena?.notes && <p className="m-0 text-[0.6875rem] text-stone-400">Arena: {arena.notes}</p>}
     </Panel>
   )
 }

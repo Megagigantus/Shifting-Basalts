@@ -21,13 +21,15 @@ import {
   setSuppressed,
   slotCount,
   slotName,
-  slotRulesText,
-  slotTags,
   takeBoon,
   type Slot,
 } from '../rules/boons'
 import { changeSlots, setHiddenBoon } from '../rules/runFlow'
 import { rankProgress } from '../rules/statTracks'
+import { HiddenSlot, SlotCard } from './BoonList'
+import { ConfirmButton } from '../ui/ConfirmButton'
+import { FIELD, SMALL_BUTTON } from '../ui/styles'
+import { cx } from '../ui/tone'
 
 type Step = (s: RunState) => RunState
 
@@ -68,150 +70,110 @@ export function PlayerBoons({ player, character, busy, act }: Props) {
     act((state) => changeSlots(state, id, () => change(slots)), confirmText)
 
   return (
-    <div className="player-boons">
-      <ol className="slot-list">
-        {slots.map((slot, i) => (
-          <li key={i} className={`slot ${slot?.suppressed ? 'suppressed' : ''}`}>
-            {!slot ? (
-              <span className="hint">Empty slot</span>
-            ) : (
-              <>
-                <div className="slot-title">
-                  <strong>{slotName(slot)}</strong>
-                  {slot.kind === 'boon' && <span className="tag">Level {slot.level}</span>}
-                  {slot.kind === 'evolution' && <span className="tag">Evolution</span>}
-                  {slot.kind === 'combination' && <span className="tag">Combination</span>}
-                  {slotTags(slot).map((t) => (
-                    <span key={t} className="tag">
-                      {t}
-                    </span>
-                  ))}
-                  {slot.suppressed && <span className="warning">Suppressed</span>}
-                </div>
-                <details>
-                  <summary className="hint">Rules text</summary>
-                  {slotRulesText(slot).map((line) => (
-                    <p key={line} className="hint">
-                      {line}
-                    </p>
-                  ))}
-                </details>
-                <div className="row-actions wrap">
-                  {slot.kind === 'boon' && slot.level < MAX_LEVEL && (
-                    <button type="button" disabled={busy} onClick={() => onSlots((s) => levelUp(s, i))}>
-                      Level up
-                    </button>
-                  )}
-                  {evolutionFor(slot) && (
-                    <button
-                      type="button"
-                      disabled={busy}
-                      onClick={() =>
-                        onSlots((s) => evolve(s, i), `Evolve into ${evolutionFor(slot)!.name}? This can't be undone except by removing it.`)
-                      }
-                    >
-                      Evolve into {evolutionFor(slot)!.name}
-                    </button>
-                  )}
-                  <button type="button" disabled={busy} onClick={() => onSlots((s) => setSuppressed(s, i, !slot.suppressed))}>
-                    {slot.suppressed ? 'Unsuppress' : 'Suppress'}
-                  </button>
-                  {picked && (
-                    <button
-                      type="button"
-                      disabled={busy}
-                      onClick={() =>
-                        onSlots((s) => replaceBoon(s, i, picked), `Replace ${slotName(slot)} with ${boon(picked).name} at Level 1?`)
-                      }
-                    >
-                      Replace with {boon(picked).name}
-                    </button>
-                  )}
-                  <button
-                    type="button"
-                    className="quiet"
-                    disabled={busy}
-                    onClick={() => onSlots((s) => clearSlot(s, i), `Remove ${slotName(slot)}? Use this to correct mistakes.`)}
-                  >
-                    Remove
-                  </button>
-                </div>
-              </>
-            )}
-          </li>
-        ))}
+    <div className="flex flex-col gap-3">
+      <ol className="m-0 flex list-none flex-col gap-1.5 p-0">
+        {slots.map((slot, i) =>
+          !slot ? (
+            <li key={i} className="rounded-lg border border-dashed border-stone-700 px-2.5 py-2 text-[0.6875rem] text-stone-500">
+              Empty slot
+            </li>
+          ) : (
+            <SlotCard key={i} slot={slot}>
+              {slot.kind === 'boon' && slot.level < MAX_LEVEL && (
+                <button type="button" className={cx(SMALL_BUTTON, 'text-amber-200')} disabled={busy} onClick={() => onSlots((s) => levelUp(s, i))}>
+                  Level up
+                </button>
+              )}
+              {evolutionFor(slot) && (
+                <ConfirmButton
+                  tone="violet"
+                  disabled={busy}
+                  confirmLabel={`Yes, evolve (only undone by removing it)`}
+                  onConfirm={() => onSlots((s) => evolve(s, i))}
+                >
+                  Evolve into {evolutionFor(slot)!.name}
+                </ConfirmButton>
+              )}
+              <button type="button" className={SMALL_BUTTON} disabled={busy} onClick={() => onSlots((s) => setSuppressed(s, i, !slot.suppressed))}>
+                {slot.suppressed ? 'Unsuppress' : 'Suppress'}
+              </button>
+              {picked && (
+                <ConfirmButton
+                  tone="amber"
+                  disabled={busy}
+                  confirmLabel={`Yes, replace with ${boon(picked).name} at Level 1`}
+                  onConfirm={() => onSlots((s) => replaceBoon(s, i, picked))}
+                >
+                  Replace with {boon(picked).name}
+                </ConfirmButton>
+              )}
+              <ConfirmButton disabled={busy} confirmLabel={`Yes, remove ${slotName(slot)}`} onConfirm={() => onSlots((s) => clearSlot(s, i))}>
+                Remove
+              </ConfirmButton>
+            </SlotCard>
+          ),
+        )}
       </ol>
 
       {combos.length > 0 && (
-        <div className="row-actions wrap">
+        <div className="flex flex-wrap gap-1.5">
           {combos.map(({ combination: c }) => (
-            <button
+            <ConfirmButton
               key={c.id}
-              type="button"
+              tone="emerald"
               disabled={busy}
-              onClick={() =>
-                onSlots(
-                  (s) => combine(s, c.id),
-                  `Combine ${c.boons.map((b) => boon(b).name).join(' + ')} into ${c.name}? Combinations are final and free up a slot.`,
-                )
-              }
+              confirmLabel={`Yes, combine (final, frees a slot)`}
+              onConfirm={() => onSlots((s) => combine(s, c.id))}
             >
-              Combine into {c.name}
-            </button>
+              Combine {c.boons.map((b) => boon(b).name).join(' + ')} into {c.name}
+            </ConfirmButton>
           ))}
         </div>
       )}
 
-      <div className="boon-picker">
-        <select value={picked} onChange={(e) => setPicked(e.target.value)} aria-label="Pick a boon">
-          <option value="">Pick a boon…</option>
-          {TAG_ORDER.map((tag) => (
-            <optgroup key={tag} label={tag}>
-              {BOONS.filter((b) => b.tags[0] === tag).map((b) => (
-                <option key={b.id} value={b.id}>
-                  {b.name}
-                </option>
-              ))}
-            </optgroup>
-          ))}
-        </select>
-        <button
-          type="button"
-          disabled={busy || !picked || (!pickedIsHeld && !hasEmpty)}
-          onClick={() => {
-            onSlots((s) => takeBoon(s, picked))
-            setPicked('')
-          }}
-        >
-          {pickedIsHeld ? 'Take (levels it up)' : 'Take'}
-        </button>
+      <div className="flex flex-col gap-1.5 rounded-lg border border-stone-800 bg-stone-950/50 p-2.5">
+        <span className="text-[0.625rem] font-bold uppercase tracking-wider text-stone-400">Add a boon by hand</span>
+        <div className="flex flex-wrap gap-1.5">
+          <select value={picked} onChange={(e) => setPicked(e.target.value)} aria-label="Pick a boon" className={cx(FIELD, 'min-w-0 flex-1 py-1.5 text-xs')}>
+            <option value="">Pick a boon…</option>
+            {TAG_ORDER.map((tag) => (
+              <optgroup key={tag} label={tag}>
+                {BOONS.filter((b) => b.tags[0] === tag).map((b) => (
+                  <option key={b.id} value={b.id}>
+                    {b.name}
+                  </option>
+                ))}
+              </optgroup>
+            ))}
+          </select>
+          <button
+            type="button"
+            className={SMALL_BUTTON}
+            disabled={busy || !picked || (!pickedIsHeld && !hasEmpty)}
+            onClick={() => {
+              onSlots((s) => takeBoon(s, picked))
+              setPicked('')
+            }}
+          >
+            {pickedIsHeld ? 'Take (levels it up)' : 'Take'}
+          </button>
+        </div>
+        {picked && (
+          <div className="flex flex-col gap-1 text-[0.6875rem] text-stone-300">
+            <span>{boon(picked).levels[0]}</span>
+            {fitWarnings(picked, character).map((w) => (
+              <span key={w} className="text-amber-300">
+                {w}
+              </span>
+            ))}
+            {!pickedIsHeld && !hasEmpty && <span className="text-amber-300">No empty slot: use Replace on a slot above.</span>}
+          </div>
+        )}
       </div>
-      {picked && (
-        <div className="hint">
-          {boon(picked).levels[0]}
-          {fitWarnings(picked, character).map((w) => (
-            <div key={w} className="warning">
-              {w}
-            </div>
-          ))}
-          {!pickedIsHeld && !hasEmpty && <div className="warning">No empty slot: use Replace on a slot above.</div>}
-        </div>
-      )}
 
-      <div className="hidden-slot">
-        <span>
-          Hidden boon:{' '}
-          {player.hiddenBoonId ? (
-            <>
-              <strong>{hiddenBoon(player.hiddenBoonId).name}</strong>
-              <span className="hint"> {hiddenBoon(player.hiddenBoonId).effect}</span>
-            </>
-          ) : (
-            <span className="hint">none</span>
-          )}
-        </span>
-        <div className="boon-picker">
-          <select value={hiddenPick} onChange={(e) => setHiddenPick(e.target.value)} aria-label="Pick a hidden boon">
+      <HiddenSlot hiddenBoonId={player.hiddenBoonId}>
+        <div className="flex flex-wrap gap-1.5">
+          <select value={hiddenPick} onChange={(e) => setHiddenPick(e.target.value)} aria-label="Pick a hidden boon" className={cx(FIELD, 'min-w-0 flex-1 py-1.5 text-xs')}>
             <option value="">Pick a hidden boon…</option>
             <optgroup label="Class hidden boon">
               {hiddenChoices
@@ -232,26 +194,38 @@ export function PlayerBoons({ player, character, busy, act }: Props) {
                 ))}
             </optgroup>
           </select>
-          <button
-            type="button"
-            disabled={busy || !hiddenPick}
-            onClick={() => {
-              act(
-                (s) => setHiddenBoon(s, id, hiddenPick),
-                player.hiddenBoonId ? `Replace ${hiddenBoon(player.hiddenBoonId).name} with ${hiddenBoon(hiddenPick).name}?` : undefined,
-              )
-              setHiddenPick('')
-            }}
-          >
-            {player.hiddenBoonId ? 'Replace hidden boon' : 'Set hidden boon'}
-          </button>
+          {player.hiddenBoonId ? (
+            <ConfirmButton
+              tone="violet"
+              disabled={busy || !hiddenPick}
+              confirmLabel={hiddenPick ? `Yes, replace with ${hiddenBoon(hiddenPick).name}` : 'Yes, replace'}
+              onConfirm={() => {
+                act((s) => setHiddenBoon(s, id, hiddenPick))
+                setHiddenPick('')
+              }}
+            >
+              Replace hidden boon
+            </ConfirmButton>
+          ) : (
+            <button
+              type="button"
+              className={SMALL_BUTTON}
+              disabled={busy || !hiddenPick}
+              onClick={() => {
+                act((s) => setHiddenBoon(s, id, hiddenPick))
+                setHiddenPick('')
+              }}
+            >
+              Set hidden boon
+            </button>
+          )}
           {player.hiddenBoonId && (
-            <button type="button" className="quiet" disabled={busy} onClick={() => act((s) => setHiddenBoon(s, id, null))}>
+            <button type="button" className={SMALL_BUTTON} disabled={busy} onClick={() => act((s) => setHiddenBoon(s, id, null))}>
               Clear
             </button>
           )}
         </div>
-      </div>
+      </HiddenSlot>
     </div>
   )
 }

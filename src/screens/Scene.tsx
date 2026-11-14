@@ -133,7 +133,7 @@ export function PostBossScene({ state, forDm = false }: { state: RunState; forDm
     <div className="flex flex-col gap-3">
       <SceneBanner id="post-boss" title={last ? 'The legendary boss is defeated' : `Floor ${run.floor} boss defeated`} subtitle="The post-boss room" />
       <SceneCards cards={cards} />
-      <p className="m-0 text-[11px] text-stone-400">
+      <p className="m-0 text-[0.6875rem] text-stone-400">
         {forDm
           ? 'Descend or extract with the run tracker buttons once the party decides.'
           : 'Decide together whether to go deeper or leave; the DM makes it happen.'}
@@ -157,7 +157,7 @@ export function ReprieveScene() {
           { id: 'reflect', title: 'Reflect', text: 'Level up one boon.' },
         ]}
       />
-      <p className="m-0 text-[11px] text-stone-400">Each player chooses one.</p>
+      <p className="m-0 text-[0.6875rem] text-stone-400">Each player chooses one.</p>
     </div>
   )
 }

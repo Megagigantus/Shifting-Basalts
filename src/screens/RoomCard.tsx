@@ -79,9 +79,9 @@ export function RoomCard({ shape, size, lighting, exits, trueExit, terrain, tric
           />
           <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/30 to-transparent" />
           <figcaption className="absolute inset-x-0 bottom-0 p-3 text-left">
-            {eyebrow && <div className="text-[10px] font-bold uppercase tracking-wider text-amber-300">{eyebrow}</div>}
+            {eyebrow && <div className="text-[0.625rem] font-bold uppercase tracking-wider text-amber-300">{eyebrow}</div>}
             <div className="text-base font-bold text-stone-50 drop-shadow">{shapeOf(shape).name}</div>
-            <div className="text-[11px] text-stone-300">
+            <div className="text-[0.6875rem] text-stone-300">
               {sizeOf(size).name} ({sizeOf(size).feet} ft) · {lightingName(lighting)}
             </div>
           </figcaption>
@@ -105,7 +105,7 @@ export function RoomCard({ shape, size, lighting, exits, trueExit, terrain, tric
                 >
                   <img src={i.url} alt="" className="h-full w-full object-cover" />
                 </button>
-                <span className="mt-1 block text-[10px] leading-tight text-stone-400">{i.name}</span>
+                <span className="mt-1 block text-[0.625rem] leading-tight text-stone-400">{i.name}</span>
               </li>
             )
           })}
@@ -123,7 +123,7 @@ export function RoomCard({ shape, size, lighting, exits, trueExit, terrain, tric
                   >
                     {url && <img src={url} alt={id === 'true-exit' ? `Doorway ${n + 1}, true exit` : `Doorway ${n + 1}`} className="h-full w-full object-cover" />}
                   </span>
-                  <span className="mt-1 block text-[10px] text-stone-400">#{n + 1}</span>
+                  <span className="mt-1 block text-[0.625rem] text-stone-400">#{n + 1}</span>
                 </li>
               )
             })}

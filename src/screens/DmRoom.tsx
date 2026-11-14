@@ -151,7 +151,7 @@ export function DmRoom({ state, busy, act }: Props) {
             {room.exits} doorway{room.exits === 1 ? '' : 's'}
           </Pill>
         </div>
-        <p className="m-0 text-[11px] text-stone-400">{shape.description}</p>
+        <p className="m-0 text-[0.6875rem] text-stone-400">{shape.description}</p>
 
         {room.exits > 1 && (
           <div className={cx(WELL, 'flex flex-wrap items-center gap-2 text-xs')}>
@@ -182,7 +182,7 @@ export function DmRoom({ state, busy, act }: Props) {
                     <RevealControl shown={room.revealed.falseWall} busy={busy} onReveal={() => act((s) => reveal(s, 'falseWall'))} />
                   )}
                 </div>
-                <p className="m-0 text-[11px] text-stone-400">{terrainOf(id).effect}</p>
+                <p className="m-0 text-[0.6875rem] text-stone-400">{terrainOf(id).effect}</p>
               </div>
             )
           })}
@@ -196,7 +196,7 @@ export function DmRoom({ state, busy, act }: Props) {
               </strong>
               <RevealControl shown={room.revealed.oddity} busy={busy} onReveal={() => act((s) => reveal(s, 'oddity'))} />
             </div>
-            <p className="m-0 text-[11px] text-stone-300">{oddityText(room.oddity)}</p>
+            <p className="m-0 text-[0.6875rem] text-stone-300">{oddityText(room.oddity)}</p>
           </div>
         )}
 
@@ -229,13 +229,13 @@ export function DmRoom({ state, busy, act }: Props) {
                         onReveal={() => act((s) => reveal(s, { trick: t.id }))}
                       />
                     </div>
-                    <p className="m-0 text-[11px] text-stone-300">
+                    <p className="m-0 text-[0.6875rem] text-stone-300">
                       <span className="text-stone-500">Trigger:</span> {trick.trigger}
                     </p>
-                    <p className="m-0 text-[11px] text-stone-300">
+                    <p className="m-0 text-[0.6875rem] text-stone-300">
                       <span className="text-stone-500">Effect:</span> {trick.effect}
                     </p>
-                    <p className="m-0 text-[11px] text-stone-300">
+                    <p className="m-0 text-[0.6875rem] text-stone-300">
                       <span className="text-stone-500">Counterplay:</span> {trick.counterplay}
                     </p>
                   </div>
@@ -265,9 +265,9 @@ export function DmRoom({ state, busy, act }: Props) {
               )}
             </div>
             <p className="m-0 text-xs text-stone-200">{conditionOf(room.condition).condition}</p>
-            <p className="m-0 text-[11px] text-stone-500">Hidden Sight hint: "{conditionOf(room.condition).hint}"</p>
+            <p className="m-0 text-[0.6875rem] text-stone-500">Hidden Sight hint: "{conditionOf(room.condition).hint}"</p>
             {!room.revealed.condition && (
-              <p className="m-0 text-[10px] text-stone-500">When met, players see it and every living player gets a hidden offer of 2 gifts.</p>
+              <p className="m-0 text-[0.625rem] text-stone-500">When met, players see it and every living player gets a hidden offer of 2 gifts.</p>
             )}
           </div>
         )}

@@ -18,7 +18,7 @@ export const QUIET_BUTTON =
 
 /** Small secondary action, for rows of tools (Reveal, Reroll…). */
 export const SMALL_BUTTON =
-  'inline-flex items-center justify-center gap-1 rounded-lg border border-stone-700 bg-stone-900 px-2.5 py-1 text-[11px] font-semibold text-stone-200 hover:bg-stone-800 disabled:opacity-50 cursor-pointer'
+  'inline-flex items-center justify-center gap-1 rounded-lg border border-stone-700 bg-stone-900 px-2.5 py-1 text-[0.6875rem] font-semibold text-stone-200 hover:bg-stone-800 disabled:opacity-50 cursor-pointer'
 
 /** A dark inner box inside a card, e.g. one terrain feature. */
 export const WELL = 'rounded-lg border border-stone-800 bg-stone-950/70 p-2.5'

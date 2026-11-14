@@ -52,6 +52,6 @@ export function Panel({ title, subtitle, icon, actions, tone = 'stone', hero, cl
 /** Small uppercase label for a group inside a panel, e.g. "BOON COUNTERS". */
 export function SectionLabel({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <h3 className={cx('m-0 text-[10px] font-bold uppercase tracking-wider text-stone-400', className)}>{children}</h3>
+    <h3 className={cx('m-0 text-[0.625rem] font-bold uppercase tracking-wider text-stone-400', className)}>{children}</h3>
   )
 }

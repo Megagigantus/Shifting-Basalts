@@ -114,7 +114,7 @@ export function InviteList({ myEmail }: { myEmail: string }) {
           Add
         </button>
       </form>
-      <p className="m-0 text-[11px] text-stone-500">Removing someone takes away their access right away.</p>
+      <p className="m-0 text-[0.6875rem] text-stone-500">Removing someone takes away their access right away.</p>
 
       {error && <p className="m-0 text-xs text-rose-300">{error}</p>}
     </div>
