@@ -6,6 +6,10 @@ import type { RunPlayer } from '../model/run'
 import type { DraftChoice } from '../rules/draftChoice'
 import { hiddenBoon, slotName, type Slot } from '../rules/boons'
 import { describeHidden, describeOffer } from '../offerText'
+import { EyeOff, RefreshCw, Sparkles } from 'lucide-react'
+import { Pill } from '../ui/Pill'
+import { FIELD, PRIMARY_BUTTON, QUIET_BUTTON } from '../ui/styles'
+import { cx, toneClasses, type Tone } from '../ui/tone'
 
 interface Props {
   player: RunPlayer
@@ -27,39 +31,46 @@ export function DraftOffers({ player, passValue, rerollsLeft, busy, onChoose, wh
 
   if (!draft && !hidden) return null
 
+  const passLabel = `Pass (+${passValue} Quantum Basalt${passValue === 1 ? '' : 's'})`
+
   return (
-    <div className="draft">
+    <div className="flex flex-col gap-4">
       {draft && (
-        <>
-          <div className="panel-header">
-            <h3>
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h3 className="m-0 flex items-center gap-1.5 text-sm font-bold text-stone-100">
+              <Sparkles size={14} className="text-amber-300" />
               {draft.starting
                 ? who ? `${who}: Starting Boon` : 'Your Starting Boon'
                 : who ? `${who}: choose a boon` : 'Choose a boon'}
             </h3>
-            <span className="hint">
+            <span className="text-[11px] text-stone-400">
               {draft.starting
                 ? 'Before room 1'
                 : `Floor ${draft.floor}, ${draft.elite ? 'elite room' : `room ${draft.room}`}`}
             </span>
           </div>
-          <div className="offer-cards">
+          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
             {draft.offers.map((offer, i) => {
               const text = describeOffer(offer, slots)
               const needsReplace = text.needsSlot && !hasEmpty
               const target = replaceSlot[i] ?? 0
+              const tone = offerTone(text.label)
               return (
-                <div key={i} className="offer-card">
-                  <span className="hint">{text.label}</span>
-                  <strong>{text.heading}</strong>
-                  {text.tag && <span className="tag">{text.tag}</span>}
-                  <p className="hint">{text.text}</p>
+                <div key={i} className={cx('flex flex-col gap-2 rounded-xl border bg-stone-950/70 p-3', toneClasses[tone].border)}>
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <Pill tone={tone}>{text.label}</Pill>
+                    {text.tag && <Pill>{text.tag}</Pill>}
+                  </div>
+                  <strong className="text-sm text-stone-50">{text.heading}</strong>
+                  <p className="m-0 flex-1 text-xs text-stone-300">{text.text}</p>
                   {needsReplace ? (
-                    <div className="replace-row">
+                    <div className="flex flex-wrap gap-1.5">
                       <select
                         value={target}
                         onChange={(e) => setReplaceSlot({ ...replaceSlot, [i]: Number(e.target.value) })}
                         aria-label="Slot to replace"
+                        className={cx(FIELD, 'min-w-0 flex-1 py-1.5 text-xs')}
                       >
                         {slots.map((s, si) => (
                           <option key={si} value={si}>
@@ -70,13 +81,14 @@ export function DraftOffers({ player, passValue, rerollsLeft, busy, onChoose, wh
                       <button
                         type="button"
                         disabled={busy}
+                        className={PRIMARY_BUTTON}
                         onClick={() => onChoose({ action: 'take', index: i, replaceSlot: target })}
                       >
                         Take
                       </button>
                     </div>
                   ) : (
-                    <button type="button" disabled={busy} onClick={() => onChoose({ action: 'take', index: i })}>
+                    <button type="button" disabled={busy} className={cx(PRIMARY_BUTTON, 'self-start')} onClick={() => onChoose({ action: 'take', index: i })}>
                       Take
                     </button>
                   )}
@@ -84,46 +96,63 @@ export function DraftOffers({ player, passValue, rerollsLeft, busy, onChoose, wh
               )
             })}
           </div>
-          <div className="row-actions wrap">
-            <button type="button" disabled={busy} onClick={() => onChoose({ action: 'pass' })}>
-              Pass (+{passValue} Quantum Basalt{passValue === 1 ? '' : 's'})
+          <div className="flex flex-wrap gap-2">
+            <button type="button" disabled={busy} className={QUIET_BUTTON} onClick={() => onChoose({ action: 'pass' })}>
+              {passLabel}
             </button>
             {rerollsLeft > 0 && (
-              <button type="button" disabled={busy} onClick={() => onChoose({ action: 'reroll' })}>
-                Reroll offer ({rerollsLeft} left this floor)
+              <button type="button" disabled={busy} className={QUIET_BUTTON} onClick={() => onChoose({ action: 'reroll' })}>
+                <RefreshCw size={13} /> Reroll offer ({rerollsLeft} left this floor)
               </button>
             )}
           </div>
-        </>
+        </div>
       )}
 
       {hidden && (
-        <div className="hidden-offer">
-          <h3>{who ? `${who}: hidden offer` : 'Hidden offer'}</h3>
-          <p className="hint">
+        <div className="flex flex-col gap-3 rounded-xl border border-violet-500/40 bg-violet-500/10 p-3">
+          <h3 className="m-0 flex items-center gap-1.5 text-sm font-bold text-violet-200">
+            <EyeOff size={14} /> {who ? `${who}: hidden offer` : 'Hidden offer'}
+          </h3>
+          <p className="m-0 text-xs text-stone-300">
             Thils approves. Take one for your hidden slot
             {player.hiddenBoonId ? ` (replaces ${hiddenBoon(player.hiddenBoonId).name})` : ''}, or pass.
           </p>
-          <div className="offer-cards">
+          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
             {[...(hidden.classBoon ? [hidden.classBoon] : []), ...hidden.gifts].map((id) => {
               const text = describeHidden(id)
               return (
-                <div key={id} className="offer-card hidden-card">
-                  <span className="hint">{id === hidden.classBoon ? 'Class hidden boon' : "Thils's gift"}</span>
-                  <strong>{text.heading}</strong>
-                  <p className="hint">{text.text}</p>
-                  <button type="button" disabled={busy} onClick={() => onChoose({ action: 'hidden', hiddenBoonId: id })}>
+                <div key={id} className="flex flex-col gap-2 rounded-xl border border-violet-500/30 bg-stone-950/70 p-3">
+                  <Pill tone="violet" className="self-start">
+                    {id === hidden.classBoon ? 'Class hidden boon' : "Thils's gift"}
+                  </Pill>
+                  <strong className="text-sm text-stone-50">{text.heading}</strong>
+                  <p className="m-0 flex-1 text-xs text-stone-300">{text.text}</p>
+                  <button
+                    type="button"
+                    disabled={busy}
+                    className={cx('inline-flex cursor-pointer items-center justify-center self-start rounded-lg border-0 px-4 py-2 text-sm font-bold disabled:opacity-60', toneClasses.violet.button)}
+                    onClick={() => onChoose({ action: 'hidden', hiddenBoonId: id })}
+                  >
                     Take
                   </button>
                 </div>
               )
             })}
           </div>
-          <button type="button" disabled={busy} onClick={() => onChoose({ action: 'passHidden' })}>
-            Pass (+{passValue} Quantum Basalt{passValue === 1 ? '' : 's'})
+          <button type="button" disabled={busy} className={cx(QUIET_BUTTON, 'self-start')} onClick={() => onChoose({ action: 'passHidden' })}>
+            {passLabel}
           </button>
         </div>
       )}
     </div>
   )
+}
+
+/** Badge color for an offer: amber level-ups, violet evolutions, emerald combinations, neutral new boons. */
+function offerTone(label: string): Tone {
+  if (label.startsWith('Level')) return 'amber'
+  if (label.includes('Evolution')) return 'violet'
+  if (label.includes('Combination')) return 'emerald'
+  return 'stone'
 }
