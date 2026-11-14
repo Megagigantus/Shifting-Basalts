@@ -6,6 +6,7 @@ import { chooseHidden, chooseOffer, passDraft, passHidden, rerollDraft } from '.
 import { spendForge, type ForgeAction } from './forge'
 import { chooseRelic } from './vault'
 import { recoverSlot, spendSurge } from './recovery'
+import { chooseReprieve } from './reprieve'
 
 export type DraftChoice =
   | { action: 'take'; index: number; replaceSlot?: number | null }
@@ -22,6 +23,12 @@ export type DraftChoice =
   | { action: 'recover'; slotLevel: number }
   /** Spend 1 slot recovery point on Leyline Surge. */
   | { action: 'surge' }
+  /** Reprieve: Rest (recorded; applied at the table). */
+  | { action: 'reprieveRest' }
+  /** Reprieve: Reflect, leveling up the boon in this slot. */
+  | { action: 'reprieveReflect'; slotIndex: number }
+  /** Reprieve: catch-up Basalts, for a player with no boon to level. */
+  | { action: 'reprieveBasalts' }
 
 /**
  * Identifies the exact offer a choice was made against. If the offer changes
@@ -57,6 +64,12 @@ export function applyChoice(state: RunState, characterId: string, choice: DraftC
       return recoverSlot(state, characterId, choice.slotLevel)
     case 'surge':
       return spendSurge(state, characterId)
+    case 'reprieveRest':
+      return chooseReprieve(state, characterId, { kind: 'rest' })
+    case 'reprieveReflect':
+      return chooseReprieve(state, characterId, { kind: 'reflect', slotIndex: choice.slotIndex })
+    case 'reprieveBasalts':
+      return chooseReprieve(state, characterId, { kind: 'basalts' })
   }
 }
 

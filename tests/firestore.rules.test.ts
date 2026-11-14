@@ -499,6 +499,16 @@ describe('Thils\'s Vault and loot requests', () => {
     await assertFails(setDoc(ref, { action: 'recover', slotLevel: 3, points: 99, draftKey: null, createdAt: now() }))
   })
 
+  it('a player can send their own Reprieve choice, and nothing extra', async () => {
+    const ref = doc(as(PLAYER), 'runs', 'live', 'choices', OWNED)
+    await assertSucceeds(setDoc(ref, { action: 'reprieveRest', draftKey: null, createdAt: now() }))
+    await assertSucceeds(setDoc(ref, { action: 'reprieveReflect', slotIndex: 0, draftKey: null, createdAt: now() }))
+    await assertSucceeds(setDoc(ref, { action: 'reprieveBasalts', draftKey: null, createdAt: now() }))
+    await assertFails(setDoc(doc(as(PLAYER), 'runs', 'live', 'choices', OTHERS), { action: 'reprieveRest', draftKey: null, createdAt: now() }))
+    await assertFails(setDoc(ref, { action: 'reprieveBasalts', basalts: 50, draftKey: null, createdAt: now() }))
+    await assertFails(setDoc(ref, { action: 'reprieveNap', draftKey: null, createdAt: now() }))
+  })
+
   it('a player can take a relic for their own character', async () => {
     const choiceRef = (id: string) => doc(as(PLAYER), 'runs', 'live', 'choices', id)
     await assertSucceeds(setDoc(choiceRef(OWNED), { action: 'relic', relicId: 'breakers-wraps', draftKey: null, createdAt: now() }))

@@ -18,6 +18,7 @@ import { classTriggerMet, rerollsLeft } from '../rules/draftFlow'
 import { finishRoom } from '../rules/progress'
 import { DmLootPanel, ExtractPanel, VaultPanel } from './LootScreens'
 import { RecoveryPanel } from './RecoveryPanel'
+import { describeReprieve } from '../rules/reprieve'
 import { CounterList, CountersEditor } from './CountersPanel'
 import { useLootRequests } from '../runStore'
 import { applyChoice } from '../rules/draftChoice'
@@ -89,20 +90,28 @@ export function RunTracker({ state, characters, onEnded }: Props) {
   // The generated room's kind (elite, Reprieve...), when this run has rooms.
   const roomKind = state.dm?.room?.kind ?? null
 
-  // Apply players' choices as they arrive, one at a time.
+  // Apply players' choices as they arrive, one at a time. When one finishes,
+  // bump `applied` so the effect looks again: if two choices arrived together,
+  // the second would otherwise wait until something else on screen changed.
   const choices = useChoices(run.id)
   const applying = useRef(false)
+  // The last choice applied (who, plus the whole doc, timestamp included), so
+  // a choice is never applied twice while its deletion is still on its way.
+  const lastApplied = useRef<string | null>(null)
+  const [applied, setApplied] = useState(0)
   useEffect(() => {
     if (applying.current) return
-    const next = Object.entries(choices).find(([, c]) => !c.error)
+    const next = Object.entries(choices).find(([id, c]) => !c.error && `${id}:${JSON.stringify(c)}` !== lastApplied.current)
     if (!next) return
     applying.current = true
+    lastApplied.current = `${next[0]}:${JSON.stringify(next[1])}`
     applyChoiceDoc(state, next[0], next[1])
       .catch(() => setError('Could not apply a player\'s choice. Check your connection.'))
       .finally(() => {
         applying.current = false
+        setApplied((n) => n + 1)
       })
-  }, [choices, state])
+  }, [choices, state, applied])
 
   async function cancel() {
     setBusy(true)
@@ -181,7 +190,7 @@ export function RunTracker({ state, characters, onEnded }: Props) {
 
         {waiting.length > 0 && (
           <p className="m-0 flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-200">
-            <Hourglass size={14} /> Waiting on draft picks from {waiting.join(', ')}.
+            <Hourglass size={14} /> Waiting on choices from {waiting.join(', ')}.
           </p>
         )}
 
@@ -379,6 +388,11 @@ function PlayerCard({ player: p, character, sent, open, floor, busy, act, onTogg
       {summary && <p className="m-0 text-[0.6875rem] text-stone-300">{summary}</p>}
       {sent?.error && <p className="m-0 text-[0.6875rem] text-amber-300">Their last choice failed: {sent.error}</p>}
       <CounterList player={p} />
+      {(p.reprieves?.length ?? 0) > 0 && (
+        <p className="m-0 text-[0.6875rem] text-emerald-200/80">
+          {p.reprieves!.map((r) => `Floor ${r.floor} Reprieve: ${describeReprieve(r)}`).join(' · ')}
+        </p>
+      )}
       <RecoveryPanel player={p} busy={busy} onSpend={(choice) => act((s) => applyChoice(s, p.characterId, choice, Math.random))} />
 
       {!p.alive && (

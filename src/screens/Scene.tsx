@@ -154,10 +154,10 @@ export function ReprieveScene() {
             title: 'Rest',
             text: "A Short Rest's benefits, including Hit Point Dice and short-rest features, without the hour.",
           },
-          { id: 'reflect', title: 'Reflect', text: 'Level up one boon.' },
+          { id: 'reflect', title: 'Reflect', text: 'Level up one boon. With no boon left to level, take catch-up Quantum Basalts instead.' },
         ]}
       />
-      <p className="m-0 text-[0.6875rem] text-stone-400">Each player chooses one.</p>
+      <p className="m-0 text-[0.6875rem] text-stone-400">Each player chooses one. The party moves on once everyone has chosen.</p>
     </div>
   )
 }

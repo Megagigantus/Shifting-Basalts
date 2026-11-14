@@ -9,6 +9,7 @@ import { enterRoom } from './roomFlow'
 import { clearRoom, defeatBoss, isFullClear } from './runFlow'
 import { openVault } from './vault'
 import { grantRecovery } from './recovery'
+import { reprieveWaitingOn } from './reprieve'
 
 export function finishRoom(state: RunState, kind: RoomKind, random: Random): RunState {
   if (kind === 'boss') {
@@ -17,6 +18,9 @@ export function finishRoom(state: RunState, kind: RoomKind, random: Random): Run
     if (isFullClear(beaten)) return enterRoom(openVault(beaten, random), random)
     return enterRoom(openDrafts(beaten, 'boss', random), random)
   }
+  // Everyone chooses Rest or Reflect before the party leaves a Reprieve.
+  const resting = kind === 'reprieve' ? reprieveWaitingOn(state) : []
+  if (resting.length) throw new Error(`Waiting on Reprieve choices from ${resting.join(', ')}.`)
   // A Reprieve pays no Devotion, so it brings no recovery points either.
   const looted = clearRoom(roomLoot(state, kind, random), kind)
   const cleared = kind === 'reprieve' ? looted : grantRecovery(looted)

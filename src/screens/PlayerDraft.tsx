@@ -32,6 +32,9 @@ const ACTION_LABELS: Record<ChoiceDoc['action'], string> = {
   relic: 'your relic pick',
   recover: 'your slot recovery',
   surge: 'your Leyline Surge',
+  reprieveRest: 'your Reprieve choice (Rest)',
+  reprieveReflect: 'your Reprieve choice (Reflect)',
+  reprieveBasalts: 'your Reprieve choice (catch-up Basalts)',
 }
 
 export function PlayerDraft({ state, player, sent, readOnly = false }: Props) {

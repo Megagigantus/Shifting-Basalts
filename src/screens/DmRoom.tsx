@@ -9,6 +9,8 @@ import { PostBossScene, ReprieveScene } from './Scene'
 import { RoomCard } from './RoomCard'
 import { DmBattleMap } from './DmBattleMap'
 import { RevealControl } from './RevealControl'
+import { ReprieveChoices } from './ReprieveChoices'
+import { applyChoice } from '../rules/draftChoice'
 import { roomConditionMet } from '../rules/draftFlow'
 import {
   conditionOf,
@@ -92,7 +94,15 @@ export function DmRoom({ state, busy, act }: Props) {
         }
       >
         {room.kind === 'reprieve' ? (
-          <ReprieveScene />
+          <>
+            <ReprieveScene />
+            <ReprieveChoices
+              state={state}
+              players={state.players}
+              busy={busy}
+              onChoose={(characterId, choice) => act((s) => applyChoice(s, characterId, choice, Math.random))}
+            />
+          </>
         ) : (
           <RoomCard
             eyebrow={where}
