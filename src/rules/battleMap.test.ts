@@ -55,6 +55,16 @@ describe('laying out a battle map', () => {
     }
   })
 
+  it('places a transit rune pair as two runes, apart from each other', () => {
+    for (let seed = 1; seed <= 20; seed++) {
+      const map = placeMap(room(seed, { size: 'large', terrain: ['transit-rune-pair'], tricks: [] }), seeded(seed))!
+      const runes = map.pieces.filter((p) => p.id === 'transit-rune-pair')
+      expect(runes).toHaveLength(2)
+      expect(new Set(runes.map((p) => p.key)).size).toBe(2)
+      expect(Math.max(Math.abs(runes[0].x - runes[1].x), Math.abs(runes[0].y - runes[1].y))).toBeGreaterThanOrEqual(4)
+    }
+  })
+
   it('keeps every piece on the grid, off the entrance and (in medium and large rooms) off each other', () => {
     for (let seed = 1; seed <= 60; seed++) {
       const r = room(seed, { size: seed % 2 ? 'medium' : 'large' })

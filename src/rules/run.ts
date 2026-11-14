@@ -84,10 +84,11 @@ export function lootKeptPercent(lastBossFloor: number): number {
   return floorInfo(lastBossFloor).lootKeptPercent
 }
 
-/** Devotions each living player earns for clearing a room. */
-export function devotionsForRoom(kind: 'combat' | 'elite' | 'reprieve' | 'boss'): number {
+/** Devotions each living player earns for clearing a room (a boss can pay more, set per floor). */
+export function devotionsForRoom(kind: 'combat' | 'elite' | 'reprieve' | 'boss', floor = 1): number {
   if (kind === 'reprieve') return 0
   if (kind === 'elite') return rules.devotionsPerRoomClear + rules.eliteExtraDevotions
+  if (kind === 'boss') return (floorInfo(floor) as { bossDevotions?: number }).bossDevotions ?? rules.devotionsPerRoomClear
   return rules.devotionsPerRoomClear
 }
 

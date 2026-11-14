@@ -297,8 +297,17 @@ export function keptPercent({ run, players }: RunState): number {
   return Math.min(100, base + (run.deepPocketsPercent ?? 0) + eye)
 }
 
+/** Boss trophies are always kept and never count against the loot share. */
+export const isFreeKeep = (item: LootItem) => item.kind === 'trophy'
+
+/** The pool's value that the loot share is cut from: everything except boss trophies. */
+export function shareableValue(loot: RunLoot | null | undefined): number {
+  if (!loot) return 0
+  return loot.credits + loot.items.reduce((s, i) => s + (isFreeKeep(i) ? 0 : itemValue(i)), 0)
+}
+
 export function keptValue(state: RunState): number {
-  return Math.floor((poolValue(state.run.loot) * keptPercent(state)) / 100)
+  return Math.floor((shareableValue(state.run.loot) * keptPercent(state)) / 100)
 }
 
 export interface LootPick {
@@ -326,8 +335,10 @@ export function planShare(state: RunState, picks: LootPick[]): LootShare {
     if (seen.has(p.uid)) throw new Error(`${itemName(item)} is picked twice.`)
     seen.add(p.uid)
     if (!state.players.some((pl) => pl.characterId === p.characterId)) throw new Error('Assign items to characters in this run.')
-    itemsValue += itemValue(item)
+    if (!isFreeKeep(item)) itemsValue += itemValue(item)
   }
+  const unpicked = items.find((i) => isFreeKeep(i) && !seen.has(i.uid))
+  if (unpicked) throw new Error(`${itemName(unpicked)} always goes home: assign it to someone.`)
   const percent = keptPercent(state)
   const value = keptValue(state)
   if (itemsValue > value) {

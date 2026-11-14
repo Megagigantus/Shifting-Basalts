@@ -152,7 +152,7 @@ export function defeatBoss(state: RunState): RunState {
   if (!isBossRoom(state)) throw new Error('Clear the floor\'s rooms first.')
   const { run } = state
   const payout = bossQuantumBasalts(run.floor, run.entryMultiplier)
-  const players = awardDevotions(state.players, devotionsForRoom('boss')).map((p) =>
+  const players = awardDevotions(state.players, devotionsForRoom('boss', run.floor)).map((p) =>
     p.alive ? { ...p, quantumBasaltsEarned: p.quantumBasaltsEarned + payout } : p,
   )
   const next: RunState = {

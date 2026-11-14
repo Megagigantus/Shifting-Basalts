@@ -133,14 +133,37 @@ describe('offer slots', () => {
     expect(offers.slice(1).some((o) => o.kind === 'boon' && ['hardy', 'honed'].includes(o.boonId))).toBe(false)
   })
 
-  it('slot 1 becomes a wildcard when every held boon is maxed', () => {
-    const slots = toLevel3(emptySlots(3), 'traverts-echoes')
+  it('slot 1 becomes a wildcard when every slot is full and every held boon is maxed', () => {
+    const slots = toLevel3(emptySlots(1), 'traverts-echoes')
     const offers = generateOffer({ character: fighter, slots, offerSize: 4, random: seeded(9) })
     expect(offers[0]).toMatchObject({ kind: 'evolution', evolutionId: 'chain-of-echoes', slotIndex: 0 })
   })
 
+  it('no wildcard Evolution or Combination while a boon slot is empty', () => {
+    const slots = toLevel3(emptySlots(3), 'traverts-echoes')
+    const random = seeded(9)
+    for (let i = 0; i < 50; i++) {
+      const offers = generateOffer({ character: fighter, slots, offerSize: 4, random })
+      expect(offers.every((o) => o.kind === 'boon')).toBe(true)
+      // Slot 1 rolls a new boon instead, since the only held boon is maxed.
+      expect(offers[0]).toMatchObject({ kind: 'boon', source: 'weighted' })
+    }
+  })
+
+  it('with empty slots, slot 1 levels a held boon about once per (held + empty) draw', () => {
+    const slots = emptySlots(3)
+    slots[0] = { kind: 'boon', boonId: 'traverts-echoes', level: 1 }
+    const random = seeded(21)
+    let levels = 0
+    for (let i = 0; i < 600; i++) {
+      const offers = generateOffer({ character: fighter, slots, offerSize: 4, random })
+      if (offers[0].kind === 'boon' && offers[0].source === 'held') levels++
+    }
+    expect(levels / 600).toBeCloseTo(1 / 3, 1)
+  })
+
   it('the wildcard offers the player\'s own Combination when they qualify', () => {
-    let slots = toLevel3(emptySlots(3), 'critical-delight')
+    let slots = toLevel3(emptySlots(2), 'critical-delight')
     slots = toLevel3(slots, 'crits-are-for-suckers')
     const random = seeded(11)
     for (let i = 0; i < 50; i++) {

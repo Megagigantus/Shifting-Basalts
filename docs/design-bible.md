@@ -48,7 +48,7 @@ A run is a stack of floors, each a set of rooms ending in a boss. After every bo
 
 - **Floors 1 to 4:** 4 rooms, then a boss room.
 - **Post-boss room:** holds the party's purchased upgrades, such as the Forge and Healing Font, and is where they choose to descend or extract.
-- **Floor 5:** a single legendary boss. Beating it is a full clear.
+- **Floor 5:** a single legendary boss. Beating it is a full clear and pays each living player 3 Devotions instead of 1.
 
 * **Rooms:** each cleared room triggers a boon draft (see Boon system rules). Floors 1 to 4 each hold 4 rooms and a boss room.
 * **Bosses:** a boss closes every floor. Extraction is only possible after a boss.
@@ -111,6 +111,7 @@ Each player starts with 3 boon slots and can buy up to 5 with Quantum Basalts. E
 - **Combine:** two specific Level 3 boons fuse into one, opening a slot for a new boon. The new boon starts at Level 1, so the build gains variety but carries a weak boon into harder floors.
 - **Combinations are final** *(proposed)***:** they can't evolve further, which keeps Evolution's ceiling higher.
 - **Gating** *(proposed)***:** Evolutions and Combinations happen at a Forge room or through the wildcard offer.
+- **Full slots first:** the wildcard never offers an Evolution or Combination while a player has an empty boon slot. After a Combination frees a slot, that slot must be filled before the next wildcard Evolution or Combination. This stops a player from leveling one boon three rooms in a row and evolving it on room 4.
 
 ### Stat tracks
 
@@ -597,10 +598,11 @@ A Quantum Basalt sells for 1,000 credits, and a portable personal stepgate costs
 | Elite room | 2 rolls. |
 | Strider remains (terrain) | Search with Investigation (DC 10 + floor number): 1 trinket, plus 1 consumable if you beat the DC by 5 or more. |
 | Shrine to Thils (terrain) | Leave any trinket as an offering: one player rerolls one loot roll from this floor. |
-| Boss cache (every boss, floor 5 included) | 2 floor rolls, 1 item one rarity above the floor's, and the boss's trophy on a d6 roll of 5 or 6. |
+| Boss cache (every boss, floor 5 included) | 2 floor rolls, 1 item one rarity above the floor's, and the boss's trophy on a d6 roll of 6. |
 | Full clear | Thils's Vault: every player drafts one relic, on top of the floor 5 boss cache. |
 
 - **Shared pool:** everything but Quantum Basalts goes into the party's run loot. On extraction the party keeps its loot share by credit value and chooses which items make up that share.
+- **Trophies are free:** boss trophies always extract and never count against the loot share. They don't add to the value the share is cut from, and they don't use any of it.
 - **Basalts in loot:** every player receives the amount rolled, banked like boss Basalts: forfeit on death, never cut by the loot share.
 - **Bonuses:** Pressures multiply credits and Basalts, Extra Loot multiplies its owner's Basalts, and every full 50% of bonus also adds 1 roll to each boss cache. Collector's Eye and Deep Pockets still raise the share kept.
 - **Entry tier:** the ×2 and ×4 multipliers apply to credits and Basalts. For items, entry tier raises rarity instead (see the next table).
@@ -763,7 +765,7 @@ Roll on the table for the item's rarity. For variety, the DM can swap in any 202
 
 ### Boss trophies
 
-Every boss has one trophy, found in its cache on a d6 roll of 5 or 6. Trophies keep the rarity below at every entry tier and scale with PB instead, so they stay collectible without outpacing tier 3 loot.
+Every boss has one trophy, found in its cache on a d6 roll of 6. Trophies are free to extract: they never count against the loot share. Trophies keep the rarity below at every entry tier and scale with PB instead, so they stay collectible without outpacing tier 3 loot.
 
 | Floor | Boss | Trophy | Rarity | Effect |
 | --- | --- | --- | --- | --- |
@@ -824,7 +826,7 @@ Quantum Basalts are a rare resource awarded to each player on extraction. They a
 
 | Upgrade | Ranks | Cost per rank | Effect | Origin |
 | --- | --- | --- | --- | --- |
-| Starting Boon | 1 | 15 | At the start of floor 1, room 1, roll a random boon at Level 1. Banish and Reroll apply to it. Speeds up early floors on repeat runs. | Brian |
+| Starting Boon | 1 | 15 | At the start of floor 1, room 1, roll a random boon at Level 1. Banish, Reroll and Attunement apply to it (Attunement rolls it from the chosen tag; a reroll rolls from every eligible boon). Speeds up early floors on repeat runs. | Brian |
 | Forge | 1 | 30 | Unlocks a Forge in post-boss rooms. | Brian |
 | Healing Font | 1 | 30 | Unlocks a Healing Font in post-boss rooms. | Brian |
 | Extra Boon Slot | 2 | 40, then 120 | A 4th slot at rank 1 and a 5th at rank 2. | Brian |
@@ -832,7 +834,7 @@ Quantum Basalts are a rare resource awarded to each player on extraction. They a
 | Extra Loot | 3 | 15, 30, 50 | +10% to your own Quantum Basalts per rank. | Brian |
 | Extra Pressures | 2 | 20, 40 | Rank 1 unlocks Restless Stone and Heavy Crown; rank 2 unlocks the harsher version of every Pressure. Each owner in the party adds 5% to rewards. | Brian |
 | Reprieve | 4 | 20, 35, 55, 80 | A 20%, 35%, 50%, then 65% chance of a Reprieve room mid-floor. Every owner rolls separately. | Brian |
-| Attunement | 1 | 15 | Your first offer of each run includes a tag you choose. | Proposed |
+| Attunement | 1 | 15 | Your Starting Boon and your first offer of each run include a tag you choose. | Proposed |
 | Banish | 3 | 10, 20, 30 | Keep a standing list of 1, 2, then 3 boons that never appear in your offers. Edit it between runs. | Proposed |
 | Hidden Sight | 1 | 20 | One hint per floor about a room's secret condition. | Proposed |
 | Deep Pockets | 3 | 25, 50, 80 | +5% loot kept on extraction per rank, up to 100%. Party-wide: the highest rank in the party applies. | Proposed |
@@ -1248,7 +1250,7 @@ The DM hosts the run; players join on their own devices with a lighter view.
 
 Rules the app follows where the rest of the Bible implies an answer without spelling it out.
 
-1. **Leveling:** drafting a boon you already hold raises it 1 level, up to Level 3, and so does the Forge. The guaranteed held-boon offer picks from boons below Level 3; if all of a player's boons are maxed, that slot becomes the wildcard.
+1. **Leveling:** drafting a boon you already hold raises it 1 level, up to Level 3, and so does the Forge. The held-boon offer draws from boons below Level 3 and, while the player has empty slots, from those empty slots too (see Offer weighting); once every slot is full and every boon is maxed, that slot becomes the wildcard.
 2. **Upgrade scope:** party-wide, with each extra owner adding more: Forge (+1 use per owner), Healing Font (+temp HP per extra owner), Extra Pressures (+5% rewards per owner) and Reprieve (every owner rolls). Party-wide at the highest rank only: Deep Pockets. Personal: Extra Boon Slot, Reroll, Banish, Starting Boon, Attunement, Hidden Sight, Quick Return and Extra Loot (its owner's Basalts only).
 3. **Party level:** the average of the party's levels, rounded down. It sets boss CR, room trick DCs, the entry multiplier (one per party) and loot rarity. Encounter XP budgets add up from each player's own level, and PB-based boon numbers use each player's own PB.
 4. **Payoff and Core boons:** they level through drafts and the Forge like other boons, but never evolve or combine.
@@ -1263,9 +1265,9 @@ Every draft is built in three steps.
 
 1. **Filter out ineligible boons.** Spell boons require spells, so non-casters never see them, nor Quick Cantrip, The Archivist's Index or Leyline Surge. Bond boons require a summon or companion. Payoffs require at least 1 rank in their track. Held boons (they have their own slot) and banished boons never appear.
 2. **Build the 4 offers.**
-   - **Slot 1, held boon:** a boon you hold below Level 3. If you hold none, it becomes a weighted roll; if all of yours are maxed, it becomes a wildcard.
+   - **Slot 1, held boon:** one draw among your boons below Level 3 and your empty boon slots. A held boon offers that boon (to level it); an empty slot offers a new weighted roll. Example: 1 boon at Level 1 with 2 empty slots levels it 1 time in 3 and offers a new boon 2 times in 3. With every slot full, it always offers a held boon below Level 3. If you hold no plain boons, it's a weighted roll; if every slot is full and every boon is maxed, it becomes a wildcard.
    - **Slots 2 and 3, weighted rolls:** drawn using the weights below.
-   - **Slot 4, wildcard:** an Evolution or Combination you qualify for, or else one eligible boon at even odds.
+   - **Slot 4, wildcard:** an Evolution or Combination you qualify for, or else one eligible boon at even odds. Evolutions and Combinations only appear once every boon slot is filled.
    - **Variety cap:** no more than 2 boons from the same tag in one draft.
    - **Narrow Seam:** drops a weighted slot first; Narrow Seam II drops the wildcard next.
 3. **Weight the rolls.** Every eligible boon starts at 1, and these multiply: a primary tag for the character's class ×3, a secondary tag ×2, and a tag the player already holds ×2. Core boons stay at 1.

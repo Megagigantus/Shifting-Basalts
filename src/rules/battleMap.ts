@@ -67,6 +67,8 @@ export interface BattleMap {
 
 const TRICK_TERRAIN = mapData.trickTerrain as Record<string, { features: string[]; shapes: string[] }>
 const AVOID = mapData.avoid as Record<string, { x: number; y: number; w: number; h: number }[]>
+const PAIRED_TERRAIN = new Set<string>(mapData.pairedTerrain)
+const PAIR_APART = 4
 
 /** Squares whose centre falls in a painted no-placement area (a chasm, a pit) for this shape. */
 export function avoidSquares(shape: string, n: number): { x: number; y: number }[] {
@@ -216,6 +218,8 @@ export function placeMap(room: Room, random: Random, keep?: BattleMap | null): B
 
   const kept = keep && keep.squares === n ? keep.pieces.filter((p) => p.kind !== 'enemy') : null
   const pieces: MapPiece[] = []
+  // Paired terrain still waiting for its second piece (placed after the enemies).
+  const partners: { id: string; x: number; y: number }[] = []
   if (kept) {
     for (const p of kept) {
       grid.mark(p.x, p.y, footprint(p))
@@ -234,6 +238,7 @@ export function placeMap(room: Room, random: Random, keep?: BattleMap | null): B
       const tries = id === 'false-wall' ? sides.map((s) => edgeSquares(n, s)) : [spots(grid, 1, inside)]
       const p = put(grid, 1, tries, random)
       pieces.push({ key: `terrain:${id}`, kind: 'terrain', id, x: p.x, y: p.y, size: 1 })
+      if (PAIRED_TERRAIN.has(id)) partners.push({ id, x: p.x, y: p.y })
     }
     // Tricks: near terrain they fit (battle-map.json trickTerrain), else anywhere inside.
     for (const t of room.tricks) {
@@ -258,6 +263,15 @@ export function placeMap(room: Room, random: Random, keep?: BattleMap | null): B
       pieces.push({ key: `enemy:${gi}:${k}`, kind: 'enemy', id: g.creatureId, x: p.x, y: p.y, size })
     }
   })
+  // Paired terrain (battle-map.json pairedTerrain), like transit runes: a second
+  // piece, at least PAIR_APART squares from the first when there's room. Placed
+  // last, since a single square fits gaps a Large creature can't.
+  for (const first of partners) {
+    const open = spots(grid, 1, inside)
+    const apart = open.filter((q) => Math.max(Math.abs(q.x - first.x), Math.abs(q.y - first.y)) >= PAIR_APART)
+    const q = put(grid, 1, [apart, open], random)
+    pieces.push({ key: `terrain:${first.id}:2`, kind: 'terrain', id: first.id, x: q.x, y: q.y, size: 1 })
+  }
   return { squares: n, entrance, pieces }
 }
 
