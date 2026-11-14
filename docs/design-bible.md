@@ -826,7 +826,7 @@ Quantum Basalts are a rare resource awarded to each player on extraction. They a
 
 | Upgrade | Ranks | Cost per rank | Effect | Origin |
 | --- | --- | --- | --- | --- |
-| Starting Boon | 1 | 15 | At the start of floor 1, room 1, roll a random boon at Level 1. Banish and Reroll apply to it. Speeds up early floors on repeat runs. | Brian |
+| Starting Boon | 1 | 15 | At the start of floor 1, room 1, roll a random boon at Level 1. Banish, Reroll and Attunement apply to it (Attunement rolls it from the chosen tag; a reroll rolls from every eligible boon). Speeds up early floors on repeat runs. | Brian |
 | Forge | 1 | 30 | Unlocks a Forge in post-boss rooms. | Brian |
 | Healing Font | 1 | 30 | Unlocks a Healing Font in post-boss rooms. | Brian |
 | Extra Boon Slot | 2 | 40, then 120 | A 4th slot at rank 1 and a 5th at rank 2. | Brian |
@@ -834,7 +834,7 @@ Quantum Basalts are a rare resource awarded to each player on extraction. They a
 | Extra Loot | 3 | 15, 30, 50 | +10% to your own Quantum Basalts per rank. | Brian |
 | Extra Pressures | 2 | 20, 40 | Rank 1 unlocks Restless Stone and Heavy Crown; rank 2 unlocks the harsher version of every Pressure. Each owner in the party adds 5% to rewards. | Brian |
 | Reprieve | 4 | 20, 35, 55, 80 | A 20%, 35%, 50%, then 65% chance of a Reprieve room mid-floor. Every owner rolls separately. | Brian |
-| Attunement | 1 | 15 | Your first offer of each run includes a tag you choose. | Proposed |
+| Attunement | 1 | 15 | Your Starting Boon and your first offer of each run include a tag you choose. | Proposed |
 | Banish | 3 | 10, 20, 30 | Keep a standing list of 1, 2, then 3 boons that never appear in your offers. Edit it between runs. | Proposed |
 | Hidden Sight | 1 | 20 | One hint per floor about a room's secret condition. | Proposed |
 | Deep Pockets | 3 | 25, 50, 80 | +5% loot kept on extraction per rank, up to 100%. Party-wide: the highest rank in the party applies. | Proposed |

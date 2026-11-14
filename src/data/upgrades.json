@@ -8,7 +8,7 @@
       "costs": [
         15
       ],
-      "effect": "At the start of floor 1, room 1, roll a random boon at Level 1. Banish and Reroll apply to it.",
+      "effect": "At the start of floor 1, room 1, roll a random boon at Level 1. Banish, Reroll and Attunement apply to it.",
       "scope": "personal",
       "status": "locked"
     },
@@ -97,7 +97,7 @@
       "costs": [
         15
       ],
-      "effect": "Your first offer of each run includes a tag you choose.",
+      "effect": "Your Starting Boon and your first offer of each run include a tag you choose.",
       "scope": "personal",
       "status": "proposed"
     },

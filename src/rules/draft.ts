@@ -200,11 +200,14 @@ function isDuplicate(offers: Offer[], offer: Offer): boolean {
 
 /**
  * Starting Boon upgrade: one random eligible boon at even odds (Banish applies).
+ * With Attunement, it rolls from the attuned tag when any boon there is eligible.
  * Returns an empty offer if nothing is eligible.
  */
-export function startingOffer(character: DraftCharacter, slots: Slot[], random: Random): Offer[] {
+export function startingOffer(character: DraftCharacter, slots: Slot[], random: Random, attuneTag: string | null = null): Offer[] {
   const held = slots.filter((s): s is SlotContent => s !== null).flatMap(boonsIn)
-  const pool = eligibleBoons(character, held)
+  const eligible = eligibleBoons(character, held)
+  const attuned = attuneTag ? eligible.filter((b) => b.tags[0] === attuneTag) : []
+  const pool = attuned.length ? attuned : eligible
   if (pool.length === 0) return []
   const b = pool[Math.floor(random() * pool.length)]
   return [{ kind: 'boon', boonId: b.id, source: 'starting' }]

@@ -141,7 +141,8 @@ export function openStartingBoons(state: RunState, owners: string[], random: Ran
     ...state,
     players: state.players.map((p) => {
       if (!p.alive || !owners.includes(p.characterId)) return p
-      const offers = startingOffer(profileOf(p), p.slots ?? [], random)
+      // Attunement shapes the Starting Boon and, separately, the first room draft.
+      const offers = startingOffer(profileOf(p), p.slots ?? [], random, p.draftProfile?.attuneTag ?? null)
       if (offers.length === 0) return p
       return { ...p, draft: { floor: 1, room: 0, elite: false, offers, starting: true } }
     }),
