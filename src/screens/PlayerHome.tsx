@@ -8,6 +8,7 @@ import { PlayerRun } from './PlayerRun'
 import { CharacterHub } from './CharacterHub'
 import { Roster } from './Roster'
 import { RunHistory } from './RunHistory'
+import { RunEntryVideo } from './RunEntryVideo'
 import { Panel } from '../ui/Panel'
 
 interface Props {
@@ -28,6 +29,8 @@ export function PlayerHome({ email, readOnly = false }: Props) {
 
   return (
     <>
+      {/* The tunnel video plays for players only, never in the DM's preview. */}
+      {myRun && !readOnly && <RunEntryVideo runId={myRun.run.id} />}
       {myRun && <PlayerRun state={myRun} myCharacterIds={myIds} readOnly={readOnly} />}
 
       <div className="mt-6 flex flex-col gap-4">

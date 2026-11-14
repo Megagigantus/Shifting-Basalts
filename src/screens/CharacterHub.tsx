@@ -18,6 +18,7 @@ import { UpgradeShop } from './UpgradeShop'
 import { Panel, SectionLabel } from '../ui/Panel'
 import { Pill } from '../ui/Pill'
 import { QUIET_BUTTON } from '../ui/styles'
+import { useLightbox } from '../ui/lightboxContext'
 import { cx, toneClasses, type Tone } from '../ui/tone'
 
 const className = (id: string) => classes.find((c) => c.id === id)?.name ?? id
@@ -44,6 +45,8 @@ interface Props {
 
 export function CharacterHub({ character: c, mode, actions }: Props) {
   const [visiting, setVisiting] = useState<'shrine' | 'markets' | null>(null)
+  const showArt = useLightbox()
+  const portraitUrl = c.portrait ? artUrl('portraits', c.portrait) : null
   const effects = trackEffects(c)
   const owned = upgradesOwned(c)
   const canEdit = mode !== 'preview'
@@ -54,7 +57,18 @@ export function CharacterHub({ character: c, mode, actions }: Props) {
     <div className="flex flex-col gap-4">
       <Panel hero>
         <div className="flex flex-wrap items-start gap-4">
-          <Avatar portrait={c.portrait} name={c.name} size="h-20 w-20" />
+          {portraitUrl ? (
+            <button
+              type="button"
+              onClick={() => showArt({ src: portraitUrl, title: c.name, subtitle: `${className(c.classId)} · Level ${c.level}` })}
+              aria-label={`Enlarge ${c.name}'s portrait`}
+              className="cursor-pointer rounded-full border-0 bg-transparent p-0"
+            >
+              <Avatar portrait={c.portrait} name={c.name} size="h-20 w-20" />
+            </button>
+          ) : (
+            <Avatar portrait={c.portrait} name={c.name} size="h-20 w-20" />
+          )}
           <div className="flex min-w-0 flex-1 flex-col gap-1.5">
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="m-0 text-lg font-bold text-stone-50">{c.name}</h2>
