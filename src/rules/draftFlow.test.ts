@@ -5,6 +5,7 @@ import { boon, BOONS } from './boons'
 import {
   chooseHidden,
   chooseOffer,
+  canTriggerClass,
   classTriggerMet,
   offerSize,
   openDrafts,
@@ -187,6 +188,13 @@ describe('hidden offers', () => {
     expect(state.players[1].hiddenOffer?.gifts).toHaveLength(2)
   })
 
+  it('a class trigger fires once per player per room, even after passing', () => {
+    let state = classTriggerMet(start(), 'b')
+    expect(canTriggerClass(state, state.players[1])).toBe(false)
+    state = passHidden(state, 'b')
+    expect(() => classTriggerMet(state, 'b')).toThrow('already fired')
+  })
+
   it('taking a hidden boon fills the hidden slot; passing pays the pass bonus', () => {
     let state = classTriggerMet(start(), 'b')
     state = chooseHidden(state, 'b', 'the-archivist')
@@ -220,9 +228,11 @@ describe('Starting Boon', () => {
     expect(() => clearRoom(state, 'combat')).toThrow('Waiting on draft picks from a')
   })
 
-  it('taking it puts the boon in at Level 1; Attunement still shapes the first room\'s offer', () => {
+  it('taking it puts the boon in at Level 1; Attunement shapes it and the first room\'s offer', () => {
     const chars = [character('a', { upgrades: { 'starting-boon': 1, attunement: 1 }, attuneTag: 'Guard' })]
     let state = openStartingBoons(start([], chars), ['a'], seeded(4))
+    const starting = state.players[0].draft!.offers[0]
+    expect(starting.kind === 'boon' && boon(starting.boonId).tags[0]).toBe('Guard')
     state = chooseOffer(state, 'a', 0)
     expect(state.players[0].slots![0]).toMatchObject({ level: 1 })
     expect(state.players[0].draftsSeen).toBe(0)

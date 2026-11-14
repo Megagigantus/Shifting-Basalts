@@ -259,7 +259,7 @@ export function rerollableItems(state: RunState): LootItem[] {
   return (state.run.loot?.items ?? []).filter((i) => i.floor === state.run.floor && REROLLABLE.includes(i.source))
 }
 
-/** Shrine to Thils: offer a trinket to reroll one loot roll from this floor. */
+/** Shrine to Thils: offer a trinket to reroll one loot roll from this floor into a new item of the same kind. */
 export function shrineOffering(state: RunState, trinketUid: string, targetUid: string, random: Random): RunState {
   const loot = state.run.loot
   const trinket = loot?.items.find((i) => i.uid === trinketUid)
@@ -271,7 +271,11 @@ export function shrineOffering(state: RunState, trinketUid: string, targetUid: s
     ...state,
     run: { ...state.run, loot: { ...loot!, items: loot!.items.filter((i) => i.uid !== trinketUid && i.uid !== targetUid) } },
   }
-  return applyDrops(without, [floorRoll(state.run, target.floor, random)], 'shrine')
+  const kind = target.kind as 'trinket' | 'consumable' | 'gear' | 'wondrous'
+  // Same kind and rarity, but a different item when the table allows one.
+  let item = rollItem(kind, target.rarity ?? 'common', random)
+  for (let tries = 0; item.ref === target.ref && tries < 20; tries++) item = rollItem(kind, target.rarity ?? 'common', random)
+  return applyDrops(without, [{ kind: 'item', item }], 'shrine')
 }
 
 // ---------------------------------------------------------------------------
@@ -293,8 +297,17 @@ export function keptPercent({ run, players }: RunState): number {
   return Math.min(100, base + (run.deepPocketsPercent ?? 0) + eye)
 }
 
+/** Boss trophies are always kept and never count against the loot share. */
+export const isFreeKeep = (item: LootItem) => item.kind === 'trophy'
+
+/** The pool's value that the loot share is cut from: everything except boss trophies. */
+export function shareableValue(loot: RunLoot | null | undefined): number {
+  if (!loot) return 0
+  return loot.credits + loot.items.reduce((s, i) => s + (isFreeKeep(i) ? 0 : itemValue(i)), 0)
+}
+
 export function keptValue(state: RunState): number {
-  return Math.floor((poolValue(state.run.loot) * keptPercent(state)) / 100)
+  return Math.floor((shareableValue(state.run.loot) * keptPercent(state)) / 100)
 }
 
 export interface LootPick {
@@ -322,8 +335,10 @@ export function planShare(state: RunState, picks: LootPick[]): LootShare {
     if (seen.has(p.uid)) throw new Error(`${itemName(item)} is picked twice.`)
     seen.add(p.uid)
     if (!state.players.some((pl) => pl.characterId === p.characterId)) throw new Error('Assign items to characters in this run.')
-    itemsValue += itemValue(item)
+    if (!isFreeKeep(item)) itemsValue += itemValue(item)
   }
+  const unpicked = items.find((i) => isFreeKeep(i) && !seen.has(i.uid))
+  if (unpicked) throw new Error(`${itemName(unpicked)} always goes home: assign it to someone.`)
   const percent = keptPercent(state)
   const value = keptValue(state)
   if (itemsValue > value) {

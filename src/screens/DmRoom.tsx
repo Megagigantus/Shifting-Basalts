@@ -114,6 +114,8 @@ export function DmRoom({ state, busy, act }: Props) {
             terrain={room.terrain}
             tricks={room.tricks.map((t) => t.id)}
             hidden={hiddenIcons}
+            arenaId={room.boss?.id}
+            arenaName={room.boss ? `${bossOf(room.boss.id).name}'s arena` : undefined}
           />
         )}
 
@@ -151,17 +153,23 @@ export function DmRoom({ state, busy, act }: Props) {
         )}
 
         <div className="flex flex-wrap gap-1.5">
-          <Pill title={shape.description}>Shape: {shape.name}</Pill>
-          <Pill>
-            Size: {sizeOf(room.size).name} ({sizeOf(room.size).feet} ft)
-          </Pill>
-          <Pill>Elevation: {elevationOf(room.elevation).name}</Pill>
+          {room.boss ? (
+            <Pill tone="rose">Boss arena · 14 × 14 squares (70 ft)</Pill>
+          ) : (
+            <>
+              <Pill title={shape.description}>Shape: {shape.name}</Pill>
+              <Pill>
+                Size: {sizeOf(room.size).name} ({sizeOf(room.size).feet} ft)
+              </Pill>
+              <Pill>Elevation: {elevationOf(room.elevation).name}</Pill>
+            </>
+          )}
           <Pill tone="amber">Lighting: {lightingName(room.lighting)}</Pill>
           <Pill tone="sky" icon={<DoorOpen size={11} />}>
             {room.exits} doorway{room.exits === 1 ? '' : 's'}
           </Pill>
         </div>
-        <p className="m-0 text-[0.6875rem] text-stone-400">{shape.description}</p>
+        {!room.boss && <p className="m-0 text-[0.6875rem] text-stone-400">{shape.description}</p>}
 
         {room.exits > 1 && (
           <div className={cx(WELL, 'flex flex-wrap items-center gap-2 text-xs')}>

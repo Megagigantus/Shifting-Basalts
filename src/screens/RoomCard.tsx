@@ -22,6 +22,9 @@ interface Props {
   hidden?: Set<string>
   /** Small line above the shape name, e.g. "Floor 1 · Room 2 · Combat". */
   eyebrow?: string
+  /** Boss rooms: the boss's arena replaces the shape picture and name. */
+  arenaId?: string | null
+  arenaName?: string
 }
 
 interface Icon {
@@ -45,9 +48,12 @@ const LIGHT_TINT: Record<string, CSSProperties> = {
   },
 }
 
-export function RoomCard({ shape, size, lighting, exits, trueExit, terrain, tricks, hidden, eyebrow }: Props) {
+export function RoomCard({ shape, size, lighting, exits, trueExit, terrain, tricks, hidden, eyebrow, arenaId, arenaName }: Props) {
   const showArt = useLightbox()
-  const shapeUrl = artUrl('shapes', shape)
+  const arenaUrl = arenaId ? artUrl('arenas', arenaId) : null
+  const shapeUrl = arenaUrl ?? artUrl('shapes', shape)
+  const title = arenaUrl && arenaName ? arenaName : shapeOf(shape).name
+  const description = arenaUrl ? undefined : shapeOf(shape).description
   const icons: Icon[] = [
     ...terrain.map((id) => ({ kind: 'terrain' as ArtKind, id, name: terrainOf(id).name })),
     ...tricks.map((id) => ({ kind: 'tricks' as ArtKind, id, name: trickOf(id).name })),
@@ -60,16 +66,17 @@ export function RoomCard({ shape, size, lighting, exits, trueExit, terrain, tric
 
   if (!shapeUrl && icons.length === 0 && !showExits) return null
 
-  const caption = `${shapeOf(shape).name} · ${sizeOf(size).name} (${sizeOf(size).feet} ft) · ${lightingName(lighting)}`
+  const details = arenaUrl ? `Boss arena · ${lightingName(lighting)}` : `${sizeOf(size).name} (${sizeOf(size).feet} ft) · ${lightingName(lighting)}`
+  const caption = `${title} · ${details}`
 
   return (
     <figure className="m-0 flex flex-col gap-2.5">
       {shapeUrl && (
         <button
           type="button"
-          onClick={() => showArt({ src: shapeUrl, title: shapeOf(shape).name, subtitle: caption, description: shapeOf(shape).description })}
+          onClick={() => showArt({ src: shapeUrl, title, subtitle: caption, description })}
           className="group relative box-border block aspect-[16/6] max-h-64 w-full cursor-pointer overflow-hidden rounded-xl border border-amber-500/30 bg-stone-950 p-0"
-          aria-label={`Enlarge ${shapeOf(shape).name}`}
+          aria-label={`Enlarge ${title}`}
         >
           <img src={shapeUrl} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]" />
           <div
@@ -80,10 +87,8 @@ export function RoomCard({ shape, size, lighting, exits, trueExit, terrain, tric
           <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/30 to-transparent" />
           <figcaption className="absolute inset-x-0 bottom-0 p-3 text-left">
             {eyebrow && <div className="text-[0.625rem] font-bold uppercase tracking-wider text-amber-300">{eyebrow}</div>}
-            <div className="text-base font-bold text-stone-50 drop-shadow">{shapeOf(shape).name}</div>
-            <div className="text-[0.6875rem] text-stone-300">
-              {sizeOf(size).name} ({sizeOf(size).feet} ft) · {lightingName(lighting)}
-            </div>
+            <div className="text-base font-bold text-stone-50 drop-shadow">{title}</div>
+            <div className="text-[0.6875rem] text-stone-300">{details}</div>
           </figcaption>
         </button>
       )}

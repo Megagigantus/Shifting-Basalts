@@ -134,11 +134,13 @@ service cloud.firestore {
 
     // A player invests banked Devotions in exactly one stat track: only
     // upward, the bank drops by exactly that much, and the track stays within
-    // the tier cap for the character's level. Refunds are DM-only.
+    // the tier cap for the character's level. Refunds are DM-only. Only
+    // between runs: the Basalt Shrine is closed while the character is inside.
     function isDevotionSpend() {
       return changedFields().hasOnly(['trackDevotions', 'bankedDevotions', 'updatedAt'])
         && changedFields().hasAll(['trackDevotions', 'bankedDevotions'])
         && request.resource.data.updatedAt == request.time
+        && notInRun()
         && anyTrackSpend();
     }
 
@@ -156,11 +158,13 @@ service cloud.firestore {
     }
 
     // A player buys the next rank of exactly one upgrade, paying exactly its
-    // price from banked Quantum Basalts. Refunds are DM-only.
+    // price from banked Quantum Basalts. Refunds are DM-only. Only between
+    // runs: the Basalt Markets are closed while the character is inside.
     function isUpgradePurchase() {
       return changedFields().hasOnly(['upgrades', 'bankedQuantumBasalts', 'updatedAt'])
         && changedFields().hasAll(['upgrades', 'bankedQuantumBasalts'])
         && request.resource.data.updatedAt == request.time
+        && notInRun()
         && anyUpgradePurchase();
     }
 
@@ -250,6 +254,20 @@ service cloud.firestore {
           && request.resource.data.keys().hasOnly(['action', 'index', 'replaceSlot', 'hiddenBoonId', 'forgeKind', 'slotIndex', 'combinationId', 'relicId', 'slotLevel', 'draftKey', 'createdAt'])
           && request.resource.data.action in ['take', 'pass', 'reroll', 'hidden', 'passHidden', 'forge', 'hiddenSight', 'relic', 'recover', 'surge', 'reprieveRest', 'reprieveReflect', 'reprieveBasalts']
           && request.resource.data.createdAt == request.time;
+        allow delete: if ownsRunCharacter(runId, characterId);
+      }
+
+      // A player's descend-or-extract vote after a boss. Everyone in the app
+      // can see votes; only that character's player casts one, as a single
+      // choice for one floor. The DM decides with the votes in view.
+      match /votes/{characterId} {
+        allow read: if isInvited();
+        allow write: if isDM();
+        allow create, update: if ownsRunCharacter(runId, characterId)
+          && request.resource.data.keys().hasOnly(['vote', 'floor', 'updatedAt'])
+          && request.resource.data.vote in ['descend', 'extract']
+          && request.resource.data.floor is int
+          && request.resource.data.updatedAt == request.time;
         allow delete: if ownsRunCharacter(runId, characterId);
       }
 

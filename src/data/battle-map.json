@@ -21,6 +21,8 @@
       "split-chamber": "east"
     }
   },
+  "pairedTerrainNote": "Terrain that comes as two pieces on the map, like a transit rune pair (one rune teleports to the other).",
+  "pairedTerrain": ["transit-rune-pair"],
   "avoidNote": "Painted areas no piece is placed on at first, as fractions of the map (0 to 1, from the top-left). A square counts when its centre is inside. Keep areas between 0.1 and 0.9 so the wall ring stays free for doorways. The DM can still drag pieces there.",
   "avoid": {
     "split-chamber": [

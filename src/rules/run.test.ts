@@ -101,6 +101,8 @@ describe('devotions', () => {
     expect(devotionsForRoom('combat')).toBe(1)
     expect(devotionsForRoom('elite')).toBe(2)
     expect(devotionsForRoom('boss')).toBe(1)
+    expect(devotionsForRoom('boss', 4)).toBe(1)
+    expect(devotionsForRoom('boss', 5)).toBe(3) // the legendary boss pays 3
     expect(devotionsForRoom('reprieve')).toBe(0)
   })
 })

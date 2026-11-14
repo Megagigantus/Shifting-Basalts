@@ -2,9 +2,10 @@
 // The DM sees every run; players see the runs their characters were in.
 import { useState } from 'react'
 import { ChevronDown, ChevronRight, ClockArrowLeft } from 'lucide-react'
-import { itemName } from '../rules/loot'
 import { PRESSURES } from '../rules/run'
-import { useRunHistory, type RunHistoryEntry } from '../runStore'
+import { deleteRunHistory, useRunHistory, type RunHistoryEntry } from '../runStore'
+import { ConfirmButton } from '../ui/ConfirmButton'
+import { LootNames } from '../ui/LootNames'
 import { Panel } from '../ui/Panel'
 import { Pill } from '../ui/Pill'
 import { cx, type Tone } from '../ui/tone'
@@ -22,16 +23,24 @@ interface Props {
   /** Only show runs these characters were in (players). Leave out for every run (DM). */
   characterIds?: string[]
   title?: string
+  /** DM only: show a Delete button on each run. */
+  canDelete?: boolean
 }
 
-export function RunHistory({ characterIds, title = 'Run history' }: Props) {
+export function RunHistory({ characterIds, title = 'Run history', canDelete = false }: Props) {
   const { entries, error } = useRunHistory()
   const [open, setOpen] = useState<string | null>(null)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
+  const remove = (id: string) => {
+    setDeleteError(null)
+    deleteRunHistory(id).catch(() => setDeleteError('Could not delete that run. Try again.'))
+  }
   const shown = (entries ?? []).filter((e) => !characterIds || e.results.some((r) => characterIds.includes(r.characterId)))
   return (
     <Panel className="mt-6" icon={<ClockArrowLeft size={15} />} title={title}>
       {entries === null && !error && <p className="m-0 text-sm text-stone-400">Loading…</p>}
       {error && <p className="m-0 text-sm text-rose-300">{error}</p>}
+      {deleteError && <p className="m-0 text-sm text-rose-300">{deleteError}</p>}
       {entries && shown.length === 0 && <p className="m-0 text-xs text-stone-500">No finished runs yet.</p>}
       <ul className="m-0 flex list-none flex-col gap-1.5 p-0">
         {shown.map((e) => {
@@ -52,7 +61,7 @@ export function RunHistory({ characterIds, title = 'Run history' }: Props) {
                   {e.results.map((r) => r.name).join(', ')} · party level {e.partyLevel}
                 </span>
               </button>
-              {isOpen && <HistoryDetails entry={e} />}
+              {isOpen && <HistoryDetails entry={e} onDelete={canDelete ? () => remove(e.id) : undefined} />}
             </li>
           )
         })}
@@ -61,7 +70,7 @@ export function RunHistory({ characterIds, title = 'Run history' }: Props) {
   )
 }
 
-function HistoryDetails({ entry: e }: { entry: RunHistoryEntry }) {
+function HistoryDetails({ entry: e, onDelete }: { entry: RunHistoryEntry; onDelete?: () => void }) {
   return (
     <div className="flex flex-col gap-2 border-t border-stone-800 p-2.5">
       <div className="flex flex-wrap gap-1.5">
@@ -92,7 +101,9 @@ function HistoryDetails({ entry: e }: { entry: RunHistoryEntry }) {
             <span className={cx('text-[0.6875rem]', r.survived ? 'text-emerald-300' : 'text-rose-300')}>
               {r.survived ? 'Made it out' : `Fell on floor ${r.deepestFloor}, locked out ${r.lockoutDays} days`}
             </span>
-            <span className="text-[0.6875rem] text-stone-400">Loot: {(r.loot ?? []).map((i) => itemName(i)).join(', ') || 'none'}</span>
+            <span className="text-[0.6875rem] text-stone-400">
+              Loot: <LootNames items={r.loot} />
+            </span>
           </div>
         ))}
       </div>
@@ -101,6 +112,16 @@ function HistoryDetails({ entry: e }: { entry: RunHistoryEntry }) {
           Kept {e.lootShare.keptPercent}%: {e.lootShare.keptValue.toLocaleString()} credits of value, of which{' '}
           {e.lootShare.creditsPayout.toLocaleString()} was paid out in credits.
         </p>
+      )}
+      {onDelete && (
+        <div className="flex flex-wrap items-center gap-2 border-t border-stone-800 pt-2">
+          <span className="mr-auto text-[0.6875rem] text-stone-500">
+            Deleting removes this record only. Basalts, Devotions, loot and lockouts already given stay with the characters.
+          </span>
+          <ConfirmButton confirmLabel="Yes, delete this run's history" onConfirm={onDelete}>
+            Delete
+          </ConfirmButton>
+        </div>
       )}
     </div>
   )

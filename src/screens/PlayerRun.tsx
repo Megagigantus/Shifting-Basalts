@@ -11,7 +11,8 @@ import { canExtract, isBossRoom, lootKeptIfExtracting } from '../rules/runFlow'
 import { BoonList } from './BoonList'
 import { PlayerDraft } from './PlayerDraft'
 import { PlayerRoom } from './PlayerRoom'
-import { submitChoice, useChoices, useLootRequests, type ChoiceDoc } from '../runStore'
+import { submitChoice, useChoices, useExitVotes, useLootRequests, type ChoiceDoc } from '../runStore'
+import { ExitVoteButtons, ExitVoteTally } from './ExitVote'
 import { PlayerLoot } from './LootScreens'
 import { RecoveryPanel } from './RecoveryPanel'
 import { describeReprieve } from '../rules/reprieve'
@@ -34,6 +35,7 @@ export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
   const { run, players } = state
   const choices = useChoices(run.id)
   const requests = useLootRequests(run.id)
+  const votes = useExitVotes(run.id)
   const looks = useLooks()
   const [open, setOpen] = useState<string | null>(myCharacterIds[0] ?? null)
   const floor = floorInfo(run.floor)
@@ -77,12 +79,15 @@ export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
         <div className="flex min-w-0 flex-col gap-4 lg:col-span-8">
           {mine.map((p) => (
-            <PlayerDraft key={p.characterId} state={state} player={p} sent={choices[p.characterId]} readOnly={readOnly} />
+            // In the DM's preview (readOnly), the DM can still pick boons for the player.
+            <PlayerDraft key={p.characterId} state={state} player={p} sent={choices[p.characterId]} readOnly={readOnly} dmChoosing={readOnly} />
           ))}
 
           {run.awaitingChoice && (
             <Panel>
               <PostBossScene state={state} />
+              <ExitVoteButtons state={state} mine={mine} votes={votes} readOnly={readOnly} />
+              <ExitVoteTally state={state} votes={votes} />
             </Panel>
           )}
 

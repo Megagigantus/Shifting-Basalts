@@ -1580,6 +1580,21 @@
   }
 }
 
+/* Relic names (src/ui/rarity.ts): a rainbow gradient across the letters, and
+   a golden glow once the relic is Woken. */
+@layer components {
+  .relic-name {
+    background-image: linear-gradient(90deg, #f87171, #fb923c, #facc15, #4ade80, #38bdf8, #818cf8, #e879f9);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .relic-name-woken {
+    filter: drop-shadow(0 0 4px rgb(250 204 21 / 0.85)) drop-shadow(0 0 10px rgb(245 158 11 / 0.5));
+  }
+}
+
 /* SMALL_BUTTON's default colors (src/ui/styles.ts). They sit in the
    components layer, below utilities, so a color class added next to
    SMALL_BUTTON (a toggle's "on" state, a tone) always wins. */

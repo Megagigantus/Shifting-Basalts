@@ -8,6 +8,7 @@ import type { RunState } from '../model/run'
 import {
   itemName,
   itemText,
+  isFreeKeep,
   itemValue,
   keptPercent,
   keptValue,
@@ -32,6 +33,7 @@ import { Pill } from '../ui/Pill'
 import { StatStrip } from '../ui/StatStrip'
 import { FIELD, PRIMARY_BUTTON, QUIET_BUTTON, SMALL_BUTTON, WELL } from '../ui/styles'
 import { cx, type Tone } from '../ui/tone'
+import { itemNameClass, relicNameClass } from '../ui/rarity'
 
 type Act = (step: (s: RunState) => RunState, confirmText?: string) => void
 const credits = (n: number) => `${n.toLocaleString()} cr`
@@ -40,7 +42,7 @@ const RARITY_TONES: Record<Rarity, Tone> = {
   common: 'stone',
   uncommon: 'emerald',
   rare: 'sky',
-  'very-rare': 'violet',
+  'very-rare': 'purple',
   legendary: 'amber',
 }
 
@@ -59,7 +61,7 @@ function ItemLine({ item, children }: { item: LootItem; children?: ReactNode }) 
   return (
     <li className={cx(WELL, 'flex flex-col gap-1.5')}>
       <div className="flex flex-wrap items-center gap-1.5">
-        <strong className="mr-1 text-xs text-stone-100">{itemName(item)}</strong>
+        <strong className={cx('mr-1 text-xs', itemNameClass(item))}>{itemName(item)}</strong>
         {kindPill}
         {item.kind !== 'relic' && (
           <Pill tone="purple" mono>
@@ -156,7 +158,7 @@ export function DmLootPanel({ state, busy, act, requests }: { state: RunState; b
               .filter((t) => t.uid !== offer)
               .map((t) => (
                 <option key={t.uid} value={t.uid}>
-                  {itemName(t)}
+                  {t.kind === 'trinket' ? `Trinket: ${itemText(t).slice(0, 40)}…` : itemName(t)}
                 </option>
               ))}
           </select>
@@ -205,16 +207,23 @@ export function ExtractPanel({
 }) {
   const items = useMemo(() => state.run.loot?.items ?? [], [state.run.loot])
   const firstRequester = (uid: string) => state.players.find((p) => requests[p.characterId]?.includes(uid))?.characterId
-  const [picks, setPicks] = useState<Record<string, string>>({})
+  const carrier = (uid: string) => firstRequester(uid) ?? state.players.find((pl) => pl.alive)?.characterId ?? state.players[0].characterId
+  // Boss trophies always go home, so they start picked and can't be dropped.
+  const [picks, setPicks] = useState<Record<string, string>>(() =>
+    Object.fromEntries(items.filter(isFreeKeep).map((i) => [i.uid, carrier(i.uid)])),
+  )
   const value = keptValue(state)
-  const used = Object.keys(picks).reduce((s, uid) => s + itemValue(items.find((i) => i.uid === uid)!), 0)
+  const used = Object.keys(picks).reduce((s, uid) => {
+    const item = items.find((i) => i.uid === uid)!
+    return s + (isFreeKeep(item) ? 0 : itemValue(item))
+  }, 0)
   const fullClear = isFullClear(state)
   const over = used > value
   const toggle = (uid: string) =>
     setPicks((p) => {
       const next = { ...p }
       if (next[uid]) delete next[uid]
-      else next[uid] = firstRequester(uid) ?? state.players.find((pl) => pl.alive)?.characterId ?? state.players[0].characterId
+      else next[uid] = carrier(uid)
       return next
     })
   const list: LootPick[] = Object.entries(picks).map(([uid, characterId]) => ({ uid, characterId }))
@@ -243,9 +252,13 @@ export function ExtractPanel({
       <ItemList>
         {items.map((i) => (
           <ItemLine key={i.uid} item={i}>
-            <label className="inline-flex cursor-pointer items-center gap-1.5 text-xs text-stone-200">
-              <input type="checkbox" checked={Boolean(picks[i.uid])} onChange={() => toggle(i.uid)} /> Keep
-            </label>
+            {isFreeKeep(i) ? (
+              <Pill tone="emerald">Trophy: free, always kept</Pill>
+            ) : (
+              <label className="inline-flex cursor-pointer items-center gap-1.5 text-xs text-stone-200">
+                <input type="checkbox" checked={Boolean(picks[i.uid])} onChange={() => toggle(i.uid)} /> Keep
+              </label>
+            )}
             {picks[i.uid] && (
               <select
                 value={picks[i.uid]}
@@ -320,7 +333,7 @@ function RelicCard({ id, partyLevel, children }: { id: string; partyLevel: numbe
   const woken = relicStateFor(partyLevel) === 'woken'
   return (
     <div className="flex flex-col gap-1.5 rounded-xl border border-fuchsia-500/30 bg-stone-950/70 p-3">
-      <strong className="text-sm text-fuchsia-100">{r.name}</strong>
+      <strong className={cx('self-start text-sm', relicNameClass(woken))}>{r.name}</strong>
       <div className="flex flex-wrap gap-1">
         <Pill>{r.build}</Pill>
         <Pill tone={woken ? 'amber' : 'stone'}>{woken ? 'Woken' : 'Dormant'}</Pill>

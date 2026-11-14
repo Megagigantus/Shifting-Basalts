@@ -249,6 +249,11 @@ describe('player spending Devotions', () => {
   it('must stamp the server time', async () => {
     await assertFails(updateDoc(owned(), { 'trackDevotions.max-hp': 3, bankedDevotions: 9, updatedAt: new Date(0) }))
   })
+
+  it('cannot spend while the character is in a run', async () => {
+    await seedCharacters({ activeRunId: 'run-1' })
+    await assertFails(updateDoc(owned(), { 'trackDevotions.max-hp': 5, bankedDevotions: 7, updatedAt: now() }))
+  })
 })
 
 describe('player buying upgrades', () => {
@@ -276,6 +281,11 @@ describe('player buying upgrades', () => {
       updateDoc(owned(), { 'upgrades.forge': 1, 'upgrades.reroll': 2, bankedQuantumBasalts: 0, updatedAt: now() }),
     )
     await assertFails(updateDoc(owned(), { 'upgrades.reroll': 0, bankedQuantumBasalts: 60, updatedAt: now() }))
+  })
+
+  it('cannot buy while the character is in a run', async () => {
+    await seedCharacters({ activeRunId: 'run-1' })
+    await assertFails(updateDoc(owned(), { 'upgrades.reroll': 2, bankedQuantumBasalts: 30, updatedAt: now() }))
   })
 })
 
@@ -559,5 +569,19 @@ describe('Thils\'s Vault and loot requests', () => {
     await assertFails(setDoc(doc(as(PLAYER), 'runs', 'live', 'requests', OTHERS), { uids: ['L1'], updatedAt: now() }))
     await assertFails(setDoc(doc(as(PLAYER), 'runs', 'over', 'requests', OWNED), { uids: ['L1'], updatedAt: now() }))
     await assertFails(getDoc(doc(as(STRANGER), 'runs', 'live', 'requests', OWNED)))
+  })
+
+  it('a player votes descend or extract for their own character; everyone invited sees the votes', async () => {
+    const ref = doc(as(PLAYER), 'runs', 'live', 'votes', OWNED)
+    await assertSucceeds(setDoc(ref, { vote: 'descend', floor: 2, updatedAt: now() }))
+    await assertSucceeds(setDoc(ref, { vote: 'extract', floor: 2, updatedAt: now() }))
+    await assertSucceeds(getDoc(doc(as(DM), 'runs', 'live', 'votes', OWNED)))
+    await assertFails(setDoc(ref, { vote: 'stay', floor: 2, updatedAt: now() }))
+    await assertFails(setDoc(ref, { vote: 'extract', floor: '2', updatedAt: now() }))
+    await assertFails(setDoc(ref, { vote: 'extract', floor: 2, weight: 9, updatedAt: now() }))
+    await assertFails(setDoc(ref, { vote: 'extract', floor: 2, updatedAt: new Date(0) }))
+    await assertFails(setDoc(doc(as(PLAYER), 'runs', 'live', 'votes', OTHERS), { vote: 'extract', floor: 2, updatedAt: now() }))
+    await assertFails(setDoc(doc(as(PLAYER), 'runs', 'over', 'votes', OWNED), { vote: 'extract', floor: 2, updatedAt: now() }))
+    await assertFails(getDoc(doc(as(STRANGER), 'runs', 'live', 'votes', OWNED)))
   })
 })

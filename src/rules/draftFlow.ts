@@ -141,7 +141,8 @@ export function openStartingBoons(state: RunState, owners: string[], random: Ran
     ...state,
     players: state.players.map((p) => {
       if (!p.alive || !owners.includes(p.characterId)) return p
-      const offers = startingOffer(profileOf(p), p.slots ?? [], random)
+      // Attunement shapes the Starting Boon and, separately, the first room draft.
+      const offers = startingOffer(profileOf(p), p.slots ?? [], random, p.draftProfile?.attuneTag ?? null)
       if (offers.length === 0) return p
       return { ...p, draft: { floor: 1, room: 0, elite: false, offers, starting: true } }
     }),
@@ -168,12 +169,20 @@ export function roomConditionMet(state: RunState, random: Random): RunState {
 
 /** A player met their class trigger: offer their class's hidden boon. */
 export function classTriggerMet(state: RunState, characterId: string): RunState {
+  const here = `${state.run.floor}-${state.run.room}`
   return updateOne(state, characterId, (p) => {
     const classBoon = classHiddenBoon(profileOf(p).classId)
     if (!classBoon) throw new Error('This class has no hidden boon.')
     if (p.hiddenBoonId === classBoon) throw new Error(`${p.name} already holds it.`)
-    return { ...p, hiddenOffer: { gifts: p.hiddenOffer?.gifts ?? [], classBoon } }
+    if (p.classTriggerRoom === here) throw new Error(`${p.name}'s class trigger already fired in this room.`)
+    return { ...p, hiddenOffer: { gifts: p.hiddenOffer?.gifts ?? [], classBoon }, classTriggerRoom: here }
   })
+}
+
+/** Whether a player's class trigger can still fire in the current room. */
+export function canTriggerClass(state: RunState, p: RunPlayer): boolean {
+  const classBoon = p.draftProfile ? classHiddenBoon(p.draftProfile.classId) : null
+  return Boolean(p.alive && classBoon && p.hiddenBoonId !== classBoon && p.classTriggerRoom !== `${state.run.floor}-${state.run.room}`)
 }
 
 /** Take one of the hidden offer's boons (replacing any held hidden boon). */

@@ -112,6 +112,9 @@ export function generateOffer({ character, slots, offerSize, elite = false, attu
   const heldBoonIds = held.flatMap(boonsIn)
   const heldTags = new Set(held.flatMap((s) => slotTags(s)))
   const pool = eligibleBoons(character, heldBoonIds)
+  // Empty boon slots: they block wildcard Evolutions and Combinations, and
+  // count toward slot 1's draw as a chance at a new boon.
+  const openSlots = slots.length - held.length
 
   const offers: Offer[] = []
   const tagCounts = new Map<string, number>()
@@ -132,12 +135,15 @@ export function generateOffer({ character, slots, offerSize, elite = false, attu
   }
   const wildcard = (): Offer | null => {
     const options: Offer[] = []
-    slots.forEach((s, i) => {
-      const evo = evolutionFor(s)
-      if (evo) options.push({ kind: 'evolution', evolutionId: evo.id, slotIndex: i, source: 'wildcard' })
-    })
-    for (const { combination } of availableCombinations(slots)) {
-      options.push({ kind: 'combination', combinationId: combination.id, source: 'wildcard' })
+    // Evolutions and Combinations only once every boon slot is filled.
+    if (openSlots === 0) {
+      slots.forEach((s, i) => {
+        const evo = evolutionFor(s)
+        if (evo) options.push({ kind: 'evolution', evolutionId: evo.id, slotIndex: i, source: 'wildcard' })
+      })
+      for (const { combination } of availableCombinations(slots)) {
+        options.push({ kind: 'combination', combinationId: combination.id, source: 'wildcard' })
+      }
     }
     // Skip any Evolution or Combination already in this offer (slot 1 can be a wildcard too).
     const fresh = options.filter((o) => !isDuplicate(offers, o))
@@ -164,15 +170,19 @@ export function generateOffer({ character, slots, offerSize, elite = false, attu
   for (const plan of slotPlan(offerSize, elite)) {
     let offer: Offer | null = null
     if (plan === 'held') {
+      // One draw among the held boons below Level 3 and the empty slots: a
+      // held boon levels it, an empty slot rolls a new weighted boon.
       const belowMax = heldPlain.filter((s) => s.level < MAX_LEVEL)
-      if (belowMax.length) {
-        const pick = belowMax[Math.floor(random() * belowMax.length)]
+      const draw = belowMax.length + openSlots
+      const ticket = belowMax.length && openSlots ? Math.floor(random() * draw) : belowMax.length ? Math.floor(random() * belowMax.length) : draw
+      if (ticket < belowMax.length) {
+        const pick = belowMax[ticket]
         note(boon(pick.boonId))
         offer = { kind: 'boon', boonId: pick.boonId, source: 'held' }
-      } else if (heldPlain.length) {
-        offer = wildcard() // every held boon is maxed
+      } else if (openSlots > 0 || heldPlain.length === 0) {
+        offer = weightedOffer() // an empty slot won the draw, or no plain boons held yet
       } else {
-        offer = weightedOffer() // holds no plain boons yet
+        offer = wildcard() // every slot is full and every held boon is maxed
       }
     } else if (plan === 'weighted') {
       offer = weightedOffer()
@@ -190,11 +200,14 @@ function isDuplicate(offers: Offer[], offer: Offer): boolean {
 
 /**
  * Starting Boon upgrade: one random eligible boon at even odds (Banish applies).
+ * With Attunement, it rolls from the attuned tag when any boon there is eligible.
  * Returns an empty offer if nothing is eligible.
  */
-export function startingOffer(character: DraftCharacter, slots: Slot[], random: Random): Offer[] {
+export function startingOffer(character: DraftCharacter, slots: Slot[], random: Random, attuneTag: string | null = null): Offer[] {
   const held = slots.filter((s): s is SlotContent => s !== null).flatMap(boonsIn)
-  const pool = eligibleBoons(character, held)
+  const eligible = eligibleBoons(character, held)
+  const attuned = attuneTag ? eligible.filter((b) => b.tags[0] === attuneTag) : []
+  const pool = attuned.length ? attuned : eligible
   if (pool.length === 0) return []
   const b = pool[Math.floor(random() * pool.length)]
   return [{ kind: 'boon', boonId: b.id, source: 'starting' }]
