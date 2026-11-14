@@ -63,7 +63,7 @@ Bring the look, layout and screens of the Gemini prototype (`D:\Shifting-Basalts
    - Basalt Shrine and Basalt Markets as art banners with Visit and Leave buttons.
    - Inventory and run history.
 6. **Extras.**
-   - The run-entry video plays once per run per device, with Skip and Sound buttons. It's a 7.2 MB file.
+   - The run-entry video plays for players only, once per run per device, with Skip and Sound buttons. It's a 7.2 MB file.
    - The lightbox on all art.
    - A JSON backup download.
    - Cancel run gets a two-step confirm. Check that nothing writes to characters mid-run, so cancelling is a true rollback.
@@ -81,7 +81,8 @@ Bring the look, layout and screens of the Gemini prototype (`D:\Shifting-Basalts
 - Class triggers live only in one browser and don't sync.
 - Gemini's rule differences: the bible wins (for example "Rest", not "Mend").
 
+- **Run-entry video:** plays for players only, not the DM.
+
 ## Still open
 
-- Should the DM also see the run-entry video, or only players?
 - Which image tool to use for step 9, decided at that step.
