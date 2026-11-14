@@ -2,6 +2,10 @@
 import type { RunPlayer } from '../model/run'
 import { boon, combination, evolutionFor, slotName } from '../rules/boons'
 import { forgeOptions, type ForgeAction } from '../rules/forge'
+import { Hammer } from 'lucide-react'
+import { Panel } from '../ui/Panel'
+import { SMALL_BUTTON, WELL } from '../ui/styles'
+import { cx } from '../ui/tone'
 
 function label(action: ForgeAction, player: RunPlayer): string {
   const slots = player.slots ?? []
@@ -27,26 +31,31 @@ interface Props {
 export function ForgePanel({ players, usesLeft, busy, onUse, intro }: Props) {
   if (usesLeft < 1) return null
   return (
-    <div className="forge">
-      <h3>
-        The Forge: {usesLeft} use{usesLeft === 1 ? '' : 's'} left
-      </h3>
-      <p className="hint">
-        {intro ?? 'Each use levels up a boon, or evolves or combines Level 3 boons.'} It cools when the party descends.
-      </p>
+    <Panel
+      tone="amber"
+      icon={<Hammer size={15} />}
+      title={`The Forge: ${usesLeft} use${usesLeft === 1 ? '' : 's'} left`}
+      subtitle={`${intro ?? 'Each use levels up a boon, or evolves or combines Level 3 boons.'} It cools when the party descends.`}
+    >
       {players
         .filter((p) => p.alive)
         .map((p) => {
           const options = forgeOptions(p.slots ?? [])
           return (
-            <div key={p.characterId} className="forge-player">
-              <strong>{p.name}</strong>
+            <div key={p.characterId} className={cx(WELL, 'flex flex-col gap-1.5')}>
+              <strong className="text-xs text-stone-100">{p.name}</strong>
               {options.length === 0 ? (
-                <span className="hint"> nothing to forge yet</span>
+                <span className="text-[11px] text-stone-500">Nothing to forge yet.</span>
               ) : (
-                <div className="row-actions wrap">
+                <div className="flex flex-wrap gap-1.5">
                   {options.map((o, i) => (
-                    <button key={i} type="button" disabled={busy} onClick={() => onUse(p.characterId, o)}>
+                    <button
+                      key={i}
+                      type="button"
+                      disabled={busy}
+                      onClick={() => onUse(p.characterId, o)}
+                      className={cx(SMALL_BUTTON, o.kind === 'evolve' ? 'text-violet-200' : o.kind === 'combine' ? 'text-emerald-200' : 'text-amber-200')}
+                    >
                       {label(o, p)}
                     </button>
                   ))}
@@ -55,6 +64,6 @@ export function ForgePanel({ players, usesLeft, busy, onUse, intro }: Props) {
             </div>
           )
         })}
-    </div>
+    </Panel>
   )
 }
