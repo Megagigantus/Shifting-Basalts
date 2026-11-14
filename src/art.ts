@@ -32,6 +32,15 @@ for (const [path, url] of Object.entries(files)) {
   byKey.set(key, url)
 }
 
+/** Every id that has a picture in a folder, sorted (e.g. the portrait gallery). */
+export function artIds(kind: ArtKind): string[] {
+  const prefix = `${kind}/`
+  return [...byKey.keys()]
+    .filter((k) => k.startsWith(prefix))
+    .map((k) => k.slice(prefix.length))
+    .sort()
+}
+
 /** URL of the picture for this id, or null when no file has been added yet. */
 export function artUrl(kind: ArtKind, id: string): string | null {
   return byKey.get(`${kind}/${id}`) ?? null

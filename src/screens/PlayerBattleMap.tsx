@@ -1,7 +1,8 @@
 // Player screen: the shared battle map, built only from the player view
 // (run.roomView.map), so nothing hidden ever reaches it. A player can move
-// only their own token; the DM's "view as player" preview moves nothing.
-import type { RunPlayer, RunState } from '../model/run'
+// only their own characters' tokens (and summons); the DM's "view as player"
+// preview moves nothing.
+import type { RunState } from '../model/run'
 import { moveToken, roomKeyOf, useTokens } from '../runStore'
 import { artUrl } from '../art'
 import { BattleBoard } from './BattleBoard'
@@ -9,11 +10,12 @@ import { playerPieces, roomPieces, spotAfterMove, tokenOwner, useLooks } from '.
 
 interface Props {
   state: RunState
-  me: RunPlayer | null
+  /** The characters this viewer owns in the run. */
+  myIds: string[]
   readOnly: boolean
 }
 
-export function PlayerBattleMap({ state, me, readOnly }: Props) {
+export function PlayerBattleMap({ state, myIds, readOnly }: Props) {
   const { run } = state
   const view = run.roomView
   const tokens = useTokens(run.id)
@@ -22,7 +24,7 @@ export function PlayerBattleMap({ state, me, readOnly }: Props) {
   if (!view || !map) return null
 
   const roomKey = roomKeyOf(view)
-  const myId = me?.characterId ?? null
+  const mine = (id: string) => myIds.includes(id)
   const counts: number[] = []
   for (const p of map.pieces) {
     if (p.kind !== 'enemy') continue
@@ -32,7 +34,7 @@ export function PlayerBattleMap({ state, me, readOnly }: Props) {
 
   const pieces = [
     ...roomPieces(map.pieces, { trueExit: view.trueExit, groupCounts: counts, movable: false }),
-    ...playerPieces(state.players, looks, map, tokens, roomKey, (id) => !readOnly && id === myId, myId),
+    ...playerPieces(state.players, looks, map, tokens, roomKey, (id) => !readOnly && mine(id), mine),
   ]
 
   return (
@@ -44,15 +46,16 @@ export function PlayerBattleMap({ state, me, readOnly }: Props) {
         pieces={pieces}
         busy={false}
         onMove={(key, x, y) => {
-          if (readOnly || !myId || tokenOwner(key) !== myId) return
-          moveToken(run.id, myId, spotAfterMove(pieces, key, x, y), roomKey).catch((e) => console.error('Could not move your token', e))
+          const owner = tokenOwner(key)
+          if (readOnly || !owner || !mine(owner)) return
+          moveToken(run.id, owner, spotAfterMove(pieces, key, x, y), roomKey).catch((e) => console.error('Could not move your token', e))
         }}
       />
       <p className="hint">
         {readOnly
           ? 'Preview: tokens can\'t be moved here.'
-          : myId
-            ? 'Drag your token (gold outline), or select it and use the arrow keys.'
+          : myIds.length
+            ? 'Drag your tokens (gold outline) and summons, or select one and use the arrow keys.'
             : 'The party\'s battle map.'}
       </p>
     </div>

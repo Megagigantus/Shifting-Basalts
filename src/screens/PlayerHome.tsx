@@ -12,6 +12,7 @@ import { PlayerRun } from './PlayerRun'
 import { StatTracks } from './StatTracks'
 import { UpgradeShop } from './UpgradeShop'
 import { DraftPreferences } from './DraftPreferences'
+import { LookPicker } from './LookPicker'
 import { CharacterLoot } from './LootScreens'
 import { RunHistory } from './RunHistory'
 
@@ -72,6 +73,7 @@ export function PlayerHome({ email, readOnly = false }: Props) {
                   <span className="hint">In the Basalts, add to your sheet: {trackEffects(c).join(' · ')}</span>
                 )}
                 {c.lockoutDays > 0 && <span className="warning">Locked out: {c.lockoutDays} days</span>}
+                <LookPicker character={c} canEdit={!readOnly} />
                 <DraftPreferences character={c} canEdit={!readOnly} />
                 <CharacterLoot loot={c.loot} />
                 {open?.id === c.id && open.kind === 'tracks' && (

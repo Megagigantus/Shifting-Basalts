@@ -723,6 +723,119 @@ button.link {
   object-fit: cover;
 }
 
+/* Portrait and summon picker (src/screens/LookPicker.tsx). */
+.look-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin: 0.4rem 0;
+}
+
+.look-current {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.look-current img,
+.look-empty {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #c9a35a;
+}
+
+.look-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  text-align: center;
+  border-style: dashed;
+  opacity: 0.7;
+}
+
+.look-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(4rem, 1fr));
+  gap: 0.4rem;
+  max-width: 32rem;
+}
+
+.look-gallery button {
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  background: none;
+  aspect-ratio: 1;
+  overflow: hidden;
+}
+
+.look-gallery button.is-active {
+  border-color: #c9a35a;
+}
+
+.look-gallery img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.look-gallery .look-clear {
+  border-radius: 6px;
+  aspect-ratio: auto;
+  font-size: 0.75rem;
+}
+
+.look-summon {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+}
+
+.look-summon-art {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.map-piece.map-player img,
+.map-piece.map-summon img {
+  width: 92%;
+  height: 92%;
+  object-fit: cover;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px #c9a35a, 0 2px 4px rgb(0 0 0 / 0.6);
+}
+
+.map-piece.map-summon img {
+  width: 78%;
+  height: 78%;
+  box-shadow: 0 0 0 2px #6ab98a, 0 2px 4px rgb(0 0 0 / 0.6);
+}
+
+.map-player.is-mine img {
+  box-shadow: 0 0 0 3px #c9a35a, 0 0 0 6px rgb(201 163 90 / 0.4), 0 2px 4px rgb(0 0 0 / 0.6);
+}
+
+.map-player.is-down img {
+  filter: grayscale(1) brightness(0.6);
+}
+
+.mini-portrait {
+  width: 1.8rem;
+  height: 1.8rem;
+  border-radius: 50%;
+  object-fit: cover;
+  vertical-align: middle;
+  margin-right: 0.4rem;
+  border: 1px solid #c9a35a;
+}
+
 /* Battle map (src/screens/DmBattleMap.tsx). */
 .battle-map-panel {
   margin: 0 0 0.75rem;

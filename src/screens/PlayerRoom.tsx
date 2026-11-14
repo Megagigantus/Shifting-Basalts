@@ -34,9 +34,11 @@ interface Props {
   /** The viewer's own character in this run, if any (for Hidden Sight). */
   me: RunPlayer | null
   readOnly?: boolean
+  /** Every character the viewer owns in this run (they can move all of their tokens). */
+  myCharacterIds?: string[]
 }
 
-export function PlayerRoom({ state, me, readOnly = false }: Props) {
+export function PlayerRoom({ state, me, readOnly = false, myCharacterIds }: Props) {
   const { run } = state
   const view = run.roomView
   const hints = usePrivateHints(readOnly ? null : run.id, me?.characterId ?? null)
@@ -70,7 +72,7 @@ export function PlayerRoom({ state, me, readOnly = false }: Props) {
         terrain={view.terrain}
         tricks={view.tricks}
       />
-      <PlayerBattleMap state={state} me={me} readOnly={readOnly} />
+      <PlayerBattleMap state={state} myIds={myCharacterIds ?? (me ? [me.characterId] : [])} readOnly={readOnly} />
       {view.bossId && (
         <>
           {view.bossBloodied && artUrl('bosses', phase2ArtId(view.bossId)) ? (

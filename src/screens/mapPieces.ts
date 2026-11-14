@@ -89,7 +89,7 @@ export function playerPieces(
   tokens: Record<string, TokenSpot>,
   roomKey: string,
   canMove: (characterId: string) => boolean,
-  me: string | null,
+  isMine: (characterId: string) => boolean,
 ): BoardPiece[] {
   const summoners = players.filter((pl) => pl.alive && looks[pl.characterId]?.hasSummon)
   const starts = startSquares(map, players.length + summoners.length)
@@ -107,7 +107,7 @@ export function playerPieces(
       label: pl.alive ? pl.name : `${pl.name} (fallen)`,
       fallback: initials(pl.name),
       state: pl.alive ? null : 'down',
-      mine: pl.characterId === me,
+      mine: isMine(pl.characterId),
       movable: pl.alive && canMove(pl.characterId),
     }
   })
@@ -127,7 +127,7 @@ export function playerPieces(
       art: artUrl('summons', look?.summonArt || 'other'),
       label: `${pl.name}'s summon`,
       fallback: 'S',
-      mine: pl.characterId === me,
+      mine: isMine(pl.characterId),
       movable: canMove(pl.characterId),
     })
   })

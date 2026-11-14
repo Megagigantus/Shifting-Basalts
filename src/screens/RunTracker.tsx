@@ -29,6 +29,7 @@ import { ForgePanel } from './ForgePanel'
 import { DmRoom } from './DmRoom'
 import { startFloor } from '../rules/roomFlow'
 import { forgeUsesLeft, spendForge } from '../rules/forge'
+import { MiniPortrait } from './LookPicker'
 
 const ROOM_LABELS = { combat: 'Combat', elite: 'Elite', reprieve: 'Reprieve', boss: 'Boss' }
 
@@ -229,6 +230,7 @@ export function RunTracker({ state, characters, onEnded }: Props) {
               <Fragment key={p.characterId}>
                 <tr className={p.alive ? '' : 'fallen'}>
                   <td>
+                    <MiniPortrait portrait={character?.portrait} name={p.name} />
                     {p.name}
                     {p.alive && (p.draft || p.hiddenOffer) && (
                       <span className="tag">{sent && !sent.error ? 'sent a choice' : 'choosing…'}</span>

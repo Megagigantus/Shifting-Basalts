@@ -61,7 +61,7 @@ export function DmBattleMap({ state, room, busy, act }: Props) {
       const t = trackers.get(bp.key)
       return { ...bp, state: t?.down ? ('down' as const) : t?.bloodied ? ('bloodied' as const) : null }
     }),
-    ...playerPieces(state.players, looks, map, tokens, roomKey, () => true, null),
+    ...playerPieces(state.players, looks, map, tokens, roomKey, () => true, () => false),
   ]
 
   function onMove(key: string, x: number, y: number) {
