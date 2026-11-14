@@ -15,7 +15,8 @@ import {
   trickNumbers,
   trickOf,
 } from '../rules/rooms'
-import { submitChoice, usePrivateHints } from '../runStore'
+import { submitChoice, useChoices, usePrivateHints } from '../runStore'
+import { ReprieveChoices } from './ReprieveChoices'
 import { creatureOf } from '../rules/encounters'
 import { bossOf, floorBossDc } from '../rules/bosses'
 import { RoomCard } from './RoomCard'
@@ -51,6 +52,7 @@ export function PlayerRoom({ state, me, readOnly = false, myCharacterIds }: Prop
   const hints = usePrivateHints(readOnly ? null : run.id, me?.characterId ?? null)
   const [sent, setSent] = useState(false)
   const showArt = useLightbox()
+  const choices = useChoices(run.id)
 
   if (!view) return null
   const shape = shapeOf(view.shape)
@@ -79,7 +81,21 @@ export function PlayerRoom({ state, me, readOnly = false, myCharacterIds }: Prop
         title={`${KIND_LABELS[view.kind]} · floor ${view.floor}${view.kind !== 'boss' ? `, room ${view.room}` : ''}`}
       >
         {view.kind === 'reprieve' ? (
-          <ReprieveScene />
+          <>
+            <ReprieveScene />
+            <ReprieveChoices
+              state={state}
+              players={state.players.filter((p) => (myCharacterIds ?? (me ? [me.characterId] : [])).includes(p.characterId))}
+              busy={readOnly}
+              pending={new Set(Object.entries(choices).filter(([, c]) => !c.error && c.action.startsWith('reprieve')).map(([id]) => id))}
+              onChoose={(characterId, choice) => {
+                if (!readOnly) submitChoice(run.id, characterId, choice, null).catch((e) => console.error('Could not send your Reprieve choice', e))
+              }}
+            />
+            {Object.values(choices).some((c) => c.error && c.action.startsWith('reprieve')) && (
+              <p className="m-0 text-xs text-rose-300">Your Reprieve choice didn't go through. Please choose again.</p>
+            )}
+          </>
         ) : (
           <RoomCard
             eyebrow={`Floor ${view.floor}${view.kind !== 'boss' ? ` · Room ${view.room}` : ''} · ${KIND_LABELS[view.kind]}`}

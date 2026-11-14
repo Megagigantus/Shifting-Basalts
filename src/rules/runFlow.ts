@@ -18,6 +18,7 @@ import {
 import { emptySlots, hiddenBoon, slotCount, type Slot } from './boons'
 import { keptPercent, partyRewardBonusPercent, planShare, type LootItem, type LootPick } from './loot'
 import { relicStateFor, vaultPending } from './vault'
+import { reprieveWaitingOn } from './reprieve'
 import {
   deepPocketsPercent,
   extraLootBonusPercent,
@@ -116,8 +117,10 @@ export function draftsPending({ players }: RunState): boolean {
 }
 
 /** Living players still choosing their draft, by name. */
-export function waitingOn({ players }: RunState): string[] {
-  return players.filter((p) => p.alive && p.draft).map((p) => p.name)
+/** Players the party is waiting on: open drafts, and Reprieve choices still to make. */
+export function waitingOn(state: RunState): string[] {
+  const drafting = state.players.filter((p) => p.alive && p.draft).map((p) => p.name)
+  return [...new Set([...drafting, ...reprieveWaitingOn(state)])]
 }
 
 function requireNoDrafts(state: RunState) {

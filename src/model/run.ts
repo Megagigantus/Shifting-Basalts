@@ -27,6 +27,21 @@ export interface HiddenOffer {
 export type RunStatus = 'active' | 'extracted' | 'wiped'
 export type RoomKind = 'combat' | 'elite' | 'reprieve' | 'boss'
 
+/**
+ * One player's choice in one Reprieve: Rest (logged; applied at the table),
+ * Reflect (a boon leveled up), or catch-up Basalts (when no boon could level).
+ */
+export interface ReprieveRecord {
+  floor: number
+  room: number
+  choice: 'rest' | 'reflect' | 'basalts'
+  /** Reflect: the boon that leveled up, and its new level. */
+  boonId?: string
+  level?: number
+  /** Catch-up Basalts: how many (counted as passed, so kept on death). */
+  basalts?: number
+}
+
 export interface RoomLogEntry {
   floor: number
   room: number
@@ -109,6 +124,8 @@ export interface RunPlayer {
   forgeOwner?: boolean
   /** Reprieve upgrade rank (each owner rolls for a Reprieve when a floor starts). */
   reprieveRank?: number
+  /** What this player chose in each Reprieve this run (rules/reprieve.ts). */
+  reprieves?: ReprieveRecord[]
   /** Owns Hidden Sight (one hint per floor). */
   hiddenSight?: boolean
   /** The floor Hidden Sight was last used on. */

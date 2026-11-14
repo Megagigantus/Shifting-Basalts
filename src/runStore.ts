@@ -206,6 +206,7 @@ export async function submitChoice(runId: string, characterId: string, choice: D
   if (choice.action === 'hidden') data.hiddenBoonId = choice.hiddenBoonId
   if (choice.action === 'relic') data.relicId = choice.relicId
   if (choice.action === 'recover') data.slotLevel = choice.slotLevel
+  if (choice.action === 'reprieveReflect') data.slotIndex = choice.slotIndex
   if (choice.action === 'forge') {
     data.forgeKind = choice.forge.kind
     if (choice.forge.kind === 'combine') data.combinationId = choice.forge.combinationId
@@ -244,6 +245,8 @@ function choiceFromDoc(c: ChoiceDoc): DraftChoice {
       return { action: 'relic', relicId: c.relicId ?? '' }
     case 'recover':
       return { action: 'recover', slotLevel: c.slotLevel ?? 0 }
+    case 'reprieveReflect':
+      return { action: 'reprieveReflect', slotIndex: c.slotIndex ?? -1 }
     case 'forge':
       return {
         action: 'forge',

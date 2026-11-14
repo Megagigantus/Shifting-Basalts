@@ -14,6 +14,7 @@ import { PlayerRoom } from './PlayerRoom'
 import { submitChoice, useChoices, useLootRequests, type ChoiceDoc } from '../runStore'
 import { PlayerLoot } from './LootScreens'
 import { RecoveryPanel } from './RecoveryPanel'
+import { describeReprieve } from '../rules/reprieve'
 import { CounterList } from './CountersPanel'
 import { PostBossScene } from './Scene'
 import { useLooks } from './mapPieces'
@@ -168,6 +169,11 @@ function PartyCard({ player: p, portrait, isMine, open, onToggle, sent, readOnly
       </div>
       {summary && !open && <p className="m-0 text-[0.6875rem] text-stone-300">{summary}</p>}
       <CounterList player={p} />
+      {(p.reprieves?.length ?? 0) > 0 && (
+        <p className="m-0 text-[0.6875rem] text-emerald-200/80">
+          {p.reprieves!.map((r) => `Floor ${r.floor} Reprieve: ${describeReprieve(r)}`).join(' · ')}
+        </p>
+      )}
       {isMine && <RecoveryPanel player={p} busy={readOnly || Boolean(sent && !sent.error)} onSpend={onSpend} />}
       {!p.alive && (
         <p className="m-0 text-[0.6875rem] text-rose-300">

@@ -857,7 +857,7 @@ Combat rooms drive the boon draft, and post-boss rooms are where Quantum Basalt 
 | Boss | Closes the floor with shift actions, then extract or descend. | End of every floor |
 | Forge | Level up a held boon, or evolve or combine eligible Level 3 boons. One use per owner in the party, then it cools. | Post-boss, once unlocked |
 | Healing Font | Restores the party between floors. Each owner beyond the first adds temp HP for everyone (proposed: +5 each). | Post-boss, once unlocked |
-| Reprieve | A safe room. Each player chooses Rest (a Short Rest's benefits, including Hit Point Dice and short-rest features, without the hour) or Reflect (level up one boon). | Mid-floor, by chance, once bought. It replaces a combat room, and the party can decline it and fight that room instead. |
+| Reprieve | A safe room. Each player chooses Rest (a Short Rest's benefits, including Hit Point Dice and short-rest features, without the hour) or Reflect (level up one boon; a player with no boon that can level up takes catch-up Quantum Basalts instead, see Build clarification 6). | Mid-floor, by chance, once bought. It replaces a combat room, and the party can decline it and fight that room instead. |
 | Post-boss room | Holds purchased upgrades like the Forge and Healing Font, then the choice to descend or extract. | After each boss on floors 1 to 4 |
 
 - **Shared upgrades:** every upgrade is shared by the whole party, and the Forge and Healing Font can both be used after the same boss. Each extra owner in the party adds more: the Forge gets one more use before it cools, the Healing Font grants more temp HP, and each owner of Extra Pressures adds 5% to rewards.
@@ -1253,7 +1253,7 @@ Rules the app follows where the rest of the Bible implies an answer without spel
 3. **Party level:** the average of the party's levels, rounded down. It sets boss CR, room trick DCs, the entry multiplier (one per party) and loot rarity. Encounter XP budgets add up from each player's own level, and PB-based boon numbers use each player's own PB.
 4. **Payoff and Core boons:** they level through drafts and the Forge like other boons, but never evolve or combine.
 5. **Tags:** an Evolution keeps its source boon's tag, and a Combination carries both source tags, for Resonance and offer weighting.
-6. **Reprieve:** it replaces one of a floor's 4 rooms, so that floor has 3 combat rooms, the Reprieve and the boss. It grants no Devotion and no draft.
+6. **Reprieve:** it replaces one of a floor's 4 rooms, so that floor has 3 combat rooms, the Reprieve and the boss. It grants no Devotion and no draft. Every living player chooses Rest or Reflect before the party moves on. Rest is applied at the table; the app only records it. Reflect levels up one plain boon below Level 3. **Catch-up Basalts:** a player with no boon that can level up (none held, or all at Level 3, Evolutions or Combinations) instead takes 1 Quantum Basalt times the entry-level multiplier, the same as a Pass, counted as passed so it extracts even on death.
 7. **The boon pool:** 69 boons across the main table and Batches 1 to 4. Kept separately: 49 Evolutions, 21 Combinations, 12 class hidden boons and 8 of Thils's hidden gifts.
 8. **Death:** if even one player survives to extract, the party's loot pool stays whole and is shared as usual. Only a wipe loses it. A fallen character still forfeits the Quantum Basalts they earned that run, except passed ones.
 
