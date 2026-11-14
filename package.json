@@ -12,7 +12,8 @@
     "check-data": "node scripts/check-data.ts",
     "sync-rules": "node scripts/sync-rules.ts",
     "test": "vitest run src",
-    "test:rules": "firebase emulators:exec --only firestore --project demo-shifting-basalts \"vitest run tests\""
+    "test:rules": "firebase emulators:exec --only firestore --project demo-shifting-basalts \"vitest run tests\"",
+    "compress-art": "node scripts/compress-art.ts"
   },
   "dependencies": {
     "firebase": "^13.2.0",
@@ -29,6 +30,7 @@
     "@vitejs/plugin-react": "^6.1.2",
     "firebase-tools": "^15.35.0",
     "oxlint": "^1.90.0",
+    "sharp": "^0.35.5",
     "tailwindcss": "^4.3.5",
     "typescript": "~7.0.2",
     "vite": "^8.3.6",

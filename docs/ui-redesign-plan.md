@@ -83,6 +83,6 @@ Bring the look, layout and screens of the Gemini prototype (`D:\Shifting-Basalts
 
 - **Run-entry video:** plays for players only, not the DM.
 
-## Still open
+## Status
 
-- Which image tool to use for step 9, decided at that step.
+All nine steps are done (2026-11-14). Step 9 uses sharp (dev only) through `npm run compress-art`. The run-entry video (7.2 MB) isn't compressed: sharp handles pictures, not video.

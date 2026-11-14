@@ -31,3 +31,10 @@ browser dev tools. The app only *shows* creature, boss, trick and false-wall
 pictures to players once the DM reveals them, but the files themselves are
 not secret. Keep that in mind for boss art. Use your own art, not Monster
 Manual art.
+
+## Keeping files small
+
+After adding big pictures, run `npm run compress-art` to see what it would
+shrink, then `npm run compress-art -- --write` to apply it. It caps arenas,
+maps, rooms and shapes at 1600 px wide (bosses at 1024 px) and re-saves them
+as WebP; files it can't make at least 20% smaller are left alone.
