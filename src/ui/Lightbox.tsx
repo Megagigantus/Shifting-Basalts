@@ -47,7 +47,7 @@ function LightboxView({ art, onClose }: { art: LightboxArt; onClose: () => void 
       onClick={onClose}
     >
       <div
-        className="relative flex max-h-full w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-stone-700 bg-stone-900 text-stone-100 shadow-2xl"
+        className="relative box-border flex max-h-full w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-stone-700 bg-stone-900 text-stone-100 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <button

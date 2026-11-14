@@ -6,6 +6,9 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { collection, deleteDoc, doc, onSnapshot, setDoc } from 'firebase/firestore'
 import { db } from '../firebase'
 import type { Role } from '../useAccess'
+import { ConfirmButton } from '../ui/ConfirmButton'
+import { Pill } from '../ui/Pill'
+import { FIELD } from '../ui/styles'
 
 interface Invite {
   email: string
@@ -54,7 +57,6 @@ export function InviteList({ myEmail }: { myEmail: string }) {
 
   async function removeInvite(target: string) {
     if (!db) return
-    if (!window.confirm(`Remove ${target} from the invite list? They'll lose access right away.`)) return
     setError(null)
     try {
       await deleteDoc(doc(db, 'invites', target))
@@ -66,34 +68,35 @@ export function InviteList({ myEmail }: { myEmail: string }) {
   const me = myEmail.toLowerCase()
 
   return (
-    <section className="panel">
-      <h2>Invite list</h2>
-      <p className="hint">
-        Only these Google accounts can use the app. The email must match the account
-        the player signs in with.
+    <div className="space-y-3 text-sm">
+      <p className="m-0 text-xs text-stone-400">
+        Only these accounts can use the app. The email must match the account the player signs in with.
       </p>
 
-      {invites === null && !error && <p>Loading…</p>}
+      {invites === null && !error && <p className="m-0 text-stone-400">Loading…</p>}
 
       {invites && (
-        <ul className="invite-list">
+        <ul className="m-0 list-none space-y-1.5 p-0">
           {invites.map((invite) => (
-            <li key={invite.email}>
-              <span className="invite-email">{invite.email}</span>
-              <span className="tag">{invite.role === 'dm' ? 'DM' : 'Player'}</span>
+            <li
+              key={invite.email}
+              className="flex flex-wrap items-center gap-2 rounded-lg border border-stone-800 bg-stone-950/80 px-3 py-2"
+            >
+              <span className="mr-auto min-w-0 truncate">{invite.email}</span>
+              <Pill tone={invite.role === 'dm' ? 'rose' : 'sky'}>{invite.role === 'dm' ? 'DM' : 'Player'}</Pill>
               {invite.email === me ? (
-                <span className="hint">you</span>
+                <span className="text-xs text-stone-500">you</span>
               ) : (
-                <button type="button" onClick={() => removeInvite(invite.email)}>
+                <ConfirmButton confirmLabel="Yes, remove" onConfirm={() => removeInvite(invite.email)}>
                   Remove
-                </button>
+                </ConfirmButton>
               )}
             </li>
           ))}
         </ul>
       )}
 
-      <form className="invite-form" onSubmit={addInvite}>
+      <form className="flex flex-wrap gap-2" onSubmit={addInvite}>
         <input
           type="email"
           placeholder="player@gmail.com"
@@ -101,15 +104,19 @@ export function InviteList({ myEmail }: { myEmail: string }) {
           onChange={(e) => setEmail(e.target.value)}
           aria-label="Email to invite"
           required
+          className={`${FIELD} min-w-0 flex-1 basis-48`}
         />
-        <select value={role} onChange={(e) => setRole(e.target.value as Role)} aria-label="Role">
+        <select value={role} onChange={(e) => setRole(e.target.value as Role)} aria-label="Role" className={FIELD}>
           <option value="player">Player</option>
           <option value="dm">DM</option>
         </select>
-        <button type="submit">Add</button>
+        <button type="submit" className="cursor-pointer rounded-lg border-0 bg-amber-500 px-4 py-2 text-xs font-bold text-stone-950 hover:bg-amber-400">
+          Add
+        </button>
       </form>
+      <p className="m-0 text-[11px] text-stone-500">Removing someone takes away their access right away.</p>
 
-      {error && <p className="error">{error}</p>}
-    </section>
+      {error && <p className="m-0 text-xs text-rose-300">{error}</p>}
+    </div>
   )
 }
