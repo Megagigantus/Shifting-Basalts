@@ -10,6 +10,7 @@ import { isBossRoom } from './runFlow'
 import { generateEncounter } from './encounters'
 import { pickBoss, restlessShiftActions } from './bosses'
 import { applyHp, emptyHp, hpShown, hpTrackers } from './hp'
+import { movePiece, placeMap } from './battleMap'
 
 function withRoom(state: RunState, room: Room | null, floorPlan = state.dm?.floorPlan ?? []): RunState {
   // Refresh the Bloodied facts players may see before building their view.
@@ -35,7 +36,7 @@ function populate(state: RunState, room: Room, random: Random): Room {
   const living = state.players.filter((p) => p.alive)
   // A new fight starts unhurt.
   room = { ...room, hp: emptyHp() }
-  if (room.kind === 'reprieve') return { ...room, encounter: null, boss: null, shifts: [] }
+  if (room.kind === 'reprieve') return { ...room, encounter: null, boss: null, shifts: [], map: null }
   if (room.kind === 'boss') {
     const id = state.dm?.bossId ?? pickBoss(run.floor, random)
     return {
@@ -43,12 +44,15 @@ function populate(state: RunState, room: Room, random: Random): Room {
       encounter: null,
       boss: { id, partySize: living.length },
       shifts: [{ bossId: id, revealed: false }],
+      map: null,
     }
   }
   const levels = living.map((p) => p.level ?? run.partyLevel)
   const encounter = generateEncounter(run.floor, room.kind === 'elite', levels, run.partyLevel, random)
   const shifts = restlessShiftActions(run.floor, state.dm?.bossId ?? null, restlessCount(run.pressures), random)
-  return { ...room, encounter, boss: null, shifts: shifts.map((bossId) => ({ bossId, revealed: false })) }
+  const next: Room = { ...room, encounter, boss: null, shifts: shifts.map((bossId) => ({ bossId, revealed: false })) }
+  // Rerolling only the encounter keeps the layout and re-places the enemies.
+  return { ...next, map: placeMap(next, random, room.map ?? null) }
 }
 
 function rollRoom(state: RunState, kind: Room['kind'], random: Random): Room {
@@ -142,6 +146,23 @@ export function setBossBloodied(state: RunState, value: boolean | null): RunStat
   const room = state.dm?.room
   if (!room?.boss) throw new Error('There\'s no boss in this room.')
   return withRoom(state, { ...room, hp: { ...(room.hp ?? emptyHp()), bossBloodied: value } })
+}
+
+/** Lay out (or lay out again) the current room's battle map, e.g. for a room made before maps existed. */
+export function layOutMap(state: RunState, random: Random): RunState {
+  const room = state.dm?.room
+  if (!room) throw new Error('There\'s no room to lay out.')
+  const map = placeMap(room, random)
+  if (!map) throw new Error('Only combat and elite rooms have a battle map for now.')
+  return withRoom(state, { ...room, map })
+}
+
+/** The DM drags a piece to a new square. */
+export function moveMapPiece(state: RunState, key: string, x: number, y: number): RunState {
+  const room = state.dm?.room
+  if (!room?.map) throw new Error('This room has no battle map.')
+  const map = movePiece(room.map, key, x, y)
+  return map === room.map ? state : withRoom(state, { ...room, map })
 }
 
 /** The party turns down the Reprieve and fights that room instead. */

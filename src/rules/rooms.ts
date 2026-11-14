@@ -12,6 +12,7 @@ import { proficiencyBonus } from './proficiency'
 import type { Random } from './draft'
 import { encounterView, type Encounter } from './encounters'
 import type { HpShown, HpState } from './hp'
+import type { BattleMap } from './battleMap'
 
 export const SHAPES = layouts.shapes
 export const TERRAIN = layouts.terrain
@@ -59,6 +60,8 @@ export interface Room {
   hp?: HpState
   /** The Bloodied facts players may see, refreshed on every save (see roomFlow). */
   hpShown?: HpShown
+  /** Combat and elite rooms: the battle map (DM only for now). */
+  map?: BattleMap | null
 }
 
 const roll =(sides: number, random: Random) => 1 + Math.floor(random() * sides)
