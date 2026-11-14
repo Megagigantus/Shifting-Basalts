@@ -1,5 +1,8 @@
 // Turning map data into board pieces for the DM and player screens.
 import type { RunPlayer } from '../model/run'
+import type { Character } from '../model/character'
+import { useMemo } from 'react'
+import { useCharacters } from '../useCharacters'
 import { creatureOf } from '../rules/encounters'
 import { terrainOf, trickOf } from '../rules/rooms'
 import { startSquares, type MapPiece } from '../rules/battleMap'
@@ -62,29 +65,45 @@ export function roomPieces(
   })
 }
 
+/** The bits of a character the map needs: their portrait and summon. */
+export type CharacterLook = Pick<Character, 'portrait' | 'summonArt' | 'hasSummon'>
+
+/** Live portraits and summons by character id (every invited user can read characters). */
+export function useLooks(): Record<string, CharacterLook | undefined> {
+  const { characters } = useCharacters()
+  return useMemo(
+    () => Object.fromEntries((characters ?? []).map((c) => [c.id, { portrait: c.portrait, summonArt: c.summonArt, hasSummon: c.hasSummon }])),
+    [characters],
+  )
+}
+
 /**
- * Player tokens: where each one stands in this room, or its start square
- * near the entrance when it hasn't moved here yet.
+ * Player tokens (key "pc:<id>") and summon tokens (key "sm:<id>", for
+ * living characters with a summon): where each stands in this room, or a
+ * start square near the entrance when it hasn't moved here yet.
  */
 export function playerPieces(
   players: RunPlayer[],
+  looks: Record<string, CharacterLook | undefined>,
   map: Parameters<typeof startSquares>[0],
   tokens: Record<string, TokenSpot>,
   roomKey: string,
   canMove: (characterId: string) => boolean,
   me: string | null,
 ): BoardPiece[] {
-  const starts = startSquares(map, players.length)
-  return players.map((pl, i) => {
+  const summoners = players.filter((pl) => pl.alive && looks[pl.characterId]?.hasSummon)
+  const starts = startSquares(map, players.length + summoners.length)
+  const out: BoardPiece[] = players.map((pl, i) => {
     const spot = tokens[pl.characterId]
     const here = spot && spot.roomKey === roomKey ? spot : starts[i]
+    const look = looks[pl.characterId]
     return {
       key: `pc:${pl.characterId}`,
       kind: 'player',
       x: here.x,
       y: here.y,
       size: 1,
-      art: null,
+      art: look?.portrait ? artUrl('portraits', look.portrait) : null,
       label: pl.alive ? pl.name : `${pl.name} (fallen)`,
       fallback: initials(pl.name),
       state: pl.alive ? null : 'down',
@@ -92,4 +111,42 @@ export function playerPieces(
       movable: pl.alive && canMove(pl.characterId),
     }
   })
+  summoners.forEach((pl, j) => {
+    const spot = tokens[pl.characterId]
+    const here =
+      spot && spot.roomKey === roomKey && spot.sx !== undefined && spot.sy !== undefined
+        ? { x: spot.sx, y: spot.sy }
+        : starts[players.length + j]
+    const look = looks[pl.characterId]
+    out.push({
+      key: `sm:${pl.characterId}`,
+      kind: 'summon',
+      x: here.x,
+      y: here.y,
+      size: 1,
+      art: artUrl('summons', look?.summonArt || 'other'),
+      label: `${pl.name}'s summon`,
+      fallback: 'S',
+      mine: pl.characterId === me,
+      movable: canMove(pl.characterId),
+    })
+  })
+  return out
+}
+
+/** Whose token a board key belongs to ("pc:" or "sm:" keys), or null for room pieces. */
+export const tokenOwner = (key: string) => (key.startsWith('pc:') || key.startsWith('sm:') ? key.slice(3) : null)
+
+/**
+ * The spot to save after moving one of a character's tokens: the moved one
+ * at its new square and the other (character or summon) where it stands now.
+ */
+export function spotAfterMove(pieces: BoardPiece[], key: string, x: number, y: number): Omit<TokenSpot, 'roomKey'> {
+  const id = tokenOwner(key)!
+  const pc = pieces.find((p) => p.key === `pc:${id}`)
+  const sm = pieces.find((p) => p.key === `sm:${id}`)
+  const at = (p: BoardPiece | undefined) => (p && p.key === key ? { x, y } : p ? { x: p.x, y: p.y } : null)
+  const self = at(pc) ?? { x, y }
+  const summon = at(sm)
+  return summon ? { x: self.x, y: self.y, sx: summon.x, sy: summon.y } : self
 }

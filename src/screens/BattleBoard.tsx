@@ -7,7 +7,7 @@ import { entranceSquares, footprint, type Side } from '../rules/battleMap'
 
 export interface BoardPiece {
   key: string
-  kind: 'exit' | 'terrain' | 'trick' | 'enemy' | 'player'
+  kind: 'exit' | 'terrain' | 'trick' | 'enemy' | 'player' | 'summon'
   x: number
   y: number
   /** Squares per side; 0.5 for Tiny. */

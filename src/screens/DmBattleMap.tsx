@@ -8,7 +8,7 @@ import { layOutMap, moveMapPiece } from '../rules/roomFlow'
 import { moveToken, roomKeyOf, useTokens } from '../runStore'
 import { artUrl } from '../art'
 import { BattleBoard } from './BattleBoard'
-import { playerPieces, roomPieces } from './mapPieces'
+import { playerPieces, roomPieces, spotAfterMove, tokenOwner, useLooks } from './mapPieces'
 
 type Step = (s: RunState) => RunState
 type Act = (step: Step, confirmText?: string) => void
@@ -22,6 +22,7 @@ interface Props {
 
 export function DmBattleMap({ state, room, busy, act }: Props) {
   const tokens = useTokens(state.run.id)
+  const looks = useLooks()
   const map = room.map ?? null
 
   if (room.kind !== 'combat' && room.kind !== 'elite') return null
@@ -60,12 +61,13 @@ export function DmBattleMap({ state, room, busy, act }: Props) {
       const t = trackers.get(bp.key)
       return { ...bp, state: t?.down ? ('down' as const) : t?.bloodied ? ('bloodied' as const) : null }
     }),
-    ...playerPieces(state.players, map, tokens, roomKey, () => true, null),
+    ...playerPieces(state.players, looks, map, tokens, roomKey, () => true, null),
   ]
 
   function onMove(key: string, x: number, y: number) {
-    if (key.startsWith('pc:')) {
-      moveToken(state.run.id, key.slice(3), x, y, roomKey).catch((e) => console.error('Could not move the token', e))
+    const owner = tokenOwner(key)
+    if (owner) {
+      moveToken(state.run.id, owner, spotAfterMove(pieces, key, x, y), roomKey).catch((e) => console.error('Could not move the token', e))
     } else {
       act((s) => moveMapPiece(s, key, x, y))
     }

@@ -207,15 +207,27 @@ service cloud.firestore {
         && (tag == null || tag in boonTags());
     }
 
+    // A player picks their character's portrait and summon art, any time:
+    // short file names (lowercase letters, digits and dashes) or "" for none.
+    function isLookEdit() {
+      return changedFields().hasOnly(['portrait', 'summonArt', 'updatedAt'])
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.get('portrait', '') is string
+        && request.resource.data.get('portrait', '').matches('[a-z0-9-]{0,40}')
+        && request.resource.data.get('summonArt', '') is string
+        && request.resource.data.get('summonArt', '').matches('[a-z0-9-]{0,40}');
+    }
+
     // Saved characters. The DM can change anything; the owning player can
-    // only spend their own Devotions and Quantum Basalts, and edit their
-    // Banish list and Attunement tag between runs, as checked above.
+    // only spend their own Devotions and Quantum Basalts, edit their Banish
+    // list and Attunement tag between runs, and pick their portrait and
+    // summon art, as checked above.
     match /characters/{characterId} {
       allow read: if isInvited();
       allow create, delete: if isDM();
       allow update: if isDM()
         || (ownsCharacter()
-          && (isDevotionSpend() || isUpgradePurchase() || isBanishEdit() || isAttunementEdit()));
+          && (isDevotionSpend() || isUpgradePurchase() || isBanishEdit() || isAttunementEdit() || isLookEdit()));
     }
 
     match /runs/{runId} {
@@ -255,16 +267,22 @@ service cloud.firestore {
         allow delete: if ownsRunCharacter(runId, characterId);
       }
 
-      // A player's token on the battle map. Everyone invited can see where
-      // tokens are; only that character's player (or the DM) moves it, as a
-      // square on the grid (at most 14 x 14) plus the room it's in.
+      // A player's token on the battle map, and their summon's (sx, sy) if
+      // they have one. Everyone invited can see where tokens are; only that
+      // character's player (or the DM) moves them, as squares on the grid
+      // (at most 14 x 14) plus the room they're in.
+      function onGrid(v) {
+        return v is int && v >= 0 && v < 14;
+      }
       match /tokens/{characterId} {
         allow read: if isInvited();
         allow write: if isDM();
         allow create, update: if ownsRunCharacter(runId, characterId)
-          && request.resource.data.keys().hasOnly(['x', 'y', 'roomKey', 'updatedAt'])
-          && request.resource.data.x is int && request.resource.data.x >= 0 && request.resource.data.x < 14
-          && request.resource.data.y is int && request.resource.data.y >= 0 && request.resource.data.y < 14
+          && request.resource.data.keys().hasOnly(['x', 'y', 'sx', 'sy', 'roomKey', 'updatedAt'])
+          && onGrid(request.resource.data.x)
+          && onGrid(request.resource.data.y)
+          && onGrid(request.resource.data.get('sx', 0))
+          && onGrid(request.resource.data.get('sy', 0))
           && request.resource.data.roomKey is string && request.resource.data.roomKey.size() <= 20
           && request.resource.data.updatedAt == request.time;
         allow delete: if ownsRunCharacter(runId, characterId);

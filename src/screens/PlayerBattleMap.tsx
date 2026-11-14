@@ -5,7 +5,7 @@ import type { RunPlayer, RunState } from '../model/run'
 import { moveToken, roomKeyOf, useTokens } from '../runStore'
 import { artUrl } from '../art'
 import { BattleBoard } from './BattleBoard'
-import { playerPieces, roomPieces } from './mapPieces'
+import { playerPieces, roomPieces, spotAfterMove, tokenOwner, useLooks } from './mapPieces'
 
 interface Props {
   state: RunState
@@ -17,6 +17,7 @@ export function PlayerBattleMap({ state, me, readOnly }: Props) {
   const { run } = state
   const view = run.roomView
   const tokens = useTokens(run.id)
+  const looks = useLooks()
   const map = view?.map ?? null
   if (!view || !map) return null
 
@@ -31,7 +32,7 @@ export function PlayerBattleMap({ state, me, readOnly }: Props) {
 
   const pieces = [
     ...roomPieces(map.pieces, { trueExit: view.trueExit, groupCounts: counts, movable: false }),
-    ...playerPieces(state.players, map, tokens, roomKey, (id) => !readOnly && id === myId, myId),
+    ...playerPieces(state.players, looks, map, tokens, roomKey, (id) => !readOnly && id === myId, myId),
   ]
 
   return (
@@ -43,8 +44,8 @@ export function PlayerBattleMap({ state, me, readOnly }: Props) {
         pieces={pieces}
         busy={false}
         onMove={(key, x, y) => {
-          if (key !== `pc:${myId}` || readOnly) return
-          moveToken(run.id, key.slice(3), x, y, roomKey).catch((e) => console.error('Could not move your token', e))
+          if (readOnly || !myId || tokenOwner(key) !== myId) return
+          moveToken(run.id, myId, spotAfterMove(pieces, key, x, y), roomKey).catch((e) => console.error('Could not move your token', e))
         }}
       />
       <p className="hint">

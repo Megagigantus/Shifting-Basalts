@@ -89,6 +89,12 @@ export async function setBanished(characterId: string, banished: string[]): Prom
   await updateDoc(doc(db, 'characters', characterId), { banished, updatedAt: serverTimestamp() })
 }
 
+/** Save a character's portrait and summon art (any time; the owning player may do this). */
+export async function setCharacterLook(characterId: string, look: { portrait: string; summonArt: string }): Promise<void> {
+  if (!db) throw new Error('Firebase is not set up.')
+  await updateDoc(doc(db, 'characters', characterId), { ...look, updatedAt: serverTimestamp() })
+}
+
 /** Save (or clear) a character's Attunement tag (between runs only). */
 export async function setAttuneTag(characterId: string, attuneTag: string | null): Promise<void> {
   if (!db) throw new Error('Firebase is not set up.')
