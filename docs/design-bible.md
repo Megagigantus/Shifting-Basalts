@@ -1210,6 +1210,7 @@ The app replaces the character sheet: characters are saved in it, and the DM loa
 
 - **Main stage:** the current room fills most of the screen. It's generated from this Bible and the Campaign Lorebook: room type, layout and terrain, encounter, room tricks and hidden condition, plus the boss and its Shift Action on boss rooms.
 - **Run tracker:** a smaller panel for floor and room progress, active Pressures, and the descend-or-extract choice at post-boss rooms.
+- **Descend or extract vote:** after each boss on floors 1 to 4, every living player votes Descend or Extract on their device and can change their vote. The DM's screen shows the tally and who hasn't voted; the DM still makes the final call.
 - **Player sidebar:** one card per player that opens into their boon slots, levels, evolutions, combinations, hidden boon and suppressed boons; stat track ranks and Devotions; and their upgrade path, where they can buy upgrades with Quantum Basalts.
 - **Group rewards:** run loot, Quantum Basalts earned and passed Basalts, tracked for the whole party.
 

@@ -20,7 +20,8 @@ import { DmLootPanel, ExtractPanel, VaultPanel } from './LootScreens'
 import { RecoveryPanel } from './RecoveryPanel'
 import { describeReprieve } from '../rules/reprieve'
 import { CounterList, CountersEditor } from './CountersPanel'
-import { useLootRequests } from '../runStore'
+import { useExitVotes, useLootRequests } from '../runStore'
+import { ExitVoteTally } from './ExitVote'
 import { applyChoice } from '../rules/draftChoice'
 import { classHiddenBoon } from '../rules/draft'
 import { applyChoiceDoc, cancelRun, saveRunState, useChoices, type ChoiceDoc } from '../runStore'
@@ -58,6 +59,7 @@ export function RunTracker({ state, characters, onEnded }: Props) {
   const [extracting, setExtracting] = useState(false)
   const { run, players } = state
   const requests = useLootRequests(run.id)
+  const votes = useExitVotes(run.id)
   const floor = floorInfo(run.floor)
   const bossRoom = isBossRoom(state)
   const waiting = waitingOn(state)
@@ -193,6 +195,8 @@ export function RunTracker({ state, characters, onEnded }: Props) {
             <Hourglass size={14} /> Waiting on choices from {waiting.join(', ')}.
           </p>
         )}
+
+        <ExitVoteTally state={state} votes={votes} />
 
         <div className="flex flex-wrap items-center gap-2 rounded-xl border border-stone-800 bg-stone-950/70 p-2.5">
           {run.awaitingChoice ? (

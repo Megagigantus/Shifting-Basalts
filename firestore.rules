@@ -257,6 +257,20 @@ service cloud.firestore {
         allow delete: if ownsRunCharacter(runId, characterId);
       }
 
+      // A player's descend-or-extract vote after a boss. Everyone in the app
+      // can see votes; only that character's player casts one, as a single
+      // choice for one floor. The DM decides with the votes in view.
+      match /votes/{characterId} {
+        allow read: if isInvited();
+        allow write: if isDM();
+        allow create, update: if ownsRunCharacter(runId, characterId)
+          && request.resource.data.keys().hasOnly(['vote', 'floor', 'updatedAt'])
+          && request.resource.data.vote in ['descend', 'extract']
+          && request.resource.data.floor is int
+          && request.resource.data.updatedAt == request.time;
+        allow delete: if ownsRunCharacter(runId, characterId);
+      }
+
       // A player's wish list from the party's loot. Everyone in the app can see
       // requests; only that character's player writes them, as a short list of
       // item ids. The DM decides who gets what at extraction.
