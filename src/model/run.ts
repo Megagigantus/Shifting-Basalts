@@ -116,6 +116,8 @@ export interface RunPlayer {
   draft?: DraftOffer | null
   /** A hidden offer (room condition or class trigger), until the player chooses. */
   hiddenOffer?: HiddenOffer | null
+  /** The room ("floor-room") where this player's class trigger last fired; once per room. */
+  classTriggerRoom?: string
   /** Rerolls used on this floor. */
   rerolls?: { floor: number; used: number }
   /** How many drafts this player has had this run (the first gets Attunement). */

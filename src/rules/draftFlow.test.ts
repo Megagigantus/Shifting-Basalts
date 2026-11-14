@@ -5,6 +5,7 @@ import { boon, BOONS } from './boons'
 import {
   chooseHidden,
   chooseOffer,
+  canTriggerClass,
   classTriggerMet,
   offerSize,
   openDrafts,
@@ -185,6 +186,13 @@ describe('hidden offers', () => {
     state = classTriggerMet(state, 'b')
     expect(state.players[1].hiddenOffer?.classBoon).toBe('the-archivist')
     expect(state.players[1].hiddenOffer?.gifts).toHaveLength(2)
+  })
+
+  it('a class trigger fires once per player per room, even after passing', () => {
+    let state = classTriggerMet(start(), 'b')
+    expect(canTriggerClass(state, state.players[1])).toBe(false)
+    state = passHidden(state, 'b')
+    expect(() => classTriggerMet(state, 'b')).toThrow('already fired')
   })
 
   it('taking a hidden boon fills the hidden slot; passing pays the pass bonus', () => {

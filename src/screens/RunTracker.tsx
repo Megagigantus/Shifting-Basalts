@@ -14,7 +14,7 @@ import {
   markDead,
   waitingOn,
 } from '../rules/runFlow'
-import { classTriggerMet, rerollsLeft } from '../rules/draftFlow'
+import { canTriggerClass, classTriggerMet, rerollsLeft } from '../rules/draftFlow'
 import { finishRoom } from '../rules/progress'
 import { DmLootPanel, ExtractPanel, VaultPanel } from './LootScreens'
 import { RecoveryPanel } from './RecoveryPanel'
@@ -24,7 +24,7 @@ import { useLootRequests } from '../runStore'
 import { applyChoice } from '../rules/draftChoice'
 import { classHiddenBoon } from '../rules/draft'
 import { applyChoiceDoc, cancelRun, saveRunState, useChoices, type ChoiceDoc } from '../runStore'
-import { boonSummary } from '../rules/boons'
+import { boonSummary, hiddenBoon } from '../rules/boons'
 import { PlayerBoons } from './PlayerBoons'
 import { DraftOffers } from './DraftOffers'
 import { ForgePanel } from './ForgePanel'
@@ -306,6 +306,7 @@ export function RunTracker({ state, characters, onEnded }: Props) {
               sent={choices[p.characterId]}
               open={open?.id === p.characterId ? open.kind : null}
               floor={run.floor}
+              canTrigger={canTriggerClass(state, p)}
               busy={busy}
               act={act}
               onToggle={(kind) => toggle(p.characterId, kind)}
@@ -325,15 +326,18 @@ interface CardProps {
   sent: ChoiceDoc | undefined
   open: 'boons' | 'draft' | null
   floor: number
+  /** The class trigger can still fire for this player in this room. */
+  canTrigger: boolean
   busy: boolean
   act: Act
   onToggle: (kind: 'boons' | 'draft') => void
 }
 
 /** A player's card in the sidebar: rewards so far, boons, counters, slot recovery and the DM's buttons. */
-function PlayerCard({ player: p, character, sent, open, floor, busy, act, onToggle }: CardProps) {
+function PlayerCard({ player: p, character, sent, open, floor, canTrigger, busy, act, onToggle }: CardProps) {
   const portrait = character?.portrait ? artUrl('portraits', character.portrait) : null
-  const hasClassBoon = Boolean(p.draftProfile && classHiddenBoon(p.draftProfile.classId))
+  const classBoonId = p.draftProfile ? classHiddenBoon(p.draftProfile.classId) : null
+  const classBoon = classBoonId ? hiddenBoon(classBoonId) : null
   const choosing = p.alive && (p.draft || p.hiddenOffer)
   const summary = boonSummary(p.slots, p.hiddenBoonId)
   const toggleClass = (on: boolean) =>
@@ -412,14 +416,14 @@ function PlayerCard({ player: p, character, sent, open, floor, busy, act, onTogg
           <button type="button" aria-pressed={open === 'boons'} onClick={() => onToggle('boons')} className={toggleClass(open === 'boons')}>
             Boons
           </button>
-          {hasClassBoon && (
+          {classBoon && (
             <ConfirmButton
               tone="violet"
-              disabled={busy}
-              confirmLabel="Yes, trigger met"
+              disabled={busy || !canTrigger}
+              confirmLabel={`Yes, offer ${classBoon.name}`}
               onConfirm={() => act((s) => classTriggerMet(s, p.characterId))}
             >
-              Class trigger
+              {canTrigger ? 'Class trigger' : 'Class trigger used'}
             </ConfirmButton>
           )}
           <span className="ml-auto">
@@ -436,7 +440,11 @@ function PlayerCard({ player: p, character, sent, open, floor, busy, act, onTogg
       {p.alive && (
         <p className="m-0 text-[0.625rem] text-stone-500">
           Died: expelled, loses this run's boss Basalts, locked out {floor}d4 days.
-          {hasClassBoon && ' Class trigger: offers their class hidden boon.'}
+        </p>
+      )}
+      {p.alive && classBoon && (
+        <p className="m-0 text-[0.625rem] text-violet-300/80">
+          Class trigger, once per room: {classBoon.condition}. Offers {classBoon.name}: {classBoon.effect}
         </p>
       )}
     </section>
