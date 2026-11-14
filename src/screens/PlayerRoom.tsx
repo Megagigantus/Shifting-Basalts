@@ -19,6 +19,7 @@ import { submitChoice, usePrivateHints } from '../runStore'
 import { creatureOf } from '../rules/encounters'
 import { bossOf, floorBossDc } from '../rules/bosses'
 import { RoomCard } from './RoomCard'
+import { PlayerBattleMap } from './PlayerBattleMap'
 import { Art } from './Art'
 import { artUrl, phase2ArtId } from '../art'
 
@@ -69,6 +70,7 @@ export function PlayerRoom({ state, me, readOnly = false }: Props) {
         terrain={view.terrain}
         tricks={view.tricks}
       />
+      <PlayerBattleMap state={state} me={me} readOnly={readOnly} />
       {view.bossId && (
         <>
           {view.bossBloodied && artUrl('bosses', phase2ArtId(view.bossId)) ? (

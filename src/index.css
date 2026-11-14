@@ -857,6 +857,31 @@ button.link {
   color: #e8e4dc;
 }
 
+.map-piece:not(.is-movable) {
+  cursor: default;
+}
+
+.map-player .map-fallback {
+  background: #2b2a30;
+  border: 2px solid #c9a35a;
+  font-weight: 700;
+  color: #f2e2b8;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 0.6);
+}
+
+.map-player.is-mine .map-fallback {
+  background: #3b3326;
+  box-shadow: 0 0 0 3px rgb(201 163 90 / 0.5), 0 2px 4px rgb(0 0 0 / 0.6);
+}
+
+.map-player.is-down .map-fallback {
+  filter: grayscale(1) brightness(0.6);
+}
+
+.map-enemy.is-bloodied .map-fallback {
+  border-color: #c96a5a;
+}
+
 .map-fallback {
   width: 80%;
   height: 80%;
