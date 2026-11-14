@@ -48,7 +48,7 @@ A run is a stack of floors, each a set of rooms ending in a boss. After every bo
 
 - **Floors 1 to 4:** 4 rooms, then a boss room.
 - **Post-boss room:** holds the party's purchased upgrades, such as the Forge and Healing Font, and is where they choose to descend or extract.
-- **Floor 5:** a single legendary boss. Beating it is a full clear.
+- **Floor 5:** a single legendary boss. Beating it is a full clear and pays each living player 3 Devotions instead of 1.
 
 * **Rooms:** each cleared room triggers a boon draft (see Boon system rules). Floors 1 to 4 each hold 4 rooms and a boss room.
 * **Bosses:** a boss closes every floor. Extraction is only possible after a boss.

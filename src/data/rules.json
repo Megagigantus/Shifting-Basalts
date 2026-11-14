@@ -34,6 +34,7 @@
       "rooms": 0,
       "hazard": "Quarantine",
       "bossQuantumBasalts": 25,
+      "bossDevotions": 3,
       "lootKeptPercent": 100
     }
   ],
