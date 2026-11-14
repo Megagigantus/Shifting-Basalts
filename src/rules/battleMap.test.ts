@@ -91,6 +91,40 @@ describe('laying out a battle map', () => {
     }
   })
 
+  it('keeps pieces off the painted columns in the column forest and twisted vault, with doorways still in the walls', () => {
+    for (const shape of ['column-forest', 'twisted-vault']) {
+      for (const size of ['small', 'medium', 'large']) {
+        for (let seed = 1; seed <= 30; seed++) {
+          const map = placeMap(room(seed, { size, shape }), seeded(seed + 900))!
+          const n = map.squares
+          for (const exit of map.pieces.filter((p) => p.kind === 'exit')) {
+            expect(exit.x === 0 || exit.y === 0 || exit.x === n - 1 || exit.y === n - 1).toBe(true)
+          }
+          // Small rooms may run out of open floor; the DM sorts those out by dragging.
+          if (size === 'small') continue
+          const bad = new Set(avoidSquares(shape, n).map((q) => `${q.x},${q.y}`))
+          expect(bad.size).toBeGreaterThan(0)
+          for (const p of map.pieces) {
+            const s = footprint(p)
+            for (let dy = 0; dy < s; dy++) for (let dx = 0; dx < s; dx++) expect(bad).not.toContain(`${p.x + dx},${p.y + dy}`)
+          }
+        }
+      }
+    }
+  })
+
+  it('every no-placement area stays off the wall ring, so doorways always fit', () => {
+    for (const shape of ['split-chamber', 'ring', 'column-forest', 'twisted-vault']) {
+      for (const n of [6, 10, 14]) {
+        for (const q of avoidSquares(shape, n)) {
+          // The split chamber's chasm runs into its north and south walls on purpose.
+          if (shape === 'split-chamber') continue
+          expect(q.x > 0 && q.y > 0 && q.x < n - 1 && q.y < n - 1).toBe(true)
+        }
+      }
+    }
+  })
+
   it('puts enemies in the half away from the entrance when there is room', () => {
     const map = placeMap(room(5, { size: 'large', shape: 'hex-hall' }), seeded(6))!
     for (const p of map.pieces.filter((q) => q.kind === 'enemy')) expect(p.y).toBeLessThan(map.squares / 2)
