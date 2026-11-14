@@ -78,7 +78,7 @@ export function ArtCard({ kind, id, title, subtitle, badge, tone = 'stone', shap
   )
 
   const frame = cx(
-    'group relative block w-full overflow-hidden rounded-xl border bg-stone-950 p-0',
+    'group relative box-border block w-full overflow-hidden rounded-xl border bg-stone-950 p-0',
     SHAPES[shape],
     toneClasses[tone].border,
     className,
