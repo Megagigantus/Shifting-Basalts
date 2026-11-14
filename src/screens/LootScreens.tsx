@@ -156,7 +156,7 @@ export function DmLootPanel({ state, busy, act, requests }: { state: RunState; b
               .filter((t) => t.uid !== offer)
               .map((t) => (
                 <option key={t.uid} value={t.uid}>
-                  {itemName(t)}
+                  {t.kind === 'trinket' ? `Trinket: ${itemText(t).slice(0, 40)}…` : itemName(t)}
                 </option>
               ))}
           </select>

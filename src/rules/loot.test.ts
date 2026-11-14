@@ -211,6 +211,10 @@ describe('strider remains and shrines', () => {
     expect(uids).not.toContain(trinket.uid)
     expect(uids).not.toContain(target.uid)
     expect(next.run.loot!.log.at(-1)?.source).toBe('shrine')
+    // The reroll is a new item of the same kind and rarity.
+    const rerolled = next.run.loot!.items.at(-1)!
+    expect(rerolled).toMatchObject({ kind: target.kind, rarity: target.rarity, source: 'shrine' })
+    expect(rerolled.ref).not.toBe(target.ref)
     expect(() => shrineOffering(state, target.uid, trinket.uid, seeded(6))).toThrow()
   })
 })
