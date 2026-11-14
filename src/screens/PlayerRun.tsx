@@ -12,7 +12,9 @@ import { submitChoice, useChoices, useLootRequests } from '../runStore'
 import { PlayerLoot } from './LootScreens'
 import { RecoveryPanel } from './RecoveryPanel'
 import { CounterList } from './CountersPanel'
-import { HealingFontNote } from './HealingFontNote'
+import { PostBossScene } from './Scene'
+import { MiniPortrait } from './LookPicker'
+import { useLooks } from './mapPieces'
 
 interface Props {
   state: RunState
@@ -25,6 +27,7 @@ export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
   const { run, players } = state
   const choices = useChoices(run.id)
   const requests = useLootRequests(run.id)
+  const looks = useLooks()
   const [open, setOpen] = useState<string | null>(myCharacterIds[0] ?? null)
   const floor = floorInfo(run.floor)
   const bossRoom = isBossRoom(state)
@@ -54,12 +57,13 @@ export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
         {canExtract(state) ? `${lootKeptIfExtracting(state)}%` : 'extraction opens after a boss'}
       </p>
 
-      <HealingFontNote state={state} />
+      <PostBossScene state={state} />
 
       <PlayerRoom
         key={`${run.floor}-${run.room}`}
         state={state}
         me={players.find((p) => myCharacterIds.includes(p.characterId)) ?? null}
+        myCharacterIds={myCharacterIds}
         readOnly={readOnly}
       />
 
@@ -99,6 +103,7 @@ export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
               <Fragment key={p.characterId}>
                 <tr className={`${p.alive ? '' : 'fallen'} ${mine ? 'mine' : ''}`}>
                   <td>
+                    <MiniPortrait portrait={looks[p.characterId]?.portrait} name={p.name} />
                     {p.name}
                     {mine && <span className="tag">you</span>}
                     {boonSummary(p.slots, p.hiddenBoonId) && (

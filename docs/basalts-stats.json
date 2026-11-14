@@ -1,0 +1,1950 @@
+{
+  "version": "2024-mm",
+  "rules": {
+    "creatureHpWhenPushed": "round(crBenchmarks[newCr].hp * creature.hpMult)",
+    "creatureSavesWhenPushed": "each save += crBenchmarks[newCr].pb - crBenchmarks[baseCr].pb; abilities and AC unchanged",
+    "creaturePartySize": "room creatures never take the boss party-size HP multiplier",
+    "bossTargetCr": "max(1, partyLevel + bossFloors[floor].crOffset)",
+    "bossHp": "round(crBenchmarks[cr].hp * template HP mult * livingPlayers / 4)",
+    "bossAbilityMod": "bossAbilityBands[band containing cr][abilityRanks[ability]]",
+    "bossAbilityScore": "10 + 2 * mod",
+    "bossSave": "mod + (proficientSaves includes ability ? crBenchmarks[cr].pb : 0)",
+    "bossExtraLegendaryActions": "+1 if livingPlayers >= 6; +1 with Heavy Crown",
+    "legendaryActionsRefresh": "boss regains spent Legendary Actions at the start of its turn"
+  },
+  "crBenchmarks": {
+    "0.5": {
+      "pb": 2,
+      "ac": 13,
+      "hp": 60,
+      "attack": 3,
+      "dpr": 5,
+      "saveDc": 13
+    },
+    "1": {
+      "pb": 2,
+      "ac": 13,
+      "hp": 78,
+      "attack": 3,
+      "dpr": 12,
+      "saveDc": 13
+    },
+    "2": {
+      "pb": 2,
+      "ac": 13,
+      "hp": 93,
+      "attack": 3,
+      "dpr": 18,
+      "saveDc": 13
+    },
+    "3": {
+      "pb": 2,
+      "ac": 13,
+      "hp": 108,
+      "attack": 4,
+      "dpr": 24,
+      "saveDc": 13
+    },
+    "4": {
+      "pb": 2,
+      "ac": 14,
+      "hp": 123,
+      "attack": 5,
+      "dpr": 30,
+      "saveDc": 14
+    },
+    "5": {
+      "pb": 3,
+      "ac": 15,
+      "hp": 138,
+      "attack": 6,
+      "dpr": 36,
+      "saveDc": 15
+    },
+    "6": {
+      "pb": 3,
+      "ac": 15,
+      "hp": 153,
+      "attack": 6,
+      "dpr": 42,
+      "saveDc": 15
+    },
+    "7": {
+      "pb": 3,
+      "ac": 15,
+      "hp": 168,
+      "attack": 6,
+      "dpr": 48,
+      "saveDc": 15
+    },
+    "8": {
+      "pb": 3,
+      "ac": 16,
+      "hp": 183,
+      "attack": 7,
+      "dpr": 54,
+      "saveDc": 16
+    },
+    "9": {
+      "pb": 4,
+      "ac": 16,
+      "hp": 198,
+      "attack": 7,
+      "dpr": 60,
+      "saveDc": 16
+    },
+    "10": {
+      "pb": 4,
+      "ac": 17,
+      "hp": 213,
+      "attack": 7,
+      "dpr": 66,
+      "saveDc": 16
+    },
+    "11": {
+      "pb": 4,
+      "ac": 17,
+      "hp": 228,
+      "attack": 8,
+      "dpr": 72,
+      "saveDc": 17
+    },
+    "12": {
+      "pb": 4,
+      "ac": 17,
+      "hp": 243,
+      "attack": 8,
+      "dpr": 78,
+      "saveDc": 17
+    },
+    "13": {
+      "pb": 5,
+      "ac": 18,
+      "hp": 258,
+      "attack": 8,
+      "dpr": 84,
+      "saveDc": 18
+    },
+    "14": {
+      "pb": 5,
+      "ac": 18,
+      "hp": 273,
+      "attack": 8,
+      "dpr": 90,
+      "saveDc": 18
+    },
+    "15": {
+      "pb": 5,
+      "ac": 18,
+      "hp": 288,
+      "attack": 8,
+      "dpr": 96,
+      "saveDc": 18
+    },
+    "16": {
+      "pb": 5,
+      "ac": 18,
+      "hp": 303,
+      "attack": 9,
+      "dpr": 102,
+      "saveDc": 18
+    },
+    "17": {
+      "pb": 6,
+      "ac": 19,
+      "hp": 318,
+      "attack": 10,
+      "dpr": 108,
+      "saveDc": 19
+    },
+    "18": {
+      "pb": 6,
+      "ac": 19,
+      "hp": 333,
+      "attack": 10,
+      "dpr": 114,
+      "saveDc": 19
+    },
+    "19": {
+      "pb": 6,
+      "ac": 19,
+      "hp": 348,
+      "attack": 10,
+      "dpr": 120,
+      "saveDc": 19
+    },
+    "20": {
+      "pb": 6,
+      "ac": 19,
+      "hp": 378,
+      "attack": 10,
+      "dpr": 132,
+      "saveDc": 19
+    },
+    "21": {
+      "pb": 7,
+      "ac": 19,
+      "hp": 423,
+      "attack": 11,
+      "dpr": 150,
+      "saveDc": 20
+    },
+    "22": {
+      "pb": 7,
+      "ac": 19,
+      "hp": 468,
+      "attack": 11,
+      "dpr": 168,
+      "saveDc": 20
+    },
+    "23": {
+      "pb": 7,
+      "ac": 19,
+      "hp": 513,
+      "attack": 11,
+      "dpr": 186,
+      "saveDc": 20
+    },
+    "24": {
+      "pb": 7,
+      "ac": 19,
+      "hp": 558,
+      "attack": 12,
+      "dpr": 204,
+      "saveDc": 21
+    },
+    "25": {
+      "pb": 8,
+      "ac": 19,
+      "hp": 603,
+      "attack": 12,
+      "dpr": 222,
+      "saveDc": 21
+    },
+    "26": {
+      "pb": 8,
+      "ac": 19,
+      "hp": 648,
+      "attack": 12,
+      "dpr": 240,
+      "saveDc": 21
+    },
+    "27": {
+      "pb": 8,
+      "ac": 19,
+      "hp": 693,
+      "attack": 13,
+      "dpr": 258,
+      "saveDc": 22
+    },
+    "28": {
+      "pb": 8,
+      "ac": 19,
+      "hp": 738,
+      "attack": 13,
+      "dpr": 276,
+      "saveDc": 22
+    },
+    "29": {
+      "pb": 9,
+      "ac": 19,
+      "hp": 783,
+      "attack": 13,
+      "dpr": 294,
+      "saveDc": 22
+    },
+    "30": {
+      "pb": 9,
+      "ac": 19,
+      "hp": 828,
+      "attack": 14,
+      "dpr": 312,
+      "saveDc": 23
+    }
+  },
+  "bossFloors": [
+    {
+      "floor": 1,
+      "crOffset": -1,
+      "legendaryActions": 0,
+      "legendaryResistances": 0,
+      "proficientSaves": 2
+    },
+    {
+      "floor": 2,
+      "crOffset": 1,
+      "legendaryActions": 0,
+      "legendaryResistances": 1,
+      "proficientSaves": 2
+    },
+    {
+      "floor": 3,
+      "crOffset": 2,
+      "legendaryActions": 2,
+      "legendaryResistances": 1,
+      "proficientSaves": 3
+    },
+    {
+      "floor": 4,
+      "crOffset": 4,
+      "legendaryActions": 2,
+      "legendaryResistances": 2,
+      "proficientSaves": 3
+    },
+    {
+      "floor": 5,
+      "crOffset": 7,
+      "legendaryActions": 3,
+      "legendaryResistances": 3,
+      "proficientSaves": 4
+    }
+  ],
+  "bossAbilityBands": [
+    {
+      "minCr": 1,
+      "maxCr": 4,
+      "primary": 4,
+      "strong": 2,
+      "average": 0,
+      "weak": -2
+    },
+    {
+      "minCr": 5,
+      "maxCr": 10,
+      "primary": 5,
+      "strong": 3,
+      "average": 1,
+      "weak": -1
+    },
+    {
+      "minCr": 11,
+      "maxCr": 16,
+      "primary": 6,
+      "strong": 4,
+      "average": 1,
+      "weak": -1
+    },
+    {
+      "minCr": 17,
+      "maxCr": 22,
+      "primary": 7,
+      "strong": 5,
+      "average": 2,
+      "weak": 0
+    },
+    {
+      "minCr": 23,
+      "maxCr": 30,
+      "primary": 8,
+      "strong": 6,
+      "average": 3,
+      "weak": 1
+    }
+  ],
+  "creatures": [
+    {
+      "id": "hexling",
+      "name": "Hexling",
+      "family": "wardstones",
+      "role": "minion",
+      "cr": 1,
+      "reskin": "Animated Armor",
+      "size": "Medium",
+      "ac": 18,
+      "hp": 33,
+      "hpMult": 0.42,
+      "abilities": {
+        "str": 14,
+        "dex": 11,
+        "con": 13,
+        "int": 1,
+        "wis": 3,
+        "cha": 1
+      },
+      "saves": {
+        "str": 2,
+        "dex": 0,
+        "con": 1,
+        "int": -5,
+        "wis": -4,
+        "cha": -5
+      }
+    },
+    {
+      "id": "column-sentinel",
+      "name": "Column Sentinel",
+      "family": "wardstones",
+      "role": "brute",
+      "cr": 2,
+      "reskin": "Gargoyle",
+      "size": "Medium",
+      "ac": 15,
+      "hp": 67,
+      "hpMult": 0.72,
+      "abilities": {
+        "str": 15,
+        "dex": 11,
+        "con": 16,
+        "int": 6,
+        "wis": 11,
+        "cha": 7
+      },
+      "saves": {
+        "str": 2,
+        "dex": 0,
+        "con": 3,
+        "int": -2,
+        "wis": 0,
+        "cha": -2
+      }
+    },
+    {
+      "id": "basalt-hound",
+      "name": "Basalt Hound",
+      "family": "wardstones",
+      "role": "skirmisher",
+      "cr": 3,
+      "reskin": "Hell Hound",
+      "size": "Medium",
+      "ac": 15,
+      "hp": 58,
+      "hpMult": 0.54,
+      "abilities": {
+        "str": 17,
+        "dex": 12,
+        "con": 14,
+        "int": 6,
+        "wis": 13,
+        "cha": 6
+      },
+      "saves": {
+        "str": 3,
+        "dex": 1,
+        "con": 2,
+        "int": -2,
+        "wis": 1,
+        "cha": -2
+      }
+    },
+    {
+      "id": "maze-warden",
+      "name": "Maze Warden",
+      "family": "wardstones",
+      "role": "controller",
+      "cr": 7,
+      "reskin": "Shield Guardian",
+      "size": "Large",
+      "ac": 17,
+      "hp": 142,
+      "hpMult": 0.85,
+      "abilities": {
+        "str": 18,
+        "dex": 8,
+        "con": 18,
+        "int": 7,
+        "wis": 10,
+        "cha": 3
+      },
+      "saves": {
+        "str": 4,
+        "dex": -1,
+        "con": 4,
+        "int": -2,
+        "wis": 0,
+        "cha": -4
+      }
+    },
+    {
+      "id": "monolith-keeper",
+      "name": "Monolith Keeper",
+      "family": "wardstones",
+      "role": "elite",
+      "cr": 10,
+      "reskin": "Stone Golem",
+      "size": "Large",
+      "ac": 18,
+      "hp": 220,
+      "hpMult": 1.03,
+      "abilities": {
+        "str": 22,
+        "dex": 9,
+        "con": 20,
+        "int": 3,
+        "wis": 11,
+        "cha": 1
+      },
+      "saves": {
+        "str": 6,
+        "dex": -1,
+        "con": 5,
+        "int": -4,
+        "wis": 0,
+        "cha": -5
+      }
+    },
+    {
+      "id": "labyrinth-colossus",
+      "name": "Labyrinth Colossus",
+      "family": "wardstones",
+      "role": "elite",
+      "cr": 16,
+      "reskin": "Iron Golem",
+      "size": "Large",
+      "ac": 20,
+      "hp": 252,
+      "hpMult": 0.83,
+      "abilities": {
+        "str": 24,
+        "dex": 9,
+        "con": 20,
+        "int": 3,
+        "wis": 11,
+        "cha": 1
+      },
+      "saves": {
+        "str": 7,
+        "dex": -1,
+        "con": 5,
+        "int": -4,
+        "wis": 0,
+        "cha": -5
+      }
+    },
+    {
+      "id": "lost-thing-mimic",
+      "name": "Lost-Thing Mimic",
+      "family": "mazework",
+      "role": "ambusher",
+      "cr": 2,
+      "reskin": "Mimic",
+      "size": "Medium",
+      "ac": 12,
+      "hp": 58,
+      "hpMult": 0.62,
+      "abilities": {
+        "str": 17,
+        "dex": 12,
+        "con": 15,
+        "int": 5,
+        "wis": 13,
+        "cha": 8
+      },
+      "saves": {
+        "str": 3,
+        "dex": 1,
+        "con": 2,
+        "int": -3,
+        "wis": 1,
+        "cha": -1
+      }
+    },
+    {
+      "id": "corner-bull",
+      "name": "Corner Bull",
+      "family": "mazework",
+      "role": "brute",
+      "cr": 3,
+      "reskin": "Minotaur of Baphomet",
+      "size": "Large",
+      "ac": 14,
+      "hp": 85,
+      "hpMult": 0.79,
+      "abilities": {
+        "str": 18,
+        "dex": 11,
+        "con": 16,
+        "int": 6,
+        "wis": 16,
+        "cha": 9
+      },
+      "saves": {
+        "str": 4,
+        "dex": 0,
+        "con": 3,
+        "int": -2,
+        "wis": 3,
+        "cha": -1
+      }
+    },
+    {
+      "id": "snarecrawler",
+      "name": "Snarecrawler",
+      "family": "mazework",
+      "role": "controller",
+      "cr": 3,
+      "reskin": "Phase Spider",
+      "size": "Large",
+      "ac": 14,
+      "hp": 45,
+      "hpMult": 0.42,
+      "abilities": {
+        "str": 15,
+        "dex": 16,
+        "con": 12,
+        "int": 6,
+        "wis": 10,
+        "cha": 6
+      },
+      "saves": {
+        "str": 2,
+        "dex": 3,
+        "con": 1,
+        "int": -2,
+        "wis": 0,
+        "cha": -2
+      }
+    },
+    {
+      "id": "wrong-turn-stalker",
+      "name": "Wrong-Turn Stalker",
+      "family": "mazework",
+      "role": "skirmisher",
+      "cr": 6,
+      "reskin": "Invisible Stalker",
+      "size": "Large",
+      "ac": 14,
+      "hp": 97,
+      "hpMult": 0.63,
+      "abilities": {
+        "str": 16,
+        "dex": 19,
+        "con": 14,
+        "int": 10,
+        "wis": 15,
+        "cha": 11
+      },
+      "saves": {
+        "str": 3,
+        "dex": 4,
+        "con": 2,
+        "int": 0,
+        "wis": 2,
+        "cha": 0
+      }
+    },
+    {
+      "id": "doorcloak",
+      "name": "Doorcloak",
+      "family": "mazework",
+      "role": "ambusher",
+      "cr": 8,
+      "reskin": "Cloaker",
+      "size": "Large",
+      "ac": 14,
+      "hp": 91,
+      "hpMult": 0.5,
+      "abilities": {
+        "str": 17,
+        "dex": 15,
+        "con": 12,
+        "int": 13,
+        "wis": 14,
+        "cha": 7
+      },
+      "saves": {
+        "str": 3,
+        "dex": 2,
+        "con": 1,
+        "int": 1,
+        "wis": 2,
+        "cha": -2
+      }
+    },
+    {
+      "id": "the-overlooked",
+      "name": "The Overlooked",
+      "family": "the-lost",
+      "role": "minion",
+      "cr": 1,
+      "reskin": "Specter",
+      "size": "Medium",
+      "ac": 12,
+      "hp": 22,
+      "hpMult": 0.28,
+      "abilities": {
+        "str": 1,
+        "dex": 14,
+        "con": 11,
+        "int": 10,
+        "wis": 10,
+        "cha": 11
+      },
+      "saves": {
+        "str": -5,
+        "dex": 2,
+        "con": 0,
+        "int": 0,
+        "wis": 0,
+        "cha": 0
+      }
+    },
+    {
+      "id": "hollow-pilgrim",
+      "name": "Hollow Pilgrim",
+      "family": "the-lost",
+      "role": "brute",
+      "cr": 2,
+      "reskin": "Ghast",
+      "size": "Medium",
+      "ac": 13,
+      "hp": 36,
+      "hpMult": 0.39,
+      "abilities": {
+        "str": 16,
+        "dex": 17,
+        "con": 10,
+        "int": 11,
+        "wis": 10,
+        "cha": 8
+      },
+      "saves": {
+        "str": 3,
+        "dex": 3,
+        "con": 0,
+        "int": 0,
+        "wis": 2,
+        "cha": -1
+      }
+    },
+    {
+      "id": "forgotten-one",
+      "name": "Forgotten One",
+      "family": "the-lost",
+      "role": "skirmisher",
+      "cr": 2,
+      "reskin": "Nothic",
+      "size": "Medium",
+      "ac": 15,
+      "hp": 45,
+      "hpMult": 0.48,
+      "abilities": {
+        "str": 14,
+        "dex": 16,
+        "con": 16,
+        "int": 13,
+        "wis": 10,
+        "cha": 8
+      },
+      "saves": {
+        "str": 2,
+        "dex": 3,
+        "con": 3,
+        "int": 1,
+        "wis": 0,
+        "cha": -1
+      }
+    },
+    {
+      "id": "mourning-wanderer",
+      "name": "Mourning Wanderer",
+      "family": "the-lost",
+      "role": "controller",
+      "cr": 4,
+      "reskin": "Banshee",
+      "size": "Medium",
+      "ac": 12,
+      "hp": 54,
+      "hpMult": 0.44,
+      "abilities": {
+        "str": 1,
+        "dex": 14,
+        "con": 10,
+        "int": 12,
+        "wis": 11,
+        "cha": 17
+      },
+      "saves": {
+        "str": -5,
+        "dex": 2,
+        "con": 0,
+        "int": 1,
+        "wis": 2,
+        "cha": 3
+      }
+    },
+    {
+      "id": "lost-regent",
+      "name": "Lost Regent",
+      "family": "the-lost",
+      "role": "elite",
+      "cr": 5,
+      "reskin": "Wraith",
+      "size": "Medium",
+      "ac": 13,
+      "hp": 67,
+      "hpMult": 0.49,
+      "abilities": {
+        "str": 6,
+        "dex": 16,
+        "con": 16,
+        "int": 12,
+        "wis": 14,
+        "cha": 15
+      },
+      "saves": {
+        "str": -2,
+        "dex": 3,
+        "con": 3,
+        "int": 1,
+        "wis": 2,
+        "cha": 2
+      }
+    },
+    {
+      "id": "echo-scout",
+      "name": "Echo Scout",
+      "family": "absorbed-echoes",
+      "role": "skirmisher",
+      "cr": 0.5,
+      "reskin": "Scout",
+      "size": "Medium",
+      "ac": 13,
+      "hp": 16,
+      "hpMult": 0.27,
+      "abilities": {
+        "str": 11,
+        "dex": 14,
+        "con": 12,
+        "int": 11,
+        "wis": 13,
+        "cha": 11
+      },
+      "saves": {
+        "str": 0,
+        "dex": 2,
+        "con": 1,
+        "int": 0,
+        "wis": 1,
+        "cha": 0
+      }
+    },
+    {
+      "id": "echo-duelist",
+      "name": "Echo Duelist",
+      "family": "absorbed-echoes",
+      "role": "skirmisher",
+      "cr": 3,
+      "reskin": "Knight",
+      "size": "Medium",
+      "ac": 18,
+      "hp": 52,
+      "hpMult": 0.48,
+      "abilities": {
+        "str": 16,
+        "dex": 11,
+        "con": 14,
+        "int": 11,
+        "wis": 11,
+        "cha": 15
+      },
+      "saves": {
+        "str": 3,
+        "dex": 0,
+        "con": 4,
+        "int": 0,
+        "wis": 2,
+        "cha": 2
+      }
+    },
+    {
+      "id": "echo-gladiator",
+      "name": "Echo Gladiator",
+      "family": "absorbed-echoes",
+      "role": "brute",
+      "cr": 5,
+      "reskin": "Gladiator",
+      "size": "Medium",
+      "ac": 16,
+      "hp": 112,
+      "hpMult": 0.81,
+      "abilities": {
+        "str": 18,
+        "dex": 15,
+        "con": 16,
+        "int": 10,
+        "wis": 12,
+        "cha": 15
+      },
+      "saves": {
+        "str": 7,
+        "dex": 5,
+        "con": 6,
+        "int": 0,
+        "wis": 4,
+        "cha": 2
+      }
+    },
+    {
+      "id": "echo-arcanist",
+      "name": "Echo Arcanist",
+      "family": "absorbed-echoes",
+      "role": "artillery",
+      "cr": 6,
+      "reskin": "Mage",
+      "size": "Medium",
+      "ac": 15,
+      "hp": 81,
+      "hpMult": 0.53,
+      "abilities": {
+        "str": 9,
+        "dex": 14,
+        "con": 11,
+        "int": 17,
+        "wis": 12,
+        "cha": 11
+      },
+      "saves": {
+        "str": -1,
+        "dex": 2,
+        "con": 0,
+        "int": 6,
+        "wis": 4,
+        "cha": 0
+      }
+    },
+    {
+      "id": "echo-assassin",
+      "name": "Echo Assassin",
+      "family": "absorbed-echoes",
+      "role": "elite",
+      "cr": 8,
+      "reskin": "Assassin",
+      "size": "Medium",
+      "ac": 16,
+      "hp": 97,
+      "hpMult": 0.53,
+      "abilities": {
+        "str": 11,
+        "dex": 18,
+        "con": 14,
+        "int": 16,
+        "wis": 11,
+        "cha": 10
+      },
+      "saves": {
+        "str": 0,
+        "dex": 7,
+        "con": 2,
+        "int": 6,
+        "wis": 0,
+        "cha": 0
+      }
+    },
+    {
+      "id": "echo-archmage",
+      "name": "Echo Archmage",
+      "family": "absorbed-echoes",
+      "role": "elite",
+      "cr": 12,
+      "reskin": "Archmage",
+      "size": "Medium",
+      "ac": 17,
+      "hp": 170,
+      "hpMult": 0.7,
+      "abilities": {
+        "str": 10,
+        "dex": 14,
+        "con": 12,
+        "int": 20,
+        "wis": 15,
+        "cha": 16
+      },
+      "saves": {
+        "str": 0,
+        "dex": 2,
+        "con": 1,
+        "int": 9,
+        "wis": 6,
+        "cha": 3
+      }
+    },
+    {
+      "id": "stride-wisp",
+      "name": "Stride Wisp",
+      "family": "gate-born",
+      "role": "artillery",
+      "cr": 2,
+      "reskin": "Will-o'-Wisp",
+      "size": "Tiny",
+      "ac": 19,
+      "hp": 27,
+      "hpMult": 0.29,
+      "abilities": {
+        "str": 1,
+        "dex": 28,
+        "con": 10,
+        "int": 13,
+        "wis": 14,
+        "cha": 11
+      },
+      "saves": {
+        "str": -5,
+        "dex": 9,
+        "con": 0,
+        "int": 1,
+        "wis": 2,
+        "cha": 0
+      }
+    },
+    {
+      "id": "blinkstalker",
+      "name": "Blinkstalker",
+      "family": "gate-born",
+      "role": "skirmisher",
+      "cr": 3,
+      "reskin": "Displacer Beast",
+      "size": "Large",
+      "ac": 13,
+      "hp": 76,
+      "hpMult": 0.7,
+      "abilities": {
+        "str": 18,
+        "dex": 15,
+        "con": 16,
+        "int": 6,
+        "wis": 12,
+        "cha": 8
+      },
+      "saves": {
+        "str": 4,
+        "dex": 2,
+        "con": 3,
+        "int": -2,
+        "wis": 1,
+        "cha": -1
+      }
+    },
+    {
+      "id": "rift-elemental",
+      "name": "Rift Elemental",
+      "family": "gate-born",
+      "role": "brute",
+      "cr": 5,
+      "reskin": "Air Elemental",
+      "size": "Large",
+      "ac": 15,
+      "hp": 90,
+      "hpMult": 0.65,
+      "abilities": {
+        "str": 14,
+        "dex": 20,
+        "con": 14,
+        "int": 6,
+        "wis": 10,
+        "cha": 6
+      },
+      "saves": {
+        "str": 2,
+        "dex": 5,
+        "con": 2,
+        "int": -2,
+        "wis": 0,
+        "cha": -2
+      }
+    },
+    {
+      "id": "gate-glass-golem",
+      "name": "Gate-Glass Golem",
+      "family": "gate-born",
+      "role": "elite",
+      "cr": 9,
+      "reskin": "Clay Golem",
+      "size": "Large",
+      "ac": 14,
+      "hp": 123,
+      "hpMult": 0.62,
+      "abilities": {
+        "str": 20,
+        "dex": 9,
+        "con": 18,
+        "int": 3,
+        "wis": 8,
+        "cha": 1
+      },
+      "saves": {
+        "str": 5,
+        "dex": -1,
+        "con": 4,
+        "int": -4,
+        "wis": -1,
+        "cha": -5
+      }
+    },
+    {
+      "id": "cable-wyrm",
+      "name": "Cable Wyrm",
+      "family": "gate-born",
+      "role": "elite",
+      "cr": 11,
+      "reskin": "Behir",
+      "size": "Huge",
+      "ac": 17,
+      "hp": 168,
+      "hpMult": 0.74,
+      "abilities": {
+        "str": 23,
+        "dex": 16,
+        "con": 18,
+        "int": 7,
+        "wis": 14,
+        "cha": 12
+      },
+      "saves": {
+        "str": 6,
+        "dex": 3,
+        "con": 4,
+        "int": -2,
+        "wis": 2,
+        "cha": 1
+      }
+    },
+    {
+      "id": "wilting-dryad",
+      "name": "Wilting Dryad",
+      "family": "inverted-paradise",
+      "role": "controller",
+      "cr": 1,
+      "reskin": "Dryad",
+      "size": "Medium",
+      "ac": 16,
+      "hp": 22,
+      "hpMult": 0.28,
+      "abilities": {
+        "str": 10,
+        "dex": 12,
+        "con": 11,
+        "int": 14,
+        "wis": 15,
+        "cha": 18
+      },
+      "saves": {
+        "str": 0,
+        "dex": 1,
+        "con": 0,
+        "int": 2,
+        "wis": 2,
+        "cha": 4
+      }
+    },
+    {
+      "id": "bloomrot-mound",
+      "name": "Bloomrot Mound",
+      "family": "inverted-paradise",
+      "role": "brute",
+      "cr": 5,
+      "reskin": "Shambling Mound",
+      "size": "Large",
+      "ac": 15,
+      "hp": 110,
+      "hpMult": 0.8,
+      "abilities": {
+        "str": 18,
+        "dex": 8,
+        "con": 16,
+        "int": 5,
+        "wis": 10,
+        "cha": 5
+      },
+      "saves": {
+        "str": 4,
+        "dex": -1,
+        "con": 3,
+        "int": -3,
+        "wis": 0,
+        "cha": -3
+      }
+    },
+    {
+      "id": "inverted-unicorn",
+      "name": "Inverted Unicorn",
+      "family": "inverted-paradise",
+      "role": "skirmisher",
+      "cr": 5,
+      "reskin": "Unicorn",
+      "size": "Large",
+      "ac": 12,
+      "hp": 97,
+      "hpMult": 0.7,
+      "abilities": {
+        "str": 18,
+        "dex": 14,
+        "con": 15,
+        "int": 11,
+        "wis": 17,
+        "cha": 16
+      },
+      "saves": {
+        "str": 4,
+        "dex": 2,
+        "con": 2,
+        "int": 0,
+        "wis": 3,
+        "cha": 3
+      }
+    },
+    {
+      "id": "inverted-treant",
+      "name": "Inverted Treant",
+      "family": "inverted-paradise",
+      "role": "brute",
+      "cr": 9,
+      "reskin": "Treant",
+      "size": "Huge",
+      "ac": 16,
+      "hp": 138,
+      "hpMult": 0.7,
+      "abilities": {
+        "str": 23,
+        "dex": 8,
+        "con": 21,
+        "int": 12,
+        "wis": 16,
+        "cha": 12
+      },
+      "saves": {
+        "str": 6,
+        "dex": -1,
+        "con": 5,
+        "int": 1,
+        "wis": 3,
+        "cha": 1
+      }
+    },
+    {
+      "id": "hollow-seraph",
+      "name": "Hollow Seraph",
+      "family": "inverted-paradise",
+      "role": "elite",
+      "cr": 10,
+      "reskin": "Deva",
+      "size": "Medium",
+      "ac": 17,
+      "hp": 229,
+      "hpMult": 1.08,
+      "abilities": {
+        "str": 18,
+        "dex": 18,
+        "con": 18,
+        "int": 17,
+        "wis": 20,
+        "cha": 20
+      },
+      "saves": {
+        "str": 4,
+        "dex": 4,
+        "con": 4,
+        "int": 3,
+        "wis": 9,
+        "cha": 9
+      }
+    },
+    {
+      "id": "fallen-planetar",
+      "name": "Fallen Planetar",
+      "family": "inverted-paradise",
+      "role": "elite",
+      "cr": 16,
+      "reskin": "Planetar",
+      "size": "Large",
+      "ac": 19,
+      "hp": 262,
+      "hpMult": 0.86,
+      "abilities": {
+        "str": 24,
+        "dex": 20,
+        "con": 24,
+        "int": 19,
+        "wis": 22,
+        "cha": 25
+      },
+      "saves": {
+        "str": 12,
+        "dex": 5,
+        "con": 12,
+        "int": 4,
+        "wis": 11,
+        "cha": 12
+      }
+    }
+  ],
+  "bosses": [
+    {
+      "id": "tessellated-warden",
+      "name": "The Tessellated Warden",
+      "floor": 1,
+      "abilityRanks": {
+        "str": "primary",
+        "con": "strong",
+        "wis": "average",
+        "dex": "weak",
+        "int": "weak",
+        "cha": "weak"
+      },
+      "proficientSaves": [
+        "str",
+        "con"
+      ],
+      "legendaryActions": [
+        {
+          "name": "Slam",
+          "cost": 1,
+          "text": "One Columnar Slam."
+        },
+        {
+          "name": "Raise Pillar",
+          "cost": 1,
+          "text": "A 5 ft pillar rises in an empty space within 30 ft."
+        },
+        {
+          "name": "Pull",
+          "cost": 2,
+          "text": "Magnetic Pull, even if it hasn't recharged."
+        }
+      ],
+      "legendaryActionsNote": "Only used when Heavy Crown, the extra-Legendary-Action Pressure or a party of 6+ grants Legendary Actions.",
+      "parts": [
+        {
+          "id": "warden",
+          "name": "The Tessellated Warden",
+          "size": "Large",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "choir-of-the-hollow-column",
+      "name": "Choir of the Hollow Column",
+      "floor": 1,
+      "abilityRanks": {
+        "con": "primary",
+        "wis": "strong",
+        "cha": "strong",
+        "int": "average",
+        "str": "weak",
+        "dex": "weak"
+      },
+      "proficientSaves": [
+        "con",
+        "wis"
+      ],
+      "legendaryActions": [
+        {
+          "name": "Resonate",
+          "cost": 1,
+          "text": "Every surviving cluster's Hymn Aura pulses again."
+        },
+        {
+          "name": "Swell",
+          "cost": 1,
+          "text": "One creature within 30 ft makes a Con save or is pushed 10 ft."
+        }
+      ],
+      "legendaryActionsNote": "Only used when Heavy Crown, the extra-Legendary-Action Pressure or a party of 6+ grants Legendary Actions.",
+      "parts": [
+        {
+          "id": "pipe-cluster",
+          "name": "Pipe Cluster",
+          "size": "Large",
+          "count": 4,
+          "hpShare": 0.25,
+          "speed": 0
+        }
+      ]
+    },
+    {
+      "id": "gilded-excavation-herd",
+      "name": "Gilded Excavation Herd",
+      "floor": 1,
+      "abilityRanks": {
+        "str": "primary",
+        "con": "strong",
+        "int": "average",
+        "wis": "average",
+        "dex": "weak",
+        "cha": "weak"
+      },
+      "proficientSaves": [
+        "str",
+        "con"
+      ],
+      "legendaryActions": [
+        {
+          "name": "Bite",
+          "cost": 1,
+          "text": "One hound makes a Bite."
+        },
+        {
+          "name": "Lumber",
+          "cost": 1,
+          "text": "The golem moves half its speed."
+        },
+        {
+          "name": "Retether",
+          "cost": 2,
+          "text": "Move an existing tether to a different pillar."
+        }
+      ],
+      "extra": {
+        "hounds": {
+          "abilityRanks": {
+            "str": "strong",
+            "dex": "strong",
+            "wis": "strong",
+            "con": "average",
+            "int": "weak",
+            "cha": "weak"
+          },
+          "proficientSaves": []
+        }
+      },
+      "legendaryActionsNote": "Only used when Heavy Crown, the extra-Legendary-Action Pressure or a party of 6+ grants Legendary Actions.",
+      "parts": [
+        {
+          "id": "golem",
+          "name": "Survey Golem",
+          "size": "Large",
+          "count": 1
+        },
+        {
+          "id": "hound",
+          "name": "Survey Hound",
+          "size": "Medium",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "kaelen-and-vyr",
+      "name": "Kaelen and Vyr",
+      "floor": 2,
+      "abilityRanks": {
+        "str": "primary",
+        "con": "strong",
+        "dex": "average",
+        "int": "average",
+        "wis": "average",
+        "cha": "average"
+      },
+      "proficientSaves": [
+        "str",
+        "con"
+      ],
+      "legendaryActions": [
+        {
+          "name": "Strike",
+          "cost": 1,
+          "text": "One Cleave (Kaelen) or Ricochet Bolt (Vyr)."
+        },
+        {
+          "name": "Blink",
+          "cost": 1,
+          "text": "The active form teleports 15 ft."
+        },
+        {
+          "name": "Swap",
+          "cost": 2,
+          "text": "Swap forms now."
+        }
+      ],
+      "extra": {
+        "vyr": {
+          "abilityRanks": {
+            "int": "primary",
+            "dex": "strong",
+            "wis": "strong",
+            "con": "average",
+            "cha": "average",
+            "str": "weak"
+          },
+          "proficientSaves": [
+            "dex",
+            "int"
+          ]
+        },
+        "note": "Base profile is Kaelen. Use the active form's abilities and saves."
+      },
+      "legendaryActionsNote": "Only used when Heavy Crown, the extra-Legendary-Action Pressure or a party of 6+ grants Legendary Actions.",
+      "parts": [
+        {
+          "id": "kaelen-and-vyr",
+          "name": "Kaelen and Vyr",
+          "size": "Medium",
+          "count": 1,
+          "note": "One token; swap the art with the active form."
+        }
+      ]
+    },
+    {
+      "id": "halvard-quill",
+      "name": "Senior Tracker Halvard Quill",
+      "floor": 2,
+      "abilityRanks": {
+        "dex": "primary",
+        "con": "strong",
+        "wis": "strong",
+        "str": "average",
+        "int": "average",
+        "cha": "average"
+      },
+      "proficientSaves": [
+        "dex",
+        "wis"
+      ],
+      "legendaryActions": [
+        {
+          "name": "Longshot",
+          "cost": 1,
+          "text": "One Longshot."
+        },
+        {
+          "name": "Slip",
+          "cost": 1,
+          "text": "Move half his speed without provoking."
+        },
+        {
+          "name": "Spring",
+          "cost": 2,
+          "text": "An armed Snare Shard triggers now."
+        }
+      ],
+      "legendaryActionsNote": "Only used when Heavy Crown, the extra-Legendary-Action Pressure or a party of 6+ grants Legendary Actions.",
+      "parts": [
+        {
+          "id": "halvard",
+          "name": "Senior Tracker Halvard Quill",
+          "size": "Medium",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "lattice-spinner",
+      "name": "The Lattice Spinner",
+      "floor": 2,
+      "abilityRanks": {
+        "dex": "primary",
+        "str": "strong",
+        "wis": "strong",
+        "con": "average",
+        "int": "weak",
+        "cha": "weak"
+      },
+      "proficientSaves": [
+        "dex",
+        "wis"
+      ],
+      "legendaryActions": [
+        {
+          "name": "Bite",
+          "cost": 1,
+          "text": "One Bite."
+        },
+        {
+          "name": "Skitter",
+          "cost": 1,
+          "text": "Move half its speed along walls or ceiling."
+        },
+        {
+          "name": "Reel",
+          "cost": 2,
+          "text": "One creature touching a Transit Cable is teleported 15 ft toward the Spinner."
+        }
+      ],
+      "legendaryActionsNote": "Only used when Heavy Crown, the extra-Legendary-Action Pressure or a party of 6+ grants Legendary Actions.",
+      "parts": [
+        {
+          "id": "spinner",
+          "name": "The Lattice Spinner",
+          "size": "Large",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "stride-core",
+      "name": "The Stride Core",
+      "floor": 3,
+      "abilityRanks": {
+        "con": "primary",
+        "int": "strong",
+        "cha": "strong",
+        "wis": "average",
+        "str": "weak",
+        "dex": "weak"
+      },
+      "proficientSaves": [
+        "con",
+        "int",
+        "cha"
+      ],
+      "legendaryActions": [
+        {
+          "name": "Pulse",
+          "cost": 1,
+          "text": "Surge Aura damage again."
+        },
+        {
+          "name": "Drift",
+          "cost": 1,
+          "text": "Move half speed."
+        }
+      ],
+      "parts": [
+        {
+          "id": "core",
+          "name": "The Stride Core",
+          "size": "Large",
+          "count": 1,
+          "hoverFt": 10
+        }
+      ]
+    },
+    {
+      "id": "general-vane",
+      "name": "General Vane of the Tenth Stride",
+      "floor": 3,
+      "abilityRanks": {
+        "str": "primary",
+        "con": "strong",
+        "cha": "strong",
+        "dex": "average",
+        "int": "average",
+        "wis": "average"
+      },
+      "proficientSaves": [
+        "str",
+        "con",
+        "wis"
+      ],
+      "legendaryActions": [
+        {
+          "name": "Shield Bash",
+          "cost": 1,
+          "text": "15% damage and push 10 ft."
+        },
+        {
+          "name": "Swap Stance",
+          "cost": 1,
+          "text": "Swap stance."
+        },
+        {
+          "name": "March",
+          "cost": 1,
+          "text": "Move half speed."
+        }
+      ],
+      "parts": [
+        {
+          "id": "vane",
+          "name": "General Vane",
+          "size": "Large",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "glass-hydra",
+      "name": "The Glass Hydra",
+      "floor": 3,
+      "abilityRanks": {
+        "con": "primary",
+        "str": "strong",
+        "dex": "average",
+        "wis": "average",
+        "int": "weak",
+        "cha": "weak"
+      },
+      "proficientSaves": [
+        "str",
+        "con",
+        "wis"
+      ],
+      "legendaryActions": [
+        {
+          "name": "Bite",
+          "cost": 1,
+          "text": "One head bites."
+        },
+        {
+          "name": "Refract",
+          "cost": 1,
+          "text": "Move 10 ft."
+        }
+      ],
+      "parts": [
+        {
+          "id": "hydra",
+          "name": "The Glass Hydra",
+          "size": "Huge",
+          "count": 1,
+          "note": "Heads are a counter on the token, not separate tokens."
+        }
+      ]
+    },
+    {
+      "id": "blind-architect",
+      "name": "The Blind Architect",
+      "floor": 4,
+      "abilityRanks": {
+        "int": "primary",
+        "wis": "strong",
+        "cha": "strong",
+        "dex": "average",
+        "con": "average",
+        "str": "weak"
+      },
+      "proficientSaves": [
+        "int",
+        "wis",
+        "cha"
+      ],
+      "legendaryActions": [
+        {
+          "name": "Seam Cut",
+          "cost": 1,
+          "text": "One Seam Cut."
+        },
+        {
+          "name": "Fold",
+          "cost": 2,
+          "text": "Fold."
+        },
+        {
+          "name": "Shift Sight",
+          "cost": 1,
+          "text": "Move 30 ft without provoking."
+        }
+      ],
+      "parts": [
+        {
+          "id": "architect",
+          "name": "The Blind Architect",
+          "size": "Large",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "chorus-of-unseen-angles",
+      "name": "The Chorus of Unseen Angles",
+      "floor": 4,
+      "abilityRanks": {
+        "cha": "primary",
+        "dex": "strong",
+        "wis": "strong",
+        "int": "average",
+        "con": "average",
+        "str": "weak"
+      },
+      "proficientSaves": [
+        "dex",
+        "wis",
+        "cha"
+      ],
+      "legendaryActions": [
+        {
+          "name": "Ray",
+          "cost": 1,
+          "text": "One member fires an Angle Ray."
+        },
+        {
+          "name": "Reposition",
+          "cost": 1,
+          "text": "One member teleports 30 ft."
+        }
+      ],
+      "parts": [
+        {
+          "id": "angle",
+          "name": "Unseen Angle",
+          "size": "Medium",
+          "count": 3,
+          "hpShared": true,
+          "hoverFt": 10
+        }
+      ]
+    },
+    {
+      "id": "inverted-reliquary",
+      "name": "The Inverted Reliquary",
+      "floor": 4,
+      "abilityRanks": {
+        "cha": "primary",
+        "con": "strong",
+        "wis": "strong",
+        "dex": "average",
+        "int": "average",
+        "str": "weak"
+      },
+      "proficientSaves": [
+        "con",
+        "wis",
+        "cha"
+      ],
+      "legendaryActions": [
+        {
+          "name": "Ward Lash",
+          "cost": 1,
+          "text": "One Ward Lash."
+        },
+        {
+          "name": "Re-attune",
+          "cost": 1,
+          "text": "Re-roll Attunement."
+        }
+      ],
+      "parts": [
+        {
+          "id": "reliquary",
+          "name": "The Inverted Reliquary",
+          "size": "Large",
+          "count": 1,
+          "hoverFt": 20
+        }
+      ]
+    },
+    {
+      "id": "ophaniel",
+      "name": "Ophaniel of the Inverted Bloom",
+      "floor": 5,
+      "abilityRanks": {
+        "cha": "primary",
+        "con": "strong",
+        "wis": "strong",
+        "str": "average",
+        "dex": "average",
+        "int": "average"
+      },
+      "proficientSaves": [
+        "str",
+        "con",
+        "wis",
+        "cha"
+      ],
+      "legendaryActions": [
+        {
+          "name": "Wing",
+          "cost": 1,
+          "text": "One Wing of Petrified Light."
+        },
+        {
+          "name": "Beam",
+          "cost": 2,
+          "text": "Inverted Gravity Beam."
+        },
+        {
+          "name": "Bloom",
+          "cost": 1,
+          "text": "Regain 5% HP."
+        }
+      ],
+      "parts": [
+        {
+          "id": "ophaniel",
+          "name": "Ophaniel of the Inverted Bloom",
+          "size": "Gargantuan",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "sun-eaters-husk",
+      "name": "The Sun-Eater's Husk",
+      "floor": 5,
+      "abilityRanks": {
+        "str": "primary",
+        "con": "strong",
+        "wis": "strong",
+        "cha": "average",
+        "dex": "weak",
+        "int": "weak"
+      },
+      "proficientSaves": [
+        "str",
+        "con",
+        "wis",
+        "cha"
+      ],
+      "legendaryActions": [
+        {
+          "name": "Rake",
+          "cost": 1,
+          "text": "One Antler Rake."
+        },
+        {
+          "name": "Pulse",
+          "cost": 1,
+          "text": "Gravitational Pulse."
+        },
+        {
+          "name": "Devour Light",
+          "cost": 1,
+          "text": "Devour Light."
+        }
+      ],
+      "parts": [
+        {
+          "id": "husk",
+          "name": "The Sun-Eater's Husk",
+          "size": "Gargantuan",
+          "count": 1,
+          "speed": 0,
+          "note": "Fused with the bedrock; it pulls players in rather than moving."
+        }
+      ]
+    },
+    {
+      "id": "gatewright",
+      "name": "The Gatewright",
+      "floor": 5,
+      "abilityRanks": {
+        "int": "primary",
+        "str": "strong",
+        "con": "strong",
+        "dex": "average",
+        "wis": "average",
+        "cha": "average"
+      },
+      "proficientSaves": [
+        "str",
+        "con",
+        "int",
+        "wis"
+      ],
+      "legendaryActions": [
+        {
+          "name": "Strike",
+          "cost": 1,
+          "text": "One Builder's Strike."
+        },
+        {
+          "name": "Raise Wall",
+          "cost": 1,
+          "text": "Raise a 10 ft wall segment within 30 ft."
+        },
+        {
+          "name": "Shift Portal",
+          "cost": 1,
+          "text": "Move one portal."
+        }
+      ],
+      "parts": [
+        {
+          "id": "gatewright",
+          "name": "The Gatewright",
+          "size": "Large",
+          "count": 1
+        }
+      ]
+    }
+  ],
+  "sizeSquares": {
+    "Tiny": 0.5,
+    "Small": 1,
+    "Medium": 1,
+    "Large": 2,
+    "Huge": 3,
+    "Gargantuan": 4
+  },
+  "sizeSquaresNote": "Squares per side on a 5 ft grid. Tiny shares a square (4 per square)."
+}

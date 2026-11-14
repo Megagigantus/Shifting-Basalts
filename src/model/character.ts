@@ -24,6 +24,10 @@ export interface CharacterProfile {
    * Beast Master Ranger (design bible: Offer weighting, Subclasses).
    */
   favoredTags: string[]
+  /** Portrait from the gallery (a file name in src/art/portraits), or "" for none. */
+  portrait: string
+  /** Summon token art (a file name in src/art/summons), or "" for the default. */
+  summonArt: string
 }
 
 /** What persists between runs. Changed by runs and upgrades, not the profile form. */
@@ -80,6 +84,8 @@ export function emptyProfile(): CharacterProfile {
     hasSummon: false,
     attackStyle: 'melee',
     favoredTags: [],
+    portrait: '',
+    summonArt: '',
   }
 }
 
@@ -111,5 +117,7 @@ export function profileOf(c: Character): CharacterProfile {
     hasSummon: c.hasSummon,
     attackStyle: c.attackStyle,
     favoredTags: c.favoredTags ?? [],
+    portrait: c.portrait ?? '',
+    summonArt: c.summonArt ?? '',
   }
 }

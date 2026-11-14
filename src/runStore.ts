@@ -381,6 +381,60 @@ export function useLootRequests(runId: string | null): Record<string, string[]> 
 }
 
 // ---------------------------------------------------------------------------
+// Battle map tokens: runs/{runId}/tokens/{characterId} holds where a player's
+// token stands, and in which room ("floor-room"). A token from an earlier
+// room counts as not placed, so it starts at the entrance again.
+
+export interface TokenSpot {
+  x: number
+  y: number
+  /** The character's summon, if they have one. */
+  sx?: number
+  sy?: number
+  roomKey: string
+}
+
+/** The key that ties a token to the room it was moved in. */
+export const roomKeyOf = (view: { floor: number; room: number }) => `${view.floor}-${view.room}`
+
+/**
+ * Save where a character's token (and summon, if any) stands in this room
+ * (the owning player, or the DM). Both positions are written each time, so a
+ * move never leaves the other one from an earlier room.
+ */
+export async function moveToken(runId: string, characterId: string, spot: Omit<TokenSpot, 'roomKey'>, roomKey: string) {
+  if (!db) throw new Error('Firebase is not set up.')
+  const data: Record<string, unknown> = { x: Math.round(spot.x), y: Math.round(spot.y), roomKey, updatedAt: serverTimestamp() }
+  if (spot.sx !== undefined && spot.sy !== undefined) {
+    data.sx = Math.round(spot.sx)
+    data.sy = Math.round(spot.sy)
+  }
+  await setDoc(doc(db, 'runs', runId, 'tokens', characterId), data)
+}
+
+/** Live map of characterId -> token spot for a run. */
+export function useTokens(runId: string | null): Record<string, TokenSpot> {
+  const [loaded, setLoaded] = useState<{ runId: string; tokens: Record<string, TokenSpot> } | null>(null)
+  useEffect(() => {
+    if (!db || !runId) return
+    return onSnapshot(collection(db, 'runs', runId, 'tokens'), (snapshot) => {
+      const tokens: Record<string, TokenSpot> = {}
+      for (const d of snapshot.docs) {
+        const data = d.data()
+        tokens[d.id] = {
+          x: data.x as number,
+          y: data.y as number,
+          ...(typeof data.sx === 'number' && typeof data.sy === 'number' ? { sx: data.sx, sy: data.sy } : {}),
+          roomKey: data.roomKey as string,
+        }
+      }
+      setLoaded({ runId, tokens })
+    })
+  }, [runId])
+  return loaded && loaded.runId === runId ? loaded.tokens : {}
+}
+
+// ---------------------------------------------------------------------------
 // Hidden Sight: runs/{runId}/private/{characterId} holds a player's hints,
 // readable only by that player and the DM.
 

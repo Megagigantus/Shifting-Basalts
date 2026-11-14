@@ -92,7 +92,8 @@ const characters: Record<string, { [key: string]: Value }> = {
     level: 5,
     casterType: 'full',
     slotLevels: [1, 2, 3],
-    hasSummon: false,
+    // A familiar, so summon tokens on the battle map can be tested locally.
+    hasSummon: true,
     attackStyle: 'spells',
     ...dungeonLayer,
     // Spell slot recovery rank 5 (15 Devotions), and a second Healing Font owner.

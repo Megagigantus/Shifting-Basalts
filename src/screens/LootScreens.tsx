@@ -22,6 +22,7 @@ import {
 } from '../rules/loot'
 import { canExtract, extract, isFullClear } from '../rules/runFlow'
 import { chooseRelic, relicStateFor, vaultPending } from '../rules/vault'
+import { SceneBanner } from './Scene'
 import { setLootRequests, submitChoice } from '../runStore'
 
 type Act = (step: (s: RunState) => RunState, confirmText?: string) => void
@@ -229,8 +230,8 @@ export function VaultPanel({ state, busy, act }: { state: RunState; busy: boolea
   if (!state.run.vaultOpen) return null
   return (
     <div className="room-stage vault-panel">
-      <h3>Thils's Vault</h3>
-      <p className="hint">Each survivor drafts one relic. Players can pick on their own devices, or you can pick for them.</p>
+      <SceneBanner id="thils-vault" title="Thils's Vault" subtitle="Each survivor drafts one relic." />
+      <p className="hint">Players can pick on their own devices, or you can pick for them.</p>
       {state.players
         .filter((p) => p.alive)
         .map((p) => (
@@ -302,7 +303,7 @@ export function PlayerLoot({ state, myCharacterIds, requests, readOnly = false }
     <div className="room-stage loot-panel">
       {run.vaultOpen && me && (
         <div className="vault-panel">
-          <h3>Thils's Vault</h3>
+          <SceneBanner id="thils-vault" title="Thils's Vault" subtitle="Take one relic." />
           {me.vaultRelic ? (
             <p className="notice">You took {relicOf(me.vaultRelic).name}.</p>
           ) : (

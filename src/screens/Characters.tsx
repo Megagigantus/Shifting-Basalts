@@ -18,6 +18,7 @@ import { CharacterForm } from './CharacterForm'
 import { StatTracks } from './StatTracks'
 import { UpgradeShop } from './UpgradeShop'
 import { DraftPreferences } from './DraftPreferences'
+import { LookPicker } from './LookPicker'
 import { CharacterLoot } from './LootScreens'
 import { UPGRADES } from '../rules/upgrades'
 
@@ -148,6 +149,7 @@ export function Characters() {
                 {c.lockoutDays > 0 && (
                   <span className="warning">Locked out: {c.lockoutDays} days</span>
                 )}
+                <LookPicker character={c} />
                 <DraftPreferences character={c} />
                 {upgradeSummary(c) && <span className="hint">Upgrades: {upgradeSummary(c)}</span>}
                 <CharacterLoot loot={c.loot} />

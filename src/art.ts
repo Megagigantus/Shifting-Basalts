@@ -3,7 +3,21 @@
 // nothing (no failed download) and the screens just show text as before.
 // See src/art/README.md for the folder layout.
 
-export type ArtKind = 'shapes' | 'terrain' | 'tricks' | 'exits' | 'creatures' | 'bosses' | 'boss-parts' | 'families'
+export type ArtKind =
+  | 'shapes'
+  | 'terrain'
+  | 'tricks'
+  | 'exits'
+  | 'creatures'
+  | 'bosses'
+  | 'boss-parts'
+  | 'families'
+  | 'maps'
+  | 'arenas'
+  | 'objects'
+  | 'summons'
+  | 'portraits'
+  | 'rooms'
 
 const files = import.meta.glob<string>('./art/*/*.{webp,png,jpg,jpeg,svg}', {
   eager: true,
@@ -16,6 +30,15 @@ const byKey = new Map<string, string>()
 for (const [path, url] of Object.entries(files)) {
   const key = path.replace(/^\.\/art\//, '').replace(/\.[a-z]+$/, '')
   byKey.set(key, url)
+}
+
+/** Every id that has a picture in a folder, sorted (e.g. the portrait gallery). */
+export function artIds(kind: ArtKind): string[] {
+  const prefix = `${kind}/`
+  return [...byKey.keys()]
+    .filter((k) => k.startsWith(prefix))
+    .map((k) => k.slice(prefix.length))
+    .sort()
 }
 
 /** URL of the picture for this id, or null when no file has been added yet. */

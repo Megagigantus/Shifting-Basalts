@@ -12,6 +12,7 @@ import { proficiencyBonus } from './proficiency'
 import type { Random } from './draft'
 import { encounterView, type Encounter } from './encounters'
 import type { HpShown, HpState } from './hp'
+import { playerMap, type BattleMap, type PlayerMap } from './battleMap'
 
 export const SHAPES = layouts.shapes
 export const TERRAIN = layouts.terrain
@@ -59,6 +60,8 @@ export interface Room {
   hp?: HpState
   /** The Bloodied facts players may see, refreshed on every save (see roomFlow). */
   hpShown?: HpShown
+  /** Combat and elite rooms: the battle map (DM only for now). */
+  map?: BattleMap | null
 }
 
 const roll =(sides: number, random: Random) => 1 + Math.floor(random() * sides)
@@ -249,6 +252,8 @@ export interface RoomView {
   bossId?: string | null
   /** The boss is Bloodied (players see this, never its HP). */
   bossBloodied?: boolean
+  /** The battle map as players may see it (combat and elite rooms). */
+  map?: PlayerMap | null
   /** Shift Actions the DM has triggered, by the boss they belong to. */
   shifts?: string[]
 }
@@ -273,6 +278,7 @@ export function playerView(room: Room): RoomView {
     enemies: encounterView(room.encounter, room.hpShown?.enemyBloodied),
     bossId: room.boss?.id ?? null,
     bossBloodied: Boolean(room.boss && room.hpShown?.boss),
+    map: playerMap(room),
     shifts: (room.shifts ?? []).filter((s) => s.revealed).map((s) => s.bossId),
   }
 }

@@ -270,6 +270,104 @@ for (let floor = 1; floor <= 5; floor++) {
   const count = bossData.bosses.filter((b) => b.floor === floor).length
   if (count < 1) fail(`bosses.json: no boss for floor ${floor}`)
 }
+// Battle map (creature sizes, room grid, trick placement).
+const battleMap = loadObject<{
+  roomSquares: Record<string, number>
+  sizeSquares: Record<string, number>
+  entrance: { default: string; shapes: Record<string, string> }
+  avoid?: Record<string, { x: number; y: number; w: number; h: number }[]>
+  trickTerrain: Record<string, { floor: number; shapes: string[]; features: string[]; avoidShapes?: string[] }>
+}>('battle-map.json')
+const mapLayouts = loadObject<{ shapes: { id: string }[]; sizes: { id: string }[]; terrain: { id: string }[] }>('room-layouts.json')
+const mapTricks = loadObject<{ tricks: { id: string; floor: number }[] }>('room-tricks.json').tricks
+const SIDES = ['north', 'south', 'east', 'west']
+const shapeIds = new Set(mapLayouts.shapes.map((s) => s.id))
+const terrainIds = new Set(mapLayouts.terrain.map((t) => t.id))
+for (const s of mapLayouts.sizes) {
+  if (!(battleMap.roomSquares[s.id] > 0)) fail(`battle-map.json: roomSquares needs a square count for room size "${s.id}"`)
+}
+if (!SIDES.includes(battleMap.entrance.default)) fail(`battle-map.json: entrance.default must be north, south, east or west`)
+for (const [shape, areas] of Object.entries(battleMap.avoid ?? {})) {
+  if (!shapeIds.has(shape)) fail(`battle-map.json avoid: unknown shape "${shape}"`)
+  for (const a of areas) {
+    const ok = [a.x, a.y, a.w, a.h].every((v) => v >= 0 && v <= 1) && a.x + a.w <= 1 && a.y + a.h <= 1
+    if (!ok) fail(`battle-map.json avoid "${shape}": areas are fractions of the map, from 0 to 1`)
+  }
+}
+for (const [shape, side] of Object.entries(battleMap.entrance.shapes)) {
+  if (!shapeIds.has(shape)) fail(`battle-map.json entrance: unknown shape "${shape}"`)
+  if (!SIDES.includes(side)) fail(`battle-map.json entrance "${shape}": side must be north, south, east or west`)
+}
+for (const c of enemies.creatures as { id: string; size?: string }[]) {
+  if (!c.size || battleMap.sizeSquares[c.size] === undefined) fail(`enemies.json creature "${c.id}": size "${c.size}" isn't in battle-map.json sizeSquares`)
+}
+for (const t of mapTricks) {
+  const pref = battleMap.trickTerrain[t.id]
+  if (!pref) continue
+  if (pref.floor !== t.floor) fail(`battle-map.json trickTerrain "${t.id}": floor ${pref.floor} but the trick is floor ${t.floor}`)
+}
+for (const [id, pref] of Object.entries(battleMap.trickTerrain)) {
+  if (!mapTricks.some((t) => t.id === id)) fail(`battle-map.json trickTerrain: unknown trick "${id}"`)
+  for (const s of [...pref.shapes, ...(pref.avoidShapes ?? [])]) if (!shapeIds.has(s)) fail(`battle-map.json trickTerrain "${id}": unknown shape "${s}"`)
+  for (const f of pref.features) if (!terrainIds.has(f)) fail(`battle-map.json trickTerrain "${id}": unknown terrain "${f}"`)
+}
+
+// Boss arenas (arenas.json): every boss has one, pieces fit the grid, art exists,
+// and each token follows a real HP tracker.
+type Box = { x: number; y: number; w: number; h: number }
+const arenaData = loadObject<{
+  squares: number
+  arenas: Record<
+    string,
+    {
+      entrance: Box
+      tokens: { name: string; size: number; art: string; hp: string; x: number; y: number; forms?: Record<string, string> }[]
+      objects: (Box & { art: string; name: string; phase?: number })[]
+      areas: (Box & { kind: string; name: string; phase?: number })[]
+      phase2?: boolean
+    }
+  >
+  palette: { art: string; name: string; w: number; h: number }[]
+}>('arenas.json')
+const artFiles = new Set<string>()
+for (const folder of readdirSync(new URL('../src/art/', import.meta.url), { withFileTypes: true })) {
+  if (!folder.isDirectory()) continue
+  for (const f of readdirSync(new URL(`../src/art/${folder.name}/`, import.meta.url))) artFiles.add(`${folder.name}:${f.replace(/\.[a-z]+$/, '')}`)
+}
+const N = arenaData.squares
+const inGrid = (b: Box) => b.x >= 0 && b.y >= 0 && b.w >= 1 && b.h >= 1 && b.x + b.w <= N && b.y + b.h <= N
+const bossParts = bossData.bosses as unknown as { id: string; parts?: { name: string; count: number }[] }[]
+for (const b of bossParts) if (!arenaData.arenas[b.id]) fail(`arenas.json: no arena for boss "${b.id}"`)
+for (const [id, arena] of Object.entries(arenaData.arenas)) {
+  const where = `arenas.json "${id}"`
+  const boss = bossParts.find((b) => b.id === id)
+  if (!boss) fail(`${where}: unknown boss`)
+  if (!inGrid(arena.entrance)) fail(`${where}: entrance is off the grid`)
+  for (const t of arena.tokens) {
+    if (!inGrid({ x: t.x, y: t.y, w: t.size, h: t.size })) fail(`${where} token "${t.name}": off the grid`)
+    for (const art of [t.art, ...Object.values(t.forms ?? {})]) if (!artFiles.has(art)) fail(`${where} token "${t.name}": no art file "${art}"`)
+    if (t.hp !== 'boss') {
+      const m = /^part:(.+):(\d+)$/.exec(t.hp)
+      const part = m && boss?.parts?.find((p) => p.name === m[1])
+      if (!m || !part || Number(m[2]) >= part.count) fail(`${where} token "${t.name}": hp "${t.hp}" isn't one of the boss's part trackers`)
+    }
+  }
+  for (const o of arena.objects) {
+    if (!inGrid(o)) fail(`${where} object "${o.name}": off the grid`)
+    if (!artFiles.has(`objects:${o.art}`)) fail(`${where} object "${o.name}": no art file "objects:${o.art}"`)
+  }
+  for (const a of arena.areas) if (!inGrid(a)) fail(`${where} area "${a.name}": off the grid`)
+  for (const p of [...arena.objects, ...arena.areas]) {
+    if (p.phase !== undefined && ![1, 2].includes(p.phase)) fail(`${where} "${p.name}": phase must be 1 or 2`)
+    if (p.phase === 2 && !arena.phase2 && !arena.areas.some((a) => a.phase === 2)) fail(`${where} "${p.name}": phase 2 piece in an arena without phase 2`)
+  }
+  if (arena.phase2 && !artFiles.has(`arenas:${id}-phase-2`)) fail(`${where}: phase2 is on but there's no "arenas:${id}-phase-2" art`)
+}
+for (const p of arenaData.palette) {
+  if (!artFiles.has(`objects:${p.art}`)) fail(`arenas.json palette "${p.name}": no art file "objects:${p.art}"`)
+  if (!(p.w >= 1 && p.h >= 1)) fail(`arenas.json palette "${p.name}": w and h must be at least 1`)
+}
+
 // Loot (Phase 6).
 const lootRolls = loadObject<{
   rarities: { id: string }[]

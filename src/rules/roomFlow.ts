@@ -10,6 +10,7 @@ import { isBossRoom } from './runFlow'
 import { generateEncounter } from './encounters'
 import { pickBoss, restlessShiftActions } from './bosses'
 import { applyHp, emptyHp, hpShown, hpTrackers } from './hp'
+import { addObject, movePiece, placeArena, placeMap, removeObject, swapForm } from './battleMap'
 
 function withRoom(state: RunState, room: Room | null, floorPlan = state.dm?.floorPlan ?? []): RunState {
   // Refresh the Bloodied facts players may see before building their view.
@@ -35,20 +36,23 @@ function populate(state: RunState, room: Room, random: Random): Room {
   const living = state.players.filter((p) => p.alive)
   // A new fight starts unhurt.
   room = { ...room, hp: emptyHp() }
-  if (room.kind === 'reprieve') return { ...room, encounter: null, boss: null, shifts: [] }
+  if (room.kind === 'reprieve') return { ...room, encounter: null, boss: null, shifts: [], map: null }
   if (room.kind === 'boss') {
     const id = state.dm?.bossId ?? pickBoss(run.floor, random)
-    return {
+    const bossRoom: Room = {
       ...room,
       encounter: null,
       boss: { id, partySize: living.length },
       shifts: [{ bossId: id, revealed: false }],
     }
+    return { ...bossRoom, map: placeArena(bossRoom) }
   }
   const levels = living.map((p) => p.level ?? run.partyLevel)
   const encounter = generateEncounter(run.floor, room.kind === 'elite', levels, run.partyLevel, random)
   const shifts = restlessShiftActions(run.floor, state.dm?.bossId ?? null, restlessCount(run.pressures), random)
-  return { ...room, encounter, boss: null, shifts: shifts.map((bossId) => ({ bossId, revealed: false })) }
+  const next: Room = { ...room, encounter, boss: null, shifts: shifts.map((bossId) => ({ bossId, revealed: false })) }
+  // Rerolling only the encounter keeps the layout and re-places the enemies.
+  return { ...next, map: placeMap(next, random, room.map ?? null) }
 }
 
 function rollRoom(state: RunState, kind: Room['kind'], random: Random): Room {
@@ -82,12 +86,13 @@ export function rerollBoss(state: RunState, random: Random): RunState {
   const next: RunState = { ...state, dm: { floorPlan: [], room: null, ...state.dm, bossId } }
   const room = next.dm?.room
   if (room?.kind === 'boss') {
-    return withRoom(next, {
+    const bossRoom: Room = {
       ...room,
       boss: { id: bossId, partySize: room.boss?.partySize ?? 0 },
       shifts: [{ bossId, revealed: false }],
       hp: emptyHp(),
-    })
+    }
+    return withRoom(next, { ...bossRoom, map: placeArena(bossRoom) })
   }
   return next
 }
@@ -143,6 +148,39 @@ export function setBossBloodied(state: RunState, value: boolean | null): RunStat
   if (!room?.boss) throw new Error('There\'s no boss in this room.')
   return withRoom(state, { ...room, hp: { ...(room.hp ?? emptyHp()), bossBloodied: value } })
 }
+
+/** Lay out (or lay out again) the current room's battle map, e.g. for a room made before maps existed. */
+export function layOutMap(state: RunState, random: Random): RunState {
+  const room = state.dm?.room
+  if (!room) throw new Error('There\'s no room to lay out.')
+  const map = placeMap(room, random)
+  if (!map) throw new Error('Only combat, elite and boss rooms have a battle map.')
+  return withRoom(state, { ...room, map })
+}
+
+/** The DM drags a piece to a new square. */
+export function moveMapPiece(state: RunState, key: string, x: number, y: number): RunState {
+  const room = state.dm?.room
+  if (!room?.map) throw new Error('This room has no battle map.')
+  const map = movePiece(room.map, key, x, y)
+  return map === room.map ? state : withRoom(state, { ...room, map })
+}
+
+/** Change the current room's map with a battleMap helper (drop or remove an object, swap a form). */
+function withMap(state: RunState, change: (map: NonNullable<Room['map']>) => NonNullable<Room['map']>): RunState {
+  const room = state.dm?.room
+  if (!room?.map) throw new Error('This room has no battle map.')
+  return withRoom(state, { ...room, map: change(room.map) })
+}
+
+/** The DM drops an object from the palette onto the map. */
+export const dropMapObject = (state: RunState, art: string) => withMap(state, (m) => addObject(m, art))
+
+/** The DM removes an object from the map. */
+export const removeMapObject = (state: RunState, key: string) => withMap(state, (m) => removeObject(m, key))
+
+/** Kaelen and Vyr: swap the boss token to the other form. */
+export const swapBossForm = (state: RunState) => withMap(state, swapForm)
 
 /** The party turns down the Reprieve and fights that room instead. */
 export function declineReprieve(state: RunState, random: Random): RunState {
