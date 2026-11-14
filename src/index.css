@@ -1579,3 +1579,18 @@
     font-size: 112.5%;
   }
 }
+
+/* SMALL_BUTTON's default colors (src/ui/styles.ts). They sit in the
+   components layer, below utilities, so a color class added next to
+   SMALL_BUTTON (a toggle's "on" state, a tone) always wins. */
+@layer components {
+  .btn-small {
+    border-color: var(--color-stone-700);
+    background-color: var(--color-stone-900);
+    color: var(--color-stone-200);
+  }
+
+  .btn-small:hover:not(:disabled) {
+    background-color: var(--color-stone-800);
+  }
+}
