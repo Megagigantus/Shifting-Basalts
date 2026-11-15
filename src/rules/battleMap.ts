@@ -317,6 +317,12 @@ export type ShiftEffect =
       squares: number
       carry: string[]
     }
+  | {
+      kind: 'rotate'
+      label?: string
+      within: number
+      afterimage?: string
+    }
 
 export interface ArenaData {
   entrance: { x: number; y: number; w: number; h: number }

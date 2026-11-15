@@ -2,6 +2,7 @@
 // compute the new map, any character/summon token moves, whether a save gates
 // those moves, and short DM notes.
 import {
+  PALETTE,
   dims,
   inPhase,
   isFloorObject,
@@ -348,6 +349,114 @@ function planTilt(
   }
 }
 
+/** Rotate a box 90 degrees clockwise about the centre of an `n x n` grid. */
+export function rotateBoxClockwise(
+  box: { x: number; y: number; w: number; h: number },
+  n: number,
+): { x: number; y: number; w: number; h: number } {
+  return {
+    x: n - box.y - box.h,
+    y: box.x,
+    w: box.h,
+    h: box.w,
+  }
+}
+
+function squareInBand(x: number, y: number, n: number, within: number): boolean {
+  return x < within || y < within || x >= n - within || y >= n - within
+}
+
+function bandCoverage(
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  n: number,
+  within: number,
+): 'all' | 'partial' | 'none' {
+  let allIn = true
+  let anyIn = false
+  for (let dy = 0; dy < h; dy++) {
+    for (let dx = 0; dx < w; dx++) {
+      if (squareInBand(x + dx, y + dy, n, within)) {
+        anyIn = true
+      } else {
+        allIn = false
+      }
+    }
+  }
+  if (allIn && anyIn) return 'all'
+  return anyIn ? 'partial' : 'none'
+}
+
+function planRotate(
+  map: BattleMap,
+  effect: Extract<ShiftEffect, { kind: 'rotate' }>,
+  tokens: TokenPos[],
+  ctx: ShiftContext,
+): ShiftPlan {
+  const n = map.squares
+  const notes: string[] = []
+  const bossBefore = effect.afterimage
+    ? map.pieces.find((p) => p.kind === 'boss' && inPhase(p, ctx.phase))
+    : undefined
+
+  const nextPieces = map.pieces.map((p) => {
+    if (p.kind === 'exit' || !inPhase(p, ctx.phase)) return p
+    const { w, h } = dims(p)
+    const cov = bandCoverage(p.x, p.y, w, h, n, effect.within)
+    if (cov === 'none') return p
+    if (cov === 'partial') {
+      notes.push(`${p.name ?? p.key} straddles the edge band and was not moved`)
+      return p
+    }
+    const rot = rotateBoxClockwise({ x: p.x, y: p.y, w, h }, n)
+    const hasDims = p.w !== undefined || p.h !== undefined
+    return {
+      ...p,
+      x: rot.x,
+      y: rot.y,
+      ...(hasDims ? { w: rot.w, h: rot.h } : {}),
+    }
+  })
+
+  if (effect.afterimage && bossBefore) {
+    const item = PALETTE.find((entry) => entry.art === effect.afterimage)
+    if (!item) throw new Error(`Unknown palette object: ${effect.afterimage}`)
+    const used = nextPieces
+      .filter((p) => p.key.startsWith('afterimage:'))
+      .map((p) => Number(p.key.slice('afterimage:'.length)))
+      .filter((num) => Number.isFinite(num))
+    const nextNum = used.length ? Math.max(...used) + 1 : 1
+    nextPieces.push({
+      key: `afterimage:${nextNum}`,
+      kind: 'object',
+      id: item.art,
+      x: bossBefore.x,
+      y: bossBefore.y,
+      size: 1,
+      w: item.w,
+      h: item.h,
+      name: item.name,
+    })
+  }
+
+  const moves: TokenMove[] = []
+  for (const t of tokens) {
+    if (!squareInBand(t.x, t.y, n, effect.within)) continue
+    const rot = rotateBoxClockwise({ x: t.x, y: t.y, w: 1, h: 1 }, n)
+    if (rot.x !== t.x || rot.y !== t.y) {
+      moves.push({ key: t.key, x: rot.x, y: rot.y })
+    }
+  }
+
+  return {
+    map: { ...map, pieces: nextPieces },
+    moves,
+    notes,
+  }
+}
+
 /** Plan the map update and any token moves for a boss arena's shift effect. */
 export function planShift(
   map: BattleMap,
@@ -364,6 +473,8 @@ export function planShift(
       return planMirror(map, tokens)
     case 'push':
       return planPush(map, effect, tokens, ctx)
+    case 'rotate':
+      return planRotate(map, effect, tokens, ctx)
     case 'tilt':
       return planTilt(map, effect, tokens, ctx)
   }

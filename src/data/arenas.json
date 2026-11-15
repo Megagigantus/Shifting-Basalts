@@ -305,6 +305,12 @@
           "h": 2
         }
       ],
+      "shiftEffect": {
+        "kind": "rotate",
+        "label": "Echo Swap",
+        "within": 1,
+        "afterimage": "afterimage"
+      },
       "notes": "Two 10 ft ledges, inset from the back corners, give Vyr high ground to teleport to. Kaelen starts on the floor between them."
     },
     "halvard-quill": {

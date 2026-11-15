@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { addObject, bloodiedEffectOf, isFloorObject, placeArena, shiftEffectOf, type BattleMap } from './battleMap'
 import type { Room } from './rooms'
-import { blockedSquares, planShift, slideToken, type TokenPos } from './shiftEffects'
+import { blockedSquares, planShift, rotateBoxClockwise, slideToken, type TokenPos } from './shiftEffects'
 
 describe('shiftEffects', () => {
   describe('slideToken', () => {
@@ -232,6 +232,90 @@ describe('shiftEffects', () => {
       })
       expect(crushed.moves).toEqual([])
       expect(crushed.notes).toContain('pc:crushed is crushed against the south wall')
+    })
+
+    it('rotate on Kaelen and Vyr arena rotates edge tokens, drops afterimage:1 then afterimage:2, and leaves ledges unchanged', () => {
+      const map = placeArena({ kind: 'boss', boss: { id: 'kaelen-and-vyr', partySize: 4 } } as Room)!
+      const effect = shiftEffectOf('kaelen-and-vyr')!
+      const tokens: TokenPos[] = [
+        { key: 'pc:nw', x: 0, y: 0 },
+        { key: 'pc:south', x: 5, y: 13 },
+        { key: 'pc:mid', x: 6, y: 6 },
+      ]
+
+      const first = planShift(map, effect, tokens, { phase: 1, random: Math.random })
+      expect(first.save).toBeUndefined()
+      expect(first.notes).toEqual([])
+      expect(first.moves).toEqual([
+        { key: 'pc:nw', x: 13, y: 0 },
+        { key: 'pc:south', x: 0, y: 5 },
+      ])
+      expect(first.map.pieces.filter((p) => p.key.startsWith('afterimage:'))).toEqual([
+        {
+          key: 'afterimage:1',
+          kind: 'object',
+          id: 'afterimage',
+          x: 6,
+          y: 5,
+          size: 1,
+          w: 1,
+          h: 1,
+          name: 'Crystal afterimage',
+        },
+      ])
+      expect(first.map.areas).toEqual(map.areas)
+
+      const second = planShift(first.map, effect, [], { phase: 1, random: Math.random })
+      expect(second.save).toBeUndefined()
+      expect(second.notes).toEqual([])
+      expect(second.map.pieces.find((p) => p.key === 'afterimage:1')).toBeDefined()
+      expect(second.map.pieces.find((p) => p.key === 'afterimage:2')).toEqual({
+        key: 'afterimage:2',
+        kind: 'object',
+        id: 'afterimage',
+        x: 6,
+        y: 5,
+        size: 1,
+        w: 1,
+        h: 1,
+        name: 'Crystal afterimage',
+      })
+      expect(second.map.areas).toEqual(map.areas)
+    })
+
+    it('rotate carries wall-edge objects (swapping w/h) and skips exit pieces and interior objects', () => {
+      const base = placeArena({ kind: 'boss', boss: { id: 'kaelen-and-vyr', partySize: 4 } } as Room)!
+      const effect = shiftEffectOf('kaelen-and-vyr')!
+      const map: BattleMap = {
+        ...base,
+        pieces: [
+          ...base.pieces,
+          { key: 'exit:1', kind: 'exit', id: '1', x: 6, y: 0, size: 1 },
+          { key: 'obj:wall', kind: 'object', id: 'wall-segment', x: 2, y: 0, size: 1, w: 2, h: 1, name: 'Wall segment' },
+        ],
+      }
+
+      const plan = planShift(map, effect, [], { phase: 1, random: Math.random })
+      expect(plan.map.pieces.find((p) => p.key === 'exit:1')).toMatchObject({ x: 6, y: 0 })
+      expect(plan.map.pieces.find((p) => p.key === 'obj:wall')).toMatchObject({ x: 13, y: 2, w: 1, h: 2 })
+      expect(plan.map.pieces.find((p) => p.key === 'obj:0')).toMatchObject({ x: 4, y: 8 })
+    })
+  })
+
+  describe('rotateBoxClockwise', () => {
+    it('rotates 1x1 and rectangular boxes clockwise about the grid centre', () => {
+      expect(rotateBoxClockwise({ x: 0, y: 0, w: 1, h: 1 }, 14)).toEqual({
+        x: 13,
+        y: 0,
+        w: 1,
+        h: 1,
+      })
+      expect(rotateBoxClockwise({ x: 2, y: 1, w: 3, h: 2 }, 14)).toEqual({
+        x: 11,
+        y: 2,
+        w: 2,
+        h: 3,
+      })
     })
   })
   it('with only set, unticked tokens stay put and block the ones that move', () => {

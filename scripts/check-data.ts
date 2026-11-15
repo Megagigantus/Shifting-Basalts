@@ -369,7 +369,7 @@ for (const folder of readdirSync(new URL('../src/art/', import.meta.url), { with
 const N = arenaData.squares
 const inGrid = (b: Box) => b.x >= 0 && b.y >= 0 && b.w >= 1 && b.h >= 1 && b.x + b.w <= N && b.y + b.h <= N
 const paletteArts = new Set(arenaData.palette.map((p) => p.art))
-const EFFECT_KINDS = ['conveyor', 'march', 'mirror', 'push', 'tilt']
+const EFFECT_KINDS = ['conveyor', 'gravity', 'march', 'mirror', 'push', 'rotate', 'tilt']
 const bossParts = bossData.bosses as unknown as { id: string; parts?: { name: string; count: number }[] }[]
 for (const b of bossParts) if (!arenaData.arenas[b.id]) fail(`arenas.json: no arena for boss "${b.id}"`)
 for (const [id, arena] of Object.entries(arenaData.arenas)) {
@@ -438,6 +438,15 @@ for (const [id, arena] of Object.entries(arenaData.arenas)) {
           if (typeof art !== 'string' || !paletteArts.has(art)) fail(`${label}: tilt carry "${String(art)}" isn't in palette`)
         }
       }
+    }
+    if (eff.kind === 'rotate') {
+      if (typeof eff.within !== 'number' || eff.within < 1) fail(`${label}: rotate within must be at least 1`)
+      if (eff.afterimage !== undefined && (typeof eff.afterimage !== 'string' || !paletteArts.has(eff.afterimage))) {
+        fail(`${label}: rotate afterimage "${String(eff.afterimage)}" isn't in palette`)
+      }
+    }
+    if (eff.kind === 'gravity') {
+      if (typeof eff.squares !== 'number' || eff.squares < 1) fail(`${label}: gravity squares must be at least 1`)
     }
   }
 }
