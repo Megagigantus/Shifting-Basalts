@@ -70,7 +70,12 @@ const characters: Record<string, { [key: string]: Value }> = {
     hasSummon: false,
     attackStyle: 'melee',
     ...dungeonLayer,
+    // A survived full clear: the golden glow, and the full-clear rewards in the shop.
+    fullClears: 1,
+    bankedQuantumBasalts: 100,
     upgrades: {
+      'lost-and-found': 1,
+      'reclamation-shrine': 1,
       reroll: 1,
       'starting-boon': 1,
       forge: 1,
