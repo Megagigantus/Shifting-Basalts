@@ -52,6 +52,23 @@ export async function changeUpgrade(characterId: string, upgradeId: string, mode
 }
 
 /**
+ * DM correction: change how many full clears a character has survived (never
+ * below 0). Full clears unlock the full-clear upgrades and the golden glow;
+ * runs add them automatically, so this is for clears from before that.
+ */
+export async function changeFullClears(characterId: string, delta: 1 | -1): Promise<void> {
+  if (!db) throw new Error('Firebase is not set up.')
+  const firestore = db
+  await runTransaction(firestore, async (tx) => {
+    const ref = doc(firestore, 'characters', characterId)
+    const snapshot = await tx.get(ref)
+    if (!snapshot.exists()) throw new Error('That character no longer exists.')
+    const current: number = snapshot.data().fullClears ?? 0
+    tx.update(ref, { fullClears: Math.max(0, current + delta), updatedAt: serverTimestamp() })
+  })
+}
+
+/**
  * Move Devotions between the bank and a stat track.
  * amount > 0 invests from the bank; amount < 0 is a DM correction that refunds.
  */
