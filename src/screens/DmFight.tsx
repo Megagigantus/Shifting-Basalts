@@ -397,36 +397,39 @@ export function DmFight({ state, room, busy, act }: { state: RunState; room: Roo
   const { run } = state
   const ctx = { partyLevel: run.partyLevel, pressures: run.pressures }
   const trackers = hpTrackers(room, ctx)
-  const triggerShift = useShiftMap(state, room, act)
+  const shift = useShiftMap(state, room, act)
   const onChange = (key: string, amount: number) => act((s) => changeHp(s, key, amount))
   if (room.boss) {
     const boss = buildBoss(room.boss.id, run.partyLevel, room.boss.partySize, run.pressures)
-    const shift = room.shifts?.find((s) => s.bossId === room.boss!.id)
+    const roomShift = room.shifts?.find((s) => s.bossId === room.boss!.id)
     const hazards = signatureHazards(room.boss.id, room.cycle ?? 0, state.dm?.bossesBeaten)
     return (
-      <BossBlock
-        boss={boss}
-        revealed={Boolean(shift?.revealed)}
-        busy={busy}
-        onTrigger={triggerShift ?? (() => act((s) => reveal(s, { shift: room.boss!.id })))}
-        cycle={
-          hazards
-            ? {
-                ...hazards,
-                dc: floorBossDc(room.floor, run.partyLevel),
-                onNext: () => act((s) => cycleShift(s, 1)),
-                onBack: () => act((s) => cycleShift(s, -1)),
-              }
-            : undefined
-        }
-        hp={{
-          trackers,
-          bloodied: bossBloodied(room, ctx),
-          override: room.hp?.bossBloodied ?? null,
-          onChange,
-          onSetBloodied: (value) => act((s) => setBossBloodied(s, value)),
-        }}
-      />
+      <>
+        <BossBlock
+          boss={boss}
+          revealed={Boolean(roomShift?.revealed)}
+          busy={busy}
+          onTrigger={shift ? shift.trigger : () => act((s) => reveal(s, { shift: room.boss!.id }))}
+          cycle={
+            hazards
+              ? {
+                  ...hazards,
+                  dc: floorBossDc(room.floor, run.partyLevel),
+                  onNext: () => act((s) => cycleShift(s, 1)),
+                  onBack: () => act((s) => cycleShift(s, -1)),
+                }
+              : undefined
+          }
+          hp={{
+            trackers,
+            bloodied: bossBloodied(room, ctx),
+            override: room.hp?.bossBloodied ?? null,
+            onChange,
+            onSetBloodied: (value) => act((s) => setBossBloodied(s, value)),
+          }}
+        />
+        {shift?.picker}
+      </>
     )
   }
   const needsEncounter = !room.encounter && (room.kind === 'combat' || room.kind === 'elite')

@@ -289,9 +289,11 @@ export type ShiftEffect =
       y: number
       w: number
       step: number
+      label?: string
     }
   | {
       kind: 'mirror'
+      label?: string
     }
 
 interface ArenaData {
