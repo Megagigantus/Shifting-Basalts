@@ -101,3 +101,23 @@ export function ShiftSavePicker({
     </Modal>
   )
 }
+
+/** Notes from a shift that applied without a save, e.g. someone crushed against a wall. */
+export function ShiftNotes({ title, notes, onClose }: { title: string; notes: string[]; onClose: () => void }) {
+  return (
+    <Modal title={title} onClose={onClose}>
+      <div className="flex flex-col gap-3">
+        <ul className="m-0 list-disc flex flex-col gap-1 pl-4 text-xs text-stone-300">
+          {notes.map((note, i) => (
+            <li key={i}>{note}</li>
+          ))}
+        </ul>
+        <div className="flex justify-end">
+          <button type="button" className={PRIMARY_BUTTON} onClick={onClose}>
+            OK
+          </button>
+        </div>
+      </div>
+    </Modal>
+  )
+}

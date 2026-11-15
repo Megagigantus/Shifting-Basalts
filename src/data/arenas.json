@@ -227,6 +227,23 @@
           "h": 14
         }
       ],
+      "shiftEffect": {
+        "kind": "conveyor",
+        "label": "Conveyor Shift",
+        "squares": 4,
+        "strips": [
+          {
+            "x": 4,
+            "w": 2,
+            "dy": -1
+          },
+          {
+            "x": 8,
+            "w": 2,
+            "dy": 1
+          }
+        ]
+      },
       "notes": "Golem at the back with a hound on each side. The painted rails are the two Conveyor Shift strips; the 4 Tether Beam pillars stay off them."
     },
     "kaelen-and-vyr": {

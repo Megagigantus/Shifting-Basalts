@@ -177,6 +177,62 @@ describe('shiftEffects', () => {
       const planRolled = planShift(map, effect, tokens, { phase: 1, random: () => 0 })
       expect(planRolled.direction).toBe('N')
     })
+
+    it('conveyor on the Herd arena wraps strip pieces and tokens in opposite directions with no save', () => {
+      const map = placeArena({ kind: 'boss', boss: { id: 'gilded-excavation-herd', partySize: 4 } } as Room)!
+      const effect = shiftEffectOf('gilded-excavation-herd')!
+      const tokens: TokenPos[] = [
+        { key: 'pc:west', x: 5, y: 1 },
+        { key: 'pc:east', x: 8, y: 12 },
+        { key: 'pc:mid', x: 7, y: 7 },
+      ]
+
+      const plan = planShift(map, effect, tokens, { phase: 1, random: Math.random })
+      expect(plan.save).toBeUndefined()
+      const hound1 = plan.map.pieces.find((p) => p.name === 'Survey Hound 1')!
+      const hound2 = plan.map.pieces.find((p) => p.name === 'Survey Hound 2')!
+      const golem = plan.map.pieces.find((p) => p.name === 'Survey Golem')!
+      expect(hound1).toMatchObject({ x: 4, y: 0 })
+      expect(hound2).toMatchObject({ x: 9, y: 8 })
+      expect(golem).toMatchObject({ x: 6, y: 3 })
+      expect(plan.moves).toEqual([
+        { key: 'pc:west', x: 5, y: 11 },
+        { key: 'pc:east', x: 8, y: 2 },
+      ])
+    })
+
+    it('march on Vane arena shoves caught tokens south of the walls and notes crushed tokens at row 13', () => {
+      const map = placeArena({ kind: 'boss', boss: { id: 'general-vane', partySize: 4 } } as Room)!
+      const effect = shiftEffectOf('general-vane')!
+
+      const first = planShift(map, effect, [{ key: 'pc:a', x: 5, y: 4 }], { phase: 1, random: Math.random })
+      expect(first.save).toBeUndefined()
+      expect(first.moves).toEqual([{ key: 'pc:a', x: 5, y: 5 }])
+
+      const second = planShift(
+        first.map,
+        effect,
+        [
+          { key: 'pc:caught', x: 6, y: 6 },
+          { key: 'pc:outside', x: 2, y: 6 },
+        ],
+        { phase: 1, random: Math.random },
+      )
+      expect(second.save).toBeUndefined()
+      expect(second.moves).toEqual([{ key: 'pc:caught', x: 6, y: 8 }])
+
+      const third = planShift(second.map, effect, [], { phase: 1, random: Math.random })
+      const fourth = planShift(third.map, effect, [], { phase: 1, random: Math.random })
+      const wallsAtSouth = fourth.map.pieces.filter((p) => p.key.startsWith('march:'))
+      expect(wallsAtSouth.every((w) => w.y === 13)).toBe(true)
+
+      const crushed = planShift(fourth.map, effect, [{ key: 'pc:crushed', x: 5, y: 13 }], {
+        phase: 1,
+        random: Math.random,
+      })
+      expect(crushed.moves).toEqual([])
+      expect(crushed.notes).toContain('pc:crushed is crushed against the south wall')
+    })
   })
   it('with only set, unticked tokens stay put and block the ones that move', () => {
     const map: BattleMap = { squares: 14, entrance: 'south', pieces: [] }

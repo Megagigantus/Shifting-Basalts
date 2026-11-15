@@ -13,7 +13,7 @@ import { planShift, type Direction, type ShiftPlan, type TokenPos } from '../rul
 import { moveToken, roomKeyOf, useTokens, type TokenSpot } from '../runStore'
 import type { BoardPiece } from './BattleBoard'
 import { playerPieces, tokenOwner, useLooks } from './mapPieces'
-import { ShiftSavePicker } from './ShiftSavePicker'
+import { ShiftNotes, ShiftSavePicker } from './ShiftSavePicker'
 
 type Step = (s: RunState) => RunState
 type Act = (step: Step, confirmText?: string) => void
@@ -46,6 +46,8 @@ export function useMapEffect(
   const tokens = useTokens(state.run.id)
   const looks = useLooks()
   const [pending, setPending] = useState<PendingShift | null>(null)
+  // Notes from a shift that applied without a save (e.g. someone crushed by the walls).
+  const [shownNotes, setShownNotes] = useState<string[] | null>(null)
   const map = room.map ?? null
   const bossId = room.boss?.id ?? map?.arena
   const ctx = { partyLevel: state.run.partyLevel, pressures: state.run.pressures }
@@ -104,6 +106,7 @@ export function useMapEffect(
       setPending({ plan, pieces, tokenPos, phase })
     } else {
       apply(plan, pieces)
+      if (plan.notes.length) setShownNotes(plan.notes.map((n) => n.replace(/\b(?:pc|sm):[^\s]+/g, (k) => labelForKey(k, pieces))))
     }
   }
 
@@ -149,7 +152,9 @@ export function useMapEffect(
           },
           onCancel: () => setPending(null),
         })
-      : null
+      : shownNotes
+        ? createElement(ShiftNotes, { title: label, notes: shownNotes, onClose: () => setShownNotes(null) })
+        : null
 
   return { effect, label, trigger, picker }
 }

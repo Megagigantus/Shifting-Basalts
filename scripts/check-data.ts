@@ -369,7 +369,7 @@ for (const folder of readdirSync(new URL('../src/art/', import.meta.url), { with
 const N = arenaData.squares
 const inGrid = (b: Box) => b.x >= 0 && b.y >= 0 && b.w >= 1 && b.h >= 1 && b.x + b.w <= N && b.y + b.h <= N
 const paletteArts = new Set(arenaData.palette.map((p) => p.art))
-const EFFECT_KINDS = ['march', 'mirror', 'push', 'tilt']
+const EFFECT_KINDS = ['conveyor', 'march', 'mirror', 'push', 'tilt']
 const bossParts = bossData.bosses as unknown as { id: string; parts?: { name: string; count: number }[] }[]
 for (const b of bossParts) if (!arenaData.arenas[b.id]) fail(`arenas.json: no arena for boss "${b.id}"`)
 for (const [id, arena] of Object.entries(arenaData.arenas)) {
@@ -403,6 +403,24 @@ for (const [id, arena] of Object.entries(arenaData.arenas)) {
     if (typeof eff.kind !== 'string' || !EFFECT_KINDS.includes(eff.kind)) {
       fail(`${label}: unknown kind "${String(eff.kind)}"`)
       continue
+    }
+    if (eff.kind === 'conveyor') {
+      if (typeof eff.squares !== 'number' || eff.squares < 1) fail(`${label}: conveyor squares must be at least 1`)
+      if (!Array.isArray(eff.strips) || eff.strips.length < 1) fail(`${label}: conveyor needs at least one strip`)
+      else {
+        for (const s of eff.strips as { x?: unknown; w?: unknown; dy?: unknown }[]) {
+          if (
+            typeof s?.x !== 'number' ||
+            typeof s?.w !== 'number' ||
+            s.w < 1 ||
+            s.x < 0 ||
+            s.x + s.w > N ||
+            (s.dy !== 1 && s.dy !== -1)
+          ) {
+            fail(`${label}: conveyor strip needs x inside the grid, w >= 1 and dy of 1 or -1`)
+          }
+        }
+      }
     }
     if (eff.kind === 'push') {
       if (eff.zone !== 'walls' && eff.zone !== 'all') fail(`${label}: push zone must be "walls" or "all"`)

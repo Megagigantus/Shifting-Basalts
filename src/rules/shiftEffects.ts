@@ -126,11 +126,96 @@ export function slideToken(
   return { x, y, stoppedBy: null }
 }
 
-function planMarch(map: BattleMap): ShiftPlan {
+function planConveyor(
+  map: BattleMap,
+  effect: Extract<ShiftEffect, { kind: 'conveyor' }>,
+  tokens: TokenPos[],
+  ctx: ShiftContext,
+): ShiftPlan {
+  const n = map.squares
+  const notes: string[] = []
+  const nextPieces = map.pieces.map((p) => {
+    if (p.kind === 'exit' || !inPhase(p, ctx.phase)) return p
+    const { w, h } = dims(p)
+    for (const s of effect.strips) {
+      if (p.x >= s.x && p.x + w <= s.x + s.w) {
+        let newY = (((p.y + s.dy * effect.squares) % n) + n) % n
+        if (newY + h > n) newY = s.dy > 0 ? 0 : n - h
+        return newY === p.y ? p : { ...p, y: newY }
+      }
+      if (p.x < s.x + s.w && p.x + w > s.x) {
+        notes.push(`${p.name ?? p.key} straddles a conveyor strip and was not moved`)
+        return p
+      }
+    }
+    return p
+  })
+
+  const moves: TokenMove[] = []
+  for (const t of tokens) {
+    const s = effect.strips.find((strip) => t.x >= strip.x && t.x < strip.x + strip.w)
+    if (!s) continue
+    const newY = (((t.y + s.dy * effect.squares) % n) + n) % n
+    if (newY !== t.y) moves.push({ key: t.key, x: t.x, y: newY })
+  }
+
   return {
-    map: marchColumns(map),
-    moves: [],
-    notes: [],
+    map: { ...map, pieces: nextPieces },
+    moves,
+    notes,
+  }
+}
+
+function planMarch(
+  map: BattleMap,
+  effect: Extract<ShiftEffect, { kind: 'march' }>,
+  tokens: TokenPos[],
+  ctx: ShiftContext,
+): ShiftPlan {
+  const oldWalls = map.pieces.filter((p) => p.key.startsWith('march:'))
+  const nextMap = marchColumns(map)
+  const newWalls = nextMap.pieces.filter((p) => p.key.startsWith('march:'))
+  const afterWallSquares = new Set(newWalls.map((w) => `${w.x},${w.y}`))
+  const oldY = oldWalls.length > 0 ? oldWalls[0].y : null
+  const newY = newWalls.length > 0 ? newWalls[0].y : effect.y
+
+  const inWallCol = (x: number) => x >= effect.x && x < effect.x + effect.w
+  const isCaught = (t: TokenPos) => {
+    if (afterWallSquares.has(`${t.x},${t.y}`)) return true
+    if (!inWallCol(t.x)) return false
+    if (oldY === null) return t.y === newY
+    return t.y >= oldY + 1 && t.y <= newY
+  }
+
+  const workingTokens = tokens.map((t) => ({ ...t }))
+  const caught = tokens.filter(isCaught).sort((a, b) => b.y - a.y)
+  const blocked = blockedSquares(nextMap, ctx.phase, tokens)
+  const notes: string[] = []
+
+  for (const t of caught) {
+    let destY: number | null = null
+    for (let y = newY + 1; y < nextMap.squares; y++) {
+      if (!blocked.has(`${t.x},${y}`)) {
+        destY = y
+        break
+      }
+    }
+    if (destY === null) {
+      notes.push(`${t.key} is crushed against the south wall`)
+    } else {
+      blocked.add(`${t.x},${destY}`)
+      const slot = workingTokens.find((w) => w.key === t.key)!
+      slot.y = destY
+    }
+  }
+
+  const moves: TokenMove[] = workingTokens.filter(
+    (w, i) => w.x !== tokens[i].x || w.y !== tokens[i].y,
+  )
+  return {
+    map: nextMap,
+    moves,
+    notes,
   }
 }
 
@@ -271,8 +356,10 @@ export function planShift(
   ctx: ShiftContext,
 ): ShiftPlan {
   switch (effect.kind) {
+    case 'conveyor':
+      return planConveyor(map, effect, tokens, ctx)
     case 'march':
-      return planMarch(map)
+      return planMarch(map, effect, tokens, ctx)
     case 'mirror':
       return planMirror(map, tokens)
     case 'push':

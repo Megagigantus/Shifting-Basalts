@@ -282,6 +282,12 @@ export function placeMap(room: Room, random: Random, keep?: BattleMap | null): B
 
 export type ShiftEffect =
   | {
+      kind: 'conveyor'
+      label?: string
+      squares: number
+      strips: { x: number; w: number; dy: -1 | 1 }[]
+    }
+  | {
       kind: 'march'
       art: string
       name: string
