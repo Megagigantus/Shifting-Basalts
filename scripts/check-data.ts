@@ -463,6 +463,19 @@ for (const [id, arena] of Object.entries(arenaData.arenas)) {
     if (eff.kind === 'chasms') {
       if (!Array.isArray(eff.areas) || eff.areas.length < 1) fail(`${label}: chasms need at least one area`)
       else for (const a of eff.areas as Box[]) if (!inGrid(a)) fail(`${label}: a chasm area is off the grid`)
+      if (eff.suppressBoons !== undefined) {
+        const sb = eff.suppressBoons as { count?: unknown; note?: unknown } | null
+        if (!sb || typeof sb !== 'object' || Array.isArray(sb)) {
+          fail(`${label}: suppressBoons must be an object with count and note`)
+        } else {
+          if (!Number.isInteger(sb.count) || (sb.count as number) < 1) {
+            fail(`${label}: suppressBoons.count must be a whole number of at least 1`)
+          }
+          if (typeof sb.note !== 'string' || !sb.note.trim()) {
+            fail(`${label}: suppressBoons.note must be a non-empty string`)
+          }
+        }
+      }
     }
     if (eff.kind === 'halves') {
       const halves = eff as { first?: { kind?: string; name?: string }; second?: { kind?: string; name?: string } }

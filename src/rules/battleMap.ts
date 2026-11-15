@@ -357,6 +357,8 @@ export type ShiftEffect =
       name: string
       areas: { x: number; y: number; w: number; h: number }[]
       note: string
+      /** Optional boon suppression applied on shift (e.g. Slot Scramble). */
+      suppressBoons?: { count: number; note: string }
     }
   | {
       kind: 'halves'
