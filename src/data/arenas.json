@@ -761,6 +761,11 @@
         }
       ],
       "areas": [],
+      "shiftEffect": {
+        "kind": "gravity",
+        "label": "Perspective Collapse",
+        "squares": 4
+      },
       "notes": "Members in 3 corners (NW, NE, SE), so players can't close on one without moving away from another. A central column breaks sightlines. The party enters a row up, inside the south wall."
     },
     "inverted-reliquary": {

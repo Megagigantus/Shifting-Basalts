@@ -46,8 +46,12 @@ export interface ShiftPlan {
   moves: TokenMove[]
   /** Present when moves depend on a failed save; keys = tokens in the zone. */
   save?: { label: string; keys: string[] }
-  /** Downhill direction for tilt effects. */
+  /** Downhill direction for tilt effects, or fall direction for gravity effects. */
   direction?: Direction
+  /** Chosen boss piece key for gravity effects. */
+  anchor?: string
+  /** Available boss pieces in this phase for gravity effects. */
+  anchors?: { key: string; label: string }[]
   /** Short DM-facing notes, e.g. "Mira is pinned against the south wall". */
   notes: string[]
 }
@@ -56,6 +60,8 @@ export interface ShiftContext {
   phase: number
   random: () => number
   direction?: Direction
+  /** Boss piece key to anchor gravity effects to. */
+  anchor?: string
   /** When set, only these token keys move (e.g. those who failed the save); the rest stay put and block. */
   only?: Set<string>
 }
@@ -306,6 +312,41 @@ function planPush(
   }
 }
 
+const CARDINAL_DIRS = new Set<Direction>(['N', 'E', 'S', 'W'])
+
+/**
+ * Slide tokens in `(dx, dy)` up to `steps` squares, processing tokens nearest
+ * the destination edge first so each final square blocks subsequent tokens.
+ */
+function slideTokens(
+  map: BattleMap,
+  tokens: TokenPos[],
+  dx: number,
+  dy: number,
+  steps: number,
+  ctx: ShiftContext,
+): { moves: TokenMove[]; notes: string[] } {
+  const workingTokens = tokens.map((t) => ({ ...t }))
+  const sorted = tokens
+    .filter((t) => !ctx.only || ctx.only.has(t.key))
+    .sort((a, b) => b.x * dx + b.y * dy - (a.x * dx + a.y * dy))
+  const notes: string[] = []
+
+  for (const t of sorted) {
+    const blocked = blockedSquares(map, ctx.phase, workingTokens, t.key)
+    const res = slideToken(t, dx, dy, steps, map.squares, blocked)
+    const slot = workingTokens.find((w) => w.key === t.key)!
+    slot.x = res.x
+    slot.y = res.y
+    if (res.stoppedBy) notes.push(`${t.key} stopped early`)
+  }
+
+  const moves: TokenMove[] = workingTokens.filter(
+    (w, i) => w.x !== tokens[i].x || w.y !== tokens[i].y,
+  )
+  return { moves, notes }
+}
+
 function planTilt(
   map: BattleMap,
   effect: Extract<ShiftEffect, { kind: 'tilt' }>,
@@ -323,28 +364,51 @@ function planTilt(
     return res.x === p.x && res.y === p.y ? p : { ...p, x: res.x, y: res.y }
   })
   const nextMap: BattleMap = { ...map, pieces: nextPieces }
+  const { moves, notes } = slideTokens(nextMap, tokens, dx, dy, effect.squares, ctx)
 
-  const workingTokens = tokens.map((t) => ({ ...t }))
-  const sorted = tokens.filter((t) => !ctx.only || ctx.only.has(t.key)).sort((a, b) => b.x * dx + b.y * dy - (a.x * dx + a.y * dy))
-  const notes: string[] = []
-
-  for (const t of sorted) {
-    const blocked = blockedSquares(nextMap, ctx.phase, workingTokens, t.key)
-    const res = slideToken(t, dx, dy, effect.squares, nextMap.squares, blocked)
-    const slot = workingTokens.find((w) => w.key === t.key)!
-    slot.x = res.x
-    slot.y = res.y
-    if (res.stoppedBy) notes.push(`${t.key} stopped early`)
-  }
-
-  const moves: TokenMove[] = workingTokens.filter(
-    (w, i) => w.x !== tokens[i].x || w.y !== tokens[i].y,
-  )
   return {
     map: nextMap,
     moves,
     ...(effect.save ? { save: { label: effect.save, keys: tokens.map((t) => t.key) } } : {}),
     direction,
+    notes,
+  }
+}
+
+function planGravity(
+  map: BattleMap,
+  effect: Extract<ShiftEffect, { kind: 'gravity' }>,
+  tokens: TokenPos[],
+  ctx: ShiftContext,
+): ShiftPlan {
+  const bosses = map.pieces.filter((p) => p.kind === 'boss' && inPhase(p, ctx.phase))
+  if (bosses.length === 0) {
+    return { map, moves: [], notes: ['No Chorus member on the map'] }
+  }
+
+  const anchors = bosses.map((p) => ({ key: p.key, label: p.name ?? p.key }))
+  const anchorPiece = (ctx.anchor ? bosses.find((p) => p.key === ctx.anchor) : undefined) ?? bosses[0]
+  const { w, h } = dims(anchorPiece)
+  const n = map.squares
+  // Tie-break order: north, east, south, west.
+  const wallDistances: { dir: Direction; dist: number }[] = [
+    { dir: 'N', dist: anchorPiece.y },
+    { dir: 'E', dist: n - (anchorPiece.x + w) },
+    { dir: 'S', dist: n - (anchorPiece.y + h) },
+    { dir: 'W', dist: anchorPiece.x },
+  ]
+  const nearest = wallDistances.reduce((best, cur) => (cur.dist < best.dist ? cur : best))
+  const direction =
+    ctx.direction && CARDINAL_DIRS.has(ctx.direction) ? ctx.direction : nearest.dir
+  const { dx, dy } = DIRECTIONS.find((d) => d.dir === direction)!
+  const { moves, notes } = slideTokens(map, tokens, dx, dy, effect.squares, ctx)
+
+  return {
+    map,
+    moves,
+    direction,
+    anchor: anchorPiece.key,
+    anchors,
     notes,
   }
 }
@@ -467,6 +531,8 @@ export function planShift(
   switch (effect.kind) {
     case 'conveyor':
       return planConveyor(map, effect, tokens, ctx)
+    case 'gravity':
+      return planGravity(map, effect, tokens, ctx)
     case 'march':
       return planMarch(map, effect, tokens, ctx)
     case 'mirror':

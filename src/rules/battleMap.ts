@@ -323,6 +323,11 @@ export type ShiftEffect =
       within: number
       afterimage?: string
     }
+  | {
+      kind: 'gravity'
+      label?: string
+      squares: number
+    }
 
 export interface ArenaData {
   entrance: { x: number; y: number; w: number; h: number }

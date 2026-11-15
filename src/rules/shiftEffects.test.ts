@@ -300,6 +300,96 @@ describe('shiftEffects', () => {
       expect(plan.map.pieces.find((p) => p.key === 'obj:wall')).toMatchObject({ x: 13, y: 2, w: 1, h: 2 })
       expect(plan.map.pieces.find((p) => p.key === 'obj:0')).toMatchObject({ x: 4, y: 8 })
     })
+
+    it('gravity on the Chorus arena picks the nearest wall to the anchor, ties N/E/S/W, slides tokens, and leaves bosses put', () => {
+      const map = placeArena({ kind: 'boss', boss: { id: 'chorus-unseen-angles', partySize: 4 } } as Room)!
+      const effect = shiftEffectOf('chorus-unseen-angles')!
+
+      const defaultPlan = planShift(map, effect, [{ key: 'pc:a', x: 4, y: 8 }], {
+        phase: 1,
+        random: Math.random,
+      })
+      expect(defaultPlan.save).toBeUndefined()
+      expect(defaultPlan.anchors).toEqual([
+        { key: 'boss:0', label: 'The Chorus of Unseen Angles' },
+        { key: 'boss:1', label: 'Unseen Angle 1' },
+        { key: 'boss:2', label: 'Unseen Angle 2' },
+        { key: 'boss:3', label: 'Unseen Angle 3' },
+      ])
+      expect(defaultPlan.anchor).toBe('boss:0')
+      expect(defaultPlan.direction).toBe('N')
+      expect(defaultPlan.moves).toEqual([{ key: 'pc:a', x: 4, y: 4 }])
+      expect(defaultPlan.map.pieces).toEqual(map.pieces)
+
+      const northPlan = planShift(
+        map,
+        effect,
+        [
+          { key: 'pc:a', x: 4, y: 8 },
+          { key: 'pc:edge', x: 5, y: 0 },
+        ],
+        { phase: 1, random: Math.random, anchor: 'boss:1' },
+      )
+      expect(northPlan.anchor).toBe('boss:1')
+      expect(northPlan.direction).toBe('N')
+      expect(northPlan.moves).toEqual([{ key: 'pc:a', x: 4, y: 4 }])
+      expect(northPlan.notes).toContain('pc:edge stopped early')
+      expect(northPlan.map.pieces).toEqual(map.pieces)
+
+      const eastPlan = planShift(map, effect, [{ key: 'pc:a', x: 4, y: 8 }], {
+        phase: 1,
+        random: Math.random,
+        anchor: 'boss:3',
+      })
+      expect(eastPlan.anchor).toBe('boss:3')
+      expect(eastPlan.direction).toBe('E')
+      expect(eastPlan.moves).toEqual([{ key: 'pc:a', x: 8, y: 8 }])
+      expect(eastPlan.map.pieces).toEqual(map.pieces)
+
+      const overridePlan = planShift(map, effect, [{ key: 'pc:a', x: 4, y: 8 }], {
+        phase: 1,
+        random: Math.random,
+        anchor: 'boss:3',
+        direction: 'W',
+      })
+      expect(overridePlan.anchor).toBe('boss:3')
+      expect(overridePlan.anchors).toHaveLength(4)
+      expect(overridePlan.direction).toBe('W')
+      expect(overridePlan.moves).toEqual([{ key: 'pc:a', x: 0, y: 8 }])
+    })
+
+    it('gravity handles missing boss pieces and honours ctx.only', () => {
+      const emptyMap: BattleMap = { squares: 14, entrance: 'south', pieces: [] }
+      const effect = shiftEffectOf('chorus-unseen-angles')!
+
+      const noBossPlan = planShift(emptyMap, effect, [{ key: 'pc:a', x: 4, y: 8 }], {
+        phase: 1,
+        random: Math.random,
+      })
+      expect(noBossPlan).toEqual({
+        map: emptyMap,
+        moves: [],
+        notes: ['No Chorus member on the map'],
+      })
+
+      const mapWithBoss: BattleMap = {
+        squares: 14,
+        entrance: 'south',
+        pieces: [{ key: 'boss:0', kind: 'boss', id: 'bosses:test', x: 1, y: 6, size: 1, name: 'West Angle' }],
+      }
+      const onlyPlan = planShift(
+        mapWithBoss,
+        effect,
+        [
+          { key: 'pc:front', x: 3, y: 6 },
+          { key: 'pc:back', x: 5, y: 6 },
+        ],
+        { phase: 1, random: Math.random, only: new Set(['pc:back']) },
+      )
+      expect(onlyPlan.direction).toBe('W')
+      expect(onlyPlan.moves).toEqual([{ key: 'pc:back', x: 4, y: 6 }])
+      expect(onlyPlan.notes).toContain('pc:back stopped early')
+    })
   })
 
   describe('rotateBoxClockwise', () => {
