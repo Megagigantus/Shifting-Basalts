@@ -1,10 +1,12 @@
 // Loot screens: the party's pool (DM and players), strider remains and shrine
 // offerings, the extraction share, Thils's Vault, and characters' own loot.
 // Run loot is shared party information, so players see the whole pool.
-import { useMemo, useState, type ReactNode } from 'react'
+import { Fragment, useMemo, useState, type ReactNode } from 'react'
 import { Coins, Gem, Package, TriangleExclamationPoint } from 'lucide-react'
 import type { OwnedLoot } from '../model/character'
-import type { RunState } from '../model/run'
+import type { RunPlayer, RunState } from '../model/run'
+import { cardFields } from '../rules/itemCard'
+import { baseName, untrainedNames } from '../rules/gear'
 import {
   itemName,
   itemText,
@@ -18,6 +20,9 @@ import {
   rerollableItems,
   searchStriderRemains,
   shrineOffering,
+  gearBaseChoices,
+  reaimGear,
+  setGearBase,
   striderSearchDC,
   type LootItem,
   type LootPick,
@@ -46,8 +51,11 @@ const RARITY_TONES: Record<Rarity, Tone> = {
   legendary: 'amber',
 }
 
-/** One item: name, type and rarity chips, value, floor, its text, and any controls. */
-function ItemLine({ item, children }: { item: LootItem; children?: ReactNode }) {
+/** One item: name, type and rarity chips, value, floor, then its card (gear, relics) or text, and any controls. */
+function ItemLine({ item, players, children }: { item: LootItem; players?: RunPlayer[]; children?: ReactNode }) {
+  const fields = cardFields(item)
+  const rolledFor = item.forCharacterId ? players?.find((p) => p.characterId === item.forCharacterId)?.name : undefined
+  const untrained = players ? untrainedNames(item.base, players) : []
   const kindPill =
     item.kind === 'trinket' ? (
       <Pill>Trinket</Pill>
@@ -70,7 +78,24 @@ function ItemLine({ item, children }: { item: LootItem; children?: ReactNode }) 
         )}
         <Pill mono>F{item.floor}</Pill>
       </div>
-      <p className="m-0 text-[0.6875rem] text-stone-400">{itemText(item)}</p>
+      {fields ? (
+        <dl className="m-0 grid grid-cols-[minmax(6rem,auto)_1fr] gap-x-3 gap-y-1 text-[0.6875rem]">
+          {fields.map((f) => (
+            <Fragment key={f.label}>
+              <dt className="font-semibold text-stone-500">{f.label}</dt>
+              <dd className="m-0 text-stone-300">{f.value}</dd>
+            </Fragment>
+          ))}
+        </dl>
+      ) : (
+        <p className="m-0 text-[0.6875rem] text-stone-400">{itemText(item)}</p>
+      )}
+      {(rolledFor || untrained.length > 0) && (
+        <div className="flex flex-wrap items-center gap-1.5">
+          {rolledFor && <Pill tone="sky">Rolled for {rolledFor}</Pill>}
+          {untrained.length > 0 && <Pill tone="rose">Not trained: {untrained.join(', ')}</Pill>}
+        </div>
+      )}
       {children && <div className="flex flex-wrap items-center gap-1.5">{children}</div>}
     </li>
   )
@@ -179,8 +204,9 @@ export function DmLootPanel({ state, busy, act, requests }: { state: RunState; b
       {items.length > 0 ? (
         <ItemList>
           {items.map((i) => (
-            <ItemLine key={i.uid} item={i}>
+            <ItemLine key={i.uid} item={i} players={state.players}>
               {requestedBy(state, requests, i.uid).length > 0 && <WantedBy names={requestedBy(state, requests, i.uid)} />}
+              {i.kind === 'gear' && <GearOverride state={state} item={i} busy={busy} act={act} />}
             </ItemLine>
           ))}
         </ItemList>
@@ -188,6 +214,50 @@ export function DmLootPanel({ state, busy, act, requests }: { state: RunState; b
         <p className="m-0 text-xs text-stone-500">No items yet.</p>
       )}
     </Panel>
+  )
+}
+
+/** DM override for a gear drop: pick its base, or aim the roll at someone else (a fresh roll for them). */
+function GearOverride({ state, item, busy, act }: { state: RunState; item: LootItem; busy: boolean; act: Act }) {
+  return (
+    <span className="flex flex-wrap items-center gap-1.5 text-[0.6875rem] text-stone-400">
+      <label className="inline-flex items-center gap-1">
+        Base
+        <select
+          value={item.base ?? ''}
+          disabled={busy}
+          onChange={(e) => act((s) => setGearBase(s, item.uid, e.target.value))}
+          aria-label={`Base for ${itemName(item)}`}
+          className={cx(FIELD, 'py-1 text-xs')}
+        >
+          {!item.base && <option value="">Pick a base…</option>}
+          {gearBaseChoices(state, item).map((b) => (
+            <option key={b.id} value={b.id}>
+              {baseName(b.id)}
+              {b.usable ? '' : ' (not usable by its target)'}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label className="inline-flex items-center gap-1">
+        Rolled for
+        <select
+          value={item.forCharacterId ?? ''}
+          disabled={busy}
+          onChange={(e) => act((s) => reaimGear(s, item.uid, e.target.value, Math.random))}
+          aria-label={`Who ${itemName(item)} is rolled for`}
+          className={cx(FIELD, 'py-1 text-xs')}
+        >
+          {!item.forCharacterId && <option value="">Nobody yet…</option>}
+          {state.players.map((p) => (
+            <option key={p.characterId} value={p.characterId}>
+              {p.name}
+              {p.alive ? '' : ' (fallen)'}
+            </option>
+          ))}
+        </select>
+      </label>
+    </span>
   )
 }
 
@@ -251,7 +321,7 @@ export function ExtractPanel({
       )}
       <ItemList>
         {items.map((i) => (
-          <ItemLine key={i.uid} item={i}>
+          <ItemLine key={i.uid} item={i} players={state.players}>
             {isFreeKeep(i) ? (
               <Pill tone="emerald">Trophy: free, always kept</Pill>
             ) : (
@@ -400,7 +470,7 @@ export function PlayerLoot({ state, myCharacterIds, requests, readOnly = false }
         {items.length > 0 ? (
           <ItemList>
             {items.map((i) => (
-              <ItemLine key={i.uid} item={i}>
+              <ItemLine key={i.uid} item={i} players={state.players}>
                 {me && (
                   <button
                     type="button"

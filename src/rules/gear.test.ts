@@ -103,3 +103,19 @@ describe('DM override', () => {
     expect(canUseBase(wizard, next.base!)).toBe(true)
   })
 })
+
+describe('card rows', () => {
+  it('match the bible\'s Columnbreaker and Sword of Apotheos examples', async () => {
+    const { cardFields } = await import('./itemCard')
+    const rows = (item: LootItem) => Object.fromEntries((cardFields(item) ?? []).map((f) => [f.label, f.value]))
+    expect(rows(gear({ base: 'warhammer' }))).toMatchObject({ 'Rarity and value': 'Uncommon, 415 credits', Attunement: 'No', Mastery: expect.stringMatching(/^Push/) })
+    const sword = rows({ uid: 'R', kind: 'relic', ref: 'sword-of-apotheos', rarity: null, relicState: 'dormant', floor: 5, room: 1, source: 'vault' })
+    expect(sword).toMatchObject({
+      Attunement: 'Required',
+      'Attack and damage': '+2 to attack rolls; 1d8 + 2 slashing, or 1d10 + 2 two-handed',
+      Mastery: expect.stringMatching(/^Sap/),
+    })
+    expect(sword.Property).toMatch(/^When an ally within 30 ft drops to 0 HP/)
+    expect(sword['When Woken']).toMatch(/^Once per day, become Apotheos/)
+  })
+})
