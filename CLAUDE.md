@@ -23,3 +23,5 @@ The full design lives in `docs/design-bible.md`. Read its "App requirements" sec
 - Commit before any risky refactor so there's a clean restore point.
 - Never commit API keys, passwords or .env files.
 - Ask me before merging into main, deleting branches or force-pushing.
+
+@.claude/gemini-delegation.md
