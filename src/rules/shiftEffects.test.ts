@@ -505,6 +505,145 @@ describe('shiftEffects', () => {
       expect(stoppedByObject.map.pieces.find((p) => p.key === 'obj:0')).toMatchObject({ x: 2, y: 7 })
       expect(stoppedByObject.notes).toEqual([])
     })
+
+    it('orbit on Lattice Spinner arena moves all 6 columns clockwise, avoids collisions and boss, and notes sweep and transit cables', () => {
+      const map = placeArena({ kind: 'boss', boss: { id: 'lattice-spinner', partySize: 4 } } as Room)!
+      const effect = shiftEffectOf('lattice-spinner')!
+
+      const beforeCols = map.pieces.filter((p) => p.kind === 'object' && p.id === 'tall-column')
+      expect(beforeCols).toHaveLength(6)
+
+      const plan = planShift(
+        map,
+        effect,
+        [
+          { key: 'pc:sweep', x: 5, y: 3 },
+          { key: 'pc:far', x: 0, y: 0 },
+        ],
+        { phase: 1, random: Math.random },
+      )
+      expect(plan.save).toBeUndefined()
+      expect(plan.moves).toEqual([])
+
+      const afterCols = plan.map.pieces.filter((p) => p.kind === 'object' && p.id === 'tall-column')
+      expect(afterCols).toHaveLength(6)
+      const destKeys = new Set(afterCols.map((c) => `${c.x},${c.y}`))
+      expect(destKeys.size).toBe(6)
+
+      const boss = plan.map.pieces.find((p) => p.kind === 'boss')!
+      const bossSquares = new Set<string>()
+      for (let dy = 0; dy < boss.size; dy++) {
+        for (let dx = 0; dx < boss.size; dx++) {
+          bossSquares.add(`${boss.x + dx},${boss.y + dy}`)
+        }
+      }
+
+      for (let i = 0; i < beforeCols.length; i++) {
+        const prev = beforeCols[i]
+        const next = afterCols[i]
+        expect(next.x !== prev.x || next.y !== prev.y).toBe(true)
+        expect(bossSquares.has(`${next.x},${next.y}`)).toBe(false)
+        const dist = Math.hypot(next.x - prev.x, next.y - prev.y)
+        expect(dist).toBeGreaterThanOrEqual(1.5)
+        expect(dist).toBeLessThanOrEqual(4.5)
+      }
+
+      expect(plan.notes).toEqual(["pc:sweep is in a column's sweep: Dex save"])
+
+      const withCable = addObject(map, 'transit-cable')
+      const cablePlan = planShift(withCable, effect, [], { phase: 1, random: Math.random })
+      expect(cablePlan.notes).toEqual(['Re-place the transit cables on the moved columns'])
+    })
+
+    it('orbit falls back to alternate floor/ceil targets or leaves a blocked column in place with a note', () => {
+      const effect = shiftEffectOf('lattice-spinner')!
+      const fallbackMap: BattleMap = {
+        squares: 14,
+        entrance: 'south',
+        pieces: [{ key: 'obj:0', kind: 'object', id: 'tall-column', x: 4, y: 2, size: 1, w: 1, h: 1, name: 'Tall column' }],
+      }
+      // Rounded target for (4, 2) is (7, 1); blocking (7, 1) should fall back to another floor/ceil corner.
+      const fallbackPlan = planShift(
+        fallbackMap,
+        effect,
+        [{ key: 'pc:block', x: 7, y: 1 }],
+        { phase: 1, random: Math.random },
+      )
+      const movedCol = fallbackPlan.map.pieces.find((p) => p.key === 'obj:0')!
+      expect(`${movedCol.x},${movedCol.y}`).not.toBe('7,1')
+      expect(`${movedCol.x},${movedCol.y}`).not.toBe('4,2')
+      expect([6, 7]).toContain(movedCol.x)
+      expect([1, 2]).toContain(movedCol.y)
+
+      // Blocking all 4 floor/ceil combinations around (6.889, 1.367) leaves the column in place with a note.
+      const allBlockedPlan = planShift(
+        fallbackMap,
+        effect,
+        [
+          { key: 'pc:b1', x: 6, y: 1 },
+          { key: 'pc:b2', x: 7, y: 1 },
+          { key: 'pc:b3', x: 6, y: 2 },
+          { key: 'pc:b4', x: 7, y: 2 },
+        ],
+        { phase: 1, random: Math.random },
+      )
+      expect(allBlockedPlan.map.pieces.find((p) => p.key === 'obj:0')).toMatchObject({ x: 4, y: 2 })
+      expect(allBlockedPlan.notes.some((n) => n.includes('Tall column'))).toBe(true)
+    })
+
+    it('chasms on Inverted Reliquary arena adds 2 chasm areas once, moves chasm tokens to nearest island, and leaves island tokens put', () => {
+      const map = placeArena({ kind: 'boss', boss: { id: 'inverted-reliquary', partySize: 4 } } as Room)!
+      const effect = shiftEffectOf('inverted-reliquary')!
+
+      const plan = planShift(
+        map,
+        effect,
+        [
+          { key: 'pc:north', x: 6, y: 3 },
+          { key: 'pc:south', x: 7, y: 10 },
+          { key: 'pc:safe', x: 2, y: 2 },
+        ],
+        { phase: 1, random: Math.random },
+      )
+      expect(plan.save).toBeUndefined()
+      const chasms = (plan.map.areas ?? []).filter((a) => a.kind === 'chasm')
+      expect(chasms).toHaveLength(2)
+      expect(plan.moves).toEqual([
+        { key: 'pc:north', x: 5, y: 3 },
+        { key: 'pc:south', x: 8, y: 10 },
+      ])
+      expect(plan.notes).toEqual([
+        'pc:north was over the void and moved to the nearest island',
+        'pc:south was over the void and moved to the nearest island',
+      ])
+
+      const second = planShift(plan.map, effect, [{ key: 'pc:safe', x: 2, y: 2 }], {
+        phase: 1,
+        random: Math.random,
+      })
+      expect((second.map.areas ?? []).filter((a) => a.kind === 'chasm')).toHaveLength(2)
+      expect(second.map.areas).toHaveLength(plan.map.areas!.length)
+      expect(second.moves).toEqual([])
+    })
+
+    it('chasms avoids squares claimed by earlier moved tokens', () => {
+      const map = placeArena({ kind: 'boss', boss: { id: 'inverted-reliquary', partySize: 4 } } as Room)!
+      const effect = shiftEffectOf('inverted-reliquary')!
+
+      const plan = planShift(
+        map,
+        effect,
+        [
+          { key: 'pc:first', x: 6, y: 3 },
+          { key: 'pc:second', x: 6, y: 3 },
+        ],
+        { phase: 1, random: Math.random },
+      )
+      expect(plan.moves).toEqual([
+        { key: 'pc:first', x: 5, y: 3 },
+        { key: 'pc:second', x: 5, y: 2 },
+      ])
+    })
   })
 
   describe('rotateBoxClockwise', () => {

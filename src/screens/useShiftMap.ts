@@ -35,7 +35,7 @@ export interface ShiftMapControl {
 /**
  * Returns the map effect control (effect, button label, trigger, and save
  * picker) for the current boss arena's shift or bloodied effect, or null when
- * the room has none (or is not in phase 2 for a bloodied effect).
+ * the room has none (or the boss isn't Bloodied, for a bloodied effect).
  */
 export function useMapEffect(
   state: RunState,
@@ -54,7 +54,7 @@ export function useMapEffect(
   const phase = map ? mapPhase(map, bossBloodied(room, ctx)) : 1
   const effect = which === 'shift' ? shiftEffectOf(bossId) : bloodiedEffectOf(bossId)
   if (!map || !effect) return null
-  if (which === 'bloodied' && phase !== 2) return null
+  if (which === 'bloodied' && !bossBloodied(room, ctx)) return null
 
   const customLabel: string | undefined = effect.label
   const shiftActionName = bossId ? bossOf(bossId)?.shiftAction.name : undefined

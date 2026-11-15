@@ -670,6 +670,210 @@ function planTracks(
   }
 }
 
+function orbitCandidates(
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  n: number,
+  squares: number,
+): { x: number; y: number }[] {
+  const c = (n - 1) / 2
+  const dx = x - c
+  const dy = y - c
+  const r = Math.hypot(dx, dy)
+  if (r === 0) return [{ x, y }]
+  const angle = Math.atan2(dy, dx) + squares / r
+  const rawX = c + r * Math.cos(angle)
+  const rawY = c + r * Math.sin(angle)
+  const clampX = (v: number) => Math.min(n - w, Math.max(0, v))
+  const clampY = (v: number) => Math.min(n - h, Math.max(0, v))
+
+  const rounded = { x: clampX(Math.round(rawX)), y: clampY(Math.round(rawY)) }
+  const xs = [Math.floor(rawX), Math.ceil(rawX)].map(clampX)
+  const ys = [Math.floor(rawY), Math.ceil(rawY)].map(clampY)
+  const combos: { x: number; y: number; dist: number }[] = []
+  for (const cx of xs) {
+    for (const cy of ys) {
+      if (cx === rounded.x && cy === rounded.y) continue
+      combos.push({ x: cx, y: cy, dist: (cx - rawX) ** 2 + (cy - rawY) ** 2 })
+    }
+  }
+  combos.sort((a, b) => a.dist - b.dist)
+
+  const seen = new Set<string>([`${rounded.x},${rounded.y}`])
+  const out = [rounded]
+  for (const cand of combos) {
+    const k = `${cand.x},${cand.y}`
+    if (seen.has(k)) continue
+    seen.add(k)
+    out.push({ x: cand.x, y: cand.y })
+  }
+  return out
+}
+
+function addSweepZone(
+  x0: number,
+  y0: number,
+  x1: number,
+  y1: number,
+  zone: Set<string>,
+): void {
+  const dx = x1 - x0
+  const dy = y1 - y0
+  const steps = Math.max(Math.abs(dx), Math.abs(dy))
+  if (steps === 0) return
+  for (let i = 0; i <= steps; i++) {
+    const sx = Math.round(x0 + (dx * i) / steps)
+    const sy = Math.round(y0 + (dy * i) / steps)
+    for (let oy = -1; oy <= 1; oy++) {
+      for (let ox = -1; ox <= 1; ox++) {
+        zone.add(`${sx + ox},${sy + oy}`)
+      }
+    }
+  }
+}
+
+function planOrbit(
+  map: BattleMap,
+  effect: Extract<ShiftEffect, { kind: 'orbit' }>,
+  tokens: TokenPos[],
+  ctx: ShiftContext,
+): ShiftPlan {
+  const workingPieces = map.pieces.map((p) => ({ ...p }))
+  const sweepZone = new Set<string>()
+  const notes: string[] = []
+
+  for (const piece of workingPieces) {
+    if (piece.kind !== 'object' || piece.id !== effect.art || !inPhase(piece, ctx.phase)) continue
+    const { w, h } = dims(piece)
+    const blocked = blockedSquares(
+      { ...map, pieces: workingPieces },
+      ctx.phase,
+      tokens,
+      piece.key,
+    )
+    const dest = orbitCandidates(piece.x, piece.y, w, h, map.squares, effect.squares).find(
+      (cand) => areaFits(cand.x, cand.y, w, h, blocked),
+    )
+    if (!dest) {
+      notes.push(`${piece.name ?? piece.key} was blocked and did not move`)
+      continue
+    }
+    addSweepZone(piece.x, piece.y, dest.x, dest.y, sweepZone)
+    piece.x = dest.x
+    piece.y = dest.y
+  }
+
+  for (const t of tokens) {
+    if (sweepZone.has(`${t.x},${t.y}`)) {
+      notes.push(`${t.key} ${effect.note}`)
+    }
+  }
+
+  if (
+    effect.dragged &&
+    workingPieces.some(
+      (p) => p.kind === 'object' && p.id === effect.dragged && inPhase(p, ctx.phase),
+    )
+  ) {
+    notes.push('Re-place the transit cables on the moved columns')
+  }
+
+  return {
+    map: { ...map, pieces: workingPieces },
+    moves: [],
+    notes,
+  }
+}
+
+function nearestIslandSquare(
+  from: { x: number; y: number },
+  squares: number,
+  chasmSquares: Set<string>,
+  blocked: Set<string>,
+): { x: number; y: number } | null {
+  let best: { x: number; y: number; cheb: number; euclid: number } | null = null
+  for (let y = 0; y < squares; y++) {
+    for (let x = 0; x < squares; x++) {
+      const sq = `${x},${y}`
+      if (chasmSquares.has(sq) || blocked.has(sq)) continue
+      const dx = Math.abs(x - from.x)
+      const dy = Math.abs(y - from.y)
+      const cheb = Math.max(dx, dy)
+      const euclid = dx * dx + dy * dy
+      if (
+        !best ||
+        cheb < best.cheb ||
+        (cheb === best.cheb &&
+          (euclid < best.euclid ||
+            (euclid === best.euclid && (y < best.y || (y === best.y && x < best.x)))))
+      ) {
+        best = { x, y, cheb, euclid }
+      }
+    }
+  }
+  return best ? { x: best.x, y: best.y } : null
+}
+
+function planChasms(
+  map: BattleMap,
+  effect: Extract<ShiftEffect, { kind: 'chasms' }>,
+  tokens: TokenPos[],
+  ctx: ShiftContext,
+): ShiftPlan {
+  const existingAreas = map.areas ?? []
+  const existingKeys = new Set(existingAreas.map((a) => a.key))
+  const addedAreas: MapArea[] = []
+  effect.areas.forEach((rect, i) => {
+    const key = `chasm:${i}`
+    if (!existingKeys.has(key)) {
+      addedAreas.push({
+        key,
+        kind: 'chasm',
+        name: effect.name,
+        x: rect.x,
+        y: rect.y,
+        w: rect.w,
+        h: rect.h,
+      })
+    }
+  })
+
+  const nextMap: BattleMap = { ...map, areas: [...existingAreas, ...addedAreas] }
+  const chasmSquares = new Set<string>()
+  for (const a of nextMap.areas ?? []) {
+    if (a.kind === 'chasm' && inPhase(a, ctx.phase)) {
+      markArea(a.x, a.y, a.w, a.h, chasmSquares)
+    }
+  }
+
+  const workingTokens = tokens.map((t) => ({ ...t }))
+  const notes: string[] = []
+
+  for (let i = 0; i < tokens.length; i++) {
+    const t = tokens[i]
+    if (!chasmSquares.has(`${t.x},${t.y}`)) continue
+    const blocked = blockedSquares(nextMap, ctx.phase, workingTokens, t.key)
+    const dest = nearestIslandSquare(t, nextMap.squares, chasmSquares, blocked)
+    if (dest) {
+      workingTokens[i].x = dest.x
+      workingTokens[i].y = dest.y
+      notes.push(`${t.key} ${effect.note}`)
+    }
+  }
+
+  const moves: TokenMove[] = workingTokens.filter(
+    (w, i) => w.x !== tokens[i].x || w.y !== tokens[i].y,
+  )
+
+  return {
+    map: nextMap,
+    moves,
+    notes,
+  }
+}
+
 /** Plan the map update and any token moves for a boss arena's shift effect. */
 export function planShift(
   map: BattleMap,
@@ -678,6 +882,8 @@ export function planShift(
   ctx: ShiftContext,
 ): ShiftPlan {
   switch (effect.kind) {
+    case 'chasms':
+      return planChasms(map, effect, tokens, ctx)
     case 'conveyor':
       return planConveyor(map, effect, tokens, ctx)
     case 'gravity':
@@ -686,6 +892,8 @@ export function planShift(
       return planMarch(map, effect, tokens, ctx)
     case 'mirror':
       return planMirror(map, tokens)
+    case 'orbit':
+      return planOrbit(map, effect, tokens, ctx)
     case 'push':
       return planPush(map, effect, tokens, ctx)
     case 'rotate':

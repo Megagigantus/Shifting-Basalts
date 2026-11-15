@@ -505,6 +505,14 @@
         }
       ],
       "areas": [],
+      "shiftEffect": {
+        "kind": "orbit",
+        "label": "Loom Rotation",
+        "art": "tall-column",
+        "squares": 3,
+        "dragged": "transit-cable",
+        "note": "is in a column's sweep: Dex save"
+      },
       "notes": "6 columns around the painted ring, point-symmetric so Loom Rotation can turn them. Transit Cables are added during the fight."
     },
     "stride-core": {
@@ -873,6 +881,26 @@
           "h": 7
         }
       ],
+      "shiftEffect": {
+        "kind": "chasms",
+        "label": "Slot Scramble",
+        "name": "Void chasm",
+        "areas": [
+          {
+            "x": 6,
+            "y": 0,
+            "w": 2,
+            "h": 14
+          },
+          {
+            "x": 0,
+            "y": 6,
+            "w": 14,
+            "h": 2
+          }
+        ],
+        "note": "was over the void and moved to the nearest island"
+      },
       "notes": "Reliquary hovers 20 ft over the centre. Slot Scramble splits the floor into the 4 quadrant islands along the painted cracks; one plinth per island."
     },
     "ophaniel": {

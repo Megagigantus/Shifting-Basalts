@@ -456,6 +456,14 @@ for (const [id, arena] of Object.entries(arenaData.arenas)) {
       if (typeof eff.art !== 'string' || !paletteArts.has(eff.art)) fail(`${label}: tracks art "${String(eff.art)}" isn't in palette`)
       if (!arena.areas.some((a) => a.kind === eff.track)) fail(`${label}: no "${String(eff.track)}" areas for the tracks`)
     }
+    if (eff.kind === 'orbit') {
+      if (typeof eff.art !== 'string' || !paletteArts.has(eff.art)) fail(`${label}: orbit art "${String(eff.art)}" isn't in palette`)
+      if (typeof eff.squares !== 'number' || eff.squares < 1) fail(`${label}: orbit squares must be at least 1`)
+    }
+    if (eff.kind === 'chasms') {
+      if (!Array.isArray(eff.areas) || eff.areas.length < 1) fail(`${label}: chasms need at least one area`)
+      else for (const a of eff.areas as Box[]) if (!inGrid(a)) fail(`${label}: a chasm area is off the grid`)
+    }
   }
 }
 for (const p of arenaData.palette) {
