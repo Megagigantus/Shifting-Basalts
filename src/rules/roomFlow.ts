@@ -11,6 +11,7 @@ import { generateEncounter } from './encounters'
 import { pickBoss, restlessShiftActions } from './bosses'
 import { applyHp, emptyHp, hpShown, hpTrackers } from './hp'
 import { addObject, movePiece, placeArena, placeMap, removeObject, swapForm } from './battleMap'
+import { advanceRing, nextRound, pullBackRing, ringOf, ringSettings, squaresAcross, startRing, type RingState } from './closingRing'
 
 function withRoom(state: RunState, room: Room | null, floorPlan = state.dm?.floorPlan ?? []): RunState {
   // Refresh the Bloodied facts players may see before building their view.
@@ -36,7 +37,7 @@ function populate(state: RunState, room: Room, random: Random): Room {
   const living = state.players.filter((p) => p.alive)
   // A new fight starts unhurt.
   room = { ...room, hp: emptyHp() }
-  if (room.kind === 'reprieve') return { ...room, encounter: null, boss: null, shifts: [], map: null }
+  if (room.kind === 'reprieve') return { ...room, encounter: null, boss: null, shifts: [], map: null, ring: null }
   if (room.kind === 'boss') {
     const id = state.dm?.bossId ?? pickBoss(run.floor, random)
     const bossRoom: Room = {
@@ -45,14 +46,17 @@ function populate(state: RunState, room: Room, random: Random): Room {
       boss: { id, partySize: living.length },
       shifts: [{ bossId: id, revealed: false }],
     }
-    return { ...bossRoom, map: placeArena(bossRoom) }
+    const map = placeArena(bossRoom)
+    return { ...bossRoom, map, ring: startRing({ ...bossRoom, map }, run.pressures) }
   }
   const levels = living.map((p) => p.level ?? run.partyLevel)
   const encounter = generateEncounter(run.floor, room.kind === 'elite', levels, run.partyLevel, random)
   const shifts = restlessShiftActions(run.floor, state.dm?.bossId ?? null, restlessCount(run.pressures), random)
   const next: Room = { ...room, encounter, boss: null, shifts: shifts.map((bossId) => ({ bossId, revealed: false })) }
   // Rerolling only the encounter keeps the layout and re-places the enemies.
-  return { ...next, map: placeMap(next, random, room.map ?? null) }
+  const map = placeMap(next, random, room.map ?? null)
+  // A new fight starts the Closing Ring over at round 1.
+  return { ...next, map, ring: startRing({ ...next, map }, run.pressures) }
 }
 
 function rollRoom(state: RunState, kind: Room['kind'], random: Random): Room {
@@ -181,6 +185,27 @@ export const removeMapObject = (state: RunState, key: string) => withMap(state, 
 
 /** Kaelen and Vyr: swap the boss token to the other form. */
 export const swapBossForm = (state: RunState) => withMap(state, swapForm)
+
+/** Change the current room's Closing Ring with a closingRing helper. */
+function withRing(state: RunState, change: (ring: RingState, squares: number) => RingState): RunState {
+  const room = state.dm?.room
+  if (!room) throw new Error('There\'s no room for the ring to close in.')
+  const current = ringOf(room, state.run.pressures)
+  if (!current) throw new Error('Closing Ring isn\'t in play in this room.')
+  return withRoom(state, { ...room, ring: change(current, squaresAcross(room)) })
+}
+
+/** Closing Ring: the fight moves to its next round, and the ring grows when that round is on its schedule. */
+export const ringNextRound = (state: RunState) => withRing(state, (r, n) => nextRound(r, ringSettings(state.run.pressures)!, n))
+
+/** Closing Ring: the DM grows the ring by hand. */
+export const ringAdvance = (state: RunState) => withRing(state, (r, n) => advanceRing(r, ringSettings(state.run.pressures)!, n))
+
+/** Closing Ring: the DM pulls the ring back by hand. */
+export const ringPullBack = (state: RunState) => withRing(state, (r) => pullBackRing(r, ringSettings(state.run.pressures)!))
+
+/** Closing Ring: start the fight over at round 1. */
+export const ringReset = (state: RunState) => withRing(state, () => startRing(state.dm!.room!, state.run.pressures)!)
 
 /** The party turns down the Reprieve and fights that room instead. */
 export function declineReprieve(state: RunState, random: Random): RunState {

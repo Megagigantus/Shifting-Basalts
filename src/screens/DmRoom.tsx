@@ -2,7 +2,20 @@
 // for each part players can't see yet.
 import { Crown, DoorOpen, Eye, Sparkles, TriangleExclamationPoint } from 'lucide-react'
 import type { RunState } from '../model/run'
-import { declineReprieve, enterRoom, rerollBoss, rerollRoom, reveal, startFloor } from '../rules/roomFlow'
+import {
+  declineReprieve,
+  enterRoom,
+  rerollBoss,
+  rerollRoom,
+  reveal,
+  ringAdvance,
+  ringNextRound,
+  ringPullBack,
+  ringReset,
+  startFloor,
+} from '../rules/roomFlow'
+import { ringOf } from '../rules/closingRing'
+import { ClosingRingNote } from './ClosingRing'
 import { bossOf } from '../rules/bosses'
 import { DmFight } from './DmFight'
 import { PostBossScene, ReprieveScene } from './Scene'
@@ -118,6 +131,21 @@ export function DmRoom({ state, busy, act }: Props) {
             arenaName={room.boss ? `${bossOf(room.boss.id).name}'s arena` : undefined}
           />
         )}
+
+        <ClosingRingNote
+          ring={ringOf(room, run.pressures)}
+          pressures={run.pressures}
+          floor={room.floor}
+          partyLevel={run.partyLevel}
+          room={room}
+          controls={{
+            busy,
+            onNextRound: () => act(ringNextRound),
+            onAdvance: () => act(ringAdvance),
+            onPullBack: () => act(ringPullBack),
+            onReset: () => act(ringReset),
+          }}
+        />
 
         {room.kind === 'reprieve' && (
           <div className="flex flex-wrap items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-xs text-emerald-100">

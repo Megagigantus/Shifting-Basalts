@@ -490,6 +490,26 @@ for (const file of readdirSync(new URL('../src/data/', import.meta.url)).filter(
   }
 }
 
+// Closing Ring and Closing Ring II need ring settings the app can draw from.
+const pressureData = load<{ id: string; ring?: Record<string, unknown> }>('pressures.json')
+for (const id of ['closing-ring', 'closing-ring-2']) {
+  const ring = pressureData.find((p) => p.id === id)?.ring
+  if (!ring) {
+    fail(`pressures.json: ${id} needs a "ring" block`)
+    continue
+  }
+  for (const key of ['everyRounds', 'startSquares', 'growSquares']) {
+    if (!Number.isInteger(ring[key]) || (ring[key] as number) < 1) fail(`pressures.json: ${id} ring.${key} must be a whole number of at least 1`)
+  }
+  if (!Number.isInteger(ring.safeCentreSquares) || (ring.safeCentreSquares as number) < 0) {
+    fail(`pressures.json: ${id} ring.safeCentreSquares must be 0 or more`)
+  }
+  if (typeof ring.damageType !== 'string' || !ring.damageType) fail(`pressures.json: ${id} ring.damageType is missing`)
+  if (typeof ring.hazardText !== 'string' || !ring.hazardText.includes('{damage}')) {
+    fail(`pressures.json: ${id} ring.hazardText must say what the hazard does, with {damage}`)
+  }
+}
+
 // firestore.rules carries a generated copy of upgrade prices and track caps.
 const rulesText = readFileSync(new URL('../firestore.rules', import.meta.url), 'utf8').replace(/\r\n/g, '\n')
 if (withGeneratedBlock(rulesText) !== rulesText) {

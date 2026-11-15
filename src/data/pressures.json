@@ -21,7 +21,15 @@
     "effect": "The room's outer ring becomes hazardous terrain, growing inward every 3 rounds.",
     "bonusPercent": 15,
     "unlockRank": 0,
-    "status": "proposed"
+    "status": "proposed",
+    "ring": {
+      "everyRounds": 3,
+      "startSquares": 1,
+      "growSquares": 1,
+      "safeCentreSquares": 2,
+      "damageType": "force",
+      "hazardText": "A creature that enters the ring or starts its turn there takes {damage} {type} damage."
+    }
   },
   {
     "id": "restless-stone",
@@ -46,7 +54,15 @@
     "bonusPercent": 25,
     "unlockRank": 2,
     "replaces": "closing-ring",
-    "status": "proposed"
+    "status": "proposed",
+    "ring": {
+      "everyRounds": 2,
+      "startSquares": 1,
+      "growSquares": 1,
+      "safeCentreSquares": 2,
+      "damageType": "force",
+      "hazardText": "A creature that enters the ring or starts its turn there takes {damage} {type} damage."
+    }
   },
   {
     "id": "brittle-ground-2",

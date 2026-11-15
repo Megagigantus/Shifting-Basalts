@@ -10,6 +10,7 @@ import { BattleBoard } from './BattleBoard'
 import { playerPieces, roomPieces, spotAfterMove, tokenOwner, useLooks } from './mapPieces'
 import { Grid3x3 } from 'lucide-react'
 import { Panel } from '../ui/Panel'
+import { Pill } from '../ui/Pill'
 
 interface Props {
   state: RunState
@@ -55,6 +56,7 @@ export function PlayerBattleMap({ state, myIds, readOnly }: Props) {
           <span className="font-normal text-stone-400">
             {map.squares} × {map.squares} ({map.squares * 5} ft)
           </span>
+          {view.ring && view.ring.width > 0 && <Pill tone="rose">Ring {view.ring.width * 5} ft</Pill>}
         </>
       }
     >
@@ -66,6 +68,7 @@ export function PlayerBattleMap({ state, myIds, readOnly }: Props) {
         mapArt={mapArt}
         pieces={pieces}
         busy={false}
+        ringWidth={view.ring?.width ?? 0}
         onMove={(key, x, y) => {
           const owner = tokenOwner(key)
           if (readOnly || !owner || !mine(owner)) return

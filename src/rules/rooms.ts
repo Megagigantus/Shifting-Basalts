@@ -13,6 +13,7 @@ import type { Random } from './draft'
 import { encounterView, type Encounter } from './encounters'
 import type { HpShown, HpState } from './hp'
 import { playerMap, type BattleMap, type PlayerMap } from './battleMap'
+import type { RingState } from './closingRing'
 
 export const SHAPES = layouts.shapes
 export const TERRAIN = layouts.terrain
@@ -62,6 +63,8 @@ export interface Room {
   hpShown?: HpShown
   /** Combat and elite rooms: the battle map (DM only for now). */
   map?: BattleMap | null
+  /** Closing Ring: the fight's round and the hazardous ring's depth (fight rooms only). */
+  ring?: RingState | null
 }
 
 const roll =(sides: number, random: Random) => 1 + Math.floor(random() * sides)
@@ -256,6 +259,8 @@ export interface RoomView {
   map?: PlayerMap | null
   /** Shift Actions the DM has triggered, by the boss they belong to. */
   shifts?: string[]
+  /** Closing Ring: the round and the ring's depth. Never hidden. */
+  ring?: RingState | null
 }
 
 export function playerView(room: Room): RoomView {
@@ -280,5 +285,6 @@ export function playerView(room: Room): RoomView {
     bossBloodied: Boolean(room.boss && room.hpShown?.boss),
     map: playerMap(room),
     shifts: (room.shifts ?? []).filter((s) => s.revealed).map((s) => s.bossId),
+    ring: room.ring ?? null,
   }
 }

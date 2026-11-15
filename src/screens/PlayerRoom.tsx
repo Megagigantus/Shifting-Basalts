@@ -21,6 +21,7 @@ import { creatureOf } from '../rules/encounters'
 import { bossOf, floorBossDc } from '../rules/bosses'
 import { RoomCard } from './RoomCard'
 import { PlayerBattleMap } from './PlayerBattleMap'
+import { ClosingRingNote } from './ClosingRing'
 import { PhaseReveal } from './PhaseReveal'
 import { ReprieveScene } from './Scene'
 import { artUrl, phase2ArtId } from '../art'
@@ -165,6 +166,8 @@ export function PlayerRoom({ state, me, readOnly = false, myCharacterIds }: Prop
             </div>
           </>
         )}
+
+        <ClosingRingNote ring={view.ring ?? null} pressures={run.pressures} floor={view.floor} partyLevel={run.partyLevel} room={view} />
 
         {view.shifts?.map((id) => {
           const action = bossOf(id).shiftAction

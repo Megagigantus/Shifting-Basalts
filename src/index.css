@@ -890,6 +890,17 @@
     fill: rgb(201 163 90 / 0.28);
   }
 
+  /* Closing Ring: the hazardous outer band, with a solid line where it stops. */
+  .battle-map-grid .closing-ring path {
+    fill: rgb(225 29 72 / 0.32);
+  }
+
+  .battle-map-grid .closing-ring-edge {
+    fill: none;
+    stroke: rgb(251 113 133 / 0.9);
+    stroke-width: 0.08;
+  }
+
   .map-piece {
     position: absolute;
     padding: 0;
