@@ -644,6 +644,129 @@ describe('shiftEffects', () => {
         { key: 'pc:second', x: 5, y: 2 },
       ])
     })
+
+    it('halves on Ophaniel arena paints meadow west / stone east first, rotates clockwise each press, and keeps other areas', () => {
+      const baseMap = placeArena({ kind: 'boss', boss: { id: 'ophaniel', partySize: 4 } } as Room)!
+      const otherArea = { key: 'area:keep', kind: 'ledge', name: 'Kept', x: 1, y: 1, w: 2, h: 2 }
+      const map: BattleMap = { ...baseMap, areas: [...(baseMap.areas ?? []), otherArea] }
+      const effect = shiftEffectOf('ophaniel')!
+      const baseCount = baseMap.areas?.length ?? 0
+      const ctx = { phase: 1, random: Math.random }
+
+      const p1 = planShift(map, effect, [{ key: 'pc:a', x: 2, y: 5 }], ctx)
+      expect(p1.save).toBeUndefined()
+      expect(p1.moves).toEqual([])
+      expect(p1.notes).toEqual([])
+      expect(p1.map.areas).toHaveLength(baseCount + 3)
+      expect(p1.map.areas).toContainEqual(otherArea)
+      expect(p1.map.areas?.find((a) => a.key === 'half:0')).toMatchObject({
+        kind: 'meadow',
+        name: 'Golden meadow: regain HP each turn, take double damage',
+        x: 0,
+        y: 0,
+        w: 7,
+        h: 14,
+      })
+      expect(p1.map.areas?.find((a) => a.key === 'half:1')).toMatchObject({
+        kind: 'stone',
+        name: 'Shattered stone: airless, Silence, necrotic damage',
+        x: 7,
+        y: 0,
+        w: 7,
+        h: 14,
+      })
+
+      const p2 = planShift(p1.map, effect, [], ctx)
+      expect(p2.map.areas).toHaveLength(baseCount + 3)
+      expect(p2.map.areas?.find((a) => a.key === 'half:0')).toMatchObject({ kind: 'meadow', x: 0, y: 0, w: 14, h: 7 })
+      expect(p2.map.areas?.find((a) => a.key === 'half:1')).toMatchObject({ kind: 'stone', x: 0, y: 7, w: 14, h: 7 })
+
+      const p3 = planShift(p2.map, effect, [], ctx)
+      expect(p3.map.areas).toHaveLength(baseCount + 3)
+      expect(p3.map.areas?.find((a) => a.key === 'half:0')).toMatchObject({ kind: 'meadow', x: 7, y: 0, w: 7, h: 14 })
+      expect(p3.map.areas?.find((a) => a.key === 'half:1')).toMatchObject({ kind: 'stone', x: 0, y: 0, w: 7, h: 14 })
+
+      const p4 = planShift(p3.map, effect, [], ctx)
+      expect(p4.map.areas).toHaveLength(baseCount + 3)
+      expect(p4.map.areas?.find((a) => a.key === 'half:0')).toMatchObject({ kind: 'meadow', x: 0, y: 7, w: 14, h: 7 })
+      expect(p4.map.areas?.find((a) => a.key === 'half:1')).toMatchObject({ kind: 'stone', x: 0, y: 0, w: 14, h: 7 })
+
+      const p5 = planShift(p4.map, effect, [], ctx)
+      expect(p5.map.areas).toHaveLength(baseCount + 3)
+      expect(p5.map.areas?.find((a) => a.key === 'half:0')).toMatchObject({ kind: 'meadow', x: 0, y: 0, w: 7, h: 14 })
+      expect(p5.map.areas?.find((a) => a.key === 'half:1')).toMatchObject({ kind: 'stone', x: 7, y: 0, w: 7, h: 14 })
+
+      const realP1 = planShift(baseMap, effect, [], ctx)
+      const realP2 = planShift(realP1.map, effect, [], ctx)
+      expect(realP1.map.areas).toHaveLength(baseCount + 2)
+      expect(realP2.map.areas).toHaveLength(baseCount + 2)
+    })
+
+    it('eclipse on Husk arena alternates Blinding Zenith and Total Umbra around boss in phase 1 and phase 2', () => {
+      const baseMap = placeArena({ kind: 'boss', boss: { id: 'sun-eaters-husk', partySize: 4 } } as Room)!
+      const otherArea = { key: 'area:keep', kind: 'plinth', name: 'Kept', x: 2, y: 2, w: 1, h: 1 }
+      const map: BattleMap = { ...baseMap, areas: [...(baseMap.areas ?? []), otherArea] }
+      const effect = shiftEffectOf('sun-eaters-husk')!
+
+      const p1 = planShift(map, effect, [{ key: 'pc:a', x: 6, y: 10 }], { phase: 1, random: Math.random })
+      expect(p1.save).toBeUndefined()
+      expect(p1.moves).toEqual([])
+      expect(p1.notes).toEqual([])
+      expect(p1.map.areas).toContainEqual(otherArea)
+      expect(p1.map.areas?.find((a) => a.key === 'eclipse:0')).toEqual({
+        key: 'eclipse:0',
+        kind: 'zenith',
+        name: 'Blinding Zenith: 2 x PB radiant and Blinded out of cover',
+        x: 0,
+        y: 0,
+        w: 14,
+        h: 14,
+      })
+
+      const p2 = planShift(p1.map, effect, [], { phase: 1, random: Math.random })
+      expect(p2.save).toBeUndefined()
+      expect(p2.moves).toEqual([])
+      expect(p2.notes).toEqual([])
+      expect(p2.map.areas).toHaveLength((map.areas?.length ?? 0) + 1)
+      expect(p2.map.areas?.find((a) => a.key === 'eclipse:0')).toEqual({
+        key: 'eclipse:0',
+        kind: 'umbra',
+        name: 'Total Umbra: magical darkness outside this ring (2 x PB cold or necrotic)',
+        x: 3,
+        y: 0,
+        w: 8,
+        h: 6,
+      })
+
+      const p3 = planShift(p2.map, effect, [], { phase: 2, random: Math.random })
+      expect(p3.map.areas?.find((a) => a.key === 'eclipse:0')).toMatchObject({
+        kind: 'zenith',
+        x: 0,
+        y: 0,
+        w: 14,
+        h: 14,
+      })
+
+      const p4 = planShift(p3.map, effect, [], { phase: 2, random: Math.random })
+      expect(p4.map.areas?.find((a) => a.key === 'eclipse:0')).toMatchObject({
+        kind: 'umbra',
+        x: 3,
+        y: 0,
+        w: 8,
+        h: 6,
+      })
+
+      const noBossMap: BattleMap = { squares: 14, entrance: 'south', pieces: [] }
+      const noBossZenith = planShift(noBossMap, effect, [], { phase: 1, random: Math.random })
+      const noBossUmbra = planShift(noBossZenith.map, effect, [], { phase: 1, random: Math.random })
+      expect(noBossUmbra.map.areas?.find((a) => a.key === 'eclipse:0')).toMatchObject({
+        kind: 'umbra',
+        x: 0,
+        y: 0,
+        w: 14,
+        h: 14,
+      })
+    })
   })
 
   describe('rotateBoxClockwise', () => {

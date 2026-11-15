@@ -973,6 +973,18 @@
           "h": 14
         }
       },
+      "shiftEffect": {
+        "kind": "halves",
+        "label": "Paradise Bleed",
+        "first": {
+          "kind": "meadow",
+          "name": "Golden meadow: regain HP each turn, take double damage"
+        },
+        "second": {
+          "kind": "stone",
+          "name": "Shattered stone: airless, Silence, necrotic damage"
+        }
+      },
       "notes": "Ophaniel fills the north end. Paradise Bleed splits the arena into west and east halves that swap or rotate each round."
     },
     "sun-eaters-husk": {
@@ -1046,6 +1058,19 @@
         "zone": "all",
         "toward": "boss",
         "squares": 3
+      },
+      "shiftEffect": {
+        "kind": "eclipse",
+        "label": "Eclipse Cycle",
+        "zenith": {
+          "kind": "zenith",
+          "name": "Blinding Zenith: 2 x PB radiant and Blinded out of cover"
+        },
+        "umbra": {
+          "kind": "umbra",
+          "name": "Total Umbra: magical darkness outside this ring (2 x PB cold or necrotic)",
+          "within": 2
+        }
       },
       "phase2": true,
       "notes": "The Husk is fused into the north wall. The painted ring of standing stones and the boulders are the cover Blinding Zenith rewards. Braziers are light sources Devour Light can eat; they go when the shell shatters (phase 2 swaps to the crater arena)."

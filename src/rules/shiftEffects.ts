@@ -874,6 +874,99 @@ function planChasms(
   }
 }
 
+type HalfSide = 'west' | 'north' | 'east' | 'south'
+
+const HALF_ORDER: readonly HalfSide[] = ['west', 'north', 'east', 'south']
+
+function halfSideOf(area: MapArea): HalfSide {
+  if (area.x > 0) return 'east'
+  if (area.y > 0) return 'south'
+  return area.w < area.h ? 'west' : 'north'
+}
+
+function halfBox(side: HalfSide, n: number): { x: number; y: number; w: number; h: number } {
+  const half = Math.floor(n / 2)
+  switch (side) {
+    case 'west':
+      return { x: 0, y: 0, w: half, h: n }
+    case 'north':
+      return { x: 0, y: 0, w: n, h: half }
+    case 'east':
+      return { x: half, y: 0, w: n - half, h: n }
+    case 'south':
+      return { x: 0, y: half, w: n, h: n - half }
+  }
+}
+
+function planHalves(
+  map: BattleMap,
+  effect: Extract<ShiftEffect, { kind: 'halves' }>,
+): ShiftPlan {
+  const areas = map.areas ?? []
+  const current = areas.find((a) => a.key === 'half:0')
+  const firstIdx = current ? (HALF_ORDER.indexOf(halfSideOf(current)) + 1) % 4 : 0
+  const secondIdx = (firstIdx + 2) % 4
+  const firstBox = halfBox(HALF_ORDER[firstIdx], map.squares)
+  const secondBox = halfBox(HALF_ORDER[secondIdx], map.squares)
+  const keptAreas = areas.filter((a) => !a.key.startsWith('half:'))
+
+  return {
+    map: {
+      ...map,
+      areas: [
+        ...keptAreas,
+        { key: 'half:0', kind: effect.first.kind, name: effect.first.name, ...firstBox },
+        { key: 'half:1', kind: effect.second.kind, name: effect.second.name, ...secondBox },
+      ],
+    },
+    moves: [],
+    notes: [],
+  }
+}
+
+function umbraBox(
+  map: BattleMap,
+  within: number,
+  phase: number,
+): { x: number; y: number; w: number; h: number } {
+  const n = map.squares
+  const boss = map.pieces.find((p) => p.kind === 'boss' && inPhase(p, phase))
+  if (!boss) return { x: 0, y: 0, w: n, h: n }
+  const { w, h } = dims(boss)
+  const x = Math.max(0, boss.x - within)
+  const y = Math.max(0, boss.y - within)
+  const x1 = Math.min(n, boss.x + w + within)
+  const y1 = Math.min(n, boss.y + h + within)
+  return { x, y, w: x1 - x, h: y1 - y }
+}
+
+function planEclipse(
+  map: BattleMap,
+  effect: Extract<ShiftEffect, { kind: 'eclipse' }>,
+  ctx: ShiftContext,
+): ShiftPlan {
+  const areas = map.areas ?? []
+  const current = areas.find((a) => a.key === 'eclipse:0')
+  const showUmbra = current?.kind === effect.zenith.kind
+  const box = showUmbra
+    ? umbraBox(map, effect.umbra.within, ctx.phase)
+    : { x: 0, y: 0, w: map.squares, h: map.squares }
+  const spec = showUmbra ? effect.umbra : effect.zenith
+  const keptAreas = areas.filter((a) => !a.key.startsWith('eclipse:'))
+
+  return {
+    map: {
+      ...map,
+      areas: [
+        ...keptAreas,
+        { key: 'eclipse:0', kind: spec.kind, name: spec.name, ...box },
+      ],
+    },
+    moves: [],
+    notes: [],
+  }
+}
+
 /** Plan the map update and any token moves for a boss arena's shift effect. */
 export function planShift(
   map: BattleMap,
@@ -886,8 +979,12 @@ export function planShift(
       return planChasms(map, effect, tokens, ctx)
     case 'conveyor':
       return planConveyor(map, effect, tokens, ctx)
+    case 'eclipse':
+      return planEclipse(map, effect, ctx)
     case 'gravity':
       return planGravity(map, effect, tokens, ctx)
+    case 'halves':
+      return planHalves(map, effect)
     case 'march':
       return planMarch(map, effect, tokens, ctx)
     case 'mirror':

@@ -358,6 +358,18 @@ export type ShiftEffect =
       areas: { x: number; y: number; w: number; h: number }[]
       note: string
     }
+  | {
+      kind: 'halves'
+      label?: string
+      first: { kind: string; name: string }
+      second: { kind: string; name: string }
+    }
+  | {
+      kind: 'eclipse'
+      label?: string
+      zenith: { kind: string; name: string }
+      umbra: { kind: string; name: string; within: number }
+    }
 
 export interface ArenaData {
   entrance: { x: number; y: number; w: number; h: number }

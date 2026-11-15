@@ -464,6 +464,22 @@ for (const [id, arena] of Object.entries(arenaData.arenas)) {
       if (!Array.isArray(eff.areas) || eff.areas.length < 1) fail(`${label}: chasms need at least one area`)
       else for (const a of eff.areas as Box[]) if (!inGrid(a)) fail(`${label}: a chasm area is off the grid`)
     }
+    if (eff.kind === 'halves') {
+      const halves = eff as { first?: { kind?: string; name?: string }; second?: { kind?: string; name?: string } }
+      if (!halves.first?.kind || !halves.first.name || !halves.second?.kind || !halves.second.name) fail(`${label}: halves need first and second kind and name`)
+    }
+    if (eff.kind === 'eclipse') {
+      const ec = eff as { zenith?: { kind?: string; name?: string }; umbra?: { kind?: string; name?: string; within?: number } }
+      if (!ec.zenith?.kind || !ec.zenith.name || !ec.umbra?.kind || !ec.umbra.name) fail(`${label}: eclipse needs zenith and umbra kind and name`)
+      if (!(Number(ec.umbra?.within) >= 0)) fail(`${label}: eclipse umbra within must be 0 or more`)
+    }
+    if (eff.kind === 'highlight') {
+      if (typeof eff.art !== 'string' || !paletteArts.has(eff.art)) fail(`${label}: highlight art "${String(eff.art)}" isn't in palette`)
+    }
+    if (eff.kind === 'place') {
+      if (typeof eff.art !== 'string' || !paletteArts.has(eff.art)) fail(`${label}: place art "${String(eff.art)}" isn't in palette`)
+      if (!Array.isArray(eff.spots) || eff.spots.length < 1) fail(`${label}: place needs at least one spot`)
+    }
   }
 }
 for (const p of arenaData.palette) {
