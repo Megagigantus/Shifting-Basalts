@@ -69,3 +69,11 @@ export function applyBoonSuppression(state: RunState, picks: SuppressPick[]): Ru
   }
   return next
 }
+
+/** Format one note line per suppressed boon for the DM's shift notes. */
+export function suppressionNotes(picks: SuppressPick[], players: RunPlayer[], note: string): string[] {
+  return picks.map((pick) => {
+    const playerName = players.find((p) => p.characterId === pick.characterId)?.name ?? pick.characterId
+    return `${playerName}: ${pick.name} ${note}`
+  })
+}

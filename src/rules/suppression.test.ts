@@ -4,7 +4,7 @@ import type { RunState } from '../model/run'
 import { shiftEffectOf } from './battleMap'
 import { clearSlot, combine, emptySlots, evolve, setSuppressed, takeBoon, type Slot } from './boons'
 import { changeSlots, markDead, newRunState, setHiddenBoon } from './runFlow'
-import { applyBoonSuppression, eligibleSuppressSlots, planBoonSuppression } from './suppression'
+import { applyBoonSuppression, eligibleSuppressSlots, planBoonSuppression, suppressionNotes } from './suppression'
 
 const char = (id: string): Character => ({
   ...emptyProfile(),
@@ -160,5 +160,33 @@ describe('Inverted Reliquary data', () => {
         note: 'suppressed until they cross to a different island',
       })
     }
+  })
+})
+
+describe('suppressionNotes', () => {
+  it('formats one line per pick with matching player names in order', () => {
+    const state = start([
+      { ...char('p1'), name: 'Alice' },
+      { ...char('p2'), name: 'Bob' },
+    ])
+    const picks = [
+      { characterId: 'p1', slotIndex: 0, name: 'Overhealing' },
+      { characterId: 'p2', slotIndex: 1, name: 'Hardened Hide' },
+    ]
+    expect(suppressionNotes(picks, state.players, 'suppressed until they cross to a different island')).toEqual([
+      'Alice: Overhealing suppressed until they cross to a different island',
+      'Bob: Hardened Hide suppressed until they cross to a different island',
+    ])
+  })
+
+  it('falls back to characterId when player is missing and returns [] for empty picks', () => {
+    expect(suppressionNotes([], [], 'suppressed until they cross to a different island')).toEqual([])
+    expect(
+      suppressionNotes(
+        [{ characterId: 'ghost', slotIndex: 0, name: 'Overhealing' }],
+        [],
+        'suppressed until they cross to a different island',
+      ),
+    ).toEqual(['ghost: Overhealing suppressed until they cross to a different island'])
   })
 })

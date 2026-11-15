@@ -10,6 +10,12 @@ import { bossBloodied } from '../rules/hp'
 import { applyMapEffect, shiftMap } from '../rules/roomFlow'
 import type { Room } from '../rules/rooms'
 import { planShift, type Direction, type ShiftPlan, type TokenPos } from '../rules/shiftEffects'
+import {
+  applyBoonSuppression,
+  planBoonSuppression,
+  suppressionNotes,
+  type SuppressPick,
+} from '../rules/suppression'
 import { moveToken, roomKeyOf, useTokens, type TokenSpot } from '../runStore'
 import type { BoardPiece } from './BattleBoard'
 import { playerPieces, tokenOwner, useLooks } from './mapPieces'
@@ -23,6 +29,7 @@ interface PendingShift {
   pieces: BoardPiece[]
   tokenPos: TokenPos[]
   phase: number
+  picks: SuppressPick[]
 }
 
 export interface ShiftMapControl {
@@ -69,8 +76,8 @@ export function useMapEffect(
 
   const roomKey = roomKeyOf(room)
 
-  function apply(plan: ShiftPlan, pieces: BoardPiece[], failedKeys?: Set<string>) {
-    act((s) => (which === 'shift' ? shiftMap(s, plan.map) : applyMapEffect(s, plan.map)))
+  function apply(plan: ShiftPlan, pieces: BoardPiece[], failedKeys?: Set<string>, picks: SuppressPick[] = []) {
+    act((s) => applyBoonSuppression(which === 'shift' ? shiftMap(s, plan.map) : applyMapEffect(s, plan.map), picks))
     const moves = failedKeys ? plan.moves.filter((m) => failedKeys.has(m.key)) : plan.moves
     if (!moves.length) return
     const moveByKey = new Map(moves.map((m) => [m.key, m]))
@@ -95,6 +102,15 @@ export function useMapEffect(
     }
   }
 
+  function suppressNoteLines(picks: SuppressPick[]): string[] {
+    if (which !== 'shift' || effect?.kind !== 'chasms' || !effect.suppressBoons) return []
+    return suppressionNotes(picks, state.players, effect.suppressBoons.note)
+  }
+
+  function formatMapNotes(notes: string[], pieces: BoardPiece[]): string[] {
+    return notes.map((n) => n.replace(/\b(?:pc|sm):[^\s]+/g, (k) => labelForKey(k, pieces)))
+  }
+
   function trigger() {
     if (!map || !effect) return
     const pieces = playerPieces(state.players, looks, map, tokens, roomKey, () => true, () => false)
@@ -102,11 +118,16 @@ export function useMapEffect(
       .filter((p) => p.key.startsWith('pc:') || p.key.startsWith('sm:'))
       .map((p) => ({ key: p.key, x: p.x, y: p.y }))
     const plan = planShift(map, effect, tokenPos, { phase, random: Math.random })
+    const picks =
+      which === 'shift' && effect.kind === 'chasms' && effect.suppressBoons
+        ? planBoonSuppression(state.players, effect.suppressBoons.count, Math.random)
+        : []
     if ((plan.save && plan.save.keys.length > 0) || (plan.anchors && plan.anchors.length >= 2)) {
-      setPending({ plan, pieces, tokenPos, phase })
+      setPending({ plan, pieces, tokenPos, phase, picks })
     } else {
-      apply(plan, pieces)
-      if (plan.notes.length) setShownNotes(plan.notes.map((n) => n.replace(/\b(?:pc|sm):[^\s]+/g, (k) => labelForKey(k, pieces))))
+      apply(plan, pieces, undefined, picks)
+      const notes = [...formatMapNotes(plan.notes, pieces), ...suppressNoteLines(picks)]
+      if (notes.length) setShownNotes(notes)
     }
   }
 
@@ -143,9 +164,7 @@ export function useMapEffect(
         title: which === 'shift' ? (shiftActionName ?? label) : label,
         saveLabel: pending.plan.save?.label,
         targets: (pending.plan.save?.keys ?? []).map((key) => ({ key, label: labelForKey(key, pending.pieces) })),
-        notes: pending.plan.notes.map((n) =>
-          n.replace(/\b(?:pc|sm):[^\s]+/g, (k) => labelForKey(k, pending.pieces)),
-        ),
+        notes: [...formatMapNotes(pending.plan.notes, pending.pieces), ...suppressNoteLines(pending.picks)],
         direction: pending.plan.direction,
         onDirectionChange: handleDirectionChange,
         anchors: pending.plan.anchors,
@@ -163,7 +182,7 @@ export function useMapEffect(
               anchor: current.plan.anchor,
               only: failedKeys,
             })
-            apply(finalPlan, current.pieces, failedKeys)
+            apply(finalPlan, current.pieces, failedKeys, current.picks)
           } else {
             // No-save choice (e.g. Perspective Collapse): re-plan with chosen anchor and move everyone.
             const finalPlan = planShift(map, effect, current.tokenPos, {
@@ -171,7 +190,7 @@ export function useMapEffect(
               random: Math.random,
               anchor: current.plan.anchor,
             })
-            apply(finalPlan, current.pieces, new Set(finalPlan.moves.map((m) => m.key)))
+            apply(finalPlan, current.pieces, new Set(finalPlan.moves.map((m) => m.key)), current.picks)
           }
         },
         onCancel: () => setPending(null),
