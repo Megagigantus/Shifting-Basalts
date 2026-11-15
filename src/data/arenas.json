@@ -60,6 +60,25 @@
         }
       ],
       "areas": [],
+      "shiftEffect": {
+        "kind": "sections",
+        "label": "Piston Floor",
+        "count": 3,
+        "w": 2,
+        "h": 2,
+        "outcomes": [
+          {
+            "kind": "raised",
+            "name": "Raised section (15 ft up)",
+            "note": "is on a rising section: Dex save or fall prone"
+          },
+          {
+            "kind": "pit",
+            "name": "Pit (10 ft down)",
+            "note": "is on a dropping section: Dex save or fall prone"
+          }
+        ]
+      },
       "notes": "Open hex floor so Columnar Slam pillars and Piston Floor sections have room. Slam pillars are added during the fight."
     },
     "choir-hollow-column": {
@@ -114,6 +133,15 @@
       ],
       "objects": [],
       "areas": [],
+      "shiftEffect": {
+        "kind": "push",
+        "label": "Acoustic Shift",
+        "save": "Con save",
+        "zone": "walls",
+        "within": 2,
+        "toward": "center",
+        "squares": 3
+      },
       "notes": "4 pipe clusters in a diamond around the open centre (the south one sits at row 9, clear of the entrance arch). The centre is safest from the cones but deepest in the Hymn Auras."
     },
     "gilded-excavation-herd": {
@@ -218,6 +246,23 @@
           "h": 14
         }
       ],
+      "shiftEffect": {
+        "kind": "conveyor",
+        "label": "Conveyor Shift",
+        "squares": 4,
+        "strips": [
+          {
+            "x": 4,
+            "w": 2,
+            "dy": -1
+          },
+          {
+            "x": 8,
+            "w": 2,
+            "dy": 1
+          }
+        ]
+      },
       "notes": "Golem at the back with a hound on each side. The painted rails are the two Conveyor Shift strips; the 4 Tether Beam pillars stay off them."
     },
     "kaelen-and-vyr": {
@@ -279,6 +324,12 @@
           "h": 2
         }
       ],
+      "shiftEffect": {
+        "kind": "rotate",
+        "label": "Echo Swap",
+        "within": 1,
+        "afterimage": "afterimage"
+      },
       "notes": "Two 10 ft ledges, inset from the back corners, give Vyr high ground to teleport to. Kaelen starts on the floor between them."
     },
     "halvard-quill": {
@@ -370,6 +421,13 @@
           "h": 10
         }
       ],
+      "shiftEffect": {
+        "kind": "tracks",
+        "label": "Trophy Gallery",
+        "art": "statue",
+        "track": "track",
+        "note": "is in a statue's path: PB d8 bludgeoning, Dex save halves"
+      },
       "notes": "Four statue tracks run north to south, one statue on each. Halvard starts at the north end with long sightlines. Snare Shards are added during the fight."
     },
     "lattice-spinner": {
@@ -447,6 +505,14 @@
         }
       ],
       "areas": [],
+      "shiftEffect": {
+        "kind": "orbit",
+        "label": "Loom Rotation",
+        "art": "tall-column",
+        "squares": 3,
+        "dragged": "transit-cable",
+        "note": "is in a column's sweep: Dex save"
+      },
       "notes": "6 columns around the painted ring, point-symmetric so Loom Rotation can turn them. Transit Cables are added during the fight."
     },
     "stride-core": {
@@ -469,6 +535,36 @@
       ],
       "objects": [],
       "areas": [],
+      "shiftEffect": {
+        "kind": "tilt",
+        "label": "Tilt the Gate",
+        "save": "Str or Dex save",
+        "squares": 3,
+        "carry": [
+          "stride-pool"
+        ]
+      },
+      "bloodiedEffect": {
+        "kind": "place",
+        "label": "Crystallize",
+        "art": "floating-shard",
+        "name": "Quantum Basalt shard",
+        "spots": [
+          {
+            "dx": -1,
+            "dy": -1
+          },
+          {
+            "dx": 2,
+            "dy": -1
+          },
+          {
+            "dx": 0,
+            "dy": 2
+          }
+        ],
+        "note": "Shards: AC 15, HP on the boss card. Break all three to Stun the Core until the end of its next turn."
+      },
       "notes": "Core hovers 10 ft over the centre of an open grated floor. Rift Barrage pools are added during the fight; Tilt the Gate slides them."
     },
     "general-vane": {
@@ -600,6 +696,15 @@
         }
       ],
       "areas": [],
+      "shiftEffect": {
+        "kind": "highlight",
+        "label": "Refraction Shift",
+        "art": "mirror-panel",
+        "area": {
+          "kind": "mirror",
+          "name": "Mirrored this round"
+        }
+      },
       "notes": "Hydra at the north end. 4 floor panels flip to mirrors on Refraction Shift. Residue puddles are added when heads are severed."
     },
     "blind-architect": {
@@ -720,6 +825,11 @@
         }
       ],
       "areas": [],
+      "shiftEffect": {
+        "kind": "gravity",
+        "label": "Perspective Collapse",
+        "squares": 4
+      },
       "notes": "Members in 3 corners (NW, NE, SE), so players can't close on one without moving away from another. A central column breaks sightlines. The party enters a row up, inside the south wall."
     },
     "inverted-reliquary": {
@@ -801,6 +911,26 @@
           "h": 7
         }
       ],
+      "shiftEffect": {
+        "kind": "chasms",
+        "label": "Slot Scramble",
+        "name": "Void chasm",
+        "areas": [
+          {
+            "x": 6,
+            "y": 0,
+            "w": 2,
+            "h": 14
+          },
+          {
+            "x": 0,
+            "y": 6,
+            "w": 14,
+            "h": 2
+          }
+        ],
+        "note": "was over the void and moved to the nearest island"
+      },
       "notes": "Reliquary hovers 20 ft over the centre. Slot Scramble splits the floor into the 4 quadrant islands along the painted cracks; one plinth per island."
     },
     "ophaniel": {
@@ -873,6 +1003,18 @@
           "h": 14
         }
       },
+      "shiftEffect": {
+        "kind": "halves",
+        "label": "Paradise Bleed",
+        "first": {
+          "kind": "meadow",
+          "name": "Golden meadow: regain HP each turn, take double damage"
+        },
+        "second": {
+          "kind": "stone",
+          "name": "Shattered stone: airless, Silence, necrotic damage"
+        }
+      },
       "notes": "Ophaniel fills the north end. Paradise Bleed splits the arena into west and east halves that swap or rotate each round."
     },
     "sun-eaters-husk": {
@@ -940,6 +1082,26 @@
         }
       ],
       "areas": [],
+      "bloodiedEffect": {
+        "kind": "push",
+        "label": "Gravitational Pulse",
+        "zone": "all",
+        "toward": "boss",
+        "squares": 3
+      },
+      "shiftEffect": {
+        "kind": "eclipse",
+        "label": "Eclipse Cycle",
+        "zenith": {
+          "kind": "zenith",
+          "name": "Blinding Zenith: 2 x PB radiant and Blinded out of cover"
+        },
+        "umbra": {
+          "kind": "umbra",
+          "name": "Total Umbra: magical darkness outside this ring (2 x PB cold or necrotic)",
+          "within": 2
+        }
+      },
       "phase2": true,
       "notes": "The Husk is fused into the north wall. The painted ring of standing stones and the boulders are the cover Blinding Zenith rewards. Braziers are light sources Devour Light can eat; they go when the shell shatters (phase 2 swaps to the crater arena)."
     },
@@ -1016,7 +1178,8 @@
       "art": "pit",
       "name": "Pit",
       "w": 2,
-      "h": 2
+      "h": 2,
+      "floor": true
     },
     {
       "art": "tether-pillar",
@@ -1034,7 +1197,8 @@
       "art": "snare-shard",
       "name": "Snare Shard",
       "w": 1,
-      "h": 1
+      "h": 1,
+      "floor": true
     },
     {
       "art": "statue",
@@ -1046,13 +1210,15 @@
       "art": "transit-cable",
       "name": "Transit Cable anchor",
       "w": 1,
-      "h": 1
+      "h": 1,
+      "floor": true
     },
     {
       "art": "stride-pool",
       "name": "Stride-energy pool",
       "w": 1,
-      "h": 1
+      "h": 1,
+      "floor": true
     },
     {
       "art": "marching-wall",
@@ -1064,19 +1230,22 @@
       "art": "mirror-panel",
       "name": "Mirror panel",
       "w": 2,
-      "h": 2
+      "h": 2,
+      "floor": true
     },
     {
       "art": "residue",
       "name": "Elemental Residue",
       "w": 1,
-      "h": 1
+      "h": 1,
+      "floor": true
     },
     {
       "art": "portal",
       "name": "Portal",
       "w": 2,
-      "h": 2
+      "h": 2,
+      "floor": true
     },
     {
       "art": "wall-segment",
@@ -1088,7 +1257,8 @@
       "art": "darkness",
       "name": "Magical darkness",
       "w": 2,
-      "h": 2
+      "h": 2,
+      "floor": true
     },
     {
       "art": "battle-standard",
@@ -1100,7 +1270,8 @@
       "art": "armed-trick",
       "name": "Re-armed trick",
       "w": 1,
-      "h": 1
+      "h": 1,
+      "floor": true
     },
     {
       "art": "tall-column",

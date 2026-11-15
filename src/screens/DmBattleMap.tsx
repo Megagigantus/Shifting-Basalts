@@ -8,13 +8,13 @@ import type { RunState } from '../model/run'
 import type { Room } from '../rules/rooms'
 import { bossBloodied, hpTrackers } from '../rules/hp'
 import { ringOf } from '../rules/closingRing'
-import { arenaOf, currentForm, inPhase, mapPhase, PALETTE, shiftEffectOf, type MapPiece } from '../rules/battleMap'
+import { arenaOf, currentForm, inPhase, mapPhase, PALETTE, type MapPiece } from '../rules/battleMap'
 import { dropMapObject, layOutMap, moveMapPiece, removeMapObject, swapBossForm } from '../rules/roomFlow'
 import { moveToken, roomKeyOf, useTokens } from '../runStore'
 import { artUrl } from '../art'
 import { BattleBoard } from './BattleBoard'
 import { playerPieces, roomPieces, spotAfterMove, tokenOwner, useLooks } from './mapPieces'
-import { useShiftMap } from './useShiftMap'
+import { useMapEffect, useShiftMap } from './useShiftMap'
 import { Grid3x3 } from 'lucide-react'
 import { ConfirmButton } from '../ui/ConfirmButton'
 import { Panel } from '../ui/Panel'
@@ -34,7 +34,8 @@ interface Props {
 export function DmBattleMap({ state, room, busy, act }: Props) {
   const tokens = useTokens(state.run.id)
   const looks = useLooks()
-  const triggerShift = useShiftMap(state, room, act)
+  const shift = useShiftMap(state, room, act)
+  const bloodiedEffect = useMapEffect(state, room, act, 'bloodied')
   const [toDrop, setToDrop] = useState(PALETTE[0]?.art ?? '')
   const map = room.map ?? null
 
@@ -65,8 +66,6 @@ export function DmBattleMap({ state, room, busy, act }: Props) {
   const roomKey = roomKeyOf(room)
   const arena = map.arena ? arenaOf(map.arena) : undefined
   const form = currentForm(map)
-  const shiftEffect = shiftEffectOf(map.arena)
-  const hasMarchWalls = map.pieces.some((p) => p.key.startsWith('march:'))
   const ring = ringOf(room, state.run.pressures)
   const mapArt = map.arena ? (phase === 2 ? artUrl('arenas', `${map.arena}-phase-2`) : null) ?? artUrl('arenas', map.arena) : artUrl('maps', room.shape)
 
@@ -143,14 +142,14 @@ export function DmBattleMap({ state, room, busy, act }: Props) {
               Swap form (now {form === 'vyr' ? 'Vyr' : 'Kaelen'})
             </button>
           )}
-          {shiftEffect?.kind === 'march' && triggerShift && (
-            <button type="button" className={SMALL_BUTTON} disabled={busy} onClick={triggerShift}>
-              {hasMarchWalls ? 'March 15 ft' : 'Raise Marching Columns'}
+          {shift && (
+            <button type="button" className={SMALL_BUTTON} disabled={busy} onClick={shift.trigger}>
+              {shift.label}
             </button>
           )}
-          {shiftEffect?.kind === 'mirror' && triggerShift && (
-            <button type="button" className={SMALL_BUTTON} disabled={busy} onClick={triggerShift}>
-              Fold Space
+          {bloodiedEffect && (
+            <button type="button" className={SMALL_BUTTON} disabled={busy} onClick={bloodiedEffect.trigger}>
+              {bloodiedEffect.label}
             </button>
           )}
           <ConfirmButton
@@ -198,6 +197,8 @@ export function DmBattleMap({ state, room, busy, act }: Props) {
         are hidden from players. Gold rings are the players; each player can move only their own. The shaded squares are the entrance.
       </p>
       {arena?.notes && <p className="m-0 text-[0.6875rem] text-stone-400">Arena: {arena.notes}</p>}
+      {shift?.picker}
+      {bloodiedEffect?.picker}
     </Panel>
   )
 }

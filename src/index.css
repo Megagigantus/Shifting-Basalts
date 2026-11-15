@@ -1195,6 +1195,55 @@
     border-color: rgb(201 163 90 / 0.6);
   }
 
+  /* Painted by boss Shift Actions (src/rules/shiftEffects.ts). */
+  .map-area-raised {
+    border-style: solid;
+    border-color: rgb(201 163 90 / 0.85);
+    background: rgb(201 163 90 / 0.18);
+  }
+
+  .map-area-pit {
+    border-style: solid;
+    border-color: rgb(120 110 100 / 0.9);
+    background: rgb(10 9 12 / 0.55);
+  }
+
+  .map-area-chasm {
+    border-style: solid;
+    border-color: rgb(140 100 200 / 0.7);
+    background: rgb(8 6 14 / 0.7);
+  }
+
+  .map-area-meadow {
+    border-style: solid;
+    border-color: rgb(230 196 90 / 0.8);
+    background: rgb(230 196 90 / 0.14);
+  }
+
+  .map-area-stone {
+    border-style: solid;
+    border-color: rgb(150 150 160 / 0.7);
+    background: rgb(40 40 48 / 0.35);
+  }
+
+  .map-area-zenith {
+    border-style: solid;
+    border-color: rgb(255 236 170 / 0.8);
+    background: rgb(255 236 170 / 0.1);
+  }
+
+  .map-area-umbra {
+    border-style: solid;
+    border-color: rgb(120 140 220 / 0.85);
+    box-shadow: 0 0 0 100vmax rgb(4 4 10 / 0.55);
+  }
+
+  .map-area-mirror {
+    border-style: solid;
+    border-color: rgb(170 220 255 / 0.9);
+    background: rgb(170 220 255 / 0.16);
+  }
+
   .map-area-line {
     border-style: solid;
     border-color: rgb(201 106 90 / 0.8);

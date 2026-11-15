@@ -282,6 +282,12 @@ export function placeMap(room: Room, random: Random, keep?: BattleMap | null): B
 
 export type ShiftEffect =
   | {
+      kind: 'conveyor'
+      label?: string
+      squares: number
+      strips: { x: number; w: number; dy: -1 | 1 }[]
+    }
+  | {
       kind: 'march'
       art: string
       name: string
@@ -289,25 +295,114 @@ export type ShiftEffect =
       y: number
       w: number
       step: number
+      label?: string
     }
   | {
       kind: 'mirror'
+      label?: string
+    }
+  | {
+      kind: 'push'
+      label?: string
+      save?: string
+      zone: 'walls' | 'all'
+      within?: number
+      toward: 'center' | 'boss'
+      squares: number
+    }
+  | {
+      kind: 'tilt'
+      label?: string
+      save?: string
+      squares: number
+      carry: string[]
+    }
+  | {
+      kind: 'rotate'
+      label?: string
+      within: number
+      afterimage?: string
+    }
+  | {
+      kind: 'gravity'
+      label?: string
+      squares: number
+    }
+  | {
+      kind: 'sections'
+      label?: string
+      count: number
+      w: number
+      h: number
+      outcomes: { kind: string; name: string; note: string }[]
+    }
+  | {
+      kind: 'tracks'
+      label?: string
+      art: string
+      track: string
+      note: string
+    }
+  | {
+      kind: 'orbit'
+      label?: string
+      art: string
+      squares: number
+      dragged?: string
+      note: string
+    }
+  | {
+      kind: 'chasms'
+      label?: string
+      name: string
+      areas: { x: number; y: number; w: number; h: number }[]
+      note: string
+    }
+  | {
+      kind: 'halves'
+      label?: string
+      first: { kind: string; name: string }
+      second: { kind: string; name: string }
+    }
+  | {
+      kind: 'eclipse'
+      label?: string
+      zenith: { kind: string; name: string }
+      umbra: { kind: string; name: string; within: number }
+    }
+  | {
+      kind: 'highlight'
+      label?: string
+      art: string
+      area: { kind: string; name: string }
+    }
+  | {
+      kind: 'place'
+      label?: string
+      art: string
+      name: string
+      spots: { dx: number; dy: number }[]
+      note: string
     }
 
-interface ArenaData {
+export interface ArenaData {
   entrance: { x: number; y: number; w: number; h: number }
   tokens: { name: string; size: number; art: string; hp: string; x: number; y: number; note?: string; forms?: Record<string, string> }[]
   objects: { art: string; name: string; x: number; y: number; w: number; h: number; phase?: number; note?: string }[]
   areas: { kind: string; name: string; x: number; y: number; w: number; h: number; phase?: number }[]
   shiftEffect?: ShiftEffect
+  bloodiedEffect?: ShiftEffect
   phase2?: boolean
   notes?: string
 }
 const ARENAS = arenaData.arenas as unknown as Record<string, ArenaData>
-export const PALETTE = arenaData.palette as { art: string; name: string; w: number; h: number }[]
+export const PALETTE = arenaData.palette as { art: string; name: string; w: number; h: number; floor?: boolean }[]
+export const isFloorObject = (art: string): boolean => Boolean(PALETTE.find((p) => p.art === art)?.floor)
 export const arenaOf = (bossId: string): ArenaData | undefined => ARENAS[bossId]
 export const shiftEffectOf = (bossId: string | undefined | null): ShiftEffect | undefined =>
   bossId ? ARENAS[bossId]?.shiftEffect : undefined
+export const bloodiedEffectOf = (bossId: string | undefined | null): ShiftEffect | undefined =>
+  bossId ? ARENAS[bossId]?.bloodiedEffect : undefined
 
 /** Optional fields only when set (Firestore can't store undefined). */
 const withPhase = <T extends object>(obj: T, phase?: number): T & { phase?: number } => (phase === undefined ? obj : { ...obj, phase })

@@ -2,8 +2,9 @@ import { describe, expect, it } from 'vitest'
 import { emptyDungeonLayer, emptyProfile, type Character } from '../model/character'
 import type { RunState } from '../model/run'
 import { newRunState, clearRoom } from './runFlow'
-import { changeHp, dropMapObject, enterRoom, removeMapObject, rerollBoss, setBossBloodied, shiftMap, startFloor, swapBossForm } from './roomFlow'
-import { arenaHasPhase2, arenaOf, currentForm, dims, doorSquares, mapPhase, placeArena, startSquares } from './battleMap'
+import { applyMapEffect, changeHp, dropMapObject, enterRoom, removeMapObject, rerollBoss, setBossBloodied, shiftMap, startFloor, swapBossForm } from './roomFlow'
+import { arenaHasPhase2, arenaOf, bloodiedEffectOf, currentForm, dims, doorSquares, mapPhase, placeArena, shiftEffectOf, startSquares } from './battleMap'
+import { planShift } from './shiftEffects'
 import { BOSSES } from './bosses'
 import { hpTrackers } from './hp'
 import type { Room } from './rooms'
@@ -172,7 +173,7 @@ describe('boss arenas', () => {
     state = shiftMap(state)
     expect(walls(state).every((p) => p.y === 13)).toBe(true)
 
-    expect(() => shiftMap(inBossRoom('tessellated-warden'))).toThrow()
+    expect(() => shiftMap(inBossRoom('gatewright'))).toThrow()
   })
 
   it('the Blind Architect\'s Fold Space mirrors objects north-to-south, leaves the boss in place, and flips back on a second trigger', () => {
@@ -195,5 +196,18 @@ describe('boss arenas', () => {
     expect(restored.dm!.room!.map!.flipped).toBe(false)
     expect(restored.dm!.room!.map!.pieces).toEqual(initialMap.pieces)
     expect(restored.run.roomView!.map!.flipped).toBeUndefined()
+  })
+
+  it('a planned shift reaches the player view and marks the Shift Action triggered; a Bloodied effect does not', () => {
+    const initial = inBossRoom('tessellated-warden')
+    const plan = planShift(initial.dm!.room!.map!, shiftEffectOf('tessellated-warden')!, [], { phase: 1, random: seeded(5) })
+    const shifted = shiftMap(initial, plan.map)
+    expect(shifted.run.roomView!.map!.areas!.filter((a) => a.key.startsWith('section:'))).toHaveLength(3)
+    expect(shifted.dm!.room!.shifts!.find((s) => s.bossId === 'tessellated-warden')!.revealed).toBe(true)
+
+    const husk = inBossRoom('sun-eaters-husk')
+    const pulse = planShift(husk.dm!.room!.map!, bloodiedEffectOf('sun-eaters-husk')!, [], { phase: 2, random: seeded(1) })
+    const after = applyMapEffect(husk, pulse.map)
+    expect(after.dm!.room!.shifts!.find((s) => s.bossId === 'sun-eaters-husk')!.revealed).toBe(false)
   })
 })

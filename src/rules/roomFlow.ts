@@ -9,8 +9,9 @@ import { floorInfo } from './run'
 import { isBossRoom } from './runFlow'
 import { generateEncounter } from './encounters'
 import { bossOf, pickBoss, restlessShiftActions } from './bosses'
-import { applyHp, emptyHp, hpShown, hpTrackers } from './hp'
-import { addObject, marchColumns, mirrorMap, movePiece, placeArena, placeMap, removeObject, shiftEffectOf, swapForm } from './battleMap'
+import { applyHp, bossBloodied, emptyHp, hpShown, hpTrackers } from './hp'
+import { addObject, mapPhase, movePiece, placeArena, placeMap, removeObject, shiftEffectOf, swapForm, type BattleMap } from './battleMap'
+import { planShift } from './shiftEffects'
 import { advanceRing, nextRound, pullBackRing, ringOf, ringSettings, squaresAcross, startRing, type RingState } from './closingRing'
 
 function withRoom(state: RunState, room: Room | null, floorPlan = state.dm?.floorPlan ?? []): RunState {
@@ -187,16 +188,24 @@ export const removeMapObject = (state: RunState, key: string) => withMap(state, 
 export const swapBossForm = (state: RunState) => withMap(state, swapForm)
 
 /** Apply the current boss room's map shift effect and reveal the boss's Shift Action. */
-export function shiftMap(state: RunState): RunState {
+export function shiftMap(state: RunState, map?: BattleMap): RunState {
   const room = state.dm?.room
   if (!room?.boss) throw new Error('There\'s no boss in this room.')
   if (!room.map) throw new Error('This room has no battle map.')
   const bossId = room.boss.id
   const effect = shiftEffectOf(bossId)
   if (!effect) throw new Error('This boss has no map shift effect.')
-  const map = effect.kind === 'march' ? marchColumns(room.map) : mirrorMap(room.map)
+  const phase = mapPhase(room.map, bossBloodied(room, { partyLevel: state.run.partyLevel, pressures: state.run.pressures }))
+  const nextMap = map ?? planShift(room.map, effect, [], { phase, random: Math.random }).map
   const shifts = (room.shifts ?? []).map((s) => (s.bossId === bossId ? { ...s, revealed: true } : s))
-  return withRoom(state, { ...room, map, shifts })
+  return withRoom(state, { ...room, map: nextMap, shifts })
+}
+
+/** Store the battle map after a non-shift map effect (such as a Bloodied phase effect) without revealing the Shift Action. */
+export function applyMapEffect(state: RunState, map: BattleMap): RunState {
+  const room = state.dm?.room
+  if (!room?.map) throw new Error('This room has no battle map.')
+  return withRoom(state, { ...room, map })
 }
 
 /** Advance or step back the current boss's Grand Reconstruction cycle (DM only). */
