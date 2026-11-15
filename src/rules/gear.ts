@@ -1,4 +1,4 @@
-// Gear drops and cards (design bible: Gear (d12), Who gear drops for, Gear
+// Gear drops and cards (design bible: Gear (d20), Who gear drops for, Gear
 // item cards, Base weapons, Base armor). Each gear roll is aimed at one
 // character in the run and only rolls rows and bases they're trained in;
 // bases they have Weapon Mastery with weigh x2. Cards show the base's stats
@@ -15,6 +15,8 @@ export interface GearRow {
   /** Base ids in roll order (the bible's Base (roll) column). */
   bases: string[]
   property: string
+  /** A spellcasting focus: its bonus also applies to spell attack rolls and spell save DCs. */
+  isFocus?: boolean
 }
 
 /** What a run remembers about a character's training, captured at run start. */
@@ -125,11 +127,12 @@ export function baseFields(baseId: string, bonus: number): CardField[] {
     const fields: CardField[] = [
       { label: 'Type', value: `${w.category === 'simple' ? 'Simple' : 'Martial'} ${w.range} weapon` },
       { label: 'Attack and damage', value: bonus ? `${sign(bonus)} to attack rolls; ${damage}` : damage },
-      { label: 'Properties', value: w.properties.join(', ') },
+      { label: 'Properties', value: w.properties.join(', ') || 'None' },
       { label: 'Mastery', value: `${w.mastery} (only with Weapon Mastery for the ${w.name.toLowerCase()})` },
       { label: 'Weight', value: w.weight },
     ]
-    if (bonus && w.id === 'sling') fields[1].value += ' (the bonus applies to the sling, not its bullets)'
+    const ammo = w.properties.map((p) => p.match(/^Ammunition \(.+, (\w+)\)$/)?.[1]).find(Boolean)
+    if (bonus && ammo) fields[1].value += ` (the bonus applies to the ${w.name.toLowerCase()}, not its ${ammo}s)`
     return fields
   }
   if (a) {
