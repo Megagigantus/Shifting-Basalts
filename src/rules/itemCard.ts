@@ -25,6 +25,8 @@ export function cardFields(item: LootItem): CardField[] | null {
       ...(item.base ? baseFields(item.base, gearBonus(rarity)) : []),
       { label: 'Property', value: row.property },
     ]
+    const bonus = gearBonus(rarity)
+    if (row.isFocus && bonus) fields.splice(fields.length - 1, 0, { label: 'Spellcasting', value: `+${bonus} to spell attacks and save DCs` })
     if (item.secondRef) fields.push({ label: 'Second property', value: gearRow(item.secondRef).property })
     if (!item.base) fields.splice(2, 0, { label: 'Base', value: 'Not recorded (rolled before gear cards)' })
     return fields
