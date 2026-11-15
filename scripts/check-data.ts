@@ -432,13 +432,17 @@ for (let floor = 1; floor <= 4; floor++) {
 }
 if (lootItems.trinkets.length !== 20) fail(`loot-items.json: expected 20 trinkets (d20), found ${lootItems.trinkets.length}`)
 if (lootItems.consumables.length !== 12) fail(`loot-items.json: expected 12 consumables (d12)`)
-if (lootItems.gear.length !== 12) fail(`loot-items.json: expected 12 gear items (d12)`)
+if (lootItems.gear.length !== 20) fail(`loot-items.json: expected 20 gear items (d20), found ${lootItems.gear.length}`)
+if (bases.weapons.length !== 38) fail(`gear-bases.json: expected all 38 weapons (2024), found ${bases.weapons.length}`)
+if (bases.armor.length !== 13) fail(`gear-bases.json: expected all 13 armors (2024), found ${bases.armor.length}`)
 // Every gear row rolls at least one base, and every base is in gear-bases.json.
 const baseIds = [...bases.weapons.map((w) => w.id), ...bases.armor.map((a) => a.id)]
 for (const g of lootItems.gear) {
   if (!g.bases?.length) fail(`loot-items.json gear "${g.id}": no bases`)
   for (const b of g.bases ?? []) if (!baseIds.includes(b)) fail(`loot-items.json gear "${g.id}": unknown base "${b}"`)
 }
+// Every base can drop: it's in at least one gear row (so a class can't be left out).
+for (const b of baseIds) if (!lootItems.gear.some((g) => g.bases.includes(b))) fail(`gear-bases.json "${b}": in no gear row, so it can never drop`)
 for (const r of relicData.relics as { id: string; base?: string }[]) {
   if (r.base && !baseIds.includes(r.base)) fail(`relics.json "${r.id}": unknown base "${r.base}"`)
 }

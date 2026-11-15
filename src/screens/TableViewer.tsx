@@ -220,7 +220,7 @@ function Items() {
             </li>
           ))}
         </RollList>
-        <RollList title="Gear (d12)">
+        <RollList title="Gear (d20)">
           {lootItems.gear.map((g) => (
             <li key={g.id}>
               <Name>{g.name}</Name> <span className="text-stone-500">(d{g.bases.length}: {g.bases.map(baseName).join(', ').toLowerCase()})</span>: {g.property}
