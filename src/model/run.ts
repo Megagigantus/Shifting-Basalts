@@ -159,6 +159,10 @@ export interface RunPlayer {
   vaultOffer?: string[] | null
   /** Thils's Vault: the relic taken. */
   vaultRelic?: string | null
+  /** Thils's Vault: took the pass instead of a relic. */
+  vaultPassed?: boolean
+  /** Thils's Vault: relic ids given up when trading in for an offered relic. */
+  vaultTradeIn?: string[] | null
   diedOnFloor: number | null
   lockoutDays: number | null
   lockoutRolls: number[] | null
@@ -196,4 +200,6 @@ export interface RunResult {
   fullClear?: boolean
   /** Items assigned to this character at extraction, plus a Vault relic on a full clear. */
   loot: LootItem[]
+  /** Relic ids traded in at Thils's Vault (removed from the character on extraction). */
+  relicsTradedIn?: string[]
 }

@@ -345,8 +345,11 @@ export function runResults(state: RunState): RunResult[] {
         relicState: relicStateFor(run.partyLevel),
       })
     }
+    const relicsTradedIn =
+      run.status === 'extracted' && p.alive && p.vaultTradeIn?.length ? [...p.vaultTradeIn] : undefined
     return {
       loot,
+      ...(relicsTradedIn ? { relicsTradedIn } : {}),
       characterId: p.characterId,
       name: p.name,
       survived: p.alive,

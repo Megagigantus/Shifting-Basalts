@@ -3,6 +3,7 @@
 // Run loot is shared party information, so players see the whole pool.
 import { Fragment, useMemo, useState, type ReactNode } from 'react'
 import { Coins, Gem, Package, TriangleExclamationPoint } from 'lucide-react'
+import relicData from '../data/relics.json'
 import type { OwnedLoot } from '../model/character'
 import type { RunPlayer, RunState } from '../model/run'
 import { cardFields } from '../rules/itemCard'
@@ -29,7 +30,7 @@ import {
   type Rarity,
 } from '../rules/loot'
 import { canExtract, extract, isFullClear } from '../rules/runFlow'
-import { chooseRelic, relicStateFor, vaultPending } from '../rules/vault'
+import { chooseRelic, heldRelics, mustTradeOrPass, passVault, relicStateFor, vaultPending } from '../rules/vault'
 import { SceneBanner } from './Scene'
 import { setLootRequests, submitChoice } from '../runStore'
 import { ConfirmButton } from '../ui/ConfirmButton'
@@ -42,6 +43,8 @@ import { itemNameClass, relicNameClass } from '../ui/rarity'
 
 type Act = (step: (s: RunState) => RunState, confirmText?: string) => void
 const credits = (n: number) => `${n.toLocaleString()} cr`
+const passBasalts = relicData.passQuantumBasalts
+const relicNames = (ids: string[]) => ids.map((id) => relicOf(id).name).join(', ')
 
 const RARITY_TONES: Record<Rarity, Tone> = {
   common: 'stone',
@@ -374,25 +377,46 @@ export function VaultPanel({ state, busy, act }: { state: RunState; busy: boolea
       <SceneBanner id="thils-vault" title="Thils's Vault" subtitle="Each survivor drafts one relic." />
       {state.players
         .filter((p) => p.alive)
-        .map((p) => (
-          <div key={p.characterId} className="flex flex-col gap-2">
-            <div className="flex items-center gap-2">
-              <SectionLabel>{p.name}</SectionLabel>
-              {p.vaultRelic && <Pill tone="emerald">Took {relicOf(p.vaultRelic).name}</Pill>}
-            </div>
-            {!p.vaultRelic && (
-              <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
-                {(p.vaultOffer ?? []).map((id) => (
-                  <RelicCard key={id} id={id} partyLevel={state.run.partyLevel}>
-                    <button type="button" className={SMALL_BUTTON} disabled={busy} onClick={() => act((s) => chooseRelic(s, p.characterId, id))}>
-                      Take for {p.name}
-                    </button>
-                  </RelicCard>
-                ))}
+        .map((p) => {
+          const tradeOrPass = mustTradeOrPass(p)
+          const chosen = Boolean(p.vaultRelic || p.vaultPassed)
+          return (
+            <div key={p.characterId} className="flex flex-col gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <SectionLabel>{p.name}</SectionLabel>
+                {p.vaultRelic && (
+                  <Pill tone="emerald">
+                    {p.vaultTradeIn?.length
+                      ? `Took ${relicOf(p.vaultRelic).name}, trading in ${relicNames(p.vaultTradeIn)}`
+                      : `Took ${relicOf(p.vaultRelic).name}`}
+                  </Pill>
+                )}
+                {p.vaultPassed && <Pill tone="purple">Passed for {passBasalts} Quantum Basalts</Pill>}
+                {!chosen && tradeOrPass && (
+                  <button type="button" className={SMALL_BUTTON} disabled={busy} onClick={() => act((s) => passVault(s, p.characterId))}>
+                    Pass (+{passBasalts} Quantum Basalts)
+                  </button>
+                )}
               </div>
-            )}
-          </div>
-        ))}
+              {!chosen && tradeOrPass && (
+                <p className="m-0 text-xs text-amber-200">
+                  Already owns {relicNames(heldRelics(p))}. Trade it in for one of these, or pass for {passBasalts} Quantum Basalts.
+                </p>
+              )}
+              {!chosen && (
+                <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
+                  {(p.vaultOffer ?? []).map((id) => (
+                    <RelicCard key={id} id={id} partyLevel={state.run.partyLevel}>
+                      <button type="button" className={SMALL_BUTTON} disabled={busy} onClick={() => act((s) => chooseRelic(s, p.characterId, id))}>
+                        {tradeOrPass ? `Trade in for ${p.name}` : `Take for ${p.name}`}
+                      </button>
+                    </RelicCard>
+                  ))}
+                </div>
+              )}
+            </div>
+          )
+        })}
     </Panel>
   )
 }
@@ -445,23 +469,47 @@ export function PlayerLoot({ state, myCharacterIds, requests, readOnly = false }
     await submitChoice(run.id, me.characterId, { action: 'relic', relicId }, null).finally(() => setSending(false))
   }
 
+  async function passRelic() {
+    if (!me || readOnly) return
+    setSending(true)
+    await submitChoice(run.id, me.characterId, { action: 'relicPass' }, null).finally(() => setSending(false))
+  }
+
   return (
     <>
       {run.vaultOpen && me && (
         <Panel tone="fuchsia" icon={<Gem size={15} />} title="Thils's Vault">
           <SceneBanner id="thils-vault" title="Thils's Vault" subtitle="Take one relic." />
           {me.vaultRelic ? (
-            <p className="m-0 text-sm text-emerald-300">You took {relicOf(me.vaultRelic).name}.</p>
+            <p className="m-0 text-sm text-emerald-300">
+              {me.vaultTradeIn?.length
+                ? `Took ${relicOf(me.vaultRelic).name}, trading in ${relicNames(me.vaultTradeIn)}.`
+                : `You took ${relicOf(me.vaultRelic).name}.`}
+            </p>
+          ) : me.vaultPassed ? (
+            <p className="m-0 text-sm text-purple-300">Passed for {passBasalts} Quantum Basalts.</p>
           ) : (
-            <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
-              {(me.vaultOffer ?? []).map((id) => (
-                <RelicCard key={id} id={id} partyLevel={run.partyLevel}>
-                  <button type="button" className={PRIMARY_BUTTON} disabled={readOnly || sending} onClick={() => takeRelic(id)}>
-                    Take this relic
+            <>
+              {mustTradeOrPass(me) && (
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="m-0 text-xs text-amber-200">
+                    Already owns {relicNames(heldRelics(me))}. Trade it in for one of these, or pass for {passBasalts} Quantum Basalts.
+                  </p>
+                  <button type="button" className={QUIET_BUTTON} disabled={readOnly || sending} onClick={passRelic}>
+                    Pass (+{passBasalts} Quantum Basalts)
                   </button>
-                </RelicCard>
-              ))}
-            </div>
+                </div>
+              )}
+              <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
+                {(me.vaultOffer ?? []).map((id) => (
+                  <RelicCard key={id} id={id} partyLevel={run.partyLevel}>
+                    <button type="button" className={PRIMARY_BUTTON} disabled={readOnly || sending} onClick={() => takeRelic(id)}>
+                      {mustTradeOrPass(me) ? 'Trade in for this' : 'Take this relic'}
+                    </button>
+                  </RelicCard>
+                ))}
+              </div>
+            </>
           )}
         </Panel>
       )}
