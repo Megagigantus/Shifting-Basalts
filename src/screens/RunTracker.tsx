@@ -1,8 +1,10 @@
 // DM screen: the run in progress. Every button runs one step from
 // rules/runFlow.ts or rules/draftFlow.ts, then saves the new state. While
 // open, it also applies players' draft choices sent from their devices.
+import { hasFullClear } from '../rules/upgrades'
 import { useEffect, useRef, useState } from 'react'
-import { Hourglass, Skull, Sparkles } from 'lucide-react'
+import { Compass, Hourglass, Skull, Sparkles } from 'lucide-react'
+import { lostAndFoundLeft, returnFromMaze, vanishNote, vanishTiming } from '../rules/lostAndFound'
 import type { Character } from '../model/character'
 import type { RoomKind, RunPlayer, RunResult, RunState } from '../model/run'
 import { floorInfo, LAST_FLOOR, PRESSURES, passQuantumBasalts } from '../rules/run'
@@ -340,6 +342,8 @@ interface CardProps {
 /** A player's card in the sidebar: rewards so far, boons, counters, slot recovery and the DM's buttons. */
 function PlayerCard({ player: p, character, sent, open, floor, canTrigger, busy, act, onToggle }: CardProps) {
   const portrait = character?.portrait ? artUrl('portraits', character.portrait) : null
+  const glow = character ? hasFullClear(character) : false
+  const vanishing = p.alive && !p.vanished ? vanishTiming(p) : null
   const classBoonId = p.draftProfile ? classHiddenBoon(p.draftProfile.classId) : null
   const classBoon = classBoonId ? hiddenBoon(classBoonId) : null
   const choosing = p.alive && (p.draft || p.hiddenOffer)
@@ -356,9 +360,9 @@ function PlayerCard({ player: p, character, sent, open, floor, canTrigger, busy,
     >
       <header className="flex items-start gap-3">
         {portrait ? (
-          <img src={portrait} alt="" className="h-11 w-11 shrink-0 rounded-full border border-stone-700 object-cover" />
+          <img src={portrait} alt="" className={cx('h-11 w-11 shrink-0 rounded-full border border-stone-700 object-cover', glow && 'full-clear-glow')} />
         ) : (
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-stone-700 bg-stone-800 font-mono text-xs font-bold text-stone-400">
+          <span className={cx(glow && 'full-clear-glow', 'flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-stone-700 bg-stone-800 font-mono text-xs font-bold text-stone-400')}>
             {initials(p.name)}
           </span>
         )}
@@ -368,6 +372,10 @@ function PlayerCard({ player: p, character, sent, open, floor, canTrigger, busy,
             {!p.alive ? (
               <Pill tone="rose" icon={<Skull size={11} />}>
                 Fallen
+              </Pill>
+            ) : p.vanished ? (
+              <Pill tone="amber" icon={<Compass size={11} />}>
+                In the maze
               </Pill>
             ) : (
               choosing && <Pill tone={sent && !sent.error ? 'emerald' : 'violet'}>{sent && !sent.error ? 'Sent a choice' : 'Choosing…'}</Pill>
@@ -410,6 +418,8 @@ function PlayerCard({ player: p, character, sent, open, floor, canTrigger, busy,
         </p>
       )}
 
+      {p.vanished && <p className="m-0 text-[0.6875rem] text-amber-200">{vanishNote(p.vanished)}</p>}
+
       {p.alive && (
         <div className="flex flex-wrap gap-1.5 border-t border-stone-800 pt-2.5">
           {(p.draft || p.hiddenOffer) && (
@@ -431,19 +441,34 @@ function PlayerCard({ player: p, character, sent, open, floor, canTrigger, busy,
             </ConfirmButton>
           )}
           <span className="ml-auto">
-            <ConfirmButton
-              disabled={busy}
-              confirmLabel={`Yes, ${p.name} died`}
-              onConfirm={() => act((s) => markDead(s, p.characterId))}
-            >
-              <Skull size={12} /> Died
-            </ConfirmButton>
+            {p.vanished ? (
+              <ConfirmButton
+                tone="amber"
+                disabled={busy}
+                confirmLabel={`Yes, ${p.name} is back`}
+                onConfirm={() => act((s) => returnFromMaze(s, p.characterId))}
+              >
+                <Compass size={12} /> Back in the room
+              </ConfirmButton>
+            ) : (
+              <ConfirmButton
+                disabled={busy}
+                confirmLabel={vanishing ? `Yes, ${p.name} vanishes` : `Yes, ${p.name} died`}
+                onConfirm={() => act((s) => markDead(s, p.characterId))}
+              >
+                <Skull size={12} /> Died
+              </ConfirmButton>
+            )}
           </span>
         </div>
       )}
-      {p.alive && (
+      {p.alive && !p.vanished && (
         <p className="m-0 text-[0.625rem] text-stone-500">
-          Died: expelled, loses this run's boss Basalts, locked out {floor}d4 days.
+          {vanishing
+            ? `Died: Lost and Found (${lostAndFoundLeft(p)} left this run). They vanish into the maze instead of being expelled and ${
+                vanishing === 'nextRoom' ? 'reappear at the start of the next room.' : 'return at the end of the round.'
+              }`
+            : `Died: expelled, loses this run's boss Basalts, locked out ${floor}d4 days.`}
         </p>
       )}
       {p.alive && classBoon && (

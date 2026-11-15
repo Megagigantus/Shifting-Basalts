@@ -12,13 +12,30 @@ import {
   quickReturnDays,
   shortenedLockout,
   UPGRADES,
+  upgradesFor,
+  lostAndFoundUses,
+  reclaimCost,
 } from './upgrades'
 
 const owner = (upgrades: Record<string, number>) => ({ upgrades })
 
 describe('the upgrade table', () => {
-  it('has all 13 upgrades from the bible', () => {
-    expect(UPGRADES).toHaveLength(13)
+  it('has all 13 upgrades from the bible, plus the 2 full-clear rewards', () => {
+    expect(UPGRADES).toHaveLength(15)
+    expect(UPGRADES.filter((u) => u.requiresFullClear).map((u) => u.id)).toEqual(['lost-and-found', 'reclamation-shrine'])
+  })
+
+  it('shows full-clear upgrades only after a survived full clear', () => {
+    expect(upgradesFor({}).some((u) => u.id === 'lost-and-found')).toBe(false)
+    expect(upgradesFor({ fullClears: 0 })).toHaveLength(13)
+    expect(upgradesFor({ fullClears: 1 })).toHaveLength(15)
+  })
+
+  it('prices Lost and Found uses and the Shrine', () => {
+    expect([0, 1, 2, 3].map(lostAndFoundUses)).toEqual([0, 1, 1, 2])
+    expect(reclaimCost(1, 1)).toBe(5)
+    expect(reclaimCost(4, 1)).toBe(20)
+    expect(reclaimCost(3, 2)).toBe(30)
   })
 
   it('prices ranks in order and stops at the max', () => {

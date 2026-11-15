@@ -1022,6 +1022,23 @@ Quantum Basalts are a rare resource awarded to each player on extraction. They a
 | Deep Pockets | 3 | 25, 50, 80 | +5% loot kept on extraction per rank, up to 100%. Party-wide: the highest rank in the party applies. | Proposed |
 | Quick Return | 3 | 10, 20, 30 | Shorten your death lockout by 1 day per rank, to a minimum of 1 day. | Proposed |
 
+### Full clear rewards *(proposed)*
+
+These only appear in the Basalt Markets once a character has survived a full clear: beaten the floor 5 legendary boss and extracted alive. A character with a full clear wears a light golden glow around their portrait and battle map token.
+
+| Upgrade | Ranks | Cost per rank | Effect | Origin |
+| --- | --- | --- | --- | --- |
+| Lost and Found | 3 | 30, 75, 150 | Personal. When you would be expelled, you vanish into the maze instead. Rank 1: once per run, you reappear at the start of the next room at half HP, with your boons intact. You miss the rest of that fight and its draft, Devotion and boss Basalts. If it happens in a boss room, you reappear in the post-boss room. Rank 2: you return at the end of the current round instead, somewhere in the room of the DM's choosing. Still once per run. Rank 3: twice per run; the second use always uses Rank 1 timing. | Brian |
+| Reclamation Shrine | 1 | 50 | Party fixture. Once anyone in the party owns it, a shrine appears in post-boss rooms beside the Forge and Healing Font. The party can reclaim any ally expelled on that floor by paying 5 × floor number × entry multiplier Quantum Basalts (5 on floor 1, 20 on floor 4 at tier 1). | Brian |
+
+- **Why Lost and Found works:** the Rank 1 delay keeps death painful. You survive, but the party finishes that fight a person down.
+- **Lost and Found and a wipe:** if every other player falls while someone is vanished (Rank 1 timing), nobody is left to finish the fight, so the vanished player is expelled too and the run wipes. A Rank 2 return counts as still in the fight.
+- **Reclamation cost:** paid from this run's unbanked boss Basalts (not passed Basalts, which are already safe), pledged by any living players on their own devices. The DM confirms the reclaim once pledges cover the cost.
+- **Reclaimed ally:** comes back with their boons, no lockout, and their forfeited run Basalts restored. They don't get the Devotion or Basalts of the boss they missed.
+- **Limit:** only allies lost on the current floor. Lost things don't stay findable for long.
+- **Owners:** the Shrine appears if anyone in the party owns it, fallen owners included.
+- **Pricing anchor:** Lost and Found Rank 1 is about two runs to floor 3, or half a tier 1 full clear; Rank 3 is about two full clears. These sit outside the roughly 1,000 Basalt base tree.
+
 ### Pacing *(proposed)*
 
 - **Typical run:** a tier 1 party extracting after floor 2 or 3 earns 13 to 25 Quantum Basalts each. A full clear earns 65, plus any passes.

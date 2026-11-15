@@ -1606,6 +1606,24 @@
   }
 }
 
+/* A character who survived a full clear: a light golden glow around their
+   portrait (FULL_CLEAR_GLOW in src/ui/styles.ts) and battle map token. */
+@layer components {
+  .full-clear-glow {
+    box-shadow: 0 0 0 2px rgb(250 204 21 / 0.75), 0 0 12px 3px rgb(245 158 11 / 0.45);
+  }
+
+  .map-player.is-glowing img,
+  .map-player.is-glowing .map-fallback {
+    box-shadow: 0 0 0 2px #facc15, 0 0 10px 3px rgb(250 204 21 / 0.6), 0 2px 4px rgb(0 0 0 / 0.6);
+  }
+
+  .map-player.is-glowing.is-mine img,
+  .map-player.is-glowing.is-mine .map-fallback {
+    box-shadow: 0 0 0 3px #facc15, 0 0 12px 5px rgb(250 204 21 / 0.6), 0 2px 4px rgb(0 0 0 / 0.6);
+  }
+}
+
 /* SMALL_BUTTON's default colors (src/ui/styles.ts). They sit in the
    components layer, below utilities, so a color class added next to
    SMALL_BUTTON (a toggle's "on" state, a tone) always wins. */

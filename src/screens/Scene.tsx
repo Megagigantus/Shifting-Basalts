@@ -8,6 +8,7 @@ import { artUrl } from '../art'
 import { LAST_FLOOR } from '../rules/run'
 import { healingFont } from '../rules/upgrades'
 import { lootKeptIfExtracting } from '../rules/runFlow'
+import { reclaimable, shrineCost, shrineHere } from '../rules/shrine'
 import { useLightbox } from '../ui/lightboxContext'
 import { cx, toneClasses, type Tone } from '../ui/tone'
 
@@ -57,6 +58,7 @@ export interface Card {
 const STATION_TONES: Record<string, Tone> = {
   forge: 'amber',
   'healing-font': 'emerald',
+  shrine: 'amber',
   descend: 'indigo',
   extract: 'sky',
   rest: 'emerald',
@@ -121,6 +123,17 @@ export function PostBossScene({ state, forDm = false }: { state: RunState; forDm
         font.tempHp > 0
           ? `Restores the party. With ${font.owners} owners, everyone also gains ${font.tempHp} temp HP.`
           : 'Restores the party between floors.',
+    })
+  }
+  if (shrineHere(state)) {
+    const lost = reclaimable(state).length
+    cards.push({
+      id: 'shrine',
+      title: 'The Reclamation Shrine',
+      text: lost
+        ? `Bring back ${lost === 1 ? 'the ally' : `any of the ${lost} allies`} lost on this floor for ${shrineCost(state)} Basalts each.`
+        : 'Nobody to reclaim on this floor.',
+      faded: lost === 0,
     })
   }
   if (!last) cards.push({ id: 'descend', title: 'Descend', text: `Go down to floor ${run.floor + 1}.` })

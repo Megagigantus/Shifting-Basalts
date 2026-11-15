@@ -1,5 +1,6 @@
 // The list of characters on the left of the Characters screens: portrait,
 // name, level and class, banked Quantum Basalts, and a lockout warning.
+import { hasFullClear } from '../rules/upgrades'
 import { buildOf, type Character } from '../model/character'
 import { buildSummary } from '../rules/build'
 import { Avatar } from './LookPicker'
@@ -27,7 +28,7 @@ export function Roster({ characters, selectedId, onSelect, title = 'Strider rost
             c.id === selectedId ? 'border-amber-500/50 bg-amber-500/15' : 'border-stone-800 bg-stone-900/80 hover:border-stone-700',
           )}
         >
-          <Avatar portrait={c.portrait} name={c.name} />
+          <Avatar portrait={c.portrait} name={c.name} glow={hasFullClear(c)} />
           <span className="flex min-w-0 flex-1 flex-col">
             <span className="flex items-center justify-between gap-2">
               <span className="truncate text-sm font-bold text-stone-100">{c.name}</span>

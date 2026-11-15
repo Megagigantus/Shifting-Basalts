@@ -8,7 +8,7 @@ import { buildOf, CASTER_TYPES, type Character } from '../model/character'
 import { buildSummary } from '../rules/build'
 import { proficiencyBonus } from '../rules/proficiency'
 import { effectAtRank, rankProgress, STAT_TRACKS } from '../rules/statTracks'
-import { UPGRADES } from '../rules/upgrades'
+import { hasFullClear, UPGRADES } from '../rules/upgrades'
 import { artUrl } from '../art'
 import { BuildPanel } from './BuildPanel'
 import { DraftPreferences } from './DraftPreferences'
@@ -71,10 +71,10 @@ export function CharacterHub({ character: c, mode, actions }: Props) {
               aria-label={`Enlarge ${c.name}'s portrait`}
               className="cursor-pointer rounded-full border-0 bg-transparent p-0"
             >
-              <Avatar portrait={c.portrait} name={c.name} size="h-20 w-20" />
+              <Avatar portrait={c.portrait} name={c.name} size="h-20 w-20" glow={hasFullClear(c)} />
             </button>
           ) : (
-            <Avatar portrait={c.portrait} name={c.name} size="h-20 w-20" />
+            <Avatar portrait={c.portrait} name={c.name} size="h-20 w-20" glow={hasFullClear(c)} />
           )}
           <div className="flex min-w-0 flex-1 flex-col gap-1.5">
             <div className="flex flex-wrap items-center gap-2">

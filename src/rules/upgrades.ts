@@ -11,6 +11,8 @@ export interface Upgrade {
   effect: string
   scope: UpgradeScope
   status: string
+  /** Only shows in the Basalt Markets (and can only be bought) after a survived full clear. */
+  requiresFullClear?: boolean
 }
 
 export const UPGRADES = data.upgrades as Upgrade[]
@@ -72,9 +74,31 @@ export function shortenedLockout(rolledDays: number, reduction: number): number 
   return Math.max(data.minimumLockoutDays, rolledDays - reduction)
 }
 
-/** Total Quantum Basalts to buy every rank of every upgrade (the bible says about 1,000). */
-export function costOfEverything(): number {
-  return UPGRADES.reduce((sum, u) => sum + u.costs.reduce((a, b) => a + b, 0), 0)
+/** True once a character has survived a full clear (the golden glow; unlocks full-clear upgrades). */
+export const hasFullClear = (c: { fullClears?: number }) => (c.fullClears ?? 0) > 0
+
+/** Upgrades a character can see in the Basalt Markets: full-clear ones only after a full clear. */
+export function upgradesFor(c: { fullClears?: number }): Upgrade[] {
+  return UPGRADES.filter((u) => !u.requiresFullClear || hasFullClear(c))
+}
+
+/**
+ * Total Quantum Basalts to buy every rank of every upgrade. The base tree
+ * (the bible says about 1,000) leaves out the full-clear upgrades.
+ */
+export function costOfEverything(includeFullClear = false): number {
+  return UPGRADES.filter((u) => includeFullClear || !u.requiresFullClear).reduce((sum, u) => sum + u.costs.reduce((a, b) => a + b, 0), 0)
+}
+
+/** Lost and Found uses per run at a rank (0 without it). */
+export function lostAndFoundUses(rank: number): number {
+  const uses = data.lostAndFoundUsesPerRun
+  return rank > 0 ? uses[Math.min(rank, uses.length) - 1] : 0
+}
+
+/** Reclamation Shrine price to bring back one ally: 5 × floor × entry multiplier. */
+export function reclaimCost(floor: number, entryMultiplier: number): number {
+  return data.reclaimCostPerFloor * floor * entryMultiplier
 }
 
 /**

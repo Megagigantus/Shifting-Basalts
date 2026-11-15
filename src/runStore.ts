@@ -27,6 +27,7 @@ import { spendHiddenSight } from './rules/roomFlow'
 import { runResults } from './rules/runFlow'
 import { applyChoice, draftKey, isDraftChoice, type DraftChoice } from './rules/draftChoice'
 import type { ExitVote, ExitVoteDoc } from './rules/votes'
+import { reclaim, type Pledge } from './rules/shrine'
 
 /**
  * Live view of the run currently in progress, if any. Only the DM's screen
@@ -147,6 +148,7 @@ export async function saveRunState(
         bankedQuantumBasalts: increment(r.quantumBasaltsGained),
         bankedDevotions: increment(r.devotions),
         deepestFloor: Math.max(character?.deepestFloor ?? 0, r.deepestFloor),
+        ...(r.fullClear ? { fullClears: increment(1) } : {}),
         ...(r.lockoutDays !== null ? { lockoutDays: r.lockoutDays } : {}),
         ...(r.loot.length ? { loot: arrayUnion(...r.loot.map((item) => ({ ...item, runId: id }))) } : {}),
         activeRunId: null,
@@ -324,6 +326,7 @@ export async function cancelRun(state: RunState): Promise<void> {
     batch.delete(doc(db, 'runs', state.run.id, 'requests', player.characterId))
     batch.delete(doc(db, 'runs', state.run.id, 'tokens', player.characterId))
     batch.delete(doc(db, 'runs', state.run.id, 'votes', player.characterId))
+    batch.delete(doc(db, 'runs', state.run.id, 'pledges', player.characterId))
     batch.delete(doc(db, 'runs', state.run.id, 'private', player.characterId))
     batch.update(doc(db, 'characters', player.characterId), { activeRunId: null, updatedAt: serverTimestamp() })
   }
@@ -408,6 +411,54 @@ export function useExitVotes(runId: string | null): Record<string, ExitVoteDoc> 
     })
   }, [runId])
   return loaded && loaded.runId === runId ? loaded.votes : {}
+}
+
+// ---------------------------------------------------------------------------
+// Reclamation Shrine pledges: runs/{runId}/pledges/{characterId} holds the
+// Basalts a player offers toward bringing back one fallen ally. The DM's app
+// checks them against the rules (rules/shrine.ts) when the DM reclaims.
+
+/** A player pledges Basalts toward reclaiming an ally (amount 0 withdraws). */
+export async function setPledge(runId: string, characterId: string, pledge: Pledge) {
+  if (!db) throw new Error('Firebase is not set up.')
+  const ref = doc(db, 'runs', runId, 'pledges', characterId)
+  if (pledge.amount <= 0) await deleteDoc(ref)
+  else await setDoc(ref, { ...pledge, updatedAt: serverTimestamp() })
+}
+
+/** Live map of characterId -> Shrine pledge for a run. */
+export function usePledges(runId: string | null): Record<string, Pledge> {
+  const [loaded, setLoaded] = useState<{ runId: string; pledges: Record<string, Pledge> } | null>(null)
+  useEffect(() => {
+    if (!db || !runId) return
+    return onSnapshot(collection(db, 'runs', runId, 'pledges'), (snapshot) => {
+      const pledges: Record<string, Pledge> = {}
+      for (const d of snapshot.docs) {
+        const data = d.data()
+        pledges[d.id] = { targetId: data.targetId as string, amount: data.amount as number, floor: data.floor as number }
+      }
+      setLoaded({ runId, pledges })
+    })
+  }, [runId])
+  return loaded && loaded.runId === runId ? loaded.pledges : {}
+}
+
+/**
+ * DM's app: bring an ally back at the Shrine. Saves the revived ally and each
+ * payer, and deletes every pledge toward that ally, in one batch.
+ */
+export async function reclaimAlly(state: RunState, targetId: string, pledges: Record<string, Pledge>): Promise<void> {
+  if (!db) throw new Error('Firebase is not set up.')
+  const { state: next } = reclaim(state, targetId, pledges)
+  const batch = writeBatch(db)
+  for (const player of next.players) {
+    const before = state.players.find((p) => p.characterId === player.characterId)
+    if (!same(before, player)) batch.set(doc(db, 'runs', state.run.id, 'players', player.characterId), player)
+  }
+  for (const [characterId, pledge] of Object.entries(pledges)) {
+    if (pledge.targetId === targetId) batch.delete(doc(db, 'runs', state.run.id, 'pledges', characterId))
+  }
+  await batch.commit()
 }
 
 /** Live map of characterId -> requested item uids for a run. */

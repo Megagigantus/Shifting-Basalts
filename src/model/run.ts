@@ -101,6 +101,15 @@ export interface RunPlayer {
   extraLootBonusPercent?: number
   /** Days this player's Quick Return takes off a death lockout. */
   quickReturnDays?: number
+  /** Lost and Found rank (captured at run start) and uses spent this run (rules/lostAndFound.ts). */
+  lostAndFoundRank?: number
+  lostAndFoundUsed?: number
+  /**
+   * Vanished into the maze instead of being expelled: "nextRoom" misses the
+   * rest of the fight and reappears in the next room; "endOfRound" returns
+   * when the DM says. Null or missing when present.
+   */
+  vanished?: 'nextRoom' | 'endOfRound' | null
   /** Boon slots (3 plus Extra Boon Slot ranks). Boons reset every run. */
   slots?: Slot[]
   /** The hidden boon slot: a class hidden boon or one of Thils's gifts. */
@@ -142,6 +151,8 @@ export interface RunPlayer {
   counters?: Record<string, number>
   /** Owns the Healing Font upgrade (each owner beyond the first adds temp HP). */
   healingFontOwner?: boolean
+  /** Owns the Reclamation Shrine (it stands in post-boss rooms if anyone does; rules/shrine.ts). */
+  shrineOwner?: boolean
   /** Relics this character already owns (captured at run start; never offered again). */
   relicsOwned?: string[]
   /** Thils's Vault: the relics offered, until the player takes one. */
@@ -179,6 +190,8 @@ export interface RunResult {
   devotions: number
   deepestFloor: number
   lockoutDays: number | null
+  /** Beat the legendary boss and extracted alive (counts toward the character's full clears). */
+  fullClear?: boolean
   /** Items assigned to this character at extraction, plus a Vault relic on a full clear. */
   loot: LootItem[]
 }
