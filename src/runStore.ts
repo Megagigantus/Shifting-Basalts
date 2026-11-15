@@ -132,6 +132,8 @@ export async function saveRunState(
   if (previous === null && next.run.status === 'active') {
     for (const characterId of next.run.characterIds) {
       batch.update(doc(db, 'characters', characterId), { activeRunId: id, updatedAt: serverTimestamp() })
+      // Their Pressure wishes were for this run; clear them for the next one.
+      batch.delete(doc(db, 'pressureWishes', characterId))
     }
   }
 

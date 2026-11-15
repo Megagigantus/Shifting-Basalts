@@ -9,6 +9,7 @@ import { CharacterHub } from './CharacterHub'
 import { Roster } from './Roster'
 import { RunHistory } from './RunHistory'
 import { RunEntryVideo } from './RunEntryVideo'
+import { PressureWishes } from './PressureWishes'
 import { Panel } from '../ui/Panel'
 
 interface Props {
@@ -53,7 +54,10 @@ export function PlayerHome({ email, readOnly = false }: Props) {
               </div>
             )}
             <div className={mine.length > 1 ? 'min-w-0 lg:col-span-9' : 'min-w-0 lg:col-span-12'}>
-              <CharacterHub key={current.id} character={current} mode={readOnly ? 'preview' : 'player'} />
+              <div className="flex flex-col gap-4">
+                <PressureWishes key={`wish-${current.id}`} character={current} everyone={characters ?? []} readOnly={readOnly} />
+                <CharacterHub key={current.id} character={current} mode={readOnly ? 'preview' : 'player'} />
+              </div>
             </div>
           </div>
         )}

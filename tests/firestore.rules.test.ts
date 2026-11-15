@@ -256,6 +256,21 @@ describe('player spending Devotions', () => {
   })
 })
 
+describe('Pressure wishes', () => {
+  beforeEach(() => seedCharacters())
+
+  it('a player sets wishes for their own character only; everyone invited can read them', async () => {
+    const ref = doc(as(PLAYER), 'pressureWishes', OWNED)
+    await assertSucceeds(setDoc(ref, { pressures: ['brittle-ground', 'narrow-seam'], updatedAt: now() }))
+    await assertSucceeds(getDoc(doc(as(DM), 'pressureWishes', OWNED)))
+    await assertFails(setDoc(doc(as(PLAYER), 'pressureWishes', OTHERS), { pressures: ['narrow-seam'], updatedAt: now() }))
+    await assertFails(setDoc(ref, { pressures: 'narrow-seam', updatedAt: now() }))
+    await assertFails(setDoc(ref, { pressures: [], weight: 3, updatedAt: now() }))
+    await assertFails(setDoc(ref, { pressures: [], updatedAt: new Date(0) }))
+    await assertFails(getDoc(doc(as(STRANGER), 'pressureWishes', OWNED)))
+  })
+})
+
 describe('player buying upgrades', () => {
   beforeEach(() => seedCharacters())
   const owned = () => doc(as(PLAYER), 'characters', OWNED)

@@ -260,6 +260,22 @@ service cloud.firestore {
           && (isDevotionSpend() || isUpgradePurchase() || isBanishEdit() || isAttunementEdit() || isLookEdit() || isBuildEdit()));
     }
 
+    // A player's Pressure wishes for their character's next run. Everyone
+    // invited can see them; only that character's player writes them, as a
+    // short list of ids. The DM chooses the Pressures with the wishes in view.
+    match /pressureWishes/{characterId} {
+      allow read: if isInvited();
+      allow write: if isDM();
+      allow create, update: if isInvited()
+        && get(/databases/$(database)/documents/characters/$(characterId)).data.get('playerEmail', '') == myEmail()
+        && request.resource.data.keys().hasOnly(['pressures', 'updatedAt'])
+        && request.resource.data.pressures is list
+        && request.resource.data.pressures.size() <= 20
+        && request.resource.data.updatedAt == request.time;
+      allow delete: if isInvited()
+        && get(/databases/$(database)/documents/characters/$(characterId)).data.get('playerEmail', '') == myEmail();
+    }
+
     match /runs/{runId} {
       allow read: if isInvited();
       allow write: if isDM();
