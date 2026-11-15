@@ -70,11 +70,6 @@ service cloud.firestore {
       return ['lost-and-found', 'reclamation-shrine'];
     }
 
-    // Stat track ids (from src/data/stat-tracks.json).
-    function statTrackIds() {
-      return ['max-hp', 'spell-slot-recovery', 'opening-temp-hp', 'flat-damage', 'healing-received', 'speed', 'fortune-dice'];
-    }
-
     // Most Devotions one track may hold at a character level (tier caps).
     function devotionCap(level) {
       return level < 5 ? 0 : level <= 10 ? 15 : level <= 16 ? 40 : level <= 20 ? 120 : 0;

@@ -1,5 +1,5 @@
 // Builds the section of firestore.rules that mirrors game data (upgrade
-// prices, stat track ids and Devotion caps), so the database can re-check
+// prices, stat track spends and Devotion caps), so the database can re-check
 // player spends. Firestore rules can't read our JSON files, so this copies the
 // numbers in. Run `npm run sync-rules` after editing upgrades.json or
 // stat-tracks.json; `npm run check-data` fails if the rules are out of date.
@@ -33,7 +33,6 @@ export function generatedBlock(): string {
   cap = `level < ${sorted[0].minLevel} ? 0 : ${cap}`
 
   const prices = upgrades.map((u) => `'${u.id}': [${u.costs.join(', ')}]`).join(',\n        ')
-  const trackIds = tracks.map((t) => `'${t.id}'`).join(', ')
 
   return [
     BEGIN,
@@ -47,11 +46,6 @@ export function generatedBlock(): string {
     '    // Upgrades only a character with a survived full clear may buy.',
     '    function fullClearUpgrades() {',
     `      return [${upgrades.filter((u) => u.requiresFullClear).map((u) => `'${u.id}'`).join(', ')}];`,
-    '    }',
-    '',
-    '    // Stat track ids (from src/data/stat-tracks.json).',
-    '    function statTrackIds() {',
-    `      return [${trackIds}];`,
     '    }',
     '',
     '    // Most Devotions one track may hold at a character level (tier caps).',
