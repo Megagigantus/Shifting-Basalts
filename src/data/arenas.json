@@ -929,7 +929,11 @@
             "h": 2
           }
         ],
-        "note": "was over the void and moved to the nearest island"
+        "note": "was over the void and moved to the nearest island",
+        "suppressBoons": {
+          "count": 1,
+          "note": "suppressed until they cross to a different island"
+        }
       },
       "notes": "Reliquary hovers 20 ft over the centre. Slot Scramble splits the floor into the 4 quadrant islands along the painted cracks; one plinth per island."
     },
