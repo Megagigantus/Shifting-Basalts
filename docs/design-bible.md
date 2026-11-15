@@ -601,13 +601,13 @@ A Quantum Basalt sells for 1,000 credits, and a portable personal stepgate costs
 | Boss cache (every boss, floor 5 included) | 2 floor rolls, 1 item one rarity above the floor's, and the boss's trophy on a d6 roll of 6. |
 | Full clear | Thils's Vault: every player drafts one relic, on top of the floor 5 boss cache. |
 
-- **Shared pool:** everything but Quantum Basalts goes into the party's run loot. On extraction the party keeps its loot share by credit value and chooses which items make up that share.
+- **Shared pool:** everything but Quantum Basalts goes into the party's run loot, and nothing in it can be used until extraction. That's the gamble every post-boss room asks: bank what's been found, or push deeper and risk it all. On extraction the party keeps its loot share by credit value and chooses which items make up that share.
 - **Trophies are free:** boss trophies always extract and never count against the loot share. They don't add to the value the share is cut from, and they don't use any of it.
 - **Basalts in loot:** every player receives the amount rolled, banked like boss Basalts: forfeit on death, never cut by the loot share.
 - **Bonuses:** Pressures multiply credits and Basalts, Extra Loot multiplies its owner's Basalts, and every full 50% of bonus also adds 1 roll to each boss cache. Collector's Eye and Deep Pockets still raise the share kept.
 - **Entry tier:** the ×2 and ×4 multipliers apply to credits and Basalts. For items, entry tier raises rarity instead (see the next table).
 - **Item numbers:** PB in an item means its user's proficiency bonus, and item save DCs are 10 + PB, so every table here works from level 5 to 20.
-- **Item uses inside:** the party can't rest in the Basalts, so per-day item uses recharge after each boss.
+- **Item uses inside:** items carried in from earlier runs recharge their per-day uses after each boss, since the party can't rest in the Basalts.
 
 ### Floor loot roll (d100)
 
@@ -683,22 +683,172 @@ Each is used up when used. Several mirror room tricks the party has learned to b
 
 ### Gear (d12)
 
-Weapons and armor with one small property. Rarity sets the bonus: common has the property only, uncommon +1, rare +2, very rare +3, and legendary +3 with a second property rolled from this table.
+Weapons and armor with one small property. Rarity sets the bonus: common has the property only, uncommon +1, rare +2, very rare +3, and legendary +3 with a second property rolled from this table. Each row rolls its exact base, or the DM picks one that suits someone in the party, and the drop shows as an item card with full stats (see Gear item cards).
 
-| d12 | Item | Base | Property |
+| d12 | Item | Base (roll) | Property |
 | --- | --- | --- | --- |
-| 1 | Lodge hunting blade | Dagger, shortsword or scimitar | Your first hit against a creature that hasn't acted yet this combat deals +1d6 damage. |
-| 2 | Columnbreaker | Any hammer or maul | Double damage to objects and structures. Hitting a column or pillar can topple it onto a creature within 10 ft: Dexterity save or PB d6 bludgeoning damage and Prone. |
-| 3 | Ricochet sling | Sling or any thrown weapon | Once per turn, when you miss, the shot bounces: attack another creature within 10 ft of the first. |
+| 1 | Lodge hunting blade | d3: 1 dagger, 2 shortsword, 3 scimitar | Your first hit against a creature that hasn't acted yet this combat deals +1d6 damage. |
+| 2 | Columnbreaker | d3: 1 light hammer, 2 warhammer, 3 maul | Double damage to objects and structures. Hitting a column or pillar can topple it onto a creature within 10 ft: Dexterity save or PB d6 bludgeoning damage and Prone. |
+| 3 | Ricochet sling | d8: 1 sling, 2 dagger, 3 dart, 4 handaxe, 5 javelin, 6 light hammer, 7 spear, 8 trident | Once per turn, when you miss, the shot bounces: attack another creature within 10 ft of the first. |
 | 4 | Cable-lash | Whip | Reach 15 ft. As a Bonus Action, swing on it up to 15 ft to a column, cable or ledge you can see. |
-| 5 | Hymn-tuned glaive | Any polearm | On a hit, the weapon hums: the next ally to attack that target before your next turn adds 1d4 to the roll. |
-| 6 | Gate-glass edge | Any blade | Deals force damage instead of its normal type when you choose. When drawn, its light shows a meadow. |
-| 7 | Wardstone plate | Any heavy armor | When an effect would push, pull or knock you Prone, you can use your Reaction to stay put. |
-| 8 | Surveyor's coat | Any light armor | Advantage on checks to spot traps, room tricks and false walls. |
-| 9 | Echo-stitched leathers | Light or medium armor | When an attack misses you, you can use your Reaction to move 5 ft without provoking Opportunity Attacks. |
+| 5 | Hymn-tuned polearm | d4: 1 glaive, 2 halberd, 3 pike, 4 spear | On a hit, the weapon hums: the next ally to attack that target before your next turn adds 1d4 to the roll. |
+| 6 | Gate-glass edge | d6: 1 dagger, 2 shortsword, 3 scimitar, 4 rapier, 5 longsword, 6 greatsword | Deals force damage instead of its normal type when you choose. When drawn, its light shows a meadow. |
+| 7 | Wardstone mail | d4: 1 ring mail, 2 chain mail, 3 splint, 4 plate | When an effect would push, pull or knock you Prone, you can use your Reaction to stay put. |
+| 8 | Surveyor's coat | d3: 1 padded, 2 leather, 3 studded leather | Advantage on checks to spot traps, room tricks and false walls. |
+| 9 | Echo-stitched leathers | d3: 1 leather, 2 studded leather, 3 hide | When an attack misses you, you can use your Reaction to move 5 ft without provoking Opportunity Attacks. |
 | 10 | Choir shield | Shield | When you take the Dodge action, allies within 5 ft of you have half cover. |
 | 11 | Lodestone shield | Shield | You ignore magnetic pulls like the Magnetic Floor. Once per day, as an action, pull a metal weapon from a creature within 10 ft (Strength save or it lands at your feet). |
-| 12 | Meadowlight breastplate | Any medium armor | While Bloodied, you shed golden light in a 10 ft radius and have advantage on Death Saving Throws. |
+| 12 | Meadowlight breastplate | Breastplate | While Bloodied, you shed golden light in a 10 ft radius and have advantage on Death Saving Throws. |
+
+### Who gear drops for
+
+Gear only drops in forms someone in the run can use. Each gear roll is aimed at one character, and the party still decides at extraction who takes it.
+
+- **Aim:** each gear roll picks a character in the run at random, fallen ones included, since kept loot can still go to them.
+- **Usable only:** the row and base are rolled from what that character is trained in: weapon training must cover the base's category, armor training its type. Rows with no usable base are skipped. Without the app, reroll anything they can't use.
+- **Mastery weighting:** bases the character has Weapon Mastery with weigh ×2.
+- **Card tag:** the card names who it was rolled for and flags anyone in the run who isn't trained for it.
+- **DM override:** the DM can still pick the base, or aim the roll at a different character.
+- **Training:** class defaults below prefill the profile. Multiclass, subclass and other grants are added in Character setup, and the DM confirms them at run setup.
+
+| Class | Weapon training | Armor training |
+| --- | --- | --- |
+| Barbarian | Simple, martial | Light, medium, shields |
+| Bard | Simple | Light |
+| Cleric | Simple | Light, medium, shields |
+| Druid | Simple | Light, shields |
+| Fighter | Simple, martial | Light, medium, heavy, shields |
+| Monk | Simple, martial with Light | None |
+| Paladin | Simple, martial | Light, medium, heavy, shields |
+| Ranger | Simple, martial | Light, medium, shields |
+| Rogue | Simple, martial with Finesse or Light | Light |
+| Sorcerer | Simple | None |
+| Warlock | Simple | Light |
+| Wizard | Simple | None |
+
+Common additions: Protector clerics gain martial weapons and heavy armor, and Warden druids gain martial weapons and medium armor.
+
+### Gear item cards
+
+Every gear drop shows as a card with its full stats, bonus already applied, so players can weigh it against what they carry before the party picks its loot share. Cards are named Item (base) +bonus.
+
+- **Fields:** name, rarity, value in credits, attunement, type, the base's stats with the bonus applied, the property, and weight.
+- **Value:** rarity value plus the base item's cost, so magic plate is worth more than magic leather.
+- **Attunement:** gear never needs it, except legendary gear.
+- **Mastery:** the card shows the base's mastery, flagged as usable only by characters with Weapon Mastery for that weapon.
+- **Comparison** *(proposed)*: if a player's profile records their AC and main weapon, the card also shows the change, such as AC 16 to 19.
+
+**Example: weapon card**
+
+| Field | Columnbreaker (warhammer) +1 |
+| --- | --- |
+| Rarity and value | Uncommon, 415 credits |
+| Attunement | No |
+| Type | Martial melee weapon |
+| Attack and damage | +1 to attack rolls; 1d8 + 1 bludgeoning, or 1d10 + 1 two-handed |
+| Properties | Versatile (1d10) |
+| Mastery | Push |
+| Property | Double damage to objects and structures. Hitting a column or pillar can topple it onto a creature within 10 ft: Dexterity save or PB d6 bludgeoning damage and Prone. |
+| Weight | 5 lb |
+
+**Example: armor card**
+
+| Field | Wardstone mail (splint) +2 |
+| --- | --- |
+| Rarity and value | Rare, 4,200 credits |
+| Attunement | No |
+| Type | Heavy armor |
+| AC | 19 (17 + 2) |
+| Strength | 15, or speed drops by 10 ft |
+| Stealth | Disadvantage |
+| Property | When an effect would push, pull or knock you Prone, you can use your Reaction to stay put. |
+| Weight | 60 lb |
+
+**Relic cards**
+
+A relic built on a weapon or armor uses the same card, with three fields changed. Relics without a base (gauntlets, rings, wraps and the like) use a short wondrous card: name, state, attunement and effect.
+
+- **Value:** None, can't be sold.
+- **Attunement:** Required.
+- **State:** the card shows Dormant or Woken, with the bonus and stats for that state, and updates when the relic wakes.
+
+**Example: relic card (Dormant)**
+
+| Field | The Sword of Apotheos (longsword) +2 |
+| --- | --- |
+| Rarity and value | Relic, Dormant (very rare strength); none, can't be sold |
+| Attunement | Required |
+| Type | Martial melee weapon |
+| Attack and damage | +2 to attack rolls; 1d8 + 2 slashing, or 1d10 + 2 two-handed |
+| Properties | Versatile (1d10) |
+| Mastery | Sap |
+| Property | When an ally within 30 ft drops to 0 HP, your next hit before the end of your next turn deals +PB d8 radiant damage. |
+| When Woken | Becomes +3 (1d8 + 3, or 1d10 + 3 two-handed). Once per day, become Apotheos for 1 minute: you're Large, have resistance to all damage, and your hits deal +PB d6 radiant damage. |
+| Weight | 3 lb |
+
+### Base weapons
+
+The 2024 Player's Handbook stats for every base the gear table can roll. Costs are in gp, and 1 gp = 1 credit.
+
+| Weapon | Category | Damage | Properties | Mastery | Weight | Cost |
+| --- | --- | --- | --- | --- | --- | --- |
+| Dagger | Simple melee | 1d4 piercing | Finesse, Light, Thrown (20/60) | Nick | 1 lb | 2 gp |
+| Dart | Simple ranged | 1d4 piercing | Finesse, Thrown (20/60) | Vex | 1/4 lb | 5 cp |
+| Handaxe | Simple melee | 1d6 slashing | Light, Thrown (20/60) | Vex | 2 lb | 5 gp |
+| Javelin | Simple melee | 1d6 piercing | Thrown (30/120) | Slow | 2 lb | 5 sp |
+| Light hammer | Simple melee | 1d4 bludgeoning | Light, Thrown (20/60) | Nick | 2 lb | 2 gp |
+| Sling | Simple ranged | 1d4 bludgeoning | Ammunition (30/120, bullet) | Slow | None | 1 sp |
+| Spear | Simple melee | 1d6 piercing | Thrown (20/60), Versatile (1d8) | Sap | 3 lb | 1 gp |
+| Glaive | Martial melee | 1d10 slashing | Heavy, Reach, Two-Handed | Graze | 6 lb | 20 gp |
+| Greatsword | Martial melee | 2d6 slashing | Heavy, Two-Handed | Graze | 6 lb | 50 gp |
+| Halberd | Martial melee | 1d10 slashing | Heavy, Reach, Two-Handed | Cleave | 6 lb | 20 gp |
+| Longsword | Martial melee | 1d8 slashing | Versatile (1d10) | Sap | 3 lb | 15 gp |
+| Maul | Martial melee | 2d6 bludgeoning | Heavy, Two-Handed | Topple | 10 lb | 10 gp |
+| Pike | Martial melee | 1d10 piercing | Heavy, Reach, Two-Handed | Push | 18 lb | 5 gp |
+| Rapier | Martial melee | 1d8 piercing | Finesse | Vex | 2 lb | 25 gp |
+| Scimitar | Martial melee | 1d6 slashing | Finesse, Light | Nick | 3 lb | 25 gp |
+| Shortsword | Martial melee | 1d6 piercing | Finesse, Light | Vex | 2 lb | 10 gp |
+| Trident | Martial melee | 1d8 piercing | Thrown (20/60), Versatile (1d10) | Topple | 4 lb | 5 gp |
+| Warhammer | Martial melee | 1d8 bludgeoning | Versatile (1d10) | Push | 5 lb | 15 gp |
+| Whip | Martial melee | 1d4 slashing | Finesse, Reach | Slow | 3 lb | 2 gp |
+
+A magic bonus adds to both attack and damage rolls. A magic sling's bonus applies to the sling, not its bullets.
+
+### Base armor
+
+The 2024 Player's Handbook stats for every base the gear table can roll. A magic bonus adds to AC.
+
+| Armor | Type | AC | Strength | Stealth | Weight | Cost |
+| --- | --- | --- | --- | --- | --- | --- |
+| Padded | Light | 11 + Dex | None | Disadvantage | 8 lb | 5 gp |
+| Leather | Light | 11 + Dex | None | Normal | 10 lb | 10 gp |
+| Studded leather | Light | 12 + Dex | None | Normal | 13 lb | 45 gp |
+| Hide | Medium | 12 + Dex (max 2) | None | Normal | 12 lb | 10 gp |
+| Breastplate | Medium | 14 + Dex (max 2) | None | Normal | 20 lb | 400 gp |
+| Ring mail | Heavy | 14 | None | Disadvantage | 40 lb | 30 gp |
+| Chain mail | Heavy | 16 | 13 | Disadvantage | 55 lb | 75 gp |
+| Splint | Heavy | 17 | 15 | Disadvantage | 60 lb | 200 gp |
+| Plate | Heavy | 18 | 15 | Disadvantage | 65 lb | 1,500 gp |
+| Shield | Shield | +2 | None | Normal | 6 lb | 10 gp |
+
+- **Strength:** wearing heavy armor below its Strength score cuts speed by 10 ft.
+- **Training:** a character without training in the armor's type has disadvantage on Strength and Dexterity checks and attacks and can't cast spells, so cards flag anyone in the run who isn't trained for the armor.
+- **Swapping:** donning takes 1 minute for light, 5 for medium and 10 for heavy armor; a shield takes the Utilize action.
+
+### Weapon mastery key
+
+The 2024 masteries the bases carry, for players weighing a weapon they'd have mastery with.
+
+| Mastery | On the card it means |
+| --- | --- |
+| Cleave | Once per turn, after a melee hit, attack a second creature within 5 ft of the first; that hit adds no ability modifier to damage. |
+| Graze | On a miss, the target still takes damage equal to your attack's ability modifier. |
+| Nick | The Light weapon's extra attack becomes part of the Attack action instead of a Bonus Action, once per turn. |
+| Push | On a hit, push a Large or smaller creature up to 10 ft straight away from you. |
+| Sap | On a hit, the creature has disadvantage on its next attack roll before your next turn. |
+| Slow | On a hit that deals damage, the creature's speed drops by 10 ft until your next turn. |
+| Topple | On a hit, the creature makes a Constitution save (DC 8 + your ability modifier + PB) or falls Prone. |
+| Vex | On a hit that deals damage, you have advantage on your next attack against it before the end of your next turn. |
 
 ### Wondrous items
 
@@ -1223,14 +1373,64 @@ The DM hosts the run; players join on their own devices with a lighter view.
 
 ### Characters
 
-- **Lean profile, not a full sheet:** characters level up through story between runs, so a saved full sheet would go stale. The app keeps only what it needs to run the dungeon, and each player confirms it at run setup: name, class and subclass, level (which sets PB), caster type (none, half, full or Pact Magic) with available slot levels, whether they have a summon or companion, and their main attack style (melee, ranged or spells).
+- **Lean profile, not a full sheet:** characters level up through story between runs, so a saved full sheet would go stale. The app keeps only what it needs to run the dungeon, and each player confirms it at run setup: name, class and subclass (plus a second class and subclass for a multiclass), level (total level sets PB), caster type (none, half, full or Pact Magic) with available slot levels, whether they have a summon or companion, their main attack style (melee, ranged or spells), and their weapon and armor training and Weapon Mastery picks (see Character setup).
 - **Why those fields:** they set boon offer eligibility, class hidden boon triggers, every PB-based boon number, and spell slot recovery.
 - **Modifiers, not totals:** the app shows what the dungeon adds, like +10 max HP or +20 ft speed, and players apply it to their own sheets. It never tries to track their full stats.
 - **The dungeon layer:** boon slots, boon levels, evolutions and combinations; the hidden boon and any suppressed boons; stat track ranks and banked Devotions; upgrades and ranks; Quantum Basalts (banked, earned this run and passed); loot assigned to them; lockout timer; deepest floor reached; and run history.
 
+### Character setup *(proposed)*
+
+How players fill in the profile's class, subclass, training and mastery fields. Players set them on their own device, and the DM confirms at run setup.
+
+- **Classes:** a primary class and its level, plus an optional second class and its level for a multiclass. Total level sets PB and counts toward party level.
+- **Subclasses:** each class unlocks a subclass pick at level 3 in that class, from the 2024 list below or a custom entry for other books, homebrew or off-world characters.
+- **Class choices:** level 1 picks that change training are chosen with the class: Cleric Divine Order (Protector adds martial weapons and heavy armor) and Druid Primal Order (Warden adds martial weapons and medium armor).
+- **Training:** prefilled. The primary class gives its full training (see Who gear drops for), and a second class adds only its multiclass training (below). Subclass and class-choice grants tick themselves, such as College of Valor adding martial weapons, medium armor and shields. Players tick anything else a feat, species or off-world origin grants: martial weapons, specific weapons, light, medium or heavy armor, and shields.
+- **Weapon Mastery:** a class with Weapon Mastery shows its number of picks, filled from weapons the character is trained in. With two mastery classes, use the higher count. Picks lock at run setup and can change between runs.
+- **Custom classes:** off-world characters can use a custom class with training and mastery set by hand.
+- **Homebrew class:** picking Homebrew as the class lets the player set training and mastery by hand and choose their own boon tags: up to 3 primary (×3) and up to 3 secondary (×2), instead of a class map. A homebrew class has no class hidden boon.
+- **Review at run setup:** the lobby shows each character's build for the DM to read. Nothing needs a tick to enter.
+
+**Subclasses and Weapon Mastery (2024)**
+
+| Class | Subclasses (level 3) | Weapon Mastery picks |
+| --- | --- | --- |
+| Barbarian | Berserker, Wild Heart, World Tree, Zealot | 2; 3 at level 4, 4 at level 10 |
+| Bard | Dance, Glamour, Lore, Valor | None |
+| Cleric | Life, Light, Trickery, War | None |
+| Druid | Land, Moon, Sea, Stars | None |
+| Fighter | Battle Master, Champion, Eldritch Knight, Psi Warrior | 3; 4 at level 4, 5 at level 10, 6 at level 16 |
+| Monk | Mercy, Shadow, Elements, Open Hand | None |
+| Paladin | Devotion, Glory, Ancients, Vengeance | 2 |
+| Ranger | Beast Master, Fey Wanderer, Gloom Stalker, Hunter | 2 |
+| Rogue | Arcane Trickster, Assassin, Soulknife, Thief | 2 |
+| Sorcerer | Aberrant, Clockwork, Draconic, Wild Magic | None |
+| Warlock | Archfey, Celestial, Fiend, Great Old One | None |
+| Wizard | Abjurer, Diviner, Evoker, Illusionist | None |
+
+**Multiclass training (2024)**
+
+What a second class adds. Simple weapons always come from the primary class.
+
+| Class added | Weapon training | Armor training |
+| --- | --- | --- |
+| Barbarian | Martial | Shields |
+| Bard | None | Light |
+| Cleric | None | Light, medium, shields |
+| Druid | None | Light, shields |
+| Fighter | Martial | Light, medium, shields |
+| Monk | None | None |
+| Paladin | Martial | Light, medium, shields |
+| Ranger | Martial | Light, medium, shields |
+| Rogue | None | Light |
+| Sorcerer | None | None |
+| Warlock | None | Light |
+| Wizard | None | None |
+
 ### Runs
 
 - Load the party, enter its level and size, and choose Pressures. Party level, party size and floor set encounter levels, boss stats, room trick DCs and the loot tier.
+- **Pressure votes:** before a run, each player marks the Pressures they'd like on their device, from the ones the party can pick. The DM's lobby shows how many players want each one; the DM still chooses.
 - Track floor, room, loot collected, and loot kept if the party extracted now.
 - Track each player's boon slots (3 base, up to 5 with upgrades, plus a hidden boon slot), boon levels, and Evolutions or Combinations.
 - Track boon counters such as banked echoes and Reaper chain jumps, plus each caster's slot recovery points and the slots they buy.
@@ -1289,6 +1489,9 @@ Every draft is built in three steps.
 | Wizard | Spell | Shadow, Rally |
 
 - **Subclasses:** the DM can shift a character's map, such as giving a Beast Master Ranger Bond as a primary tag.
+- **Multiclass:** the main class (more levels; the primary class on a tie) uses its normal map, primary ×3 and secondary ×2. Once the second class has 3 or more levels, its primary tags weigh ×2 and its secondary tags add nothing; a one- or two-level dip changes nothing. On an exact tie, both classes use their full maps. A tag in both maps uses its highest multiplier (no stacking), and "a tag the player already holds ×2" still multiplies on top. Eligibility is unchanged: the filter reads the profile, so any caster sees Spell boons. Relic weighting in Thils's Vault uses the same rule.
+  - Example: Fighter 6 / Wizard 3 gets Crit, Stance and Echo at ×3, and Volley, Hunt, Flurry and Spell at ×2. Fighter 5 / Wizard 5 gets Crit, Stance, Echo and Spell at ×3, and Volley, Hunt, Flurry, Shadow and Rally at ×2.
+- **Class hidden boon:** a multiclass character's class trigger and hidden boon come from their main class.
 - **Expected feel:** for a Wizard, about 45% of weighted rolls are Spell boons, tailored but still open to surprises.
 
 ### Offering Thils's hidden gifts
@@ -1392,7 +1595,7 @@ Everything rolled for a room is DM-only until revealed, and the DM gets a reveal
 - **Extra cache rolls:** every full 50% of the party reward bonus adds 1 floor roll to each boss cache.
 - **Credits:** the party's credits go into the pool at their bonus value, times the entry multiplier.
 - **Loot Basalts:** each player's roll amount times the entry multiplier is banked like boss Basalts, so the same bonuses apply at payout and they're forfeit on death.
-- **Item values:** magic items and gear by rarity (Value ladder), trinkets 10, and consumables half their rarity's value. A consumable takes the floor's rarity, like the healing potion's grade. Relics have no value: they can't be sold.
+- **Item values:** magic items by rarity (Value ladder), gear by rarity plus its base item's cost, trinkets 10, and consumables half their rarity's value. A consumable takes the floor's rarity, like the healing potion's grade. Relics have no value: they can't be sold.
 - **Boss cache bonus item:** rolled on the wondrous table one rarity above the floor's, up to legendary.
 - **Floor 5:** its boss cache uses floor 4's loot tables, and its bonus item is one rarity above floor 4's.
 - **Collector's Eye:** if any surviving player holds it at extraction, the party keeps 10 percentage points more, like Deep Pockets' +5 per rank. Several holders still add only 10, and the total never goes above 100%.
