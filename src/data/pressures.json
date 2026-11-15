@@ -27,7 +27,8 @@
       "startSquares": 1,
       "growSquares": 1,
       "safeCentreSquares": 2,
-      "damageType": "force"
+      "damageType": "force",
+      "hazardText": "A creature that enters the ring or starts its turn there takes {damage} {type} damage."
     }
   },
   {
@@ -59,7 +60,8 @@
       "startSquares": 1,
       "growSquares": 1,
       "safeCentreSquares": 2,
-      "damageType": "force"
+      "damageType": "force",
+      "hazardText": "A creature that enters the ring or starts its turn there takes {damage} {type} damage."
     }
   },
   {

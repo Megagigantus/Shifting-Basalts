@@ -23,6 +23,8 @@ export interface Pressure {
     /** It never covers this many squares across the centre. */
     safeCentreSquares: number
     damageType: string
+    /** What the hazard does; {damage} and {type} are filled in (trick damage for the floor). */
+    hazardText: string
   }
   status: string
 }

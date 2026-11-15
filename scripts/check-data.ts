@@ -505,6 +505,9 @@ for (const id of ['closing-ring', 'closing-ring-2']) {
     fail(`pressures.json: ${id} ring.safeCentreSquares must be 0 or more`)
   }
   if (typeof ring.damageType !== 'string' || !ring.damageType) fail(`pressures.json: ${id} ring.damageType is missing`)
+  if (typeof ring.hazardText !== 'string' || !ring.hazardText.includes('{damage}')) {
+    fail(`pressures.json: ${id} ring.hazardText must say what the hazard does, with {damage}`)
+  }
 }
 
 // firestore.rules carries a generated copy of upgrade prices and track caps.
