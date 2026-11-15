@@ -3,7 +3,8 @@
 // loot, and the Basalt Shrine (stat tracks) and Basalt Markets (upgrades) as
 // art banners that open when visited.
 import { useState, type ReactNode } from 'react'
-import { Landmark, LogOut, Store } from 'lucide-react'
+import { Landmark, LogOut, Minus, Plus, Store } from 'lucide-react'
+import { changeFullClears } from '../characterStore'
 import { buildOf, CASTER_TYPES, type Character } from '../model/character'
 import { buildSummary } from '../rules/build'
 import { proficiencyBonus } from '../rules/proficiency'
@@ -18,7 +19,7 @@ import { StatTracks } from './StatTracks'
 import { UpgradeShop } from './UpgradeShop'
 import { Panel, SectionLabel } from '../ui/Panel'
 import { Pill } from '../ui/Pill'
-import { QUIET_BUTTON } from '../ui/styles'
+import { QUIET_BUTTON, SMALL_BUTTON } from '../ui/styles'
 import { useLightbox } from '../ui/lightboxContext'
 import { cx, toneClasses, type Tone } from '../ui/tone'
 
@@ -45,6 +46,19 @@ interface Props {
 
 export function CharacterHub({ character: c, mode, actions }: Props) {
   const [visiting, setVisiting] = useState<'shrine' | 'markets' | null>(null)
+  const [savingClears, setSavingClears] = useState(false)
+  const [clearsError, setClearsError] = useState<string | null>(null)
+  async function adjustFullClears(delta: 1 | -1) {
+    setClearsError(null)
+    setSavingClears(true)
+    try {
+      await changeFullClears(c.id, delta)
+    } catch {
+      setClearsError('Could not save the full clear count. Please try again.')
+    } finally {
+      setSavingClears(false)
+    }
+  }
   const showArt = useLightbox()
   const portraitUrl = c.portrait ? artUrl('portraits', c.portrait) : null
   const effects = trackEffects(c)
@@ -99,7 +113,33 @@ export function CharacterHub({ character: c, mode, actions }: Props) {
                 {c.bankedDevotions} Devotions
               </Pill>
               <Pill mono>Deepest floor {c.deepestFloor || '–'}</Pill>
+              <Pill tone={hasFullClear(c) ? 'amber' : 'stone'} mono title="Survived full clears: unlock the full-clear upgrades and the golden glow">
+                Full clears {c.fullClears ?? 0}
+              </Pill>
+              {mode === 'dm' && (
+                <span className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    className={SMALL_BUTTON}
+                    disabled={savingClears || (c.fullClears ?? 0) === 0}
+                    onClick={() => adjustFullClears(-1)}
+                    aria-label={`Remove a full clear from ${c.name}`}
+                  >
+                    <Minus size={12} />
+                  </button>
+                  <button
+                    type="button"
+                    className={SMALL_BUTTON}
+                    disabled={savingClears}
+                    onClick={() => adjustFullClears(1)}
+                    aria-label={`Add a full clear for ${c.name}`}
+                  >
+                    <Plus size={12} />
+                  </button>
+                </span>
+              )}
             </div>
+            {clearsError && <p className="m-0 text-xs text-rose-300">{clearsError}</p>}
           </div>
           {actions && <div className="flex flex-wrap gap-1.5">{actions}</div>}
         </div>
