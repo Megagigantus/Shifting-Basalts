@@ -68,6 +68,15 @@ describe('Weapon Mastery', () => {
     expect(ids).toContain('rapier')
     expect(ids).not.toContain('greatsword')
   })
+
+  it('offers the full 2024 weapon list: bows for rangers, hand crossbow but not blowgun for monks', () => {
+    const ranger = masteryOptions(build({ classId: 'ranger', classLevel: 5 })).map((w) => w.id)
+    expect(ranger).toHaveLength(38)
+    expect(ranger).toEqual(expect.arrayContaining(['shortbow', 'longbow', 'musket', 'pistol']))
+    const monk = masteryOptions(build({ classId: 'monk', classLevel: 5 })).map((w) => w.id)
+    expect(monk).toEqual(expect.arrayContaining(['quarterstaff', 'hand-crossbow']))
+    expect(monk).not.toContain('blowgun')
+  })
 })
 
 describe('multiclass tag weights', () => {
