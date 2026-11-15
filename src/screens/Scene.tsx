@@ -9,7 +9,9 @@ import { LAST_FLOOR } from '../rules/run'
 import { healingFont } from '../rules/upgrades'
 import { lootKeptIfExtracting } from '../rules/runFlow'
 import { reclaimable, shrineCost, shrineHere } from '../rules/shrine'
+import { votingOpen, type ExitVote } from '../rules/votes'
 import { useLightbox } from '../ui/lightboxContext'
+import { Pill } from '../ui/Pill'
 import { cx, toneClasses, type Tone } from '../ui/tone'
 
 /** A wide scene picture with a title over it. Click to enlarge. */
@@ -52,6 +54,9 @@ export interface Card {
   text: string
   /** Shown faded (e.g. a cooled Forge). */
   faded?: boolean
+  onClick?: () => void
+  selected?: boolean
+  disabled?: boolean
 }
 
 /** Each station's accent color. */
@@ -65,6 +70,20 @@ const STATION_TONES: Record<string, Tone> = {
   reflect: 'violet',
 }
 
+/** Highlight classes for a selected interactive card in its tone. */
+const SELECTED_RING: Record<Tone, string> = {
+  amber: 'border-amber-400 ring-2 ring-amber-400/60',
+  emerald: 'border-emerald-400 ring-2 ring-emerald-400/60',
+  rose: 'border-rose-400 ring-2 ring-rose-400/60',
+  sky: 'border-sky-400 ring-2 ring-sky-400/60',
+  indigo: 'border-indigo-400 ring-2 ring-indigo-400/60',
+  violet: 'border-violet-400 ring-2 ring-violet-400/60',
+  purple: 'border-purple-400 ring-2 ring-purple-400/60',
+  teal: 'border-teal-400 ring-2 ring-teal-400/60',
+  fuchsia: 'border-fuchsia-400 ring-2 ring-fuchsia-400/60',
+  stone: 'border-stone-400 ring-2 ring-stone-400/60',
+}
+
 /** A grid of station cards: picture, title and what it does. */
 export function SceneCards({ cards }: { cards: Card[] }) {
   if (cards.length === 0) return null
@@ -73,21 +92,60 @@ export function SceneCards({ cards }: { cards: Card[] }) {
       {cards.map((c) => {
         const url = artUrl('rooms', c.id)
         const tone = STATION_TONES[c.id] ?? 'stone'
-        return (
-          <li
-            key={c.id}
-            className={cx('overflow-hidden rounded-xl border bg-stone-950/70', toneClasses[tone].border, c.faded && 'opacity-50 grayscale')}
-          >
+        const content = (
+          <>
             {url && (
-              <div className="relative aspect-[16/7] overflow-hidden">
-                <img src={url} alt="" className="absolute inset-0 h-full w-full object-cover" />
+              <div className="relative aspect-[16/7] w-full overflow-hidden">
+                <img
+                  src={url}
+                  alt=""
+                  className={cx(
+                    'absolute inset-0 h-full w-full object-cover',
+                    c.onClick && !c.disabled && 'transition-transform duration-300 group-hover:scale-[1.02]',
+                  )}
+                />
                 <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-stone-950 to-transparent" />
               </div>
             )}
-            <div className="flex flex-col gap-1 p-3">
-              <strong className={cx('text-sm', toneClasses[tone].text)}>{c.title}</strong>
+            <div className="flex w-full flex-col gap-1 p-3">
+              {c.selected ? (
+                <div className="flex items-center justify-between gap-2">
+                  <strong className={cx('text-sm', toneClasses[tone].text)}>{c.title}</strong>
+                  <Pill tone={tone}>Your vote</Pill>
+                </div>
+              ) : (
+                <strong className={cx('text-sm', toneClasses[tone].text)}>{c.title}</strong>
+              )}
               <span className="text-xs text-stone-300">{c.text}</span>
             </div>
+          </>
+        )
+        if (!c.onClick) {
+          return (
+            <li
+              key={c.id}
+              className={cx('overflow-hidden rounded-xl border bg-stone-950/70', toneClasses[tone].border, c.faded && 'opacity-50 grayscale')}
+            >
+              {content}
+            </li>
+          )
+        }
+        return (
+          <li key={c.id} className="flex">
+            <button
+              type="button"
+              aria-pressed={Boolean(c.selected)}
+              disabled={c.disabled}
+              onClick={c.onClick}
+              className={cx(
+                'group box-border flex w-full cursor-pointer flex-col overflow-hidden rounded-xl border bg-stone-950/70 p-0 text-left transition-colors disabled:cursor-default disabled:opacity-60',
+                !c.disabled && 'hover:bg-stone-900/90',
+                c.selected ? SELECTED_RING[tone] : toneClasses[tone].border,
+                c.faded && 'opacity-50 grayscale',
+              )}
+            >
+              {content}
+            </button>
           </li>
         )
       })}
@@ -97,9 +155,18 @@ export function SceneCards({ cards }: { cards: Card[] }) {
 
 /**
  * The post-boss room: what's here (the party's Forge and Healing Font, when
- * someone owns them) and the choice ahead. `forDm` changes only the hint.
+ * someone owns them) and the choice ahead. `forDm` changes only the hint;
+ * `vote` lets players cast their Descend/Extract vote directly on the cards.
  */
-export function PostBossScene({ state, forDm = false }: { state: RunState; forDm?: boolean }) {
+export function PostBossScene({
+  state,
+  forDm = false,
+  vote,
+}: {
+  state: RunState
+  forDm?: boolean
+  vote?: { current: ExitVote | null; onVote: (v: ExitVote) => void; disabled: boolean }
+}) {
   const { run } = state
   if (!run.awaitingChoice) return null
   const last = run.floor >= LAST_FLOOR
@@ -136,11 +203,15 @@ export function PostBossScene({ state, forDm = false }: { state: RunState; forDm
       faded: lost === 0,
     })
   }
-  if (!last) cards.push({ id: 'descend', title: 'Descend', text: `Go down to floor ${run.floor + 1}.` })
+  const canVote = !forDm && Boolean(vote) && votingOpen(state)
+  const voteProps = (id: ExitVote): Pick<Card, 'onClick' | 'selected' | 'disabled'> =>
+    vote && canVote ? { onClick: () => vote.onVote(id), selected: vote.current === id, disabled: vote.disabled } : {}
+  if (!last) cards.push({ id: 'descend', title: 'Descend', text: `Go down to floor ${run.floor + 1}.`, ...voteProps('descend') })
   cards.push({
     id: 'extract',
     title: last ? 'Finish the full clear' : 'Extract',
     text: last ? 'Take everything home.' : `Leave the Basalts with ${lootKeptIfExtracting(state)}% of the loot.`,
+    ...voteProps('extract'),
   })
   return (
     <div className="flex flex-col gap-3">
@@ -149,7 +220,9 @@ export function PostBossScene({ state, forDm = false }: { state: RunState; forDm
       <p className="m-0 text-[0.6875rem] text-stone-400">
         {forDm
           ? 'Descend or extract with the run tracker buttons once the party decides.'
-          : 'Decide together whether to go deeper or leave; the DM makes it happen.'}
+          : canVote
+            ? 'Tap Descend or Extract to vote; the DM makes the final call.'
+            : 'Decide together whether to go deeper or leave; the DM makes it happen.'}
       </p>
     </div>
   )

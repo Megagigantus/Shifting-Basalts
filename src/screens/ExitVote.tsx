@@ -1,11 +1,11 @@
 // Descend or extract, after a boss: players vote on their devices
 // (ExitVoteButtons) and the DM sees the tally (ExitVoteTally). The DM still
 // makes the call with the Descend and Extract buttons.
-import { useState, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { ArrowDownToLine, LogOut, Vote } from 'lucide-react'
 import type { RunPlayer, RunState } from '../model/run'
 import { tallyVotes, votingOpen, type ExitVote, type ExitVoteDoc } from '../rules/votes'
-import { setExitVote } from '../runStore'
+import type { ExitBallot } from './useExitVote'
 import { Pill } from '../ui/Pill'
 import { SMALL_BUTTON } from '../ui/styles'
 import { cx, toneClasses } from '../ui/tone'
@@ -31,63 +31,53 @@ export function ExitVoteTally({ state, votes }: { state: RunState; votes: Record
   )
 }
 
-/** A player's vote buttons for each of their living characters. */
+/** Per-character vote buttons (when controlling 2+ living characters), change note, and errors. */
 export function ExitVoteButtons({
   state,
   mine,
   votes,
   readOnly,
+  ballot,
 }: {
   state: RunState
   mine: RunPlayer[]
   votes: Record<string, ExitVoteDoc>
   readOnly: boolean
+  ballot: ExitBallot
 }) {
-  const [error, setError] = useState<string | null>(null)
-  const [sending, setSending] = useState(false)
   if (!votingOpen(state)) return null
   const { run } = state
-  const cast = async (characterId: string, vote: ExitVote) => {
-    if (readOnly) return
-    setError(null)
-    setSending(true)
-    try {
-      await setExitVote(run.id, characterId, vote, run.floor)
-    } catch {
-      setError('Could not send your vote. Check your connection and try again.')
-    } finally {
-      setSending(false)
-    }
-  }
+  const living = mine.filter((p) => p.alive)
+  const showRows = living.length >= 2
+  if (!showRows && !ballot.current && !ballot.error) return null
+
   return (
     <div className="flex flex-col gap-2">
-      <p className="m-0 text-xs text-stone-300">Descend to floor {run.floor + 1}, or extract with the loot? Vote; your DM makes the final call.</p>
-      {mine
-        .filter((p) => p.alive)
-        .map((p) => {
+      {showRows &&
+        living.map((p) => {
           const v = votes[p.characterId]
-          const current = v && v.floor === run.floor ? v.vote : null
+          const charVote = v && v.floor === run.floor ? v.vote : null
           const button = (vote: ExitVote, label: string, icon: ReactNode, tone: 'indigo' | 'sky') => (
             <button
               type="button"
-              aria-pressed={current === vote}
-              disabled={readOnly || sending}
-              onClick={() => cast(p.characterId, vote)}
-              className={cx(SMALL_BUTTON, current === vote ? toneClasses[tone].button : 'border-stone-700 bg-stone-900 text-stone-200 hover:bg-stone-800')}
+              aria-pressed={charVote === vote}
+              disabled={readOnly || ballot.sending}
+              onClick={() => ballot.castOne(p.characterId, vote)}
+              className={cx(SMALL_BUTTON, charVote === vote ? toneClasses[tone].button : 'border-stone-700 bg-stone-900 text-stone-200 hover:bg-stone-800')}
             >
               {icon} {label}
             </button>
           )
           return (
             <div key={p.characterId} className="flex flex-wrap items-center gap-2">
-              {mine.length > 1 && <span className="text-xs font-semibold text-stone-200">{p.name}</span>}
+              <span className="text-xs font-semibold text-stone-200">{p.name}</span>
               {button('descend', 'Descend', <ArrowDownToLine size={12} />, 'indigo')}
               {button('extract', 'Extract', <LogOut size={12} />, 'sky')}
-              {current && <span className="text-[0.6875rem] text-stone-400">You can change your vote until the DM decides.</span>}
             </div>
           )
         })}
-      {error && <p className="m-0 text-xs text-rose-300">{error}</p>}
+      {ballot.current && <p className="m-0 text-[0.6875rem] text-stone-400">You can change your vote until the DM decides.</p>}
+      {ballot.error && <p className="m-0 text-xs text-rose-300">{ballot.error}</p>}
     </div>
   )
 }

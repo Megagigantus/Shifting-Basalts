@@ -35,3 +35,16 @@ export function tallyVotes(state: RunState, votes: Record<string, ExitVoteDoc>):
   }
   return tally
 }
+
+/** The vote all given characters share on this floor, or null if empty, incomplete or split. */
+export function partyVote(characterIds: string[], votes: Record<string, ExitVoteDoc>, floor: number): ExitVote | null {
+  if (characterIds.length === 0) return null
+  let shared: ExitVote | null = null
+  for (const id of characterIds) {
+    const v = votes[id]
+    if (!v || v.floor !== floor) return null
+    if (shared === null) shared = v.vote
+    else if (shared !== v.vote) return null
+  }
+  return shared
+}

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { RunState } from '../model/run'
-import { tallyVotes, votingOpen } from './votes'
+import { partyVote, tallyVotes, votingOpen } from './votes'
 
 const state = (overrides: Partial<RunState['run']> = {}): RunState =>
   ({
@@ -32,5 +32,56 @@ describe('descend or extract votes', () => {
     expect(votingOpen(state({ awaitingChoice: false }))).toBe(false)
     expect(votingOpen(state({ floor: 5 }))).toBe(false)
     expect(votingOpen(state({ status: 'extracted' }))).toBe(false)
+  })
+})
+
+describe('partyVote', () => {
+  it('returns the shared vote when all characters agree on this floor', () => {
+    expect(
+      partyVote(
+        ['a', 'b'],
+        {
+          a: { vote: 'descend', floor: 2 },
+          b: { vote: 'descend', floor: 2 },
+        },
+        2,
+      ),
+    ).toBe('descend')
+    expect(partyVote(['a'], { a: { vote: 'extract', floor: 2 } }, 2)).toBe('extract')
+  })
+
+  it('returns null when votes differ', () => {
+    expect(
+      partyVote(
+        ['a', 'b'],
+        {
+          a: { vote: 'descend', floor: 2 },
+          b: { vote: 'extract', floor: 2 },
+        },
+        2,
+      ),
+    ).toBeNull()
+  })
+
+  it('returns null when any character has not voted', () => {
+    expect(partyVote(['a', 'b'], { a: { vote: 'descend', floor: 2 } }, 2)).toBeNull()
+  })
+
+  it('ignores votes from another floor', () => {
+    expect(
+      partyVote(
+        ['a', 'b'],
+        {
+          a: { vote: 'descend', floor: 2 },
+          b: { vote: 'descend', floor: 1 },
+        },
+        2,
+      ),
+    ).toBeNull()
+    expect(partyVote(['a'], { a: { vote: 'extract', floor: 1 } }, 2)).toBeNull()
+  })
+
+  it('returns null for an empty character list', () => {
+    expect(partyVote([], { a: { vote: 'descend', floor: 2 } }, 2)).toBeNull()
   })
 })
