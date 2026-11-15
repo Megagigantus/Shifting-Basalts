@@ -4,12 +4,14 @@
 import {
   PALETTE,
   dims,
+  doorSquares,
   inPhase,
   isFloorObject,
   marchColumns,
   mirrorMap,
   mirrorSpot,
   type BattleMap,
+  type MapArea,
   type ShiftEffect,
 } from './battleMap'
 
@@ -521,6 +523,153 @@ function planRotate(
   }
 }
 
+function areaFits(
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  occupied: Set<string>,
+): boolean {
+  for (let dy = 0; dy < h; dy++) {
+    for (let dx = 0; dx < w; dx++) {
+      if (occupied.has(`${x + dx},${y + dy}`)) return false
+    }
+  }
+  return true
+}
+
+function markArea(x: number, y: number, w: number, h: number, occupied: Set<string>): void {
+  for (let dy = 0; dy < h; dy++) {
+    for (let dx = 0; dx < w; dx++) {
+      occupied.add(`${x + dx},${y + dy}`)
+    }
+  }
+}
+
+function planSections(
+  map: BattleMap,
+  effect: Extract<ShiftEffect, { kind: 'sections' }>,
+  tokens: TokenPos[],
+  ctx: ShiftContext,
+): ShiftPlan {
+  const keptAreas = (map.areas ?? []).filter((a) => !a.key.startsWith('section:'))
+  const occupied = blockedSquares(map, ctx.phase, [])
+  for (const d of doorSquares(map)) {
+    occupied.add(`${d.x},${d.y}`)
+  }
+
+  const placed: { area: MapArea; note: string }[] = []
+  const notes: string[] = []
+  if (effect.outcomes.length > 0) {
+    for (let i = 0; i < effect.count; i++) {
+      const candidates: { x: number; y: number }[] = []
+      for (let y = 0; y <= map.squares - effect.h; y++) {
+        for (let x = 0; x <= map.squares - effect.w; x++) {
+          if (areaFits(x, y, effect.w, effect.h, occupied)) {
+            candidates.push({ x, y })
+          }
+        }
+      }
+      if (candidates.length === 0) {
+        notes.push(`Only ${placed.length} of ${effect.count} sections fit on the map`)
+        break
+      }
+      const spot = candidates[Math.floor(ctx.random() * candidates.length)]
+      const outcome = effect.outcomes[Math.floor(ctx.random() * effect.outcomes.length)]
+      markArea(spot.x, spot.y, effect.w, effect.h, occupied)
+      placed.push({
+        area: {
+          key: `section:${i}`,
+          kind: outcome.kind,
+          name: outcome.name,
+          x: spot.x,
+          y: spot.y,
+          w: effect.w,
+          h: effect.h,
+        },
+        note: outcome.note,
+      })
+    }
+  }
+
+  for (const t of tokens) {
+    const hit = placed.find(
+      ({ area }) =>
+        t.x >= area.x && t.x < area.x + area.w && t.y >= area.y && t.y < area.y + area.h,
+    )
+    if (hit) notes.push(`${t.key} ${hit.note}`)
+  }
+
+  return {
+    map: { ...map, areas: [...keptAreas, ...placed.map((p) => p.area)] },
+    moves: [],
+    notes,
+  }
+}
+
+function planTracks(
+  map: BattleMap,
+  effect: Extract<ShiftEffect, { kind: 'tracks' }>,
+  tokens: TokenPos[],
+  ctx: ShiftContext,
+): ShiftPlan {
+  const workingPieces = map.pieces.map((p) => ({ ...p }))
+  const tracks = (map.areas ?? []).filter(
+    (a) => a.kind === effect.track && inPhase(a, ctx.phase),
+  )
+  const tokenSquares = new Set(tokens.map((t) => `${t.x},${t.y}`))
+  const hitSquares = new Set<string>()
+
+  for (const piece of workingPieces) {
+    if (piece.kind !== 'object' || piece.id !== effect.art || !inPhase(piece, ctx.phase)) continue
+    const track = tracks.find(
+      (a) =>
+        piece.x >= a.x && piece.x < a.x + a.w && piece.y >= a.y && piece.y < a.y + a.h,
+    )
+    if (!track) continue
+
+    const targetY =
+      piece.y - track.y < track.h / 2 ? track.y + track.h - 1 : track.y
+    const dy = Math.sign(targetY - piece.y)
+    if (dy === 0) continue
+
+    const blocked = blockedSquares(
+      { ...map, pieces: workingPieces },
+      ctx.phase,
+      [],
+      piece.key,
+    )
+    let maxEndY = piece.y
+    for (let y = piece.y + dy; y !== targetY + dy; y += dy) {
+      if (y < 0 || y >= map.squares || blocked.has(`${piece.x},${y}`)) break
+      maxEndY = y
+    }
+
+    for (let y = piece.y + dy; y !== maxEndY + dy; y += dy) {
+      hitSquares.add(`${piece.x},${y}`)
+    }
+
+    let endY = maxEndY
+    while (endY !== piece.y && tokenSquares.has(`${piece.x},${endY}`)) {
+      endY -= dy
+    }
+    piece.y = endY
+  }
+
+  const notes: string[] = []
+  for (const t of tokens) {
+    if (hitSquares.has(`${t.x},${t.y}`)) {
+      notes.push(`${t.key} ${effect.note}`)
+    }
+  }
+
+  return {
+    map: { ...map, pieces: workingPieces },
+    moves: [],
+    notes,
+  }
+}
+
 /** Plan the map update and any token moves for a boss arena's shift effect. */
 export function planShift(
   map: BattleMap,
@@ -541,7 +690,11 @@ export function planShift(
       return planPush(map, effect, tokens, ctx)
     case 'rotate':
       return planRotate(map, effect, tokens, ctx)
+    case 'sections':
+      return planSections(map, effect, tokens, ctx)
     case 'tilt':
       return planTilt(map, effect, tokens, ctx)
+    case 'tracks':
+      return planTracks(map, effect, tokens, ctx)
   }
 }

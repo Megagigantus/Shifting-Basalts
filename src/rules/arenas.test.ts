@@ -172,7 +172,7 @@ describe('boss arenas', () => {
     state = shiftMap(state)
     expect(walls(state).every((p) => p.y === 13)).toBe(true)
 
-    expect(() => shiftMap(inBossRoom('tessellated-warden'))).toThrow()
+    expect(() => shiftMap(inBossRoom('gatewright'))).toThrow()
   })
 
   it('the Blind Architect\'s Fold Space mirrors objects north-to-south, leaves the boss in place, and flips back on a second trigger', () => {

@@ -60,6 +60,25 @@
         }
       ],
       "areas": [],
+      "shiftEffect": {
+        "kind": "sections",
+        "label": "Piston Floor",
+        "count": 3,
+        "w": 2,
+        "h": 2,
+        "outcomes": [
+          {
+            "kind": "raised",
+            "name": "Raised section (15 ft up)",
+            "note": "is on a rising section: Dex save or fall prone"
+          },
+          {
+            "kind": "pit",
+            "name": "Pit (10 ft down)",
+            "note": "is on a dropping section: Dex save or fall prone"
+          }
+        ]
+      },
       "notes": "Open hex floor so Columnar Slam pillars and Piston Floor sections have room. Slam pillars are added during the fight."
     },
     "choir-hollow-column": {
@@ -402,6 +421,13 @@
           "h": 10
         }
       ],
+      "shiftEffect": {
+        "kind": "tracks",
+        "label": "Trophy Gallery",
+        "art": "statue",
+        "track": "track",
+        "note": "is in a statue's path: PB d8 bludgeoning, Dex save halves"
+      },
       "notes": "Four statue tracks run north to south, one statue on each. Halvard starts at the north end with long sightlines. Snare Shards are added during the fight."
     },
     "lattice-spinner": {

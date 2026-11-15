@@ -369,7 +369,7 @@ for (const folder of readdirSync(new URL('../src/art/', import.meta.url), { with
 const N = arenaData.squares
 const inGrid = (b: Box) => b.x >= 0 && b.y >= 0 && b.w >= 1 && b.h >= 1 && b.x + b.w <= N && b.y + b.h <= N
 const paletteArts = new Set(arenaData.palette.map((p) => p.art))
-const EFFECT_KINDS = ['conveyor', 'gravity', 'march', 'mirror', 'push', 'rotate', 'tilt']
+const EFFECT_KINDS = ['chasms', 'conveyor', 'eclipse', 'gravity', 'halves', 'highlight', 'march', 'mirror', 'orbit', 'place', 'push', 'rotate', 'sections', 'tilt', 'tracks']
 const bossParts = bossData.bosses as unknown as { id: string; parts?: { name: string; count: number }[] }[]
 for (const b of bossParts) if (!arenaData.arenas[b.id]) fail(`arenas.json: no arena for boss "${b.id}"`)
 for (const [id, arena] of Object.entries(arenaData.arenas)) {
@@ -447,6 +447,14 @@ for (const [id, arena] of Object.entries(arenaData.arenas)) {
     }
     if (eff.kind === 'gravity') {
       if (typeof eff.squares !== 'number' || eff.squares < 1) fail(`${label}: gravity squares must be at least 1`)
+    }
+    if (eff.kind === 'sections') {
+      if (!(Number(eff.count) >= 1 && Number(eff.w) >= 1 && Number(eff.h) >= 1)) fail(`${label}: sections need count, w and h of at least 1`)
+      if (!Array.isArray(eff.outcomes) || eff.outcomes.length < 1) fail(`${label}: sections need at least one outcome`)
+    }
+    if (eff.kind === 'tracks') {
+      if (typeof eff.art !== 'string' || !paletteArts.has(eff.art)) fail(`${label}: tracks art "${String(eff.art)}" isn't in palette`)
+      if (!arena.areas.some((a) => a.kind === eff.track)) fail(`${label}: no "${String(eff.track)}" areas for the tracks`)
     }
   }
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { addObject, bloodiedEffectOf, isFloorObject, placeArena, shiftEffectOf, type BattleMap } from './battleMap'
+import { addObject, bloodiedEffectOf, doorSquares, isFloorObject, placeArena, shiftEffectOf, type BattleMap } from './battleMap'
 import type { Room } from './rooms'
 import { blockedSquares, planShift, rotateBoxClockwise, slideToken, type TokenPos } from './shiftEffects'
 
@@ -389,6 +389,121 @@ describe('shiftEffects', () => {
       expect(onlyPlan.direction).toBe('W')
       expect(onlyPlan.moves).toEqual([{ key: 'pc:back', x: 4, y: 6 }])
       expect(onlyPlan.notes).toContain('pc:back stopped early')
+    })
+
+    it('sections on the Warden arena places 3 non-overlapping section areas, replaces them on a second call, and notes tokens on them', () => {
+      const map = placeArena({ kind: 'boss', boss: { id: 'tessellated-warden', partySize: 4 } } as Room)!
+      const effect = shiftEffectOf('tessellated-warden')!
+
+      const first = planShift(map, effect, [], { phase: 1, random: () => 0 })
+      expect(first.save).toBeUndefined()
+      expect(first.moves).toEqual([])
+      const areas = first.map.areas ?? []
+      expect(areas).toHaveLength(3)
+      expect(areas.map((a) => a.key)).toEqual(['section:0', 'section:1', 'section:2'])
+
+      const validKinds = new Set(effect.kind === 'sections' ? effect.outcomes.map((o) => o.kind) : [])
+      const forbidden = blockedSquares(map, 1, [])
+      for (const d of doorSquares(map)) forbidden.add(`${d.x},${d.y}`)
+      const seenSquares = new Set<string>()
+
+      for (const area of areas) {
+        expect(area.w).toBe(2)
+        expect(area.h).toBe(2)
+        expect(validKinds.has(area.kind)).toBe(true)
+        for (let dy = 0; dy < area.h; dy++) {
+          for (let dx = 0; dx < area.w; dx++) {
+            const sq = `${area.x + dx},${area.y + dy}`
+            expect(forbidden.has(sq)).toBe(false)
+            expect(seenSquares.has(sq)).toBe(false)
+            seenSquares.add(sq)
+          }
+        }
+      }
+
+      const second = planShift(first.map, effect, [], { phase: 1, random: () => 0.9 })
+      expect(second.map.areas).toHaveLength(3)
+      expect(second.map.areas?.every((a) => a.key.startsWith('section:'))).toBe(true)
+
+      const withTokens = planShift(
+        map,
+        effect,
+        [
+          { key: 'pc:on', x: areas[0].x, y: areas[0].y },
+          { key: 'pc:door', x: 6, y: 13 },
+        ],
+        { phase: 1, random: () => 0 },
+      )
+      expect(withTokens.moves).toEqual([])
+      expect(withTokens.notes).toHaveLength(1)
+      expect(withTokens.notes[0]).toContain('pc:on')
+      expect(withTokens.notes[0]).toContain('Dex save or fall prone')
+    })
+
+    it('sections places what fits and adds a note when fewer valid spots remain', () => {
+      const tightMap: BattleMap = {
+        squares: 4,
+        entrance: 'south',
+        door: { x: 3, y: 3, w: 1, h: 1 },
+        pieces: [
+          { key: 'obj:1', kind: 'object', id: 'tall-column', x: 2, y: 0, size: 1, w: 1, h: 1 },
+          { key: 'obj:2', kind: 'object', id: 'tall-column', x: 0, y: 2, size: 1, w: 1, h: 1 },
+          { key: 'obj:3', kind: 'object', id: 'tall-column', x: 2, y: 2, size: 1, w: 1, h: 1 },
+        ],
+      }
+      const effect = shiftEffectOf('tessellated-warden')!
+
+      const plan = planShift(tightMap, effect, [], { phase: 1, random: () => 0 })
+      expect(plan.moves).toEqual([])
+      expect(plan.map.areas).toHaveLength(1)
+      expect(plan.map.areas?.[0]).toMatchObject({ key: 'section:0', x: 0, y: 0, w: 2, h: 2 })
+      expect(plan.notes).toHaveLength(1)
+    })
+
+    it('tracks on Halvard Quill arena slides statues to track ends, stops before end-square tokens, and notes path tokens', () => {
+      const map = placeArena({ kind: 'boss', boss: { id: 'halvard-quill', partySize: 4 } } as Room)!
+      const effect = shiftEffectOf('halvard-quill')!
+
+      const plan = planShift(
+        map,
+        effect,
+        [
+          { key: 'pc:path', x: 2, y: 7 },
+          { key: 'pc:off', x: 0, y: 0 },
+        ],
+        { phase: 1, random: Math.random },
+      )
+      expect(plan.save).toBeUndefined()
+      expect(plan.moves).toEqual([])
+      expect(plan.map.pieces.find((p) => p.key === 'obj:0')).toMatchObject({ x: 2, y: 11 })
+      expect(plan.map.pieces.find((p) => p.key === 'obj:1')).toMatchObject({ x: 5, y: 2 })
+      expect(plan.notes).toEqual(["pc:path is in a statue's path: PB d8 bludgeoning, Dex save halves"])
+
+      const stoppedByToken = planShift(
+        map,
+        effect,
+        [{ key: 'pc:end', x: 2, y: 11 }],
+        { phase: 1, random: Math.random },
+      )
+      expect(stoppedByToken.moves).toEqual([])
+      expect(stoppedByToken.map.pieces.find((p) => p.key === 'obj:0')).toMatchObject({ x: 2, y: 10 })
+      expect(stoppedByToken.notes).toEqual(["pc:end is in a statue's path: PB d8 bludgeoning, Dex save halves"])
+
+      const obstructedMap: BattleMap = {
+        ...map,
+        pieces: [
+          ...map.pieces,
+          { key: 'obj:blocker', kind: 'object', id: 'tall-column', x: 2, y: 8, size: 1, w: 1, h: 1 },
+        ],
+      }
+      const stoppedByObject = planShift(
+        obstructedMap,
+        effect,
+        [{ key: 'pc:behind', x: 2, y: 9 }],
+        { phase: 1, random: Math.random },
+      )
+      expect(stoppedByObject.map.pieces.find((p) => p.key === 'obj:0')).toMatchObject({ x: 2, y: 7 })
+      expect(stoppedByObject.notes).toEqual([])
     })
   })
 

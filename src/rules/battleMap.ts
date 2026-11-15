@@ -328,6 +328,21 @@ export type ShiftEffect =
       label?: string
       squares: number
     }
+  | {
+      kind: 'sections'
+      label?: string
+      count: number
+      w: number
+      h: number
+      outcomes: { kind: string; name: string; note: string }[]
+    }
+  | {
+      kind: 'tracks'
+      label?: string
+      art: string
+      track: string
+      note: string
+    }
 
 export interface ArenaData {
   entrance: { x: number; y: number; w: number; h: number }
