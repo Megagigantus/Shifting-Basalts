@@ -147,6 +147,7 @@ export async function saveRunState(
         bankedQuantumBasalts: increment(r.quantumBasaltsGained),
         bankedDevotions: increment(r.devotions),
         deepestFloor: Math.max(character?.deepestFloor ?? 0, r.deepestFloor),
+        ...(r.fullClear ? { fullClears: increment(1) } : {}),
         ...(r.lockoutDays !== null ? { lockoutDays: r.lockoutDays } : {}),
         ...(r.loot.length ? { loot: arrayUnion(...r.loot.map((item) => ({ ...item, runId: id }))) } : {}),
         activeRunId: null,

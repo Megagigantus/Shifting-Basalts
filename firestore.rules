@@ -59,8 +59,15 @@ service cloud.firestore {
         'banish': [10, 20, 30],
         'hidden-sight': [20],
         'deep-pockets': [25, 50, 80],
-        'quick-return': [10, 20, 30]
+        'quick-return': [10, 20, 30],
+        'lost-and-found': [30, 75, 150],
+        'reclamation-shrine': [50]
       };
+    }
+
+    // Upgrades only a character with a survived full clear may buy.
+    function fullClearUpgrades() {
+      return ['lost-and-found', 'reclamation-shrine'];
     }
 
     // Stat track ids (from src/data/stat-tracks.json).
@@ -94,21 +101,24 @@ service cloud.firestore {
         || devotionSpendOn('fortune-dice');
     }
 
-    // True if this update is a valid purchase of one of the upgrades.
-    function anyUpgradePurchase() {
-      return upgradePurchaseOf('starting-boon')
-        || upgradePurchaseOf('forge')
-        || upgradePurchaseOf('healing-font')
-        || upgradePurchaseOf('extra-boon-slot')
-        || upgradePurchaseOf('reroll')
-        || upgradePurchaseOf('extra-loot')
-        || upgradePurchaseOf('extra-pressures')
-        || upgradePurchaseOf('reprieve')
-        || upgradePurchaseOf('attunement')
-        || upgradePurchaseOf('banish')
-        || upgradePurchaseOf('hidden-sight')
-        || upgradePurchaseOf('deep-pockets')
-        || upgradePurchaseOf('quick-return');
+    // True if this update is a valid purchase of one of the upgrades. Only the
+    // upgrade that changed is checked in full, to stay under the rules' work limit.
+    function anyUpgradePurchase(changed) {
+      return (changed.hasOnly(['starting-boon']) && upgradePurchaseOf('starting-boon'))
+        || (changed.hasOnly(['forge']) && upgradePurchaseOf('forge'))
+        || (changed.hasOnly(['healing-font']) && upgradePurchaseOf('healing-font'))
+        || (changed.hasOnly(['extra-boon-slot']) && upgradePurchaseOf('extra-boon-slot'))
+        || (changed.hasOnly(['reroll']) && upgradePurchaseOf('reroll'))
+        || (changed.hasOnly(['extra-loot']) && upgradePurchaseOf('extra-loot'))
+        || (changed.hasOnly(['extra-pressures']) && upgradePurchaseOf('extra-pressures'))
+        || (changed.hasOnly(['reprieve']) && upgradePurchaseOf('reprieve'))
+        || (changed.hasOnly(['attunement']) && upgradePurchaseOf('attunement'))
+        || (changed.hasOnly(['banish']) && upgradePurchaseOf('banish'))
+        || (changed.hasOnly(['hidden-sight']) && upgradePurchaseOf('hidden-sight'))
+        || (changed.hasOnly(['deep-pockets']) && upgradePurchaseOf('deep-pockets'))
+        || (changed.hasOnly(['quick-return']) && upgradePurchaseOf('quick-return'))
+        || (changed.hasOnly(['lost-and-found']) && upgradePurchaseOf('lost-and-found'))
+        || (changed.hasOnly(['reclamation-shrine']) && upgradePurchaseOf('reclamation-shrine'));
     }
     // END GENERATED
 
@@ -165,10 +175,11 @@ service cloud.firestore {
         && changedFields().hasAll(['upgrades', 'bankedQuantumBasalts'])
         && request.resource.data.updatedAt == request.time
         && notInRun()
-        && anyUpgradePurchase();
+        && anyUpgradePurchase(request.resource.data.upgrades.diff(resource.data.get('upgrades', {})).affectedKeys());
     }
 
     // The purchase checks for one named upgrade (anyUpgradePurchase tries each id).
+    // Full-clear rewards also need a survived full clear (fullClears, set by the DM's app).
     function upgradePurchaseOf(upgrade) {
       let before = resource.data.get('upgrades', {});
       let after = request.resource.data.upgrades;
@@ -177,6 +188,7 @@ service cloud.firestore {
       return after.diff(before).affectedKeys().hasOnly([upgrade])
         && owned < prices.size()
         && after.get(upgrade, 0) == owned + 1
+        && (!(upgrade in fullClearUpgrades()) || resource.data.get('fullClears', 0) >= 1)
         && request.resource.data.bankedQuantumBasalts
           == resource.data.get('bankedQuantumBasalts', 0) - prices[owned]
         && request.resource.data.bankedQuantumBasalts >= 0;

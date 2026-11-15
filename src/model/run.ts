@@ -179,6 +179,8 @@ export interface RunResult {
   devotions: number
   deepestFloor: number
   lockoutDays: number | null
+  /** Beat the legendary boss and extracted alive (counts toward the character's full clears). */
+  fullClear?: boolean
   /** Items assigned to this character at extraction, plus a Vault relic on a full clear. */
   loot: LootItem[]
 }

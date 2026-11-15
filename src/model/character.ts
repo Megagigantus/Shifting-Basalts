@@ -55,6 +55,8 @@ export interface DungeonLayer {
   /** Stat track id -> Devotions invested in it. Ranks come from rules/statTracks.ts. */
   trackDevotions: Record<string, number>
   deepestFloor: number
+  /** Full clears this character survived (beat floor 5 and extracted alive). Missing on older characters. */
+  fullClears?: number
   /** Days left on a death lockout; the DM clears it by hand. 0 = free to enter. */
   lockoutDays: number
   /** Upgrade id -> rank owned. */
@@ -121,6 +123,7 @@ export function emptyDungeonLayer(): DungeonLayer {
     bankedDevotions: 0,
     trackDevotions: {},
     deepestFloor: 0,
+    fullClears: 0,
     lockoutDays: 0,
     upgrades: {},
     banished: [],

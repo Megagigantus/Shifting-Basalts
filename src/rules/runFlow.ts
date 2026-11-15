@@ -333,6 +333,7 @@ export function runResults(state: RunState): RunResult[] {
       devotions: p.devotions,
       deepestFloor: p.diedOnFloor ?? run.floor,
       lockoutDays: p.lockoutDays,
+      fullClear: keepsEarned && isFullClear(state),
     }
   })
 }

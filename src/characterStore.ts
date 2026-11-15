@@ -26,6 +26,7 @@ export async function changeUpgrade(characterId: string, upgradeId: string, mode
     let newRank: number
     let newBank: number
     if (mode === 'buy') {
+      if (upgrade.requiresFullClear && !(data.fullClears > 0)) throw new Error(`${upgrade.name} unlocks after a full clear.`)
       const cost = nextRankCost(upgradeId, owned)
       if (cost === null) throw new Error(`${upgrade.name} is already at its highest rank.`)
       if (cost > banked) throw new Error(`Not enough Quantum Basalts: ${upgrade.name} costs ${cost}.`)

@@ -12,7 +12,7 @@ const readJson = (file: string) =>
   JSON.parse(readFileSync(new URL(`../src/data/${file}`, import.meta.url), 'utf8').replace(/^﻿/, ''))
 
 export function generatedBlock(): string {
-  const upgrades: { id: string; costs: number[] }[] = readJson('upgrades.json').upgrades
+  const upgrades: { id: string; costs: number[]; requiresFullClear?: boolean }[] = readJson('upgrades.json').upgrades
   const tracks: { id: string }[] = readJson('stat-tracks.json').tracks
   const boons: { id: string; tags: string[] }[] = readJson('boons.json')
   const costBands: { fromRank: number; toRank: number; devotions: number }[] = readJson('stat-tracks.json').rankCosts
@@ -44,6 +44,11 @@ export function generatedBlock(): string {
     '      };',
     '    }',
     '',
+    '    // Upgrades only a character with a survived full clear may buy.',
+    '    function fullClearUpgrades() {',
+    `      return [${upgrades.filter((u) => u.requiresFullClear).map((u) => `'${u.id}'`).join(', ')}];`,
+    '    }',
+    '',
     '    // Stat track ids (from src/data/stat-tracks.json).',
     '    function statTrackIds() {',
     `      return [${trackIds}];`,
@@ -69,9 +74,10 @@ export function generatedBlock(): string {
     `      return ${tracks.map((t) => `devotionSpendOn('${t.id}')`).join('\n        || ')};`,
     '    }',
     '',
-    '    // True if this update is a valid purchase of one of the upgrades.',
-    '    function anyUpgradePurchase() {',
-    `      return ${upgrades.map((u) => `upgradePurchaseOf('${u.id}')`).join('\n        || ')};`,
+    '    // True if this update is a valid purchase of one of the upgrades. Only the',
+    '    // upgrade that changed is checked in full, to stay under the rules\' work limit.',
+    '    function anyUpgradePurchase(changed) {',
+    `      return ${upgrades.map((u) => `(changed.hasOnly(['${u.id}']) && upgradePurchaseOf('${u.id}'))`).join('\n        || ')};`,
     '    }',
     END,
   ].join('\n')

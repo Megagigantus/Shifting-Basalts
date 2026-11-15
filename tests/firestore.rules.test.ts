@@ -280,6 +280,10 @@ describe('player buying upgrades', () => {
     await assertSucceeds(updateDoc(owned(), { 'upgrades.forge': 1, bankedQuantumBasalts: 0, updatedAt: now() }))
   })
 
+  it('can buy upgrades late in the list (the check stays under the rules work limit)', async () => {
+    await assertSucceeds(updateDoc(owned(), { 'upgrades.quick-return': 1, bankedQuantumBasalts: 40, updatedAt: now() }))
+  })
+
   it('cannot pay the wrong price, skip ranks or go past the max', async () => {
     await assertFails(updateDoc(owned(), { 'upgrades.reroll': 2, bankedQuantumBasalts: 49, updatedAt: now() }))
     await assertFails(updateDoc(owned(), { 'upgrades.reroll': 3, bankedQuantumBasalts: 15, updatedAt: now() }))
@@ -301,6 +305,13 @@ describe('player buying upgrades', () => {
   it('cannot buy while the character is in a run', async () => {
     await seedCharacters({ activeRunId: 'run-1' })
     await assertFails(updateDoc(owned(), { 'upgrades.reroll': 2, bankedQuantumBasalts: 30, updatedAt: now() }))
+  })
+
+  it('can buy full-clear rewards only after a survived full clear', async () => {
+    await assertFails(updateDoc(owned(), { 'upgrades.lost-and-found': 1, bankedQuantumBasalts: 20, updatedAt: now() }))
+    await assertFails(updateDoc(owned(), { fullClears: 1, updatedAt: now() }))
+    await seedCharacters({ fullClears: 1 })
+    await assertSucceeds(updateDoc(owned(), { 'upgrades.lost-and-found': 1, bankedQuantumBasalts: 20, updatedAt: now() }))
   })
 })
 

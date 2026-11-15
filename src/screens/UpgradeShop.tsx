@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import type { Character } from '../model/character'
 import { changeUpgrade } from '../characterStore'
-import { nextRankCost, ownedRankCost, UPGRADES, type UpgradeScope } from '../rules/upgrades'
+import { nextRankCost, ownedRankCost, upgradesFor, type UpgradeScope } from '../rules/upgrades'
 import { ConfirmButton } from '../ui/ConfirmButton'
 import { Pill } from '../ui/Pill'
 import { cx } from '../ui/tone'
@@ -48,7 +48,7 @@ export function UpgradeShop({ character, canCorrect = true, canSpend = true }: P
       </div>
 
       <div className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3">
-        {UPGRADES.map((u) => {
+        {upgradesFor(character).map((u) => {
           const owned = character.upgrades[u.id] ?? 0
           const cost = nextRankCost(u.id, owned)
           const maxed = cost === null
@@ -63,7 +63,12 @@ export function UpgradeShop({ character, canCorrect = true, canSpend = true }: P
                   {owned} / {u.costs.length}
                 </Pill>
               </div>
-              {u.status === 'proposed' && <Pill className="self-start">Proposed</Pill>}
+              {(u.status === 'proposed' || u.requiresFullClear) && (
+                <div className="flex flex-wrap gap-1.5">
+                  {u.requiresFullClear && <Pill tone="amber">Full clear reward</Pill>}
+                  {u.status === 'proposed' && <Pill>Proposed</Pill>}
+                </div>
+              )}
               <p className="m-0 flex-1 text-[0.6875rem] text-stone-300">{u.effect}</p>
               <p className="m-0 text-[0.625rem] text-stone-500">
                 {SCOPE_LABELS[u.scope]} · costs {u.costs.join(', ')}
