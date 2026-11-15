@@ -1,6 +1,5 @@
 // Create or edit a character's lean profile.
 import { useState, type FormEvent } from 'react'
-import classes from '../data/classes.json'
 import {
   ATTACK_STYLES,
   CASTER_TYPES,
@@ -8,7 +7,9 @@ import {
   type CharacterProfile,
   type AttackStyle,
 } from '../model/character'
-import { MAX_LEVEL, MIN_ENTRY_LEVEL, proficiencyBonus } from '../rules/proficiency'
+import { MIN_ENTRY_LEVEL } from '../rules/proficiency'
+import { buildError, cleanBuild, totalLevel, type BuildFields } from '../rules/build'
+import { BuildEditor } from './BuildEditor'
 import classTags from '../data/class-tags.json'
 import { BOONS } from '../rules/boons'
 import { FIELD, FIELD_LABEL, PRIMARY_BUTTON, QUIET_BUTTON } from '../ui/styles'
@@ -50,16 +51,17 @@ export function CharacterForm({ initial, onSave, onCancel }: Props) {
 
   async function submit(event: FormEvent) {
     event.preventDefault()
+    const build = cleanBuild(profile)
     const cleaned: CharacterProfile = {
       ...profile,
+      ...build,
+      level: totalLevel(build),
       name: profile.name.trim(),
-      subclass: profile.subclass.trim(),
       playerEmail: profile.playerEmail.trim().toLowerCase(),
     }
     if (!cleaned.name) return setError('Give the character a name.')
-    if (!Number.isInteger(cleaned.level) || cleaned.level < MIN_ENTRY_LEVEL || cleaned.level > MAX_LEVEL) {
-      return setError(`Level must be a whole number from ${MIN_ENTRY_LEVEL} to ${MAX_LEVEL}.`)
-    }
+    const problem = buildError(build, MIN_ENTRY_LEVEL)
+    if (problem) return setError(problem)
     if (cleaned.playerEmail && !EMAIL_PATTERN.test(cleaned.playerEmail)) {
       return setError('The player email doesn\'t look like an email address.')
     }
@@ -89,34 +91,6 @@ export function CharacterForm({ initial, onSave, onCancel }: Props) {
         <label className={`${FIELD_LABEL} sm:col-span-2`}>
           <span>Name</span>
           <input value={profile.name} onChange={(e) => set('name', e.target.value)} required className={`${FIELD} w-full`} />
-        </label>
-        <label className={FIELD_LABEL}>
-          <span>Class</span>
-          <select value={profile.classId} onChange={(e) => set('classId', e.target.value)} className={`${FIELD} w-full`}>
-            {classes.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className={FIELD_LABEL}>
-          <span>Subclass</span>
-          <input value={profile.subclass} onChange={(e) => set('subclass', e.target.value)} className={`${FIELD} w-full`} />
-        </label>
-        <label className={FIELD_LABEL}>
-          <span>
-            Level <span className="font-normal text-stone-500">(PB +{proficiencyBonus(Number.isNaN(profile.level) ? MIN_ENTRY_LEVEL : profile.level)})</span>
-          </span>
-          <input
-            type="number"
-            min={MIN_ENTRY_LEVEL}
-            max={MAX_LEVEL}
-            value={Number.isNaN(profile.level) ? '' : profile.level}
-            onChange={(e) => set('level', e.target.valueAsNumber)}
-            required
-            className={`${FIELD} w-full`}
-          />
         </label>
         <label className={FIELD_LABEL}>
           <span>Main attack style</span>
@@ -151,6 +125,8 @@ export function CharacterForm({ initial, onSave, onCancel }: Props) {
           />
         </label>
       </div>
+
+      <BuildEditor value={profile} onChange={(b: BuildFields) => setProfile((p) => ({ ...p, ...b }))} />
 
       {profile.casterType !== 'none' && (
         <fieldset className="m-0 flex flex-col gap-1.5 border-0 p-0">

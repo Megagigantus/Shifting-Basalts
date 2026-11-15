@@ -139,8 +139,38 @@ for (const b of boons) {
 const classTags = JSON.parse(
   readFileSync(new URL('../src/data/class-tags.json', import.meta.url), 'utf8').replace(/^﻿/, ''),
 ) as { classes: { classId: string; primary: string[]; secondary: string[] }[] }
-for (const id of classIds) {
+// A homebrew class has no row: its player picks their own tags.
+const homebrewIds = load<{ id: string; homebrew?: boolean }>('classes.json').filter((c) => c.homebrew).map((c) => c.id)
+for (const id of classIds.filter((c) => !homebrewIds.includes(c))) {
   if (!classTags.classes.some((c) => c.classId === id)) fail(`class-tags.json: no row for class "${id}"`)
+}
+
+// classes.json training and gear-bases.json: real training tokens, weapons and armor types.
+const bases = JSON.parse(readFileSync(new URL('../src/data/gear-bases.json', import.meta.url), 'utf8').replace(/^﻿/, '')) as {
+  weapons: { id: string; mastery: string; category: string }[]
+  armor: { id: string; type: string }[]
+  masteries: Record<string, string>
+}
+const weaponTokens = ['simple', 'martial', 'martial-light', 'martial-finesse-or-light', ...bases.weapons.map((w) => w.id)]
+const armorTypes = ['light', 'medium', 'heavy', 'shields']
+for (const w of bases.weapons) {
+  if (!bases.masteries[w.mastery]) fail(`gear-bases.json "${w.id}": unknown mastery "${w.mastery}"`)
+  if (!['simple', 'martial'].includes(w.category)) fail(`gear-bases.json "${w.id}": unknown category "${w.category}"`)
+}
+for (const a of bases.armor) if (!armorTypes.includes(a.type)) fail(`gear-bases.json "${a.id}": unknown armor type "${a.type}"`)
+type Grant = { weapons: string[]; armor: string[] }
+const checkGrant = (where: string, g: Grant) => {
+  for (const w of g.weapons) if (!weaponTokens.includes(w)) fail(`${where}: unknown weapon training "${w}"`)
+  for (const a of g.armor) if (!armorTypes.includes(a)) fail(`${where}: unknown armor training "${a}"`)
+}
+for (const c of load<Grant & { id: string; multiclass: Grant; subclasses: string[]; subclassGrants?: Record<string, Grant>; order?: { options: (Grant & { id: string })[] } }>('classes.json')) {
+  checkGrant(`classes.json "${c.id}"`, c)
+  checkGrant(`classes.json "${c.id}" multiclass`, c.multiclass)
+  for (const [sub, g] of Object.entries(c.subclassGrants ?? {})) {
+    if (!c.subclasses.includes(sub)) fail(`classes.json "${c.id}": grant for unknown subclass "${sub}"`)
+    checkGrant(`classes.json "${c.id}" ${sub}`, g)
+  }
+  for (const o of c.order?.options ?? []) checkGrant(`classes.json "${c.id}" ${o.id}`, o)
 }
 for (const row of classTags.classes) {
   const where = `class-tags.json "${row.classId}"`

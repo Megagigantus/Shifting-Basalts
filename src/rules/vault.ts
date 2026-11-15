@@ -3,7 +3,7 @@
 import relicData from '../data/relics.json'
 import classTagData from '../data/class-tags.json'
 import type { RunPlayer, RunState } from '../model/run'
-import type { Random } from './draft'
+import { classFactor, type Random } from './draft'
 import { slotTags } from './boons'
 import { entryTier, relicOf } from './loot'
 
@@ -23,17 +23,12 @@ function partyRelics(state: RunState): Set<string> {
 /** A relic's weight for this player: class primary ×3 or secondary ×2, ×2 if they hold one of its tags. */
 export function relicWeight(relicId: string, player: Pick<RunPlayer, 'draftProfile' | 'slots'>): number {
   const relic = relicOf(relicId)
-  const classId = player.draftProfile?.classId ?? ''
-  const favored = player.draftProfile?.favoredTags ?? []
-  const row = classTagData.classes.find((c) => c.classId === classId)
+  const profile = player.draftProfile
   const held = new Set((player.slots ?? []).flatMap((s) => (s ? slotTags(s) : [])))
-  let classFactor = 1
-  for (const tag of relic.tags) {
-    if (row?.primary.includes(tag) || favored.includes(tag)) classFactor = Math.max(classFactor, WEIGHTS.primaryTag)
-    else if (row?.secondary.includes(tag)) classFactor = Math.max(classFactor, WEIGHTS.secondaryTag)
-  }
+  // Same class factors as boon offers (multiclass and homebrew included).
+  const factor = Math.max(1, ...relic.tags.map((tag) => classFactor(tag, profile?.classId ?? '', profile?.favoredTags ?? [], profile?.tagWeights)))
   const heldFactor = relic.tags.some((t) => held.has(t)) ? WEIGHTS.heldTag : 1
-  return WEIGHTS.base * classFactor * heldFactor
+  return WEIGHTS.base * factor * heldFactor
 }
 
 function weightedPick(ids: string[], weight: (id: string) => number, random: Random): string {

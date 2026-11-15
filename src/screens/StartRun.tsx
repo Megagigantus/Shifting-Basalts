@@ -1,13 +1,14 @@
 // DM screen: pick who's entering and which Pressures, then start a run.
 import { useState } from 'react'
 import { DoorOpen, Lock, Swords } from 'lucide-react'
-import classes from '../data/classes.json'
 import { artUrl } from '../art'
 import { Panel, SectionLabel } from '../ui/Panel'
 import { StatStrip } from '../ui/StatStrip'
-import { PRIMARY_BUTTON } from '../ui/styles'
+import { PRIMARY_BUTTON, WELL } from '../ui/styles'
 import { cx, initials } from '../ui/tone'
-import type { Character } from '../model/character'
+import { buildOf, type Character } from '../model/character'
+import { buildSummary } from '../rules/build'
+import { BuildSummary } from './BuildPanel'
 import {
   availablePressures,
   entryMultiplier,
@@ -24,7 +25,6 @@ import { newRunId, saveRunState } from '../runStore'
 
 const EXTRA_PRESSURES = 'extra-pressures'
 
-const className = (id: string) => classes.find((c) => c.id === id)?.name ?? id
 
 interface Props {
   characters: Character[]
@@ -125,7 +125,7 @@ export function StartRun({ characters }: Props) {
                   <span className="shrink-0 font-mono text-[0.6875rem] font-bold text-amber-300">Lv {c.level}</span>
                 </span>
                 <span className="block truncate text-[0.6875rem] text-stone-400">
-                  {className(c.classId)} · {c.bankedQuantumBasalts} QB
+                  {buildSummary({ ...c, ...buildOf(c) })} · {c.bankedQuantumBasalts} QB
                 </span>
                 {locked && <span className="block text-[0.6875rem] font-semibold text-rose-300">Locked out {c.lockoutDays} days</span>}
               </span>
@@ -133,6 +133,21 @@ export function StartRun({ characters }: Props) {
           )
         })}
       </div>
+
+      {party.length > 0 && (
+        <>
+          <SectionLabel>Builds to review</SectionLabel>
+          <p className="m-0 text-[0.6875rem] text-stone-500">Players set these on their own devices. Check them before entering; Edit on the Characters tab to correct one.</p>
+          <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+            {party.map((c) => (
+              <div key={c.id} className={WELL}>
+                <span className="text-xs font-bold text-amber-200">{c.name}</span>
+                <BuildSummary character={c} />
+              </div>
+            ))}
+          </div>
+        </>
+      )}
 
       <StatStrip
         stats={[
