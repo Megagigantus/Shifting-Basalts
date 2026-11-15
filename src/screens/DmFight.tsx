@@ -11,7 +11,8 @@ import { BloodiedControl, HpList, StatLine } from './HpTracker'
 import { bossOf, buildBoss, floorBossDc, type AbilityProfile, type BossStats } from '../rules/bosses'
 import { ABILITIES, type Ability } from '../rules/encounters'
 import { boon } from '../rules/boons'
-import { changeHp, rerollEncounter, reveal, setBossBloodied } from '../rules/roomFlow'
+import { changeHp, rerollEncounter, reveal, setBossBloodied, shiftMap } from '../rules/roomFlow'
+import { shiftEffectOf } from '../rules/battleMap'
 import { artUrl, partArtId, phase2ArtId, type ArtKind } from '../art'
 import { RevealControl } from './RevealControl'
 import { ConfirmButton } from '../ui/ConfirmButton'
@@ -359,12 +360,13 @@ export function DmFight({ state, room, busy, act }: { state: RunState; room: Roo
   if (room.boss) {
     const boss = buildBoss(room.boss.id, run.partyLevel, room.boss.partySize, run.pressures)
     const shift = room.shifts?.find((s) => s.bossId === room.boss!.id)
+    const hasMapShift = Boolean(shiftEffectOf(room.boss.id))
     return (
       <BossBlock
         boss={boss}
         revealed={Boolean(shift?.revealed)}
         busy={busy}
-        onTrigger={() => act((s) => reveal(s, { shift: room.boss!.id }))}
+        onTrigger={() => act((s) => (hasMapShift ? shiftMap(s) : reveal(s, { shift: room.boss!.id })))}
         hp={{
           trackers,
           bloodied: bossBloodied(room, ctx),

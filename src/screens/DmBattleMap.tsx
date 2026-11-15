@@ -8,8 +8,8 @@ import type { RunState } from '../model/run'
 import type { Room } from '../rules/rooms'
 import { bossBloodied, hpTrackers } from '../rules/hp'
 import { ringOf } from '../rules/closingRing'
-import { arenaOf, currentForm, inPhase, mapPhase, PALETTE, type MapPiece } from '../rules/battleMap'
-import { dropMapObject, layOutMap, moveMapPiece, removeMapObject, swapBossForm } from '../rules/roomFlow'
+import { arenaOf, currentForm, inPhase, mapPhase, PALETTE, shiftEffectOf, type MapPiece } from '../rules/battleMap'
+import { dropMapObject, layOutMap, moveMapPiece, removeMapObject, shiftMap, swapBossForm } from '../rules/roomFlow'
 import { moveToken, roomKeyOf, useTokens } from '../runStore'
 import { artUrl } from '../art'
 import { BattleBoard } from './BattleBoard'
@@ -63,6 +63,8 @@ export function DmBattleMap({ state, room, busy, act }: Props) {
   const roomKey = roomKeyOf(room)
   const arena = map.arena ? arenaOf(map.arena) : undefined
   const form = currentForm(map)
+  const shiftEffect = shiftEffectOf(map.arena)
+  const hasMarchWalls = map.pieces.some((p) => p.key.startsWith('march:'))
   const ring = ringOf(room, state.run.pressures)
   const mapArt = map.arena ? (phase === 2 ? artUrl('arenas', `${map.arena}-phase-2`) : null) ?? artUrl('arenas', map.arena) : artUrl('maps', room.shape)
 
@@ -137,6 +139,11 @@ export function DmBattleMap({ state, room, busy, act }: Props) {
           {form && (
             <button type="button" className={SMALL_BUTTON} disabled={busy} onClick={() => act((s) => swapBossForm(s))}>
               Swap form (now {form === 'vyr' ? 'Vyr' : 'Kaelen'})
+            </button>
+          )}
+          {shiftEffect?.kind === 'march' && (
+            <button type="button" className={SMALL_BUTTON} disabled={busy} onClick={() => act((s) => shiftMap(s))}>
+              {hasMarchWalls ? 'March 15 ft' : 'Raise Marching Columns'}
             </button>
           )}
           <ConfirmButton

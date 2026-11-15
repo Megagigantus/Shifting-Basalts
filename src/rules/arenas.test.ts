@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { emptyDungeonLayer, emptyProfile, type Character } from '../model/character'
 import type { RunState } from '../model/run'
 import { newRunState, clearRoom } from './runFlow'
-import { changeHp, dropMapObject, enterRoom, removeMapObject, rerollBoss, setBossBloodied, startFloor, swapBossForm } from './roomFlow'
+import { changeHp, dropMapObject, enterRoom, removeMapObject, rerollBoss, setBossBloodied, shiftMap, startFloor, swapBossForm } from './roomFlow'
 import { arenaHasPhase2, arenaOf, currentForm, dims, doorSquares, mapPhase, placeArena, startSquares } from './battleMap'
 import { BOSSES } from './bosses'
 import { hpTrackers } from './hp'
@@ -144,5 +144,34 @@ describe('boss arenas', () => {
       { x: 6, y: 12 },
       { x: 7, y: 12 },
     ])
+  })
+
+  it('General Vane\'s Marching Columns rise on row 4 and march 3 squares south per trigger, stopping at the south edge', () => {
+    let state = inBossRoom('general-vane')
+    expect(state.run.roomView!.shifts).toEqual([])
+
+    state = shiftMap(state)
+    expect(state.dm!.room!.shifts![0].revealed).toBe(true)
+    expect(state.run.roomView!.shifts).toEqual(['general-vane'])
+    const walls = (s: RunState) => s.dm!.room!.map!.pieces.filter((p) => p.key.startsWith('march:'))
+    const playerWalls = (s: RunState) => s.run.roomView!.map!.pieces.filter((p) => p.key.startsWith('march:'))
+    expect(walls(state).map((p) => [p.key, p.id, p.x, p.y, p.w, p.h])).toEqual(
+      Array.from({ length: 8 }, (_, i) => [`march:${i}`, 'marching-wall', 3 + i, 4, 1, 1]),
+    )
+    expect(playerWalls(state).length).toBe(8)
+    expect(playerWalls(state).map((p) => [p.x, p.y])).toEqual(walls(state).map((p) => [p.x, p.y]))
+
+    state = shiftMap(state)
+    expect(walls(state).every((p) => p.y === 7)).toBe(true)
+    expect(playerWalls(state).every((p) => p.y === 7)).toBe(true)
+
+    state = shiftMap(state)
+    expect(walls(state).every((p) => p.y === 10)).toBe(true)
+    state = shiftMap(state)
+    expect(walls(state).every((p) => p.y === 13)).toBe(true)
+    state = shiftMap(state)
+    expect(walls(state).every((p) => p.y === 13)).toBe(true)
+
+    expect(() => shiftMap(inBossRoom('tessellated-warden'))).toThrow()
   })
 })

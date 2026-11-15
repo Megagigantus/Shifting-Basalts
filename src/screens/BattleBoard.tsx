@@ -141,6 +141,7 @@ export function BattleBoard({ squares: n, entrance, door, areas = [], mapArt, pi
           selected === p.key ? 'is-selected' : '',
           drag?.key === p.key ? 'is-dragging' : '',
           p.size < 1 ? 'is-tiny' : '',
+          p.key.startsWith('march:') ? 'is-marching' : '',
         ]
           .filter(Boolean)
           .join(' ')

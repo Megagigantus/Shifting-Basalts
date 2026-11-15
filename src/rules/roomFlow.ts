@@ -10,7 +10,7 @@ import { isBossRoom } from './runFlow'
 import { generateEncounter } from './encounters'
 import { pickBoss, restlessShiftActions } from './bosses'
 import { applyHp, emptyHp, hpShown, hpTrackers } from './hp'
-import { addObject, movePiece, placeArena, placeMap, removeObject, swapForm } from './battleMap'
+import { addObject, marchColumns, movePiece, placeArena, placeMap, removeObject, shiftEffectOf, swapForm } from './battleMap'
 import { advanceRing, nextRound, pullBackRing, ringOf, ringSettings, squaresAcross, startRing, type RingState } from './closingRing'
 
 function withRoom(state: RunState, room: Room | null, floorPlan = state.dm?.floorPlan ?? []): RunState {
@@ -185,6 +185,19 @@ export const removeMapObject = (state: RunState, key: string) => withMap(state, 
 
 /** Kaelen and Vyr: swap the boss token to the other form. */
 export const swapBossForm = (state: RunState) => withMap(state, swapForm)
+
+/** Apply the current boss room's map shift effect and reveal the boss's Shift Action. */
+export function shiftMap(state: RunState): RunState {
+  const room = state.dm?.room
+  if (!room?.boss) throw new Error('There\'s no boss in this room.')
+  if (!room.map) throw new Error('This room has no battle map.')
+  const bossId = room.boss.id
+  const effect = shiftEffectOf(bossId)
+  if (!effect) throw new Error('This boss has no map shift effect.')
+  const map = effect.kind === 'march' ? marchColumns(room.map) : room.map
+  const shifts = (room.shifts ?? []).map((s) => (s.bossId === bossId ? { ...s, revealed: true } : s))
+  return withRoom(state, { ...room, map, shifts })
+}
 
 /** Change the current room's Closing Ring with a closingRing helper. */
 function withRing(state: RunState, change: (ring: RingState, squares: number) => RingState): RunState {

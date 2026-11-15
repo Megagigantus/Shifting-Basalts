@@ -536,6 +536,15 @@
           "h": 1
         }
       ],
+      "shiftEffect": {
+        "kind": "march",
+        "art": "marching-wall",
+        "name": "Marching wall",
+        "x": 3,
+        "y": 4,
+        "w": 8,
+        "step": 3
+      },
       "notes": "Vane holds the dais at the north end. Marching Columns rise just below the dais (row 4) and march south 15 ft a round. The low posts give cover from his rebounds."
     },
     "glass-hydra": {

@@ -278,17 +278,30 @@ export function placeMap(room: Room, random: Random, keep?: BattleMap | null): B
 // ---------------------------------------------------------------------------
 // Boss arenas (arenas.json): a fixed layout per boss, on a 14 x 14 grid.
 
+export type ShiftEffect = {
+  kind: 'march'
+  art: string
+  name: string
+  x: number
+  y: number
+  w: number
+  step: number
+}
+
 interface ArenaData {
   entrance: { x: number; y: number; w: number; h: number }
   tokens: { name: string; size: number; art: string; hp: string; x: number; y: number; note?: string; forms?: Record<string, string> }[]
   objects: { art: string; name: string; x: number; y: number; w: number; h: number; phase?: number; note?: string }[]
   areas: { kind: string; name: string; x: number; y: number; w: number; h: number; phase?: number }[]
+  shiftEffect?: ShiftEffect
   phase2?: boolean
   notes?: string
 }
-const ARENAS = arenaData.arenas as Record<string, ArenaData>
+const ARENAS = arenaData.arenas as unknown as Record<string, ArenaData>
 export const PALETTE = arenaData.palette as { art: string; name: string; w: number; h: number }[]
 export const arenaOf = (bossId: string): ArenaData | undefined => ARENAS[bossId]
+export const shiftEffectOf = (bossId: string | undefined | null): ShiftEffect | undefined =>
+  bossId ? ARENAS[bossId]?.shiftEffect : undefined
 
 /** Optional fields only when set (Firestore can't store undefined). */
 const withPhase = <T extends object>(obj: T, phase?: number): T & { phase?: number } => (phase === undefined ? obj : { ...obj, phase })
@@ -347,6 +360,31 @@ export function currentForm(map: BattleMap | null | undefined): string | null {
     if (hit) return hit[0]
   }
   return null
+}
+
+/** General Vane: raise Marching Columns on the first call, or march them south. */
+export function marchColumns(map: BattleMap): BattleMap {
+  const effect = shiftEffectOf(map.arena)
+  if (!effect || effect.kind !== 'march') throw new Error('This arena has no Marching Columns shift effect.')
+  if (!map.pieces.some((p) => p.key.startsWith('march:'))) {
+    const walls: MapPiece[] = Array.from({ length: effect.w }, (_, i) => ({
+      key: `march:${i}`,
+      kind: 'object',
+      id: effect.art,
+      x: effect.x + i,
+      y: effect.y,
+      size: 1,
+      w: 1,
+      h: 1,
+      name: effect.name,
+    }))
+    return { ...map, pieces: [...map.pieces, ...walls] }
+  }
+  const maxY = map.squares - 1
+  return {
+    ...map,
+    pieces: map.pieces.map((p) => (p.key.startsWith('march:') ? { ...p, y: Math.min(maxY, p.y + effect.step) } : p)),
+  }
 }
 
 /** The DM drops an object from the palette near the middle of the map. */
