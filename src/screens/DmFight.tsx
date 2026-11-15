@@ -8,10 +8,10 @@ import type { Room } from '../rules/rooms'
 import { crLabel, creatureOf, creatureStats, creatureXp, familyOf, pushedStats, type Encounter } from '../rules/encounters'
 import { bossBloodied, hpTrackers, type Tracker } from '../rules/hp'
 import { BloodiedControl, HpList, StatLine } from './HpTracker'
-import { bossOf, buildBoss, floorBossDc, type AbilityProfile, type BossStats } from '../rules/bosses'
+import { bossOf, buildBoss, floorBossDc, signatureHazards, type AbilityProfile, type BossStats } from '../rules/bosses'
 import { ABILITIES, type Ability } from '../rules/encounters'
 import { boon } from '../rules/boons'
-import { changeHp, rerollEncounter, reveal, setBossBloodied } from '../rules/roomFlow'
+import { changeHp, cycleShift, rerollEncounter, reveal, setBossBloodied } from '../rules/roomFlow'
 import { artUrl, partArtId, phase2ArtId, type ArtKind } from '../art'
 import { RevealControl } from './RevealControl'
 import { useShiftMap } from './useShiftMap'
@@ -161,6 +161,15 @@ interface BossHp {
   onSetBloodied: (value: boolean | null) => void
 }
 
+/** Floor geometry cycle for a boss's Shift Action (e.g. Grand Reconstruction). */
+interface ShiftCycle {
+  floor: number
+  hazards: { bossId: string; bossName: string; name: string; text: string }[]
+  dc: number
+  onNext: () => void
+  onBack: () => void
+}
+
 const scoresOf = (p: AbilityProfile) => Object.fromEntries(ABILITIES.map((a) => [a, p[a].score])) as Record<Ability, number>
 const savesOf = (p: AbilityProfile) => Object.fromEntries(ABILITIES.map((a) => [a, p[a].save])) as Record<Ability, number>
 
@@ -180,12 +189,14 @@ export function BossBlock({
   busy,
   onTrigger,
   hp,
+  cycle,
 }: {
   boss: BossStats
   revealed: boolean
   busy: boolean
   onTrigger?: () => void
   hp?: BossHp
+  cycle?: ShiftCycle
 }) {
   const showArt = useLightbox()
   const mainArt = artUrl('bosses', boss.bossId)
@@ -318,6 +329,36 @@ export function BossBlock({
           {onTrigger && <RevealControl shown={revealed} busy={busy} onReveal={onTrigger} label="Trigger Shift Action" shownLabel="Triggered" />}
         </div>
         <p className="m-0 text-xs text-stone-200">{boss.shiftAction.text}</p>
+        {cycle && (
+          <div className="mt-1 flex flex-col gap-1.5 border-t border-amber-500/20 pt-2">
+            <div className="text-[0.6875rem] font-semibold text-amber-200">
+              {boss.shiftAction.name}: floor {cycle.floor} geometry
+            </div>
+            {cycle.hazards.length > 1 && (
+              <p className="m-0 text-[0.6875rem] text-stone-400">
+                This run didn&apos;t record floor {cycle.floor}&apos;s boss, so all three are shown.
+              </p>
+            )}
+            <ul className="m-0 list-none flex flex-col gap-1 p-0 text-xs text-stone-200">
+              {cycle.hazards.map((h) => (
+                <li key={h.bossId}>
+                  <strong className="text-stone-100">
+                    {h.name} ({h.bossName})
+                  </strong>
+                  : {h.text.replace(/\{dc\}/g, String(cycle.dc))}
+                </li>
+              ))}
+            </ul>
+            <div className="flex flex-wrap gap-1.5">
+              <button type="button" className={SMALL_BUTTON} disabled={busy} onClick={cycle.onBack}>
+                Back
+              </button>
+              <button type="button" className={SMALL_BUTTON} disabled={busy} onClick={cycle.onNext}>
+                Next round
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </Panel>
   )
@@ -361,12 +402,23 @@ export function DmFight({ state, room, busy, act }: { state: RunState; room: Roo
   if (room.boss) {
     const boss = buildBoss(room.boss.id, run.partyLevel, room.boss.partySize, run.pressures)
     const shift = room.shifts?.find((s) => s.bossId === room.boss!.id)
+    const hazards = signatureHazards(room.boss.id, room.cycle ?? 0, state.dm?.bossesBeaten)
     return (
       <BossBlock
         boss={boss}
         revealed={Boolean(shift?.revealed)}
         busy={busy}
         onTrigger={triggerShift ?? (() => act((s) => reveal(s, { shift: room.boss!.id })))}
+        cycle={
+          hazards
+            ? {
+                ...hazards,
+                dc: floorBossDc(room.floor, run.partyLevel),
+                onNext: () => act((s) => cycleShift(s, 1)),
+                onBack: () => act((s) => cycleShift(s, -1)),
+              }
+            : undefined
+        }
         hp={{
           trackers,
           bloodied: bossBloodied(room, ctx),

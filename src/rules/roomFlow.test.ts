@@ -3,6 +3,7 @@ import { emptyDungeonLayer, emptyProfile, type Character } from '../model/charac
 import type { RunState } from '../model/run'
 import {
   changeHp,
+  cycleShift,
   declineReprieve,
   enterRoom,
   rerollBoss,
@@ -14,7 +15,7 @@ import {
 } from './roomFlow'
 import { conditionOf } from './rooms'
 import { clearRoom, defeatBoss, descend, markDead, newRunState } from './runFlow'
-import { bossesOnFloor } from './bosses'
+import { bossesOnFloor, signatureHazards } from './bosses'
 import { hpTrackers } from './hp'
 
 function seeded(seed: number) {
@@ -299,5 +300,74 @@ describe('HP tracking', () => {
     boss = rerollBoss(boss, seeded(91))
     expect(boss.dm!.room!.hp).toEqual({ damage: {}, bossBloodied: null })
     expect(boss.run.roomView!.bossBloodied).toBe(false)
+  })
+})
+
+describe('Grand Reconstruction', () => {
+  function gatewrightRoom(bossesBeaten?: Record<string, string>): RunState {
+    let state = start()
+    state = {
+      ...state,
+      run: { ...state.run, floor: 5, room: 1 },
+      dm: { floorPlan: [], room: null, bossId: 'gatewright', bossesBeaten },
+    }
+    return enterRoom(state, seeded(1))
+  }
+
+  it('cycleShift wraps 1 -> 2 -> 3 -> 4 -> 1 and back from 1 to 4, keeping cycle out of roomView', () => {
+    let state = gatewrightRoom()
+    const currentFloor = (s: RunState) => signatureHazards(s.dm!.room!.boss!.id, s.dm!.room!.cycle ?? 0, s.dm?.bossesBeaten)?.floor
+
+    expect(currentFloor(state)).toBe(1)
+    expect('cycle' in (state.run.roomView ?? {})).toBe(false)
+
+    state = cycleShift(state, 1)
+    expect(currentFloor(state)).toBe(2)
+    expect('cycle' in (state.run.roomView ?? {})).toBe(false)
+
+    state = cycleShift(state, 1)
+    expect(currentFloor(state)).toBe(3)
+
+    state = cycleShift(state, 1)
+    expect(currentFloor(state)).toBe(4)
+
+    state = cycleShift(state, 1)
+    expect(currentFloor(state)).toBe(1)
+
+    state = cycleShift(state, -1)
+    expect(currentFloor(state)).toBe(4)
+  })
+
+  it('cycleShift throws on a non-cycling boss or outside a boss room', () => {
+    const combat = start()
+    expect(() => cycleShift(combat, 1)).toThrow()
+
+    let boss = start()
+    for (let i = 0; i < 4; i++) boss = enterRoom(clearRoom(boss, 'combat'), seeded(70 + i))
+    expect(() => cycleShift(boss, 1)).toThrow()
+  })
+
+  it('signatureHazards returns the beaten boss for a recorded floor and all three for an unrecorded floor', () => {
+    const beaten = { '1': 'choir-hollow-column', '3': 'glass-hydra' }
+
+    const floor1 = signatureHazards('gatewright', 0, beaten)
+    expect(floor1?.floor).toBe(1)
+    expect(floor1?.hazards.map((h) => h.bossId)).toEqual(['choir-hollow-column'])
+    expect(floor1?.hazards[0].bossName).toBe('Choir of the Hollow Column')
+
+    const floor2 = signatureHazards('gatewright', 1, beaten)
+    expect(floor2?.floor).toBe(2)
+    expect(floor2?.hazards.map((h) => h.bossId)).toEqual(bossesOnFloor(2).map((b) => b.id))
+    expect(floor2?.hazards).toHaveLength(3)
+
+    const floor3 = signatureHazards('gatewright', 2, beaten)
+    expect(floor3?.floor).toBe(3)
+    expect(floor3?.hazards.map((h) => h.bossId)).toEqual(['glass-hydra'])
+
+    const unrecorded = signatureHazards('gatewright', 0, undefined)
+    expect(unrecorded?.floor).toBe(1)
+    expect(unrecorded?.hazards.map((h) => h.bossId)).toEqual(bossesOnFloor(1).map((b) => b.id))
+
+    expect(signatureHazards('ophaniel', 0, beaten)).toBeNull()
   })
 })

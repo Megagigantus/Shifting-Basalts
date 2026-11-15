@@ -172,6 +172,8 @@ export interface DmRunState {
   room: Room | null
   /** The boss waiting at the end of this floor, picked when the floor starts. */
   bossId?: string | null
+  /** Which boss was beaten on each floor this run (floor number as a string key -> boss id). */
+  bossesBeaten?: Record<string, string>
 }
 
 export interface RunState {

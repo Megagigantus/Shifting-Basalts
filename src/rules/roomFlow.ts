@@ -8,7 +8,7 @@ import { conditionOf, generateRoom, planFloor, playerView, type Room } from './r
 import { floorInfo } from './run'
 import { isBossRoom } from './runFlow'
 import { generateEncounter } from './encounters'
-import { pickBoss, restlessShiftActions } from './bosses'
+import { bossOf, pickBoss, restlessShiftActions } from './bosses'
 import { applyHp, emptyHp, hpShown, hpTrackers } from './hp'
 import { addObject, marchColumns, mirrorMap, movePiece, placeArena, placeMap, removeObject, shiftEffectOf, swapForm } from './battleMap'
 import { advanceRing, nextRound, pullBackRing, ringOf, ringSettings, squaresAcross, startRing, type RingState } from './closingRing'
@@ -81,7 +81,7 @@ export function startFloor(state: RunState, random: Random): RunState {
   const ranks = state.players.filter((p) => p.alive).map((p) => p.reprieveRank ?? 0)
   const plan = planFloor(state.run.floor, floorInfo(state.run.floor).rooms, ranks, random)
   const bossId = pickBoss(state.run.floor, random)
-  return enterRoom({ ...state, dm: { floorPlan: plan, room: null, bossId } }, random)
+  return enterRoom({ ...state, dm: { ...state.dm, floorPlan: plan, room: null, bossId } }, random)
 }
 
 /** Swap the floor's boss for another of its three (and rebuild the boss room if the party is in it). */
@@ -197,6 +197,17 @@ export function shiftMap(state: RunState): RunState {
   const map = effect.kind === 'march' ? marchColumns(room.map) : mirrorMap(room.map)
   const shifts = (room.shifts ?? []).map((s) => (s.bossId === bossId ? { ...s, revealed: true } : s))
   return withRoom(state, { ...room, map, shifts })
+}
+
+/** Advance or step back the current boss's Grand Reconstruction cycle (DM only). */
+export function cycleShift(state: RunState, delta: 1 | -1): RunState {
+  const room = state.dm?.room
+  if (!room?.boss) throw new Error('There\'s no boss in this room.')
+  const floors = bossOf(room.boss.id)?.shiftAction.cycleFloors
+  if (!floors?.length) throw new Error('This boss\'s Shift Action doesn\'t cycle.')
+  const current = room.cycle ?? 0
+  const next = (((current + delta) % floors.length) + floors.length) % floors.length
+  return withRoom(state, { ...room, cycle: next })
 }
 
 /** Change the current room's Closing Ring with a closingRing helper. */

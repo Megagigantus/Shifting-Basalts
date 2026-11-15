@@ -173,8 +173,12 @@ export function defeatBoss(state: RunState): RunState {
   const players = awardDevotions(state.players, devotionsForRoom('boss', run.floor)).map((p) =>
     inFight(p) ? { ...p, quantumBasaltsEarned: p.quantumBasaltsEarned + payout } : p,
   )
+  const dm = state.dm?.bossId
+    ? { ...state.dm, bossesBeaten: { ...state.dm.bossesBeaten, [String(run.floor)]: state.dm.bossId } }
+    : state.dm
   const next: RunState = {
     ...state,
+    ...(dm !== undefined ? { dm } : {}),
     run: {
       ...run,
       lastBossFloor: run.floor,

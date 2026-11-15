@@ -115,6 +115,27 @@ describe('floor progress', () => {
     expect(state.players[0].quantumBasaltsEarned).toBe(65)
     expect(state.players[0].devotions).toBe(20 + 3) // 20 rooms and bosses on floors 1 to 4, then 3 for the legendary boss
   })
+
+  it('records dm.bossesBeaten on defeatBoss and keeps it when descending to the next floor', async () => {
+    const { startFloor } = await import('./roomFlow')
+    let state = startFloor(start(), () => 0.1)
+    const floor1Boss = state.dm!.bossId!
+    state = clearFloor(state)
+    expect(state.dm?.bossesBeaten).toEqual({ '1': floor1Boss })
+
+    state = startFloor(descend(state), () => 0.2)
+    expect(state.run.floor).toBe(2)
+    expect(state.dm?.bossesBeaten).toEqual({ '1': floor1Boss })
+
+    const floor2Boss = state.dm!.bossId!
+    state = clearFloor(state)
+    expect(state.dm?.bossesBeaten).toEqual({ '1': floor1Boss, '2': floor2Boss })
+  })
+
+  it('leaves dm undefined when defeating a boss without dm state', () => {
+    const state = clearFloor(start())
+    expect(state.dm).toBeUndefined()
+  })
 })
 
 describe('finishing rooms with loot', () => {

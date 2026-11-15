@@ -225,7 +225,7 @@ const bossData = loadObject<{
     attacks: { name: string; percent: number; count: number; die?: string }[]
     specials?: { text: string }[]
     legendaryOptions?: { text: string }[]
-    shiftAction: { name: string; text: string }
+    shiftAction: { name: string; text: string; cycleFloors?: number[] }
   }[]
 }>('bosses.json')
 
