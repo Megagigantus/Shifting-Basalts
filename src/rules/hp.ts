@@ -98,6 +98,13 @@ export function hpShown(room: Room, ctx: FightContext): HpShown {
     if (t.part !== undefined && (t.down || t.bloodied)) tokens[t.key] = t.down ? 'down' : 'bloodied'
     if (t.key === 'boss' && (t.down || boss)) tokens.boss = t.down ? 'down' : 'bloodied'
   }
+  // A boss with separate part pools: its whole-boss token is Down once every
+  // part is, else Bloodied with the boss.
+  const all = hpTrackers(room, ctx)
+  if (all.some((t) => t.part !== undefined) && !tokens.boss) {
+    if (all.every((t) => t.down)) tokens.boss = 'down'
+    else if (boss) tokens.boss = 'bloodied'
+  }
   return { enemyBloodied, boss, tokens }
 }
 

@@ -71,6 +71,15 @@
       },
       "tokens": [
         {
+          "name": "Choir of the Hollow Column",
+          "size": 2,
+          "art": "bosses:choir-hollow-column",
+          "hp": "boss",
+          "x": 6,
+          "y": 6,
+          "note": "The whole boss. Its HP is the pipe clusters' added together."
+        },
+        {
           "name": "Pipe cluster 1",
           "size": 2,
           "art": "boss-parts:choir-hollow-column-pipe-cluster",
@@ -115,6 +124,15 @@
         "h": 1
       },
       "tokens": [
+        {
+          "name": "Gilded Excavation Herd",
+          "size": 2,
+          "art": "bosses:gilded-excavation-herd",
+          "hp": "boss",
+          "x": 6,
+          "y": 1,
+          "note": "The whole boss. Its HP is the golem's and hounds' added together."
+        },
         {
           "name": "Survey Golem",
           "size": 2,
@@ -641,6 +659,15 @@
         "h": 1
       },
       "tokens": [
+        {
+          "name": "The Chorus of Unseen Angles",
+          "size": 2,
+          "art": "bosses:chorus-unseen-angles",
+          "hp": "boss",
+          "x": 6,
+          "y": 3,
+          "note": "The whole boss, just north of the central column. The members share its HP."
+        },
         {
           "name": "Unseen Angle 1",
           "size": 1,

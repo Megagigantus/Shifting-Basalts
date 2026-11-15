@@ -49,7 +49,15 @@ export function DmBattleMap({ state, room, busy, act }: Props) {
   }
 
   const ctx = { partyLevel: state.run.partyLevel, pressures: state.run.pressures }
-  const trackers = new Map(hpTrackers(room, ctx).map((t) => [t.key, t]))
+  const allTrackers = hpTrackers(room, ctx)
+  const trackers = new Map(allTrackers.map((t) => [t.key, t]))
+  // A boss with separate part pools has no "boss" tracker; its whole-boss
+  // token shows the parts added together.
+  if (!trackers.has('boss') && allTrackers.some((t) => t.part !== undefined)) {
+    const max = allTrackers.reduce((s, t) => s + t.max, 0)
+    const current = allTrackers.reduce((s, t) => s + t.current, 0)
+    trackers.set('boss', { key: 'boss', label: 'Whole boss', max, current, bloodied: current <= max / 2, down: current === 0 })
+  }
   const bloodied = bossBloodied(room, ctx)
   const phase = mapPhase(map, bloodied)
   const roomKey = roomKeyOf(room)

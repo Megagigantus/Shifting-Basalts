@@ -51,7 +51,9 @@ describe('boss arenas', () => {
       const tokens = map.pieces.filter((p) => p.kind === 'boss')
       expect(tokens.length).toBe(arenaOf(b.id)!.tokens.length)
       const partCount = (b.parts ?? []).reduce((s, p) => s + p.count, 0)
-      if (b.id !== 'kaelen-and-vyr') expect(tokens.length).toBe(Math.max(1, partCount))
+      // Part bosses: one token per part plus the whole boss with its own art.
+      if (b.id !== 'kaelen-and-vyr') expect(tokens.length).toBe(partCount ? partCount + 1 : 1)
+      if (b.id !== 'kaelen-and-vyr') expect(tokens.some((t) => t.hp === 'boss' && t.id === `bosses:${b.id}`)).toBe(true)
       for (const t of tokens) expect(t.hp).toBeTruthy()
     }
   })
@@ -74,6 +76,12 @@ describe('boss arenas', () => {
     const pieces = state.run.roomView!.map!.pieces
     expect(pieces.find((p) => p.hp === parts[0].key)!.state).toBe('bloodied')
     expect(pieces.find((p) => p.hp === parts[1].key)!.state).toBeNull()
+    expect(pieces.find((p) => p.hp === 'boss')!.state).toBeNull()
+    // The whole-boss token: Bloodied with the boss, Down once every part is.
+    for (const t of parts.slice(1, 3)) state = changeHp(state, t.key, t.max)
+    expect(state.run.roomView!.map!.pieces.find((p) => p.hp === 'boss')!.state).toBe('bloodied')
+    for (const t of parts) state = changeHp(state, t.key, t.max)
+    expect(state.run.roomView!.map!.pieces.find((p) => p.hp === 'boss')!.state).toBe('down')
 
     let warden = inBossRoom('tessellated-warden')
     expect(warden.run.roomView!.map!.pieces.find((p) => p.kind === 'boss')!.state).toBeNull()
