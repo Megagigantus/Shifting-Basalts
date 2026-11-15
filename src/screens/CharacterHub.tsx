@@ -245,15 +245,15 @@ function LocationBanner({ artId, tone, icon, title, text, badge, onVisit }: Bann
           src={url}
           alt=""
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-70 transition-transform duration-300 group-hover:scale-[1.03]"
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
         />
       )}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-r from-stone-950/95 via-stone-950/70 to-transparent" />
-      <div className="relative flex min-h-28 flex-col justify-end gap-1.5 p-4">
-        <strong className={cx('flex items-center gap-2 text-base', toneClasses[tone].text)}>
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-stone-950/35" />
+      <div className="relative flex min-h-40 flex-col justify-end gap-1.5 p-4">
+        <strong className={cx('flex items-center gap-2 text-base drop-shadow-[0_1px_3px_rgb(0_0_0/0.9)]', toneClasses[tone].text)}>
           {icon} {title}
         </strong>
-        <span className="text-xs text-stone-300">{text}</span>
+        <span className="text-xs text-stone-100 drop-shadow-[0_1px_2px_rgb(0_0_0/0.9)]">{text}</span>
         <span className="flex flex-wrap items-center gap-2">
           <Pill tone={tone} mono>
             {badge}
@@ -276,8 +276,8 @@ function Location({ artId, tone, icon, title, onLeave, children }: { artId: stri
   const url = artUrl('rooms', artId)
   return (
     <section className={cx('relative overflow-hidden rounded-2xl border bg-stone-900/95 text-stone-100 shadow-2xl shadow-black/40', toneClasses[tone].border)}>
-      {url && <img src={url} alt="" aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-48 w-full object-cover opacity-30" />}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-transparent to-stone-900" />
+      {url && <img src={url} alt="" aria-hidden="true" className="pointer-events-none absolute inset-0 h-full w-full object-cover" />}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-stone-950/75" />
       <div className="relative flex flex-col gap-3 p-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className={cx('m-0 flex items-center gap-2 text-base font-bold', toneClasses[tone].text)}>
