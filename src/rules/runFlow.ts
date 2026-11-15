@@ -2,7 +2,7 @@
 // returns a new one (it never changes the old one), or throws if the action
 // isn't allowed right now. Screens call these, then save the result.
 import { buildOf, type Character } from '../model/character'
-import { mainClassId, tagWeights } from './build'
+import { mainClassId, tagWeights, trainingOf } from './build'
 import type { RoomKind, RunPlayer, RunResult, RunState } from '../model/run'
 import {
   bossQuantumBasalts,
@@ -75,6 +75,7 @@ export function newRunState(id: string, joinCode: string, party: Character[], pr
       slots: emptySlots(slotCount(c.upgrades['extra-boon-slot'] ?? 0)),
       hiddenBoonId: null,
       draftProfile: draftProfileFor(c),
+      training: trainingFor(c),
       draft: null,
       hiddenOffer: null,
       draftsSeen: 0,
@@ -113,6 +114,13 @@ export function draftProfileFor(c: Character): NonNullable<RunPlayer['draftProfi
     rerollsPerFloor: c.upgrades.reroll ?? 0,
     attuneTag: (c.upgrades.attunement ?? 0) > 0 ? (c.attuneTag ?? null) : null,
   }
+}
+
+/** A character's training and mastery picks, as a run keeps them for aiming gear (Who gear drops for). */
+export function trainingFor(c: Character): NonNullable<RunPlayer['training']> {
+  const build = { ...c, ...buildOf(c) }
+  const t = trainingOf(build)
+  return { weapons: [...t.weapons], armor: [...t.armor], masteries: [...build.masteries] }
 }
 
 /** True while any living player still has a draft to choose from. */

@@ -1,5 +1,5 @@
 {
-  "_source": "docs/design-bible.md: Trinkets, Consumables, Gear, Wondrous items, Boss trophies, Loot defaults. Names and effects as written; Meadow in a jar reworded per Loot defaults.",
+  "_source": "Gear bases: the bible's Gear (d12) Base (roll) column, in roll order (ids in gear-bases.json). docs/design-bible.md: Trinkets, Consumables, Gear, Wondrous items, Boss trophies, Loot defaults. Names and effects as written; Meadow in a jar reworded per Loot defaults.",
   "status": "proposed",
   "healingPotionGrades": { "common": "Potion of Healing", "uncommon": "Potion of Greater Healing", "rare": "Potion of Superior Healing", "very-rare": "Potion of Supreme Healing", "legendary": "Potion of Supreme Healing" },
   "gearBonus": { "common": 0, "uncommon": 1, "rare": 2, "very-rare": 3, "legendary": 3 },
@@ -41,18 +41,18 @@
     { "id": "stride-spark", "name": "Stride spark", "effect": "Crush it as a Bonus Action to teleport 30 ft, or crush it before a stride roll to add +PB to the roll." }
   ],
   "gear": [
-    { "id": "lodge-hunting-blade", "name": "Lodge hunting blade", "base": "Dagger, shortsword or scimitar", "property": "Your first hit against a creature that hasn't acted yet this combat deals +1d6 damage." },
-    { "id": "columnbreaker", "name": "Columnbreaker", "base": "Any hammer or maul", "property": "Double damage to objects and structures. Hitting a column or pillar can topple it onto a creature within 10 ft: Dexterity save or PB d6 bludgeoning damage and Prone." },
-    { "id": "ricochet-sling", "name": "Ricochet sling", "base": "Sling or any thrown weapon", "property": "Once per turn, when you miss, the shot bounces: attack another creature within 10 ft of the first." },
-    { "id": "cable-lash", "name": "Cable-lash", "base": "Whip", "property": "Reach 15 ft. As a Bonus Action, swing on it up to 15 ft to a column, cable or ledge you can see." },
-    { "id": "hymn-tuned-glaive", "name": "Hymn-tuned glaive", "base": "Any polearm", "property": "On a hit, the weapon hums: the next ally to attack that target before your next turn adds 1d4 to the roll." },
-    { "id": "gate-glass-edge", "name": "Gate-glass edge", "base": "Any blade", "property": "Deals force damage instead of its normal type when you choose. When drawn, its light shows a meadow." },
-    { "id": "wardstone-plate", "name": "Wardstone plate", "base": "Any heavy armor", "property": "When an effect would push, pull or knock you Prone, you can use your Reaction to stay put." },
-    { "id": "surveyors-coat", "name": "Surveyor's coat", "base": "Any light armor", "property": "Advantage on checks to spot traps, room tricks and false walls." },
-    { "id": "echo-stitched-leathers", "name": "Echo-stitched leathers", "base": "Light or medium armor", "property": "When an attack misses you, you can use your Reaction to move 5 ft without provoking Opportunity Attacks." },
-    { "id": "choir-shield", "name": "Choir shield", "base": "Shield", "property": "When you take the Dodge action, allies within 5 ft of you have half cover." },
-    { "id": "lodestone-shield", "name": "Lodestone shield", "base": "Shield", "property": "You ignore magnetic pulls like the Magnetic Floor. Once per day, as an action, pull a metal weapon from a creature within 10 ft (Strength save or it lands at your feet)." },
-    { "id": "meadowlight-breastplate", "name": "Meadowlight breastplate", "base": "Any medium armor", "property": "While Bloodied, you shed golden light in a 10 ft radius and have advantage on Death Saving Throws." }
+    { "id": "lodge-hunting-blade", "name": "Lodge hunting blade", "bases": ["dagger", "shortsword", "scimitar"], "property": "Your first hit against a creature that hasn't acted yet this combat deals +1d6 damage." },
+    { "id": "columnbreaker", "name": "Columnbreaker", "bases": ["light-hammer", "warhammer", "maul"], "property": "Double damage to objects and structures. Hitting a column or pillar can topple it onto a creature within 10 ft: Dexterity save or PB d6 bludgeoning damage and Prone." },
+    { "id": "ricochet-sling", "name": "Ricochet sling", "bases": ["sling", "dagger", "dart", "handaxe", "javelin", "light-hammer", "spear", "trident"], "property": "Once per turn, when you miss, the shot bounces: attack another creature within 10 ft of the first." },
+    { "id": "cable-lash", "name": "Cable-lash", "bases": ["whip"], "property": "Reach 15 ft. As a Bonus Action, swing on it up to 15 ft to a column, cable or ledge you can see." },
+    { "id": "hymn-tuned-glaive", "name": "Hymn-tuned polearm", "bases": ["glaive", "halberd", "pike", "spear"], "property": "On a hit, the weapon hums: the next ally to attack that target before your next turn adds 1d4 to the roll." },
+    { "id": "gate-glass-edge", "name": "Gate-glass edge", "bases": ["dagger", "shortsword", "scimitar", "rapier", "longsword", "greatsword"], "property": "Deals force damage instead of its normal type when you choose. When drawn, its light shows a meadow." },
+    { "id": "wardstone-plate", "name": "Wardstone mail", "bases": ["ring-mail", "chain-mail", "splint", "plate"], "property": "When an effect would push, pull or knock you Prone, you can use your Reaction to stay put." },
+    { "id": "surveyors-coat", "name": "Surveyor's coat", "bases": ["padded", "leather", "studded-leather"], "property": "Advantage on checks to spot traps, room tricks and false walls." },
+    { "id": "echo-stitched-leathers", "name": "Echo-stitched leathers", "bases": ["leather", "studded-leather", "hide"], "property": "When an attack misses you, you can use your Reaction to move 5 ft without provoking Opportunity Attacks." },
+    { "id": "choir-shield", "name": "Choir shield", "bases": ["shield"], "property": "When you take the Dodge action, allies within 5 ft of you have half cover." },
+    { "id": "lodestone-shield", "name": "Lodestone shield", "bases": ["shield"], "property": "You ignore magnetic pulls like the Magnetic Floor. Once per day, as an action, pull a metal weapon from a creature within 10 ft (Strength save or it lands at your feet)." },
+    { "id": "meadowlight-breastplate", "name": "Meadowlight breastplate", "bases": ["breastplate"], "property": "While Bloodied, you shed golden light in a 10 ft radius and have advantage on Death Saving Throws." }
   ],
   "wondrous": {
     "common": [

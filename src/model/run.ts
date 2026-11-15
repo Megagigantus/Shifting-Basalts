@@ -116,6 +116,8 @@ export interface RunPlayer {
   draft?: DraftOffer | null
   /** A hidden offer (room condition or class trigger), until the player chooses. */
   hiddenOffer?: HiddenOffer | null
+  /** Weapon and armor training and mastery picks, captured at run start, for aiming gear drops. */
+  training?: { weapons: string[]; armor: string[]; masteries: string[] }
   /** The room ("floor-room") where this player's class trigger last fired; once per room. */
   classTriggerRoom?: string
   /** Rerolls used on this floor. */

@@ -8,6 +8,7 @@ import rules from '../data/rules.json'
 import type { Run, RunPlayer, RunState } from '../model/run'
 import type { Random } from './draft'
 import { lootKeptPercent, withPressureBonus } from './run'
+import { baseCost, gearName, gearRow, rollGear, usableBases } from './gear'
 
 export type Rarity = 'common' | 'uncommon' | 'rare' | 'very-rare' | 'legendary'
 export type ItemKind = 'trinket' | 'consumable' | 'gear' | 'wondrous' | 'trophy' | 'relic'
@@ -22,6 +23,10 @@ export interface LootItem {
   rarity: Rarity | null
   /** Legendary gear's second property (another gear id). */
   secondRef?: string
+  /** Gear: the base weapon or armor (gear-bases.json id). Older drops have none. */
+  base?: string
+  /** Gear: the character the roll was aimed at (Who gear drops for). */
+  forCharacterId?: string
   floor: number
   room: number
   source: LootSource
@@ -105,6 +110,7 @@ export function itemValue(item: LootItem): number {
   if (item.kind === 'relic') return 0
   if (item.kind === 'trinket') return rollData.trinketValue
   const value = rarityValue(item.rarity ?? 'common')
+  if (item.kind === 'gear') return Math.round(value + baseCost(item.base)) // gear adds its base item's cost
   return item.kind === 'consumable' ? Math.floor(value * rollData.consumableValueShare) : value
 }
 
@@ -116,10 +122,8 @@ export function itemName(item: LootItem): string {
       return item.ref === 'healing-potion'
         ? (itemData.healingPotionGrades as Record<string, string>)[item.rarity ?? 'common']
         : consumableOf(item.ref).name
-    case 'gear': {
-      const bonus = (itemData.gearBonus as Record<string, number>)[item.rarity ?? 'common']
-      return `${gearOf(item.ref).name}${bonus ? ` +${bonus}` : ''}`
-    }
+    case 'gear':
+      return gearName(item)
     case 'wondrous':
       return wondrousOf(item.ref).name
     case 'trophy':
@@ -138,7 +142,7 @@ export function itemText(item: LootItem): string {
     case 'gear': {
       const g = gearOf(item.ref)
       const second = item.secondRef ? ` Also: ${gearOf(item.secondRef).property}` : ''
-      return `${g.base}. ${g.property}${second}`
+      return `${g.property}${second}`
     }
     case 'wondrous':
       return wondrousOf(item.ref).effect
@@ -156,15 +160,16 @@ export function itemText(item: LootItem): string {
 
 type NewItem = Omit<LootItem, 'uid' | 'source' | 'floor' | 'room'>
 
-function rollItem(kind: 'trinket' | 'consumable' | 'gear' | 'wondrous', rarity: Rarity, random: Random): NewItem {
+function rollItem(
+  kind: 'trinket' | 'consumable' | 'gear' | 'wondrous',
+  rarity: Rarity,
+  random: Random,
+  players: Pick<RunPlayer, 'characterId' | 'training'>[] = [],
+  aimAt?: string,
+): NewItem {
   if (kind === 'trinket') return { kind, ref: String(roll(itemData.trinkets.length, random) - 1), rarity: null }
   if (kind === 'consumable') return { kind, ref: pick(itemData.consumables, random).id, rarity }
-  if (kind === 'gear') {
-    const first = pick(itemData.gear, random).id
-    if (rarity !== itemData.gearSecondPropertyAt) return { kind, ref: first, rarity }
-    const second = pick(itemData.gear.filter((g) => g.id !== first), random).id
-    return { kind, ref: first, rarity, secondRef: second }
-  }
+  if (kind === 'gear') return { kind, rarity, ...rollGear(players, rarity, random, aimAt) }
   const table = (itemData.wondrous as Record<string, { id: string }[]>)[rarity]
   return { kind, ref: pick(table, random).id, rarity }
 }
@@ -172,7 +177,7 @@ function rollItem(kind: 'trinket' | 'consumable' | 'gear' | 'wondrous', rarity: 
 export type Drop = { kind: 'credits'; amount: number } | { kind: 'basalts'; amount: number } | { kind: 'item'; item: NewItem }
 
 /** One roll on the floor loot roll (d100), with the floor's amounts and rarity. */
-export function floorRoll(run: Run, floor: number, random: Random): Drop {
+export function floorRoll(run: Run, floor: number, random: Random, players: Pick<RunPlayer, 'characterId' | 'training'>[] = []): Drop {
   const row = rollData.floorRoll.find((r) => r.floor === lootFloor(floor))!
   const d100 = roll(100, random)
   const kind = row.table.find((t) => d100 <= t.upTo)!.kind
@@ -186,7 +191,7 @@ export function floorRoll(run: Run, floor: number, random: Random): Drop {
     return { kind: 'basalts', amount: (rollDice(b.dice, b.sides, random) + b.plus) * run.entryMultiplier }
   }
   const rarity = floorRarity(floor, run.partyLevel, random)
-  return { kind: 'item', item: rollItem(kind as 'trinket' | 'consumable' | 'gear' | 'wondrous', rarity, random) }
+  return { kind: 'item', item: rollItem(kind as 'trinket' | 'consumable' | 'gear' | 'wondrous', rarity, random, players) }
 }
 
 /** Add drops to the party's pool; Basalts go to every living player (banked like boss Basalts). */
@@ -214,7 +219,7 @@ export function applyDrops(state: RunState, drops: Drop[], source: LootSource): 
 /** A cleared room's loot: 1 roll for combat, 2 for elite, none for a Reprieve. */
 export function roomLoot(state: RunState, kind: 'combat' | 'elite' | 'reprieve', random: Random): RunState {
   const rolls = kind === 'elite' ? rollData.drops.elite : kind === 'combat' ? rollData.drops.combat : 0
-  const drops = Array.from({ length: rolls }, () => floorRoll(state.run, state.run.floor, random))
+  const drops = Array.from({ length: rolls }, () => floorRoll(state.run, state.run.floor, random, state.players))
   return applyDrops(state, drops, kind === 'elite' ? 'elite' : 'room')
 }
 
@@ -226,7 +231,7 @@ export function cacheRolls(run: Run): number {
 /** A boss cache: floor rolls, a wondrous item one rarity up, and the trophy on a d6 roll of 5 or 6. */
 export function bossCache(state: RunState, bossId: string | null, random: Random): RunState {
   const { run } = state
-  const rolls = Array.from({ length: cacheRolls(run) }, () => floorRoll(run, run.floor, random))
+  const rolls = Array.from({ length: cacheRolls(run) }, () => floorRoll(run, run.floor, random, state.players))
   let next = applyDrops(state, rolls, 'cache')
   const rarity = stepRarity(floorRarity(run.floor, run.partyLevel, random), rollData.drops.cacheBonusRarityStep)
   next = applyDrops(next, [{ kind: 'item', item: rollItem('wondrous', rarity, random) }], 'cache-bonus')
@@ -273,8 +278,10 @@ export function shrineOffering(state: RunState, trinketUid: string, targetUid: s
   }
   const kind = target.kind as 'trinket' | 'consumable' | 'gear' | 'wondrous'
   // Same kind and rarity, but a different item when the table allows one.
-  let item = rollItem(kind, target.rarity ?? 'common', random)
-  for (let tries = 0; item.ref === target.ref && tries < 20; tries++) item = rollItem(kind, target.rarity ?? 'common', random)
+  // Gear stays aimed at the same character.
+  const reroll = () => rollItem(kind, target.rarity ?? 'common', random, state.players, target.forCharacterId)
+  let item = reroll()
+  for (let tries = 0; item.ref === target.ref && tries < 20; tries++) item = reroll()
   return applyDrops(without, [{ kind: 'item', item }], 'shrine')
 }
 
@@ -345,4 +352,41 @@ export function planShare(state: RunState, picks: LootPick[]): LootShare {
     throw new Error(`Those items are worth ${itemsValue.toLocaleString()} credits; the party keeps ${value.toLocaleString()}.`)
   }
   return { keptPercent: percent, keptValue: value, itemsValue, creditsPayout: value - itemsValue, picks }
+}
+
+// ---------------------------------------------------------------------------
+// DM override for gear (Who gear drops for): pick the base, or aim the roll at
+// a different character.
+
+function changeItem(state: RunState, uid: string, change: (item: LootItem) => LootItem): RunState {
+  const loot = state.run.loot
+  const item = loot?.items.find((i) => i.uid === uid)
+  if (!loot || !item) throw new Error("That item isn't in the party's loot.")
+  return { ...state, run: { ...state.run, loot: { ...loot, items: loot.items.map((i) => (i.uid === uid ? change(i) : i)) } } }
+}
+
+/** The DM picks a gear drop's base from its row's bases. */
+export function setGearBase(state: RunState, uid: string, baseId: string): RunState {
+  return changeItem(state, uid, (item) => {
+    if (item.kind !== 'gear') throw new Error('Only gear has a base.')
+    if (!gearRow(item.ref).bases.includes(baseId)) throw new Error("That base isn't one this gear can roll.")
+    return { ...item, base: baseId }
+  })
+}
+
+/** The DM aims a gear drop at another character: a fresh row and base they can use, same rarity. */
+export function reaimGear(state: RunState, uid: string, characterId: string, random: Random): RunState {
+  if (!state.players.some((p) => p.characterId === characterId)) throw new Error('Aim at a character in this run.')
+  return changeItem(state, uid, (item) => {
+    if (item.kind !== 'gear') throw new Error('Only gear can be aimed.')
+    const { kind, rarity, uid: id, floor, room, source } = item
+    return { kind, rarity, uid: id, floor, room, source, ...rollGear(state.players, rarity ?? 'common', random, characterId) }
+  })
+}
+
+/** Bases the DM may pick for a gear drop, and which ones the aimed character can use. */
+export function gearBaseChoices(state: RunState, item: LootItem): { id: string; usable: boolean }[] {
+  const training = state.players.find((p) => p.characterId === item.forCharacterId)?.training
+  const usable = new Set(usableBases(gearRow(item.ref), training))
+  return gearRow(item.ref).bases.map((id) => ({ id, usable: usable.has(id) }))
 }
