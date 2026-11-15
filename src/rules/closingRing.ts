@@ -26,7 +26,7 @@ export function hasRing(room: Pick<Room, 'kind'>): boolean {
 }
 
 /** Squares per side of the room's map (from the map, or the room's size). */
-export function squaresAcross(room: Pick<Room, 'size' | 'map'>): number {
+export function squaresAcross(room: { size: string; map?: { squares: number } | null }): number {
   return room.map?.squares ?? Math.round(sizeOf(room.size).feet / 5)
 }
 
