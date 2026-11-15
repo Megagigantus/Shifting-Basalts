@@ -407,7 +407,7 @@ const lootRolls = loadObject<{
 const lootItems = loadObject<{
   trinkets: string[]
   consumables: { id: string; name: string; effect: string }[]
-  gear: { id: string; name: string; property: string }[]
+  gear: { id: string; name: string; bases: string[]; property: string }[]
   wondrous: Record<string, { id: string; name: string; effect: string }[]>
   trophies: { bossId: string; id: string; name: string; rarity: string; effect: string }[]
 }>('loot-items.json')
@@ -433,6 +433,15 @@ for (let floor = 1; floor <= 4; floor++) {
 if (lootItems.trinkets.length !== 20) fail(`loot-items.json: expected 20 trinkets (d20), found ${lootItems.trinkets.length}`)
 if (lootItems.consumables.length !== 12) fail(`loot-items.json: expected 12 consumables (d12)`)
 if (lootItems.gear.length !== 12) fail(`loot-items.json: expected 12 gear items (d12)`)
+// Every gear row rolls at least one base, and every base is in gear-bases.json.
+const baseIds = [...bases.weapons.map((w) => w.id), ...bases.armor.map((a) => a.id)]
+for (const g of lootItems.gear) {
+  if (!g.bases?.length) fail(`loot-items.json gear "${g.id}": no bases`)
+  for (const b of g.bases ?? []) if (!baseIds.includes(b)) fail(`loot-items.json gear "${g.id}": unknown base "${b}"`)
+}
+for (const r of relicData.relics as { id: string; base?: string }[]) {
+  if (r.base && !baseIds.includes(r.base)) fail(`relics.json "${r.id}": unknown base "${r.base}"`)
+}
 for (const id of rarityIds) if (!lootItems.wondrous[id]?.length) fail(`loot-items.json: no wondrous items for ${id}`)
 for (const b of bossData.bosses) {
   if (!lootItems.trophies.some((t) => t.bossId === b.id)) fail(`loot-items.json: no trophy for boss "${b.id}"`)

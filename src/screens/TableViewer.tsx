@@ -11,6 +11,7 @@ import lootItems from '../data/loot-items.json'
 import relicData from '../data/relics.json'
 import { BOSSES } from '../rules/bosses'
 import { crLabel } from '../rules/encounters'
+import { baseName } from '../rules/gear'
 import { Panel, SectionLabel } from '../ui/Panel'
 import { Pill } from '../ui/Pill'
 import { SMALL_BUTTON, WELL } from '../ui/styles'
@@ -222,7 +223,7 @@ function Items() {
         <RollList title="Gear (d12)">
           {lootItems.gear.map((g) => (
             <li key={g.id}>
-              <Name>{g.name}</Name> <span className="text-stone-500">({g.base})</span>: {g.property}
+              <Name>{g.name}</Name> <span className="text-stone-500">(d{g.bases.length}: {g.bases.map(baseName).join(', ').toLowerCase()})</span>: {g.property}
             </li>
           ))}
         </RollList>
