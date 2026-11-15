@@ -2,6 +2,7 @@
 // party is and everyone's boons; never anything from the DM-only data.
 // Wide screens: main column (draft, room, loot) plus a party sidebar. Phones:
 // one column, with the party cards (yours first) right after the banner.
+import { hasFullClear } from '../rules/upgrades'
 import { useState } from 'react'
 import { Skull } from 'lucide-react'
 import type { RunPlayer, RunState } from '../model/run'
@@ -109,6 +110,7 @@ export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
               key={p.characterId}
               player={p}
               portrait={looks[p.characterId]?.portrait}
+              glow={hasFullClear(looks[p.characterId] ?? {})}
               isMine={myCharacterIds.includes(p.characterId)}
               open={open === p.characterId}
               onToggle={() => setOpen(open === p.characterId ? null : p.characterId)}
@@ -126,6 +128,8 @@ export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
 interface CardProps {
   player: RunPlayer
   portrait: string | undefined
+  /** Survived a full clear: a golden glow around the portrait. */
+  glow: boolean
   isMine: boolean
   open: boolean
   onToggle: () => void
@@ -135,7 +139,7 @@ interface CardProps {
 }
 
 /** One party member: rewards so far, boons (tap to open), counters, and your own slot recovery. */
-function PartyCard({ player: p, portrait, isMine, open, onToggle, sent, readOnly, onSpend }: CardProps) {
+function PartyCard({ player: p, portrait, glow, isMine, open, onToggle, sent, readOnly, onSpend }: CardProps) {
   const url = portrait ? artUrl('portraits', portrait) : null
   const summary = boonSummary(p.slots, p.hiddenBoonId)
   return (
@@ -147,9 +151,9 @@ function PartyCard({ player: p, portrait, isMine, open, onToggle, sent, readOnly
     >
       <header className="flex items-center gap-3">
         {url ? (
-          <img src={url} alt="" className="h-11 w-11 shrink-0 rounded-full border border-stone-700 object-cover" />
+          <img src={url} alt="" className={cx('h-11 w-11 shrink-0 rounded-full border border-stone-700 object-cover', glow && 'full-clear-glow')} />
         ) : (
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-stone-700 bg-stone-800 font-mono text-xs font-bold text-stone-400">
+          <span className={cx(glow && 'full-clear-glow', 'flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-stone-700 bg-stone-800 font-mono text-xs font-bold text-stone-400')}>
             {initials(p.name)}
           </span>
         )}

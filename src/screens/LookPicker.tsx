@@ -20,12 +20,12 @@ const SUMMON_NAMES: Record<string, string> = {
 }
 
 /** A round portrait of a set size, or the character's initials. */
-export function Avatar({ portrait, name, size = 'h-10 w-10' }: { portrait?: string; name: string; size?: string }) {
+export function Avatar({ portrait, name, size = 'h-10 w-10', glow }: { portrait?: string; name: string; size?: string; glow?: boolean }) {
   const url = portrait ? artUrl('portraits', portrait) : null
   return url ? (
-    <img src={url} alt="" className={cx(size, 'shrink-0 rounded-full border border-stone-700 object-cover')} />
+    <img src={url} alt="" className={cx(size, 'shrink-0 rounded-full border border-stone-700 object-cover', glow && 'full-clear-glow')} />
   ) : (
-    <span className={cx(size, 'flex shrink-0 items-center justify-center rounded-full border border-stone-700 bg-stone-800 font-mono text-xs font-bold text-stone-400')}>
+    <span className={cx(size, glow && 'full-clear-glow', 'flex shrink-0 items-center justify-center rounded-full border border-stone-700 bg-stone-800 font-mono text-xs font-bold text-stone-400')}>
       {initials(name)}
     </span>
   )

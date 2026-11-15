@@ -1,4 +1,5 @@
 // DM screen: pick who's entering and which Pressures, then start a run.
+import { hasFullClear } from '../rules/upgrades'
 import { useState } from 'react'
 import { DoorOpen, Lock, Swords } from 'lucide-react'
 import { artUrl } from '../art'
@@ -116,9 +117,9 @@ export function StartRun({ characters }: Props) {
               )}
             >
               {portrait ? (
-                <img src={portrait} alt="" className="h-10 w-10 shrink-0 rounded-full border border-stone-700 object-cover" />
+                <img src={portrait} alt="" className={cx('h-10 w-10 shrink-0 rounded-full border border-stone-700 object-cover', hasFullClear(c) && 'full-clear-glow')} />
               ) : (
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-stone-700 bg-stone-800 font-mono text-xs font-bold text-stone-400">
+                <span className={cx(hasFullClear(c) && 'full-clear-glow', 'flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-stone-700 bg-stone-800 font-mono text-xs font-bold text-stone-400')}>
                   {initials(c.name)}
                 </span>
               )}

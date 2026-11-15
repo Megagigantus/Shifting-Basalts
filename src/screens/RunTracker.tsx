@@ -1,6 +1,7 @@
 // DM screen: the run in progress. Every button runs one step from
 // rules/runFlow.ts or rules/draftFlow.ts, then saves the new state. While
 // open, it also applies players' draft choices sent from their devices.
+import { hasFullClear } from '../rules/upgrades'
 import { useEffect, useRef, useState } from 'react'
 import { Hourglass, Skull, Sparkles } from 'lucide-react'
 import type { Character } from '../model/character'
@@ -340,6 +341,7 @@ interface CardProps {
 /** A player's card in the sidebar: rewards so far, boons, counters, slot recovery and the DM's buttons. */
 function PlayerCard({ player: p, character, sent, open, floor, canTrigger, busy, act, onToggle }: CardProps) {
   const portrait = character?.portrait ? artUrl('portraits', character.portrait) : null
+  const glow = character ? hasFullClear(character) : false
   const classBoonId = p.draftProfile ? classHiddenBoon(p.draftProfile.classId) : null
   const classBoon = classBoonId ? hiddenBoon(classBoonId) : null
   const choosing = p.alive && (p.draft || p.hiddenOffer)
@@ -356,9 +358,9 @@ function PlayerCard({ player: p, character, sent, open, floor, canTrigger, busy,
     >
       <header className="flex items-start gap-3">
         {portrait ? (
-          <img src={portrait} alt="" className="h-11 w-11 shrink-0 rounded-full border border-stone-700 object-cover" />
+          <img src={portrait} alt="" className={cx('h-11 w-11 shrink-0 rounded-full border border-stone-700 object-cover', glow && 'full-clear-glow')} />
         ) : (
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-stone-700 bg-stone-800 font-mono text-xs font-bold text-stone-400">
+          <span className={cx(glow && 'full-clear-glow', 'flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-stone-700 bg-stone-800 font-mono text-xs font-bold text-stone-400')}>
             {initials(p.name)}
           </span>
         )}
