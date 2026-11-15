@@ -1,6 +1,6 @@
-// Modal picker when a boss arena's Shift Action moves tokens only for
-// creatures that fail a save. Affected tokens start ticked as failed; the DM
-// unticks anyone who passed, then confirms.
+// Modal picker when a boss arena's Shift Action needs DM input before
+// applying: ticking who failed a save, picking a tilt direction, or choosing
+// which Chorus member has the most HP for Perspective Collapse.
 import { useState } from 'react'
 import { DIRECTIONS, type Direction } from '../rules/shiftEffects'
 import { Modal } from '../ui/Modal'
@@ -11,13 +11,23 @@ export interface SaveTarget {
   label: string
 }
 
+const WALL_WORD: Partial<Record<Direction, string>> = {
+  N: 'north',
+  E: 'east',
+  S: 'south',
+  W: 'west',
+}
+
 interface Props {
   title: string
-  saveLabel: string
+  saveLabel?: string
   targets: SaveTarget[]
   notes: string[]
   direction?: Direction
   onDirectionChange?: (dir: Direction) => void
+  anchors?: { key: string; label: string }[]
+  anchor?: string
+  onAnchorChange?: (key: string) => void
   onApply: (failedKeys: Set<string>) => void
   onCancel: () => void
 }
@@ -29,6 +39,9 @@ export function ShiftSavePicker({
   notes,
   direction,
   onDirectionChange,
+  anchors,
+  anchor,
+  onAnchorChange,
   onApply,
   onCancel,
 }: Props) {
@@ -46,7 +59,28 @@ export function ShiftSavePicker({
   return (
     <Modal title={title} onClose={onCancel}>
       <div className="flex flex-col gap-3">
-        {direction && onDirectionChange && (
+        {anchors && anchors.length >= 2 && (
+          <div className="flex flex-wrap items-center gap-3 text-xs text-stone-300">
+            <label className="flex items-center gap-2">
+              Member with the most HP:
+              <select
+                value={anchor ?? anchors[0].key}
+                onChange={(e) => onAnchorChange?.(e.target.value)}
+                className={FIELD}
+              >
+                {anchors.map((a) => (
+                  <option key={a.key} value={a.key}>
+                    {a.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            {direction && WALL_WORD[direction] && (
+              <span>Everyone falls toward the {WALL_WORD[direction]} wall</span>
+            )}
+          </div>
+        )}
+        {direction && onDirectionChange && !anchors?.length && (
           <label className="flex items-center gap-2 text-xs text-stone-300">
             Downhill:
             <select
@@ -62,22 +96,26 @@ export function ShiftSavePicker({
             </select>
           </label>
         )}
-        <p className="m-0 text-xs text-stone-300">
-          <strong className="text-amber-200">{saveLabel}</strong>: untick anyone who passed their save. Ticked creatures fail and are moved.
-        </p>
-        <div className={`${WELL} flex flex-col gap-2`}>
-          {targets.map((t) => (
-            <label key={t.key} className="flex cursor-pointer items-center gap-2 text-xs text-stone-100">
-              <input
-                type="checkbox"
-                checked={failed.has(t.key)}
-                onChange={() => toggle(t.key)}
-                className="accent-amber-500"
-              />
-              <span>{t.label}</span>
-            </label>
-          ))}
-        </div>
+        {saveLabel && (
+          <p className="m-0 text-xs text-stone-300">
+            <strong className="text-amber-200">{saveLabel}</strong>: untick anyone who passed their save. Ticked creatures fail and are moved.
+          </p>
+        )}
+        {targets.length > 0 && (
+          <div className={`${WELL} flex flex-col gap-2`}>
+            {targets.map((t) => (
+              <label key={t.key} className="flex cursor-pointer items-center gap-2 text-xs text-stone-100">
+                <input
+                  type="checkbox"
+                  checked={failed.has(t.key)}
+                  onChange={() => toggle(t.key)}
+                  className="accent-amber-500"
+                />
+                <span>{t.label}</span>
+              </label>
+            ))}
+          </div>
+        )}
         {notes.length > 0 && (
           <ul className="m-0 list-disc flex flex-col gap-1 pl-4 text-xs text-stone-400">
             {notes.map((note, i) => (

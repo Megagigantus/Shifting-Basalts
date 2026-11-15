@@ -102,7 +102,7 @@ export function useMapEffect(
       .filter((p) => p.key.startsWith('pc:') || p.key.startsWith('sm:'))
       .map((p) => ({ key: p.key, x: p.x, y: p.y }))
     const plan = planShift(map, effect, tokenPos, { phase, random: Math.random })
-    if (plan.save && plan.save.keys.length > 0) {
+    if ((plan.save && plan.save.keys.length > 0) || (plan.anchors && plan.anchors.length >= 2)) {
       setPending({ plan, pieces, tokenPos, phase })
     } else {
       apply(plan, pieces)
@@ -123,38 +123,62 @@ export function useMapEffect(
       phase: pending.phase,
       random: Math.random,
       direction: dir,
+      anchor: pending.plan.anchor,
     })
     setPending({ ...pending, plan: nextPlan })
   }
 
-  const picker =
-    pending && pending.plan.save
-      ? createElement(ShiftSavePicker, {
-          title: which === 'shift' ? (shiftActionName ?? label) : label,
-          saveLabel: pending.plan.save.label,
-          targets: pending.plan.save.keys.map((key) => ({ key, label: labelForKey(key, pending.pieces) })),
-          notes: pending.plan.notes.map((n) =>
-            n.replace(/\b(?:pc|sm):[^\s]+/g, (k) => labelForKey(k, pending.pieces)),
-          ),
-          direction: pending.plan.direction,
-          onDirectionChange: handleDirectionChange,
-          onApply: (failedKeys: Set<string>) => {
-            const current = pending
-            setPending(null)
+  function handleAnchorChange(anchorKey: string) {
+    if (!pending || !map || !effect) return
+    const nextPlan = planShift(map, effect, pending.tokenPos, {
+      phase: pending.phase,
+      random: Math.random,
+      anchor: anchorKey,
+    })
+    setPending({ ...pending, plan: nextPlan })
+  }
+
+  const picker = pending
+    ? createElement(ShiftSavePicker, {
+        title: which === 'shift' ? (shiftActionName ?? label) : label,
+        saveLabel: pending.plan.save?.label,
+        targets: (pending.plan.save?.keys ?? []).map((key) => ({ key, label: labelForKey(key, pending.pieces) })),
+        notes: pending.plan.notes.map((n) =>
+          n.replace(/\b(?:pc|sm):[^\s]+/g, (k) => labelForKey(k, pending.pieces)),
+        ),
+        direction: pending.plan.direction,
+        onDirectionChange: handleDirectionChange,
+        anchors: pending.plan.anchors,
+        anchor: pending.plan.anchor,
+        onAnchorChange: handleAnchorChange,
+        onApply: (failedKeys: Set<string>) => {
+          const current = pending
+          setPending(null)
+          if (current.plan.save) {
             // Re-plan so only the tokens that failed move; the rest stay put and block.
             const finalPlan = planShift(map, effect, current.tokenPos, {
               phase: current.phase,
               random: Math.random,
               direction: current.plan.direction,
+              anchor: current.plan.anchor,
               only: failedKeys,
             })
             apply(finalPlan, current.pieces, failedKeys)
-          },
-          onCancel: () => setPending(null),
-        })
-      : shownNotes
-        ? createElement(ShiftNotes, { title: label, notes: shownNotes, onClose: () => setShownNotes(null) })
-        : null
+          } else {
+            // No-save choice (e.g. Perspective Collapse): re-plan with chosen anchor and move everyone.
+            const finalPlan = planShift(map, effect, current.tokenPos, {
+              phase: current.phase,
+              random: Math.random,
+              anchor: current.plan.anchor,
+            })
+            apply(finalPlan, current.pieces, new Set(finalPlan.moves.map((m) => m.key)))
+          }
+        },
+        onCancel: () => setPending(null),
+      })
+    : shownNotes
+      ? createElement(ShiftNotes, { title: label, notes: shownNotes, onClose: () => setShownNotes(null) })
+      : null
 
   return { effect, label, trigger, picker }
 }
