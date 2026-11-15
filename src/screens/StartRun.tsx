@@ -22,6 +22,7 @@ import { openStartingBoons } from '../rules/draftFlow'
 import { startFloor } from '../rules/roomFlow'
 import { deepPocketsPercent, extraPressuresBonusPercent } from '../rules/upgrades'
 import { newRunId, saveRunState } from '../runStore'
+import { usePressureWishes, wishTally } from '../pressureWishes'
 
 const EXTRA_PRESSURES = 'extra-pressures'
 
@@ -43,6 +44,8 @@ export function StartRun({ characters }: Props) {
   const unlocked = new Set(availablePressures(extraRank).map((p) => p.id))
   // Drop any picked Pressure that's no longer unlocked (e.g. its owner was unticked).
   const activePressures = pressures.filter((id) => unlocked.has(id))
+  // Pressure votes from the entering characters' players.
+  const wanted = wishTally(usePressureWishes(), party)
 
   function toggleCharacter(id: string) {
     setPicked((ids) => (ids.includes(id) ? ids.filter((i) => i !== id) : [...ids, id]))
@@ -188,6 +191,11 @@ export function StartRun({ characters }: Props) {
                 <span className="font-mono text-xs font-bold text-emerald-300">+{p.bonusPercent}%</span>
               </span>
               <span className="mt-1 block text-[0.6875rem] text-stone-400">{p.effect}</span>
+              {(wanted[p.id]?.length ?? 0) > 0 && (
+                <span className="mt-1.5 inline-block rounded-full border border-sky-500/40 bg-sky-500/15 px-2 py-0.5 text-[0.625rem] font-semibold text-sky-200">
+                  Wanted by {wanted[p.id].length}: {wanted[p.id].join(', ')}
+                </span>
+              )}
               {!isUnlocked && <span className="mt-1 block text-[0.6875rem] text-stone-500">Needs Extra Pressures rank {p.unlockRank}</span>}
             </button>
           )
