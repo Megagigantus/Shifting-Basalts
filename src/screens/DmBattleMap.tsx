@@ -7,6 +7,7 @@ import { useState } from 'react'
 import type { RunState } from '../model/run'
 import type { Room } from '../rules/rooms'
 import { bossBloodied, hpTrackers } from '../rules/hp'
+import { ringOf } from '../rules/closingRing'
 import { arenaOf, currentForm, inPhase, mapPhase, PALETTE, type MapPiece } from '../rules/battleMap'
 import { dropMapObject, layOutMap, moveMapPiece, removeMapObject, swapBossForm } from '../rules/roomFlow'
 import { moveToken, roomKeyOf, useTokens } from '../runStore'
@@ -54,6 +55,7 @@ export function DmBattleMap({ state, room, busy, act }: Props) {
   const roomKey = roomKeyOf(room)
   const arena = map.arena ? arenaOf(map.arena) : undefined
   const form = currentForm(map)
+  const ring = ringOf(room, state.run.pressures)
   const mapArt = map.arena ? (phase === 2 ? artUrl('arenas', `${map.arena}-phase-2`) : null) ?? artUrl('arenas', map.arena) : artUrl('maps', room.shape)
 
   function isHidden(p: MapPiece): boolean {
@@ -119,6 +121,7 @@ export function DmBattleMap({ state, room, busy, act }: Props) {
             {map.squares} × {map.squares} ({map.squares * 5} ft)
           </span>
           {map.arena && phase === 2 && <Pill tone="rose">Phase 2</Pill>}
+          {ring && ring.width > 0 && <Pill tone="rose">Ring {ring.width * 5} ft</Pill>}
         </>
       }
       actions={
@@ -147,6 +150,7 @@ export function DmBattleMap({ state, room, busy, act }: Props) {
         mapArt={mapArt}
         pieces={pieces}
         busy={busy}
+        ringWidth={ring?.width ?? 0}
         onMove={onMove}
         onRemove={(key) => act((s) => removeMapObject(s, key))}
       />

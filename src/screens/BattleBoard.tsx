@@ -40,6 +40,8 @@ interface Props {
   mapArt: string | null
   pieces: BoardPiece[]
   busy: boolean
+  /** Closing Ring: how many squares deep the hazardous outer ring is (0 or unset for none). */
+  ringWidth?: number
   onMove: (key: string, x: number, y: number) => void
   onRemove?: (key: string) => void
 }
@@ -52,7 +54,8 @@ interface Drag {
   y: number
 }
 
-export function BattleBoard({ squares: n, entrance, door, areas = [], mapArt, pieces, busy, onMove, onRemove }: Props) {
+export function BattleBoard({ squares: n, entrance, door, areas = [], mapArt, pieces, busy, ringWidth = 0, onMove, onRemove }: Props) {
+  const ring = Math.min(ringWidth, Math.floor(n / 2))
   const boardRef = useRef<HTMLDivElement>(null)
   const [drag, setDrag] = useState<Drag | null>(null)
   /** A dropped position, shown until the piece's saved position changes. */
@@ -93,6 +96,13 @@ export function BattleBoard({ squares: n, entrance, door, areas = [], mapArt, pi
     >
       {mapArt && <img className="battle-map-art" src={mapArt} alt="" draggable={false} />}
       <svg className="battle-map-grid" viewBox={`0 0 ${n} ${n}`} preserveAspectRatio="none" aria-hidden="true">
+        {ring > 0 && (
+          <g className="closing-ring">
+            {/* The hazardous outer band, drawn as one shape with the safe middle cut out. */}
+            <path d={`M0 0H${n}V${n}H0Z M${ring} ${ring}V${n - ring}H${n - ring}V${ring}Z`} fillRule="evenodd" />
+            <rect x={ring} y={ring} width={n - 2 * ring} height={n - 2 * ring} className="closing-ring-edge" />
+          </g>
+        )}
         {doorSquares({ squares: n, entrance, door }).map((q) => (
           <rect key={`${q.x},${q.y}`} x={q.x} y={q.y} width={1} height={1} className="entrance-square" />
         ))}
