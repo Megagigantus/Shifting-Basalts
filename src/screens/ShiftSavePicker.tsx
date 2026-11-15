@@ -2,8 +2,9 @@
 // creatures that fail a save. Affected tokens start ticked as failed; the DM
 // unticks anyone who passed, then confirms.
 import { useState } from 'react'
+import { DIRECTIONS, type Direction } from '../rules/shiftEffects'
 import { Modal } from '../ui/Modal'
-import { PRIMARY_BUTTON, SMALL_BUTTON, WELL } from '../ui/styles'
+import { FIELD, PRIMARY_BUTTON, SMALL_BUTTON, WELL } from '../ui/styles'
 
 export interface SaveTarget {
   key: string
@@ -15,11 +16,22 @@ interface Props {
   saveLabel: string
   targets: SaveTarget[]
   notes: string[]
+  direction?: Direction
+  onDirectionChange?: (dir: Direction) => void
   onApply: (failedKeys: Set<string>) => void
   onCancel: () => void
 }
 
-export function ShiftSavePicker({ title, saveLabel, targets, notes, onApply, onCancel }: Props) {
+export function ShiftSavePicker({
+  title,
+  saveLabel,
+  targets,
+  notes,
+  direction,
+  onDirectionChange,
+  onApply,
+  onCancel,
+}: Props) {
   const [failed, setFailed] = useState<Set<string>>(() => new Set(targets.map((t) => t.key)))
 
   function toggle(key: string) {
@@ -34,6 +46,22 @@ export function ShiftSavePicker({ title, saveLabel, targets, notes, onApply, onC
   return (
     <Modal title={title} onClose={onCancel}>
       <div className="flex flex-col gap-3">
+        {direction && onDirectionChange && (
+          <label className="flex items-center gap-2 text-xs text-stone-300">
+            Downhill:
+            <select
+              value={direction}
+              onChange={(e) => onDirectionChange(e.target.value as Direction)}
+              className={FIELD}
+            >
+              {DIRECTIONS.map((d) => (
+                <option key={d.dir} value={d.dir}>
+                  {d.dir}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
         <p className="m-0 text-xs text-stone-300">
           <strong className="text-amber-200">{saveLabel}</strong>: untick anyone who passed their save. Ticked creatures fail and are moved.
         </p>
@@ -61,7 +89,11 @@ export function ShiftSavePicker({ title, saveLabel, targets, notes, onApply, onC
           <button type="button" className={SMALL_BUTTON} onClick={onCancel}>
             Cancel
           </button>
-          <button type="button" className={PRIMARY_BUTTON} onClick={() => onApply(failed)}>
+          <button
+            type="button"
+            className={PRIMARY_BUTTON}
+            onClick={() => onApply(new Set(targets.filter((t) => failed.has(t.key)).map((t) => t.key)))}
+          >
             Apply shift
           </button>
         </div>

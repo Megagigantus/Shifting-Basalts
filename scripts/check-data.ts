@@ -354,10 +354,12 @@ const arenaData = loadObject<{
       tokens: { name: string; size: number; art: string; hp: string; x: number; y: number; forms?: Record<string, string> }[]
       objects: (Box & { art: string; name: string; phase?: number })[]
       areas: (Box & { kind: string; name: string; phase?: number })[]
+      shiftEffect?: Record<string, unknown>
+      bloodiedEffect?: Record<string, unknown>
       phase2?: boolean
     }
   >
-  palette: { art: string; name: string; w: number; h: number }[]
+  palette: { art: string; name: string; w: number; h: number; floor?: boolean }[]
 }>('arenas.json')
 const artFiles = new Set<string>()
 for (const folder of readdirSync(new URL('../src/art/', import.meta.url), { withFileTypes: true })) {
@@ -366,6 +368,8 @@ for (const folder of readdirSync(new URL('../src/art/', import.meta.url), { with
 }
 const N = arenaData.squares
 const inGrid = (b: Box) => b.x >= 0 && b.y >= 0 && b.w >= 1 && b.h >= 1 && b.x + b.w <= N && b.y + b.h <= N
+const paletteArts = new Set(arenaData.palette.map((p) => p.art))
+const EFFECT_KINDS = ['march', 'mirror', 'push', 'tilt']
 const bossParts = bossData.bosses as unknown as { id: string; parts?: { name: string; count: number }[] }[]
 for (const b of bossParts) if (!arenaData.arenas[b.id]) fail(`arenas.json: no arena for boss "${b.id}"`)
 for (const [id, arena] of Object.entries(arenaData.arenas)) {
@@ -392,6 +396,32 @@ for (const [id, arena] of Object.entries(arenaData.arenas)) {
     if (p.phase === 2 && !arena.phase2 && !arena.areas.some((a) => a.phase === 2)) fail(`${where} "${p.name}": phase 2 piece in an arena without phase 2`)
   }
   if (arena.phase2 && !artFiles.has(`arenas:${id}-phase-2`)) fail(`${where}: phase2 is on but there's no "arenas:${id}-phase-2" art`)
+  for (const field of ['shiftEffect', 'bloodiedEffect'] as const) {
+    const eff = arena[field]
+    if (!eff) continue
+    const label = `${where} ${field}`
+    if (typeof eff.kind !== 'string' || !EFFECT_KINDS.includes(eff.kind)) {
+      fail(`${label}: unknown kind "${String(eff.kind)}"`)
+      continue
+    }
+    if (eff.kind === 'push') {
+      if (eff.zone !== 'walls' && eff.zone !== 'all') fail(`${label}: push zone must be "walls" or "all"`)
+      if (eff.toward !== 'center' && eff.toward !== 'boss') fail(`${label}: push toward must be "center" or "boss"`)
+      if (typeof eff.squares !== 'number' || eff.squares < 1) fail(`${label}: push squares must be at least 1`)
+      if (eff.zone === 'walls' && (typeof eff.within !== 'number' || eff.within < 1)) {
+        fail(`${label}: push with zone "walls" needs within >= 1`)
+      }
+    }
+    if (eff.kind === 'tilt') {
+      if (typeof eff.squares !== 'number' || eff.squares < 1) fail(`${label}: tilt squares must be at least 1`)
+      if (!Array.isArray(eff.carry)) fail(`${label}: tilt needs a carry list`)
+      else {
+        for (const art of eff.carry) {
+          if (typeof art !== 'string' || !paletteArts.has(art)) fail(`${label}: tilt carry "${String(art)}" isn't in palette`)
+        }
+      }
+    }
+  }
 }
 for (const p of arenaData.palette) {
   if (!artFiles.has(`objects:${p.art}`)) fail(`arenas.json palette "${p.name}": no art file "objects:${p.art}"`)

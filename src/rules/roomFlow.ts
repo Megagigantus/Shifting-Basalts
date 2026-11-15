@@ -201,6 +201,13 @@ export function shiftMap(state: RunState, map?: BattleMap): RunState {
   return withRoom(state, { ...room, map: nextMap, shifts })
 }
 
+/** Store the battle map after a non-shift map effect (such as a Bloodied phase effect) without revealing the Shift Action. */
+export function applyMapEffect(state: RunState, map: BattleMap): RunState {
+  const room = state.dm?.room
+  if (!room?.map) throw new Error('This room has no battle map.')
+  return withRoom(state, { ...room, map })
+}
+
 /** Advance or step back the current boss's Grand Reconstruction cycle (DM only). */
 export function cycleShift(state: RunState, delta: 1 | -1): RunState {
   const room = state.dm?.room

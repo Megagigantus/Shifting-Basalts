@@ -114,6 +114,15 @@
       ],
       "objects": [],
       "areas": [],
+      "shiftEffect": {
+        "kind": "push",
+        "label": "Acoustic Shift",
+        "save": "Con save",
+        "zone": "walls",
+        "within": 2,
+        "toward": "center",
+        "squares": 3
+      },
       "notes": "4 pipe clusters in a diamond around the open centre (the south one sits at row 9, clear of the entrance arch). The centre is safest from the cones but deepest in the Hymn Auras."
     },
     "gilded-excavation-herd": {
@@ -469,6 +478,15 @@
       ],
       "objects": [],
       "areas": [],
+      "shiftEffect": {
+        "kind": "tilt",
+        "label": "Tilt the Gate",
+        "save": "Str or Dex save",
+        "squares": 3,
+        "carry": [
+          "stride-pool"
+        ]
+      },
       "notes": "Core hovers 10 ft over the centre of an open grated floor. Rift Barrage pools are added during the fight; Tilt the Gate slides them."
     },
     "general-vane": {
@@ -940,6 +958,13 @@
         }
       ],
       "areas": [],
+      "bloodiedEffect": {
+        "kind": "push",
+        "label": "Gravitational Pulse",
+        "zone": "all",
+        "toward": "boss",
+        "squares": 3
+      },
       "phase2": true,
       "notes": "The Husk is fused into the north wall. The painted ring of standing stones and the boulders are the cover Blinding Zenith rewards. Braziers are light sources Devour Light can eat; they go when the shell shatters (phase 2 swaps to the crater arena)."
     },
@@ -1016,7 +1041,8 @@
       "art": "pit",
       "name": "Pit",
       "w": 2,
-      "h": 2
+      "h": 2,
+      "floor": true
     },
     {
       "art": "tether-pillar",
@@ -1034,7 +1060,8 @@
       "art": "snare-shard",
       "name": "Snare Shard",
       "w": 1,
-      "h": 1
+      "h": 1,
+      "floor": true
     },
     {
       "art": "statue",
@@ -1046,13 +1073,15 @@
       "art": "transit-cable",
       "name": "Transit Cable anchor",
       "w": 1,
-      "h": 1
+      "h": 1,
+      "floor": true
     },
     {
       "art": "stride-pool",
       "name": "Stride-energy pool",
       "w": 1,
-      "h": 1
+      "h": 1,
+      "floor": true
     },
     {
       "art": "marching-wall",
@@ -1064,19 +1093,22 @@
       "art": "mirror-panel",
       "name": "Mirror panel",
       "w": 2,
-      "h": 2
+      "h": 2,
+      "floor": true
     },
     {
       "art": "residue",
       "name": "Elemental Residue",
       "w": 1,
-      "h": 1
+      "h": 1,
+      "floor": true
     },
     {
       "art": "portal",
       "name": "Portal",
       "w": 2,
-      "h": 2
+      "h": 2,
+      "floor": true
     },
     {
       "art": "wall-segment",
@@ -1088,7 +1120,8 @@
       "art": "darkness",
       "name": "Magical darkness",
       "w": 2,
-      "h": 2
+      "h": 2,
+      "floor": true
     },
     {
       "art": "battle-standard",
@@ -1100,7 +1133,8 @@
       "art": "armed-trick",
       "name": "Re-armed trick",
       "w": 1,
-      "h": 1
+      "h": 1,
+      "floor": true
     },
     {
       "art": "tall-column",

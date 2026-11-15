@@ -14,7 +14,7 @@ import { moveToken, roomKeyOf, useTokens } from '../runStore'
 import { artUrl } from '../art'
 import { BattleBoard } from './BattleBoard'
 import { playerPieces, roomPieces, spotAfterMove, tokenOwner, useLooks } from './mapPieces'
-import { useShiftMap } from './useShiftMap'
+import { useMapEffect, useShiftMap } from './useShiftMap'
 import { Grid3x3 } from 'lucide-react'
 import { ConfirmButton } from '../ui/ConfirmButton'
 import { Panel } from '../ui/Panel'
@@ -35,6 +35,7 @@ export function DmBattleMap({ state, room, busy, act }: Props) {
   const tokens = useTokens(state.run.id)
   const looks = useLooks()
   const shift = useShiftMap(state, room, act)
+  const bloodiedEffect = useMapEffect(state, room, act, 'bloodied')
   const [toDrop, setToDrop] = useState(PALETTE[0]?.art ?? '')
   const map = room.map ?? null
 
@@ -146,6 +147,11 @@ export function DmBattleMap({ state, room, busy, act }: Props) {
               {shift.label}
             </button>
           )}
+          {bloodiedEffect && (
+            <button type="button" className={SMALL_BUTTON} disabled={busy} onClick={bloodiedEffect.trigger}>
+              {bloodiedEffect.label}
+            </button>
+          )}
           <ConfirmButton
             tone="amber"
             disabled={busy}
@@ -192,6 +198,7 @@ export function DmBattleMap({ state, room, busy, act }: Props) {
       </p>
       {arena?.notes && <p className="m-0 text-[0.6875rem] text-stone-400">Arena: {arena.notes}</p>}
       {shift?.picker}
+      {bloodiedEffect?.picker}
     </Panel>
   )
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { placeArena, shiftEffectOf, type BattleMap } from './battleMap'
+import { addObject, bloodiedEffectOf, isFloorObject, placeArena, shiftEffectOf, type BattleMap } from './battleMap'
 import type { Room } from './rooms'
 import { blockedSquares, planShift, slideToken, type TokenPos } from './shiftEffects'
 
@@ -69,6 +69,25 @@ describe('shiftEffects', () => {
       expect(phase2.has('2,2')).toBe(false)
       expect(phase2.has('9,9')).toBe(true)
     })
+
+    it('skips floor objects such as stride-pool', () => {
+      const map: BattleMap = {
+        squares: 14,
+        entrance: 'south',
+        pieces: [
+          { key: 'obj:pool', kind: 'object', id: 'stride-pool', x: 4, y: 4, size: 1, w: 1, h: 1 },
+          { key: 'obj:pit', kind: 'object', id: 'pit', x: 7, y: 7, size: 1, w: 2, h: 2 },
+          { key: 'obj:pillar', kind: 'object', id: 'pillar', x: 2, y: 2, size: 1, w: 1, h: 1 },
+        ],
+      }
+      expect(isFloorObject('stride-pool')).toBe(true)
+      expect(isFloorObject('pit')).toBe(true)
+      expect(isFloorObject('pillar')).toBe(false)
+      const blocked = blockedSquares(map, 1, [])
+      expect(blocked.has('4,4')).toBe(false)
+      expect(blocked.has('7,7')).toBe(false)
+      expect(blocked.has('2,2')).toBe(true)
+    })
   })
 
   describe('planShift', () => {
@@ -108,5 +127,65 @@ describe('shiftEffects', () => {
       expect(walls2).toHaveLength(8)
       expect(walls2.every((w) => w.y === 7)).toBe(true)
     })
+
+    it('push walls on the Choir arena pushes wall tokens toward center, stops before Pipe cluster 1, and skips interior tokens', () => {
+      const map = placeArena({ kind: 'boss', boss: { id: 'choir-hollow-column', partySize: 4 } } as Room)!
+      const effect = shiftEffectOf('choir-hollow-column')!
+      const tokens: TokenPos[] = [
+        { key: 'pc:corner', x: 0, y: 0 },
+        { key: 'pc:north', x: 6, y: 0 },
+        { key: 'pc:mid', x: 6, y: 6 },
+      ]
+
+      const plan = planShift(map, effect, tokens, { phase: 1, random: Math.random })
+      expect(plan.save).toEqual({
+        label: 'Con save',
+        keys: ['pc:corner', 'pc:north'],
+      })
+      expect(plan.moves).toEqual([
+        { key: 'pc:corner', x: 3, y: 3 },
+        { key: 'pc:north', x: 6, y: 1 },
+      ])
+      expect(plan.notes).toContain('pc:north stopped early')
+    })
+
+    it('push toward boss on the Husk arena in phase 2 pulls everyone 3 squares toward the boss with no save', () => {
+      const map = placeArena({ kind: 'boss', boss: { id: 'sun-eaters-husk', partySize: 4 } } as Room)!
+      const effect = bloodiedEffectOf('sun-eaters-husk')!
+      const tokens: TokenPos[] = [{ key: 'pc:a', x: 6, y: 12 }]
+
+      const plan = planShift(map, effect, tokens, { phase: 2, random: Math.random })
+      expect(plan.save).toBeUndefined()
+      expect(plan.moves).toEqual([{ key: 'pc:a', x: 6, y: 9 }])
+    })
+
+    it('tilt on the Stride Core arena slides carried stride-pool objects and tokens, and rolls a direction when omitted', () => {
+      const baseMap = placeArena({ kind: 'boss', boss: { id: 'stride-core', partySize: 4 } } as Room)!
+      const map = addObject(baseMap, 'stride-pool')
+      const poolBefore = map.pieces.find((p) => p.id === 'stride-pool')!
+      const effect = shiftEffectOf('stride-core')!
+      const tokens: TokenPos[] = [{ key: 'pc:a', x: 12, y: 5 }]
+
+      const planE = planShift(map, effect, tokens, { phase: 1, random: Math.random, direction: 'E' })
+      expect(planE.direction).toBe('E')
+      expect(planE.save).toEqual({ label: 'Str or Dex save', keys: ['pc:a'] })
+      expect(planE.moves).toEqual([{ key: 'pc:a', x: 13, y: 5 }])
+      const poolAfter = planE.map.pieces.find((p) => p.id === 'stride-pool')!
+      expect(poolAfter.x).toBe(poolBefore.x + 3)
+      expect(poolAfter.y).toBe(poolBefore.y)
+
+      const planRolled = planShift(map, effect, tokens, { phase: 1, random: () => 0 })
+      expect(planRolled.direction).toBe('N')
+    })
+  })
+  it('with only set, unticked tokens stay put and block the ones that move', () => {
+    const map: BattleMap = { squares: 14, entrance: 'south', pieces: [] }
+    const effect = { kind: 'tilt', save: 'Dex save', squares: 3, carry: [] } as unknown as Parameters<typeof planShift>[1]
+    const tokens: TokenPos[] = [
+      { key: 'pc:front', x: 5, y: 3 },
+      { key: 'pc:back', x: 5, y: 5 },
+    ]
+    const plan = planShift(map, effect, tokens, { phase: 1, random: Math.random, direction: 'N', only: new Set(['pc:back']) })
+    expect(plan.moves).toEqual([{ key: 'pc:back', x: 5, y: 4 }])
   })
 })

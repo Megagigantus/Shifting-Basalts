@@ -1,14 +1,15 @@
-// Hook for triggering a boss arena's Shift Action (e.g. Marching Columns or
-// Fold Space). Keeps the map shift, optional save picker, and any
+// Hook for triggering a boss arena's Shift Action or Bloodied map effect
+// (e.g. Marching Columns, Fold Space, Acoustic Shift, Tilt the Gate, or
+// Gravitational Pulse). Keeps the map update, optional save picker, and any
 // player/summon token moves together.
 import { createElement, useState, type ReactNode } from 'react'
 import type { RunState } from '../model/run'
-import { mapPhase, shiftEffectOf, type ShiftEffect } from '../rules/battleMap'
+import { bloodiedEffectOf, mapPhase, shiftEffectOf, type ShiftEffect } from '../rules/battleMap'
 import { bossOf } from '../rules/bosses'
 import { bossBloodied } from '../rules/hp'
-import { shiftMap } from '../rules/roomFlow'
+import { applyMapEffect, shiftMap } from '../rules/roomFlow'
 import type { Room } from '../rules/rooms'
-import { planShift, type ShiftPlan, type TokenPos } from '../rules/shiftEffects'
+import { planShift, type Direction, type ShiftPlan, type TokenPos } from '../rules/shiftEffects'
 import { moveToken, roomKeyOf, useTokens, type TokenSpot } from '../runStore'
 import type { BoardPiece } from './BattleBoard'
 import { playerPieces, tokenOwner, useLooks } from './mapPieces'
@@ -20,6 +21,8 @@ type Act = (step: Step, confirmText?: string) => void
 interface PendingShift {
   plan: ShiftPlan
   pieces: BoardPiece[]
+  tokenPos: TokenPos[]
+  phase: number
 }
 
 export interface ShiftMapControl {
@@ -30,17 +33,26 @@ export interface ShiftMapControl {
 }
 
 /**
- * Returns the shift control (effect, button label, trigger, and save picker)
- * for the current boss arena's shift effect, or null when the room has none.
+ * Returns the map effect control (effect, button label, trigger, and save
+ * picker) for the current boss arena's shift or bloodied effect, or null when
+ * the room has none (or is not in phase 2 for a bloodied effect).
  */
-export function useShiftMap(state: RunState, room: Room, act: Act): ShiftMapControl | null {
+export function useMapEffect(
+  state: RunState,
+  room: Room,
+  act: Act,
+  which: 'shift' | 'bloodied',
+): ShiftMapControl | null {
   const tokens = useTokens(state.run.id)
   const looks = useLooks()
   const [pending, setPending] = useState<PendingShift | null>(null)
   const map = room.map ?? null
   const bossId = room.boss?.id ?? map?.arena
-  const effect = shiftEffectOf(bossId)
+  const ctx = { partyLevel: state.run.partyLevel, pressures: state.run.pressures }
+  const phase = map ? mapPhase(map, bossBloodied(room, ctx)) : 1
+  const effect = which === 'shift' ? shiftEffectOf(bossId) : bloodiedEffectOf(bossId)
   if (!map || !effect) return null
+  if (which === 'bloodied' && phase !== 2) return null
 
   const customLabel: string | undefined = effect.label
   const shiftActionName = bossId ? bossOf(bossId)?.shiftAction.name : undefined
@@ -56,7 +68,7 @@ export function useShiftMap(state: RunState, room: Room, act: Act): ShiftMapCont
   const roomKey = roomKeyOf(room)
 
   function apply(plan: ShiftPlan, pieces: BoardPiece[], failedKeys?: Set<string>) {
-    act((s) => shiftMap(s, plan.map))
+    act((s) => (which === 'shift' ? shiftMap(s, plan.map) : applyMapEffect(s, plan.map)))
     const moves = failedKeys ? plan.moves.filter((m) => failedKeys.has(m.key)) : plan.moves
     if (!moves.length) return
     const moveByKey = new Map(moves.map((m) => [m.key, m]))
@@ -87,11 +99,9 @@ export function useShiftMap(state: RunState, room: Room, act: Act): ShiftMapCont
     const tokenPos: TokenPos[] = pieces
       .filter((p) => p.key.startsWith('pc:') || p.key.startsWith('sm:'))
       .map((p) => ({ key: p.key, x: p.x, y: p.y }))
-    const ctx = { partyLevel: state.run.partyLevel, pressures: state.run.pressures }
-    const phase = mapPhase(map, bossBloodied(room, ctx))
     const plan = planShift(map, effect, tokenPos, { phase, random: Math.random })
     if (plan.save && plan.save.keys.length > 0) {
-      setPending({ plan, pieces })
+      setPending({ plan, pieces, tokenPos, phase })
     } else {
       apply(plan, pieces)
     }
@@ -104,21 +114,50 @@ export function useShiftMap(state: RunState, room: Room, act: Act): ShiftMapCont
     return player?.name ?? pieces.find((p) => p.key === key)?.label ?? key
   }
 
+  function handleDirectionChange(dir: Direction) {
+    if (!pending || !map || !effect) return
+    const nextPlan = planShift(map, effect, pending.tokenPos, {
+      phase: pending.phase,
+      random: Math.random,
+      direction: dir,
+    })
+    setPending({ ...pending, plan: nextPlan })
+  }
+
   const picker =
     pending && pending.plan.save
       ? createElement(ShiftSavePicker, {
-          title: shiftActionName ?? label,
+          title: which === 'shift' ? (shiftActionName ?? label) : label,
           saveLabel: pending.plan.save.label,
           targets: pending.plan.save.keys.map((key) => ({ key, label: labelForKey(key, pending.pieces) })),
-          notes: pending.plan.notes,
+          notes: pending.plan.notes.map((n) =>
+            n.replace(/\b(?:pc|sm):[^\s]+/g, (k) => labelForKey(k, pending.pieces)),
+          ),
+          direction: pending.plan.direction,
+          onDirectionChange: handleDirectionChange,
           onApply: (failedKeys: Set<string>) => {
             const current = pending
             setPending(null)
-            apply(current.plan, current.pieces, failedKeys)
+            // Re-plan so only the tokens that failed move; the rest stay put and block.
+            const finalPlan = planShift(map, effect, current.tokenPos, {
+              phase: current.phase,
+              random: Math.random,
+              direction: current.plan.direction,
+              only: failedKeys,
+            })
+            apply(finalPlan, current.pieces, failedKeys)
           },
           onCancel: () => setPending(null),
         })
       : null
 
   return { effect, label, trigger, picker }
+}
+
+/**
+ * Returns the shift control (effect, button label, trigger, and save picker)
+ * for the current boss arena's shift effect, or null when the room has none.
+ */
+export function useShiftMap(state: RunState, room: Room, act: Act): ShiftMapControl | null {
+  return useMapEffect(state, room, act, 'shift')
 }

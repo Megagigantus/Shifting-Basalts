@@ -295,21 +295,41 @@ export type ShiftEffect =
       kind: 'mirror'
       label?: string
     }
+  | {
+      kind: 'push'
+      label?: string
+      save?: string
+      zone: 'walls' | 'all'
+      within?: number
+      toward: 'center' | 'boss'
+      squares: number
+    }
+  | {
+      kind: 'tilt'
+      label?: string
+      save?: string
+      squares: number
+      carry: string[]
+    }
 
-interface ArenaData {
+export interface ArenaData {
   entrance: { x: number; y: number; w: number; h: number }
   tokens: { name: string; size: number; art: string; hp: string; x: number; y: number; note?: string; forms?: Record<string, string> }[]
   objects: { art: string; name: string; x: number; y: number; w: number; h: number; phase?: number; note?: string }[]
   areas: { kind: string; name: string; x: number; y: number; w: number; h: number; phase?: number }[]
   shiftEffect?: ShiftEffect
+  bloodiedEffect?: ShiftEffect
   phase2?: boolean
   notes?: string
 }
 const ARENAS = arenaData.arenas as unknown as Record<string, ArenaData>
-export const PALETTE = arenaData.palette as { art: string; name: string; w: number; h: number }[]
+export const PALETTE = arenaData.palette as { art: string; name: string; w: number; h: number; floor?: boolean }[]
+export const isFloorObject = (art: string): boolean => Boolean(PALETTE.find((p) => p.art === art)?.floor)
 export const arenaOf = (bossId: string): ArenaData | undefined => ARENAS[bossId]
 export const shiftEffectOf = (bossId: string | undefined | null): ShiftEffect | undefined =>
   bossId ? ARENAS[bossId]?.shiftEffect : undefined
+export const bloodiedEffectOf = (bossId: string | undefined | null): ShiftEffect | undefined =>
+  bossId ? ARENAS[bossId]?.bloodiedEffect : undefined
 
 /** Optional fields only when set (Firestore can't store undefined). */
 const withPhase = <T extends object>(obj: T, phase?: number): T & { phase?: number } => (phase === undefined ? obj : { ...obj, phase })
