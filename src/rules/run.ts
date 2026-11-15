@@ -12,6 +12,18 @@ export interface Pressure {
   unlockRank: number
   /** Harsher versions replace their base version. */
   replaces?: string
+  /** Closing Ring: how the hazardous outer ring behaves (sizes in 5 ft squares). */
+  ring?: {
+    /** The ring grows at the start of every Nth round (3, or 2 for Closing Ring II). */
+    everyRounds: number
+    /** How deep the ring is when the fight begins. */
+    startSquares: number
+    /** How much deeper it gets each time it grows. */
+    growSquares: number
+    /** It never covers this many squares across the centre. */
+    safeCentreSquares: number
+    damageType: string
+  }
   status: string
 }
 
