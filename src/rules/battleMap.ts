@@ -63,6 +63,8 @@ export interface BattleMap {
   door?: { x: number; y: number; w: number; h: number }
   /** Boss arenas: painted features, outlined. */
   areas?: MapArea[]
+  /** Boss arenas: whether the arena art and pieces are currently mirrored north-to-south. */
+  flipped?: boolean
 }
 
 const TRICK_TERRAIN = mapData.trickTerrain as Record<string, { features: string[]; shapes: string[] }>
@@ -278,17 +280,34 @@ export function placeMap(room: Room, random: Random, keep?: BattleMap | null): B
 // ---------------------------------------------------------------------------
 // Boss arenas (arenas.json): a fixed layout per boss, on a 14 x 14 grid.
 
+export type ShiftEffect =
+  | {
+      kind: 'march'
+      art: string
+      name: string
+      x: number
+      y: number
+      w: number
+      step: number
+    }
+  | {
+      kind: 'mirror'
+    }
+
 interface ArenaData {
   entrance: { x: number; y: number; w: number; h: number }
   tokens: { name: string; size: number; art: string; hp: string; x: number; y: number; note?: string; forms?: Record<string, string> }[]
   objects: { art: string; name: string; x: number; y: number; w: number; h: number; phase?: number; note?: string }[]
   areas: { kind: string; name: string; x: number; y: number; w: number; h: number; phase?: number }[]
+  shiftEffect?: ShiftEffect
   phase2?: boolean
   notes?: string
 }
-const ARENAS = arenaData.arenas as Record<string, ArenaData>
+const ARENAS = arenaData.arenas as unknown as Record<string, ArenaData>
 export const PALETTE = arenaData.palette as { art: string; name: string; w: number; h: number }[]
 export const arenaOf = (bossId: string): ArenaData | undefined => ARENAS[bossId]
+export const shiftEffectOf = (bossId: string | undefined | null): ShiftEffect | undefined =>
+  bossId ? ARENAS[bossId]?.shiftEffect : undefined
 
 /** Optional fields only when set (Firestore can't store undefined). */
 const withPhase = <T extends object>(obj: T, phase?: number): T & { phase?: number } => (phase === undefined ? obj : { ...obj, phase })
@@ -349,6 +368,46 @@ export function currentForm(map: BattleMap | null | undefined): string | null {
   return null
 }
 
+/** Mirror a vertical coordinate north-to-south for a box of height `h` on an `squares`-tall grid. */
+export const mirrorSpot = (y: number, h: number, squares: number) => squares - y - h
+
+/** Mirror the map north-to-south: flip pieces (except boss tokens) and areas, and toggle `flipped`. */
+export function mirrorMap(map: BattleMap): BattleMap {
+  const pieces = map.pieces.map((p) => (p.kind === 'boss' ? p : { ...p, y: mirrorSpot(p.y, dims(p).h, map.squares) }))
+  const areas = map.areas?.map((a) => ({ ...a, y: mirrorSpot(a.y, a.h, map.squares) }))
+  return {
+    ...map,
+    pieces,
+    ...(areas ? { areas } : {}),
+    flipped: !map.flipped,
+  }
+}
+
+/** General Vane: raise Marching Columns on the first call, or march them south. */
+export function marchColumns(map: BattleMap): BattleMap {
+  const effect = shiftEffectOf(map.arena)
+  if (!effect || effect.kind !== 'march') throw new Error('This arena has no Marching Columns shift effect.')
+  if (!map.pieces.some((p) => p.key.startsWith('march:'))) {
+    const walls: MapPiece[] = Array.from({ length: effect.w }, (_, i) => ({
+      key: `march:${i}`,
+      kind: 'object',
+      id: effect.art,
+      x: effect.x + i,
+      y: effect.y,
+      size: 1,
+      w: 1,
+      h: 1,
+      name: effect.name,
+    }))
+    return { ...map, pieces: [...map.pieces, ...walls] }
+  }
+  const maxY = map.squares - 1
+  return {
+    ...map,
+    pieces: map.pieces.map((p) => (p.key.startsWith('march:') ? { ...p, y: Math.min(maxY, p.y + effect.step) } : p)),
+  }
+}
+
 /** The DM drops an object from the palette near the middle of the map. */
 export function addObject(map: BattleMap, art: string): BattleMap {
   const item = PALETTE.find((p) => p.art === art)
@@ -379,6 +438,7 @@ export interface PlayerMap {
   arena?: string
   door?: BattleMap['door']
   areas?: MapArea[]
+  flipped?: boolean
 }
 
 /**
@@ -409,6 +469,7 @@ export function playerMap(room: Room): PlayerMap | null {
   if (map.arena) out.arena = map.arena
   if (map.door) out.door = map.door
   if (map.areas) out.areas = map.areas
+  if (map.flipped) out.flipped = true
   return out
 }
 

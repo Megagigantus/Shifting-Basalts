@@ -10,6 +10,16 @@ import { entryTier, relicOf } from './loot'
 export const RELICS = relicData.relics
 const WEIGHTS = classTagData.weights
 
+/** Relics this character already owns going into the Vault. */
+export function heldRelics(player: Pick<RunPlayer, 'relicsOwned'>): string[] {
+  return player.relicsOwned ?? []
+}
+
+/** True when the character already owns the maximum number of Vault relics and must trade in or pass. */
+export function mustTradeOrPass(player: Pick<RunPlayer, 'relicsOwned'>): boolean {
+  return heldRelics(player).length >= relicData.relicsPerCharacter
+}
+
 /** Relics anyone in the party already owns never appear. */
 function partyRelics(state: RunState): Set<string> {
   const owned = new Set<string>()
@@ -62,16 +72,16 @@ export function openVault(state: RunState, random: Random): RunState {
       offer.push(id)
       offeredSoFar.add(id)
     }
-    return { ...p, vaultOffer: offer, vaultRelic: null }
+    return { ...p, vaultOffer: offer, vaultRelic: null, vaultPassed: false, vaultTradeIn: null }
   })
   return { ...state, run: { ...state.run, vaultOpen: true }, players }
 }
 
 /** True while any surviving player still has a relic to choose. */
 export const vaultPending = ({ run, players }: RunState) =>
-  Boolean(run.vaultOpen) && players.some((p) => p.alive && p.vaultOffer?.length)
+  Boolean(run.vaultOpen) && players.some((p) => p.alive && !p.vaultPassed && p.vaultOffer?.length)
 
-/** A player takes one of their offered relics. */
+/** A player takes one of their offered relics (trading in their held relic if at the limit). */
 export function chooseRelic(state: RunState, characterId: string, relicId: string): RunState {
   if (!state.run.vaultOpen) throw new Error('Thils\'s Vault isn\'t open.')
   const player = state.players.find((p) => p.characterId === characterId)
@@ -81,8 +91,38 @@ export function chooseRelic(state: RunState, characterId: string, relicId: strin
   if (state.players.some((p) => p.vaultRelic === relicId)) {
     throw new Error(`${relicOf(relicId).name} was already taken. Pick another.`)
   }
+  const vaultTradeIn = mustTradeOrPass(player) ? [...heldRelics(player)] : null
   return {
     ...state,
-    players: state.players.map((p) => (p.characterId === characterId ? { ...p, vaultRelic: relicId, vaultOffer: null } : p)),
+    players: state.players.map((p) =>
+      p.characterId === characterId ? { ...p, vaultRelic: relicId, vaultOffer: null, vaultTradeIn } : p,
+    ),
+  }
+}
+
+/** A relic owner passes the Vault for a flat Quantum Basalts payout. */
+export function passVault(state: RunState, characterId: string): RunState {
+  if (!state.run.vaultOpen) throw new Error('Thils\'s Vault isn\'t open.')
+  const player = state.players.find((p) => p.characterId === characterId)
+  if (!player) throw new Error('That character isn\'t in this run.')
+  if (!player.alive) throw new Error(`${player.name} fell before the Vault.`)
+  if (!mustTradeOrPass(player)) throw new Error('Only a character who already owns a relic can pass the Vault.')
+  if (player.vaultRelic || player.vaultPassed || !player.vaultOffer?.length) {
+    throw new Error(`${player.name} already chose in the Vault.`)
+  }
+  return {
+    ...state,
+    players: state.players.map((p) =>
+      p.characterId === characterId
+        ? {
+            ...p,
+            vaultPassed: true,
+            vaultOffer: null,
+            vaultRelic: null,
+            vaultTradeIn: null,
+            quantumBasaltsPassed: p.quantumBasaltsPassed + relicData.passQuantumBasalts,
+          }
+        : p,
+    ),
   }
 }

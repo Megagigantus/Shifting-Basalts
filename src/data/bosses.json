@@ -401,7 +401,7 @@
         { "name": "Raise Wall", "text": "Raises a 10 ft wall segment within 30 ft." },
         { "name": "Shift Portal", "text": "Moves one portal." }
       ],
-      "shiftAction": { "name": "Grand Reconstruction", "text": "The arena cycles through the geometry of floors 1 to 4 each round, triggering that floor's signature hazard." }
+      "shiftAction": { "name": "Grand Reconstruction", "text": "The arena cycles through the geometry of floors 1 to 4 each round, triggering that floor's signature hazard.", "cycleFloors": [1, 2, 3, 4] }
     }
   ]
 }

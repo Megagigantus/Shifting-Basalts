@@ -6,7 +6,7 @@ import { useMemo } from 'react'
 import { useCharacters } from '../useCharacters'
 import { creatureOf } from '../rules/encounters'
 import { terrainOf, trickOf } from '../rules/rooms'
-import { inPhase, startSquares, type MapPiece } from '../rules/battleMap'
+import { inPhase, mirrorSpot, startSquares, type MapPiece } from '../rules/battleMap'
 import type { TokenSpot } from '../runStore'
 import { artUrl, type ArtKind } from '../art'
 import type { BoardPiece } from './BattleBoard'
@@ -182,4 +182,23 @@ export function spotAfterMove(pieces: BoardPiece[], key: string, x: number, y: n
   const self = at(pc) ?? { x, y }
   const summon = at(sm)
   return summon ? { x: self.x, y: self.y, sx: summon.x, sy: summon.y } : self
+}
+
+/**
+ * Mirrored token spots for every character with a "pc:" piece on the board:
+ * y (and summon sy when present) flips north-to-south; x is unchanged.
+ */
+export function mirroredTokenSpots(
+  pieces: BoardPiece[],
+  squares: number,
+): { characterId: string; spot: Omit<TokenSpot, 'roomKey'> }[] {
+  return pieces
+    .filter((p) => p.key.startsWith('pc:'))
+    .map((pc) => {
+      const characterId = tokenOwner(pc.key)!
+      const sm = pieces.find((p) => p.key === `sm:${characterId}`)
+      const y = mirrorSpot(pc.y, 1, squares)
+      const spot: Omit<TokenSpot, 'roomKey'> = sm ? { x: pc.x, y, sx: sm.x, sy: mirrorSpot(sm.y, 1, squares) } : { x: pc.x, y }
+      return { characterId, spot }
+    })
 }

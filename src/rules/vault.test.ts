@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { emptyDungeonLayer, emptyProfile, type Character } from '../model/character'
 import type { RunState } from '../model/run'
 import { newRunState, markDead } from './runFlow'
-import { chooseRelic, openVault, relicStateFor, relicWeight, vaultPending, RELICS } from './vault'
+import { chooseRelic, heldRelics, mustTradeOrPass, openVault, passVault, relicStateFor, relicWeight, vaultPending, RELICS } from './vault'
 
 function seeded(seed: number) {
   let s = seed >>> 0
@@ -74,5 +74,59 @@ describe('Thils\'s Vault', () => {
     expect(relicStateFor(10)).toBe('dormant')
     expect(relicStateFor(11)).toBe('woken')
     expect(RELICS).toHaveLength(15)
+  })
+
+  it('a relic owner trades their relic in when taking an offer, and a relic-less player has no trade-in', () => {
+    let state = party([char('a'), char('b')])
+    state = { ...state, players: state.players.map((p) => (p.characterId === 'a' ? { ...p, relicsOwned: ['breakers-wraps'] } : p)) }
+    expect(heldRelics(state.players[0])).toEqual(['breakers-wraps'])
+    expect(mustTradeOrPass(state.players[0])).toBe(true)
+    expect(mustTradeOrPass(state.players[1])).toBe(false)
+
+    state = openVault(state, seeded(3))
+    const allOffered = state.players.flatMap((p) => p.vaultOffer ?? [])
+    expect(allOffered).not.toContain('breakers-wraps')
+
+    state = chooseRelic(state, 'a', state.players[0].vaultOffer![0])
+    expect(state.players[0].vaultTradeIn).toEqual(['breakers-wraps'])
+    expect(allOffered).not.toContain('breakers-wraps')
+
+    state = chooseRelic(state, 'b', state.players[1].vaultOffer![0])
+    expect(state.players[1].vaultTradeIn).toBeNull()
+  })
+
+  it('a relic owner can pass the Vault for a flat 100 Quantum Basalts, while relic-less players cannot', () => {
+    let state = party([char('a', 'fighter', 18), char('b', 'fighter', 18)])
+    expect(state.run.entryMultiplier).toBe(4)
+    state = { ...state, players: state.players.map((p) => (p.characterId === 'a' ? { ...p, relicsOwned: ['breakers-wraps'] } : p)) }
+    expect(() => passVault(state, 'a')).toThrow('isn\'t open')
+
+    state = openVault(state, seeded(4))
+    expect(() => passVault(state, 'nobody')).toThrow('isn\'t in this run')
+    expect(() => passVault(state, 'b')).toThrow('Only a character who already owns a relic can pass the Vault.')
+
+    state = passVault(state, 'a')
+    expect(state.players[0]).toMatchObject({
+      vaultPassed: true,
+      vaultOffer: null,
+      vaultRelic: null,
+      vaultTradeIn: null,
+      quantumBasaltsPassed: 100,
+    })
+    expect(() => passVault(state, 'a')).toThrow('already chose')
+    expect(vaultPending(state)).toBe(true)
+
+    state = chooseRelic(state, 'b', state.players[1].vaultOffer![0])
+    expect(vaultPending(state)).toBe(false)
+  })
+
+  it('cannot pass after taking a relic or when fallen', () => {
+    let state = party([char('a'), char('b')])
+    state = { ...state, players: state.players.map((p) => ({ ...p, relicsOwned: [p.characterId === 'a' ? 'breakers-wraps' : 'corrows-fishhook'] })) }
+    state = markDead(state, 'b', () => 1)
+    state = openVault(state, seeded(5))
+    expect(() => passVault(state, 'b')).toThrow('fell before the Vault')
+    state = chooseRelic(state, 'a', state.players[0].vaultOffer![0])
+    expect(() => passVault(state, 'a')).toThrow('already chose')
   })
 })

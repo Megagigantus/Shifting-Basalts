@@ -8,12 +8,13 @@ import type { RunState } from '../model/run'
 import type { Room } from '../rules/rooms'
 import { bossBloodied, hpTrackers } from '../rules/hp'
 import { ringOf } from '../rules/closingRing'
-import { arenaOf, currentForm, inPhase, mapPhase, PALETTE, type MapPiece } from '../rules/battleMap'
+import { arenaOf, currentForm, inPhase, mapPhase, PALETTE, shiftEffectOf, type MapPiece } from '../rules/battleMap'
 import { dropMapObject, layOutMap, moveMapPiece, removeMapObject, swapBossForm } from '../rules/roomFlow'
 import { moveToken, roomKeyOf, useTokens } from '../runStore'
 import { artUrl } from '../art'
 import { BattleBoard } from './BattleBoard'
 import { playerPieces, roomPieces, spotAfterMove, tokenOwner, useLooks } from './mapPieces'
+import { useShiftMap } from './useShiftMap'
 import { Grid3x3 } from 'lucide-react'
 import { ConfirmButton } from '../ui/ConfirmButton'
 import { Panel } from '../ui/Panel'
@@ -33,6 +34,7 @@ interface Props {
 export function DmBattleMap({ state, room, busy, act }: Props) {
   const tokens = useTokens(state.run.id)
   const looks = useLooks()
+  const triggerShift = useShiftMap(state, room, act)
   const [toDrop, setToDrop] = useState(PALETTE[0]?.art ?? '')
   const map = room.map ?? null
 
@@ -49,12 +51,22 @@ export function DmBattleMap({ state, room, busy, act }: Props) {
   }
 
   const ctx = { partyLevel: state.run.partyLevel, pressures: state.run.pressures }
-  const trackers = new Map(hpTrackers(room, ctx).map((t) => [t.key, t]))
+  const allTrackers = hpTrackers(room, ctx)
+  const trackers = new Map(allTrackers.map((t) => [t.key, t]))
+  // A boss with separate part pools has no "boss" tracker; its whole-boss
+  // token shows the parts added together.
+  if (!trackers.has('boss') && allTrackers.some((t) => t.part !== undefined)) {
+    const max = allTrackers.reduce((s, t) => s + t.max, 0)
+    const current = allTrackers.reduce((s, t) => s + t.current, 0)
+    trackers.set('boss', { key: 'boss', label: 'Whole boss', max, current, bloodied: current <= max / 2, down: current === 0 })
+  }
   const bloodied = bossBloodied(room, ctx)
   const phase = mapPhase(map, bloodied)
   const roomKey = roomKeyOf(room)
   const arena = map.arena ? arenaOf(map.arena) : undefined
   const form = currentForm(map)
+  const shiftEffect = shiftEffectOf(map.arena)
+  const hasMarchWalls = map.pieces.some((p) => p.key.startsWith('march:'))
   const ring = ringOf(room, state.run.pressures)
   const mapArt = map.arena ? (phase === 2 ? artUrl('arenas', `${map.arena}-phase-2`) : null) ?? artUrl('arenas', map.arena) : artUrl('maps', room.shape)
 
@@ -131,6 +143,16 @@ export function DmBattleMap({ state, room, busy, act }: Props) {
               Swap form (now {form === 'vyr' ? 'Vyr' : 'Kaelen'})
             </button>
           )}
+          {shiftEffect?.kind === 'march' && triggerShift && (
+            <button type="button" className={SMALL_BUTTON} disabled={busy} onClick={triggerShift}>
+              {hasMarchWalls ? 'March 15 ft' : 'Raise Marching Columns'}
+            </button>
+          )}
+          {shiftEffect?.kind === 'mirror' && triggerShift && (
+            <button type="button" className={SMALL_BUTTON} disabled={busy} onClick={triggerShift}>
+              Fold Space
+            </button>
+          )}
           <ConfirmButton
             tone="amber"
             disabled={busy}
@@ -148,6 +170,7 @@ export function DmBattleMap({ state, room, busy, act }: Props) {
         door={map.door}
         areas={(map.areas ?? []).filter((a) => inPhase(a, phase))}
         mapArt={mapArt}
+        flipArt={Boolean(map.flipped)}
         pieces={pieces}
         busy={busy}
         ringWidth={ring?.width ?? 0}

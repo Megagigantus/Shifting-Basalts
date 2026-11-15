@@ -144,13 +144,27 @@ export async function saveRunState(
     results = runResults(next)
     for (const r of results) {
       const character = characters.find((c) => c.id === r.characterId)
+      const newLoot = r.loot.map((item) => ({ ...item, runId: id }))
+      const traded = r.relicsTradedIn
+      // A trade-in rewrites the whole loot list, so it needs the character's
+      // current loot; without it, only add (never wipe their loot).
+      const lootUpdate = traded?.length && character
+        ? {
+            loot: [
+              ...(character.loot ?? []).filter((item) => !(item.kind === 'relic' && traded.includes(item.ref))),
+              ...newLoot,
+            ],
+          }
+        : newLoot.length
+          ? { loot: arrayUnion(...newLoot) }
+          : {}
       batch.update(doc(db, 'characters', r.characterId), {
         bankedQuantumBasalts: increment(r.quantumBasaltsGained),
         bankedDevotions: increment(r.devotions),
         deepestFloor: Math.max(character?.deepestFloor ?? 0, r.deepestFloor),
         ...(r.fullClear ? { fullClears: increment(1) } : {}),
         ...(r.lockoutDays !== null ? { lockoutDays: r.lockoutDays } : {}),
-        ...(r.loot.length ? { loot: arrayUnion(...r.loot.map((item) => ({ ...item, runId: id }))) } : {}),
+        ...lootUpdate,
         activeRunId: null,
         updatedAt: serverTimestamp(),
       })

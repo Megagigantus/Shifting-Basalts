@@ -11,7 +11,7 @@ interface ProfileData {
   proficientSaves: Ability[]
 }
 
-type BossTemplate = Omit<(typeof bossData.bosses)[number], 'abilityRanks' | 'proficientSaves' | 'partProfiles'> &
+type BossTemplate = Omit<(typeof bossData.bosses)[number], 'abilityRanks' | 'proficientSaves' | 'partProfiles' | 'shiftAction'> &
   ProfileData & {
   partProfiles?: Record<string, ProfileData>
   profileNote?: string
@@ -20,6 +20,7 @@ type BossTemplate = Omit<(typeof bossData.bosses)[number], 'abilityRanks' | 'pro
   traits?: string[]
   legendaryOptions?: { name: string; text: string }[]
   phase2ExtraLegendaryActions?: number
+  shiftAction: { name: string; text: string; cycleFloors?: number[] }
 }
 
 export const BOSSES = bossData.bosses as unknown as BossTemplate[]
@@ -155,6 +156,30 @@ export function bossCr(floor: number, partyLevel: number): number {
 /** The save DC Shift Actions use on a floor (the floor's boss DC). */
 export function floorBossDc(floor: number, partyLevel: number): number {
   return benchmark(bossCr(Math.min(floor, 5), partyLevel)).dc
+}
+
+/** The signature hazard(s) for one round of a cycling boss's Shift Action (e.g. Grand Reconstruction). */
+export function signatureHazards(
+  bossId: string,
+  index: number,
+  bossesBeaten: Record<string, string> | undefined,
+): { floor: number; hazards: { bossId: string; bossName: string; name: string; text: string }[] } | null {
+  const floors = bossOf(bossId)?.shiftAction.cycleFloors
+  if (!floors?.length) return null
+  const pos = ((index % floors.length) + floors.length) % floors.length
+  const floor = floors[pos]
+  const beatenId = bossesBeaten?.[String(floor)]
+  const beaten = beatenId ? BOSSES.find((b) => b.id === beatenId) : undefined
+  const bosses = beaten ? [beaten] : bossesOnFloor(floor)
+  return {
+    floor,
+    hazards: bosses.map((b) => ({
+      bossId: b.id,
+      bossName: b.name,
+      name: b.shiftAction.name,
+      text: b.shiftAction.text,
+    })),
+  }
 }
 
 /** Build a boss's stat block for this party. `partySize`: living players. */

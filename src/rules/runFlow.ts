@@ -173,8 +173,12 @@ export function defeatBoss(state: RunState): RunState {
   const players = awardDevotions(state.players, devotionsForRoom('boss', run.floor)).map((p) =>
     inFight(p) ? { ...p, quantumBasaltsEarned: p.quantumBasaltsEarned + payout } : p,
   )
+  const dm = state.dm?.bossId
+    ? { ...state.dm, bossesBeaten: { ...state.dm.bossesBeaten, [String(run.floor)]: state.dm.bossId } }
+    : state.dm
   const next: RunState = {
     ...state,
+    ...(dm !== undefined ? { dm } : {}),
     run: {
       ...run,
       lastBossFloor: run.floor,
@@ -341,8 +345,11 @@ export function runResults(state: RunState): RunResult[] {
         relicState: relicStateFor(run.partyLevel),
       })
     }
+    const relicsTradedIn =
+      run.status === 'extracted' && p.alive && p.vaultTradeIn?.length ? [...p.vaultTradeIn] : undefined
     return {
       loot,
+      ...(relicsTradedIn ? { relicsTradedIn } : {}),
       characterId: p.characterId,
       name: p.name,
       survived: p.alive,

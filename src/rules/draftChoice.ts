@@ -4,7 +4,7 @@ import type { RunPlayer, RunState } from '../model/run'
 import type { Random } from './draft'
 import { chooseHidden, chooseOffer, passDraft, passHidden, rerollDraft } from './draftFlow'
 import { spendForge, type ForgeAction } from './forge'
-import { chooseRelic } from './vault'
+import { chooseRelic, passVault } from './vault'
 import { recoverSlot, spendSurge } from './recovery'
 import { chooseReprieve } from './reprieve'
 
@@ -19,6 +19,8 @@ export type DraftChoice =
   | { action: 'hiddenSight' }
   /** Take a relic from Thils's Vault. */
   | { action: 'relic'; relicId: string }
+  /** Pass Thils's Vault (when already owning a relic) for Quantum Basalts. */
+  | { action: 'relicPass' }
   /** Spend slot recovery points on a spell slot of this level. */
   | { action: 'recover'; slotLevel: number }
   /** Spend 1 slot recovery point on Leyline Surge. */
@@ -60,6 +62,8 @@ export function applyChoice(state: RunState, characterId: string, choice: DraftC
       throw new Error('Hidden Sight is applied separately.')
     case 'relic':
       return chooseRelic(state, characterId, choice.relicId)
+    case 'relicPass':
+      return passVault(state, characterId)
     case 'recover':
       return recoverSlot(state, characterId, choice.slotLevel)
     case 'surge':

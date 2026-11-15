@@ -873,6 +873,10 @@
     pointer-events: none;
   }
 
+  .battle-map-art.is-flipped {
+    transform: scaleY(-1);
+  }
+
   .battle-map-grid {
     position: absolute;
     inset: 0;
@@ -1126,6 +1130,17 @@
     object-fit: contain;
     border-radius: 0;
     box-shadow: none;
+  }
+  /* Marching Columns: the wall art fills only a band of its square, so scale
+     it up and outline the square so the phalanx reads on dark floors. */
+  .map-object.is-marching {
+    outline: 1px solid rgb(251 191 36 / 0.7);
+    outline-offset: -1px;
+    background: rgb(251 191 36 / 0.12);
+    overflow: hidden;
+  }
+  .map-object.is-marching img {
+    transform: scale(1.6);
   }
 
   .map-boss img {

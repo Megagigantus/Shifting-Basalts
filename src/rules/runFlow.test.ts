@@ -115,6 +115,27 @@ describe('floor progress', () => {
     expect(state.players[0].quantumBasaltsEarned).toBe(65)
     expect(state.players[0].devotions).toBe(20 + 3) // 20 rooms and bosses on floors 1 to 4, then 3 for the legendary boss
   })
+
+  it('records dm.bossesBeaten on defeatBoss and keeps it when descending to the next floor', async () => {
+    const { startFloor } = await import('./roomFlow')
+    let state = startFloor(start(), () => 0.1)
+    const floor1Boss = state.dm!.bossId!
+    state = clearFloor(state)
+    expect(state.dm?.bossesBeaten).toEqual({ '1': floor1Boss })
+
+    state = startFloor(descend(state), () => 0.2)
+    expect(state.run.floor).toBe(2)
+    expect(state.dm?.bossesBeaten).toEqual({ '1': floor1Boss })
+
+    const floor2Boss = state.dm!.bossId!
+    state = clearFloor(state)
+    expect(state.dm?.bossesBeaten).toEqual({ '1': floor1Boss, '2': floor2Boss })
+  })
+
+  it('leaves dm undefined when defeating a boss without dm state', () => {
+    const state = clearFloor(start())
+    expect(state.dm).toBeUndefined()
+  })
 })
 
 describe('finishing rooms with loot', () => {
@@ -144,6 +165,45 @@ describe('finishing rooms with loot', () => {
     state = extract(state)
     const results = runResults(state)
     expect(results[0].loot.at(-1)).toMatchObject({ kind: 'relic', relicState: 'dormant', source: 'vault' })
+  })
+
+  it('records relicsTradedIn when a relic owner trades in, and banks a flat 100 Basalts when they pass', async () => {
+    const { finishRoom } = await import('./progress')
+    const { chooseRelic, passVault } = await import('./vault')
+    const ownedRelic = (ref: string) => ({
+      uid: `relic-${ref}`,
+      kind: 'relic' as const,
+      ref,
+      rarity: null,
+      floor: 5,
+      room: 1,
+      source: 'vault' as const,
+      relicState: 'woken' as const,
+      runId: 'old',
+    })
+    const party = [
+      { ...char('trader', 18), loot: [ownedRelic('breakers-wraps')] },
+      { ...char('passer', 18), loot: [ownedRelic('corrows-fishhook')] },
+      char('fresh', 18),
+    ]
+    let state = newRunState('r1', 'ABCD', party, ['brittle-ground'])
+    expect(state.run.entryMultiplier).toBe(4)
+    for (let f = 1; f <= 4; f++) state = descend(clearFloor(state))
+    state = finishRoom(state, 'boss', () => 0.5)
+
+    const traderPick = state.players[0].vaultOffer![0]
+    state = chooseRelic(state, 'trader', traderPick)
+    state = passVault(state, 'passer')
+    state = chooseRelic(state, 'fresh', state.players[2].vaultOffer![0])
+    state = extract(state)
+
+    const [traderRes, passerRes, freshRes] = runResults(state)
+    expect(traderRes.relicsTradedIn).toEqual(['breakers-wraps'])
+    expect(traderRes.loot.at(-1)).toMatchObject({ kind: 'relic', ref: traderPick, relicState: 'woken' })
+    expect('relicsTradedIn' in passerRes).toBe(false)
+    expect(passerRes.loot.some((i) => i.kind === 'relic')).toBe(false)
+    expect(passerRes.quantumBasaltsGained - traderRes.quantumBasaltsGained).toBe(100)
+    expect('relicsTradedIn' in freshRes).toBe(false)
   })
 
   it('gives assigned items to their characters, fallen ones too, and nothing on a wipe', () => {

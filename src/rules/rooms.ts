@@ -65,6 +65,8 @@ export interface Room {
   map?: BattleMap | null
   /** Closing Ring: the fight's round and the hazardous ring's depth (fight rooms only). */
   ring?: RingState | null
+  /** Index into the boss's cycleFloors (DM only; missing = 0). */
+  cycle?: number
 }
 
 const roll =(sides: number, random: Random) => 1 + Math.floor(random() * sides)

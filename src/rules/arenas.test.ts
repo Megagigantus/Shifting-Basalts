@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { emptyDungeonLayer, emptyProfile, type Character } from '../model/character'
 import type { RunState } from '../model/run'
 import { newRunState, clearRoom } from './runFlow'
-import { changeHp, dropMapObject, enterRoom, removeMapObject, rerollBoss, setBossBloodied, startFloor, swapBossForm } from './roomFlow'
+import { changeHp, dropMapObject, enterRoom, removeMapObject, rerollBoss, setBossBloodied, shiftMap, startFloor, swapBossForm } from './roomFlow'
 import { arenaHasPhase2, arenaOf, currentForm, dims, doorSquares, mapPhase, placeArena, startSquares } from './battleMap'
 import { BOSSES } from './bosses'
 import { hpTrackers } from './hp'
@@ -51,7 +51,9 @@ describe('boss arenas', () => {
       const tokens = map.pieces.filter((p) => p.kind === 'boss')
       expect(tokens.length).toBe(arenaOf(b.id)!.tokens.length)
       const partCount = (b.parts ?? []).reduce((s, p) => s + p.count, 0)
-      if (b.id !== 'kaelen-and-vyr') expect(tokens.length).toBe(Math.max(1, partCount))
+      // Part bosses: one token per part plus the whole boss with its own art.
+      if (b.id !== 'kaelen-and-vyr') expect(tokens.length).toBe(partCount ? partCount + 1 : 1)
+      if (b.id !== 'kaelen-and-vyr') expect(tokens.some((t) => t.hp === 'boss' && t.id === `bosses:${b.id}`)).toBe(true)
       for (const t of tokens) expect(t.hp).toBeTruthy()
     }
   })
@@ -74,6 +76,12 @@ describe('boss arenas', () => {
     const pieces = state.run.roomView!.map!.pieces
     expect(pieces.find((p) => p.hp === parts[0].key)!.state).toBe('bloodied')
     expect(pieces.find((p) => p.hp === parts[1].key)!.state).toBeNull()
+    expect(pieces.find((p) => p.hp === 'boss')!.state).toBeNull()
+    // The whole-boss token: Bloodied with the boss, Down once every part is.
+    for (const t of parts.slice(1, 3)) state = changeHp(state, t.key, t.max)
+    expect(state.run.roomView!.map!.pieces.find((p) => p.hp === 'boss')!.state).toBe('bloodied')
+    for (const t of parts) state = changeHp(state, t.key, t.max)
+    expect(state.run.roomView!.map!.pieces.find((p) => p.hp === 'boss')!.state).toBe('down')
 
     let warden = inBossRoom('tessellated-warden')
     expect(warden.run.roomView!.map!.pieces.find((p) => p.kind === 'boss')!.state).toBeNull()
@@ -136,5 +144,56 @@ describe('boss arenas', () => {
       { x: 6, y: 12 },
       { x: 7, y: 12 },
     ])
+  })
+
+  it('General Vane\'s Marching Columns rise on row 4 and march 3 squares south per trigger, stopping at the south edge', () => {
+    let state = inBossRoom('general-vane')
+    expect(state.run.roomView!.shifts).toEqual([])
+
+    state = shiftMap(state)
+    expect(state.dm!.room!.shifts![0].revealed).toBe(true)
+    expect(state.run.roomView!.shifts).toEqual(['general-vane'])
+    const walls = (s: RunState) => s.dm!.room!.map!.pieces.filter((p) => p.key.startsWith('march:'))
+    const playerWalls = (s: RunState) => s.run.roomView!.map!.pieces.filter((p) => p.key.startsWith('march:'))
+    expect(walls(state).map((p) => [p.key, p.id, p.x, p.y, p.w, p.h])).toEqual(
+      Array.from({ length: 8 }, (_, i) => [`march:${i}`, 'marching-wall', 3 + i, 4, 1, 1]),
+    )
+    expect(playerWalls(state).length).toBe(8)
+    expect(playerWalls(state).map((p) => [p.x, p.y])).toEqual(walls(state).map((p) => [p.x, p.y]))
+
+    state = shiftMap(state)
+    expect(walls(state).every((p) => p.y === 7)).toBe(true)
+    expect(playerWalls(state).every((p) => p.y === 7)).toBe(true)
+
+    state = shiftMap(state)
+    expect(walls(state).every((p) => p.y === 10)).toBe(true)
+    state = shiftMap(state)
+    expect(walls(state).every((p) => p.y === 13)).toBe(true)
+    state = shiftMap(state)
+    expect(walls(state).every((p) => p.y === 13)).toBe(true)
+
+    expect(() => shiftMap(inBossRoom('tessellated-warden'))).toThrow()
+  })
+
+  it('the Blind Architect\'s Fold Space mirrors objects north-to-south, leaves the boss in place, and flips back on a second trigger', () => {
+    const initial = inBossRoom('blind-architect')
+    const initialMap = initial.dm!.room!.map!
+    const bossBefore = initialMap.pieces.find((p) => p.kind === 'boss')!
+    const shardAt3 = initialMap.pieces.find((p) => p.kind === 'object' && p.x === 3 && p.y === 3)!
+
+    const flipped = shiftMap(initial)
+    const flippedMap = flipped.dm!.room!.map!
+    expect(flippedMap.flipped).toBe(true)
+    expect(flippedMap.pieces.find((p) => p.key === bossBefore.key)).toEqual(bossBefore)
+    expect(flippedMap.pieces.find((p) => p.key === shardAt3.key)!.y).toBe(10)
+    expect(flipped.dm!.room!.shifts![0].revealed).toBe(true)
+    expect(flipped.run.roomView!.shifts).toEqual(['blind-architect'])
+    expect(flipped.run.roomView!.map!.flipped).toBe(true)
+    expect(flipped.run.roomView!.map!.pieces.find((p) => p.key === shardAt3.key)!.y).toBe(10)
+
+    const restored = shiftMap(flipped)
+    expect(restored.dm!.room!.map!.flipped).toBe(false)
+    expect(restored.dm!.room!.map!.pieces).toEqual(initialMap.pieces)
+    expect(restored.run.roomView!.map!.flipped).toBeUndefined()
   })
 })

@@ -66,6 +66,7 @@ export function PlayerBattleMap({ state, myIds, readOnly }: Props) {
         door={map.door}
         areas={(map.areas ?? []).filter((a) => inPhase(a, phase))}
         mapArt={mapArt}
+        flipArt={Boolean(map.flipped)}
         pieces={pieces}
         busy={false}
         ringWidth={view.ring?.width ?? 0}

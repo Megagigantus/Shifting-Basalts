@@ -33,6 +33,7 @@ const ACTION_LABELS: Record<ChoiceDoc['action'], string> = {
   forge: 'your Forge use',
   hiddenSight: 'your Hidden Sight request',
   relic: 'your relic pick',
+  relicPass: 'your Vault pass',
   recover: 'your slot recovery',
   surge: 'your Leyline Surge',
   reprieveRest: 'your Reprieve choice (Rest)',

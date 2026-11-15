@@ -973,6 +973,7 @@ A full clear opens Thils's Vault, his private collection of what legendary strid
 
 - **Draft:** each player sees 3 relics weighted to their class and boon tags (4 at entry 17 to 20) and takes one, like a boon offer. A relic anyone in the party owns never appears.
 - **Dormant and Woken:** entry 5 to 10 clears give a Dormant relic (very rare strength); entry 11 and up gives it Woken (legendary). A Dormant relic wakes when its bearer reaches level 11 and offers 40 Quantum Basalts at a shrine to Thils.
+- **One per character** *(proposed)*: a character can own only one relic. A player who already owns one still sees an offer, but must either trade theirs in for one of the offered relics (the old relic leaves them on extraction and returns to the Vault) or pass for a flat 100 Quantum Basalts, which extract like passed Basalts.
 - **Attunement:** required, unlike totems.
 - **No market:** relics can't be sold. Thils reclaims any relic traded for credits, and it returns to the Vault.
 
@@ -1102,6 +1103,8 @@ Every run pulls one random boss per floor from three options, so repeat runs sta
 | The Chorus of Unseen Angles | Three floating polyhedrons of empty black space, where Sonder ate away part of the local god's memory. | Shared-HP trio in different corners. Immune to damage from any creature that moved closer to them this turn, so players must attack while moving parallel or away, or use ricochets and echoes. | Perspective Collapse: gravity reorients to the wall nearest the member with the most HP, dropping creatures up to 20 ft onto the new floor. |
 | The Inverted Reliquary | The vault heart of the local temple, turned inside out so its wards now try to erase whatever is inside. | Mimics the party's builds. Each round it attunes to the party's two most common tags and gains corrupted versions of their Resonance riders. | Slot Scramble: the floor breaks into 4 islands over 15 ft chasms of void, and each player has one random non-evolved boon suppressed until they cross to a different island. |
 
+- **Fold Space on the map:** each time it triggers, the arena mirrors north to south. Every creature and object moves to its mirrored square, except the Architect, which stays put.
+
 ### Floor 5 (Quarantine, boss CR party level +7)
 
 | Boss | Lore | Role and mechanics | Shift Action |
@@ -1109,6 +1112,8 @@ Every run pulls one random boss per floor from three options, so repeat runs sta
 | Ophaniel of the Inverted Bloom | A vast paradise-side being, part seraphic beast and part living cathedral of golden glass and blooming light, turned inside out when the gate inverted. | The Wounded Idol: sweeping wings of petrified light, Paradise Spores that Charm targets into walking toward it, and Inverted Gravity Beams. The Gate Opens (at Bloodied): its chest splits to reveal the raw tear to paradise, its damage gains radiant or necrotic riders, and it gains an extra Legendary Action. | Paradise Bleed: half the arena becomes the paradise universe, where creatures regain HP each turn but take double damage, and half becomes airless shattered stone with Silence and necrotic damage. The halves swap or rotate every round. |
 | The Sun-Eater's Husk | A colossal golden-antlered leviathan that grazed on sunlight in the paradise universe, dragged halfway through the gate as it imploded and fused with the bedrock. | Starving Gold: Antler Rakes (20 ft cone, Topple and Push), and it devours light sources and magical buffs to heal. Supernova Core (at Bloodied): its shell shatters around a miniature collapsing star, and a Gravitational Pulse pulls everyone 15 ft toward it each round. | Eclipse Cycle: rounds alternate between Blinding Zenith (2 × PB radiant damage and Blinded for creatures out of cover) and Total Umbra (magical darkness beyond 10 ft of the boss, with 2 × PB cold or necrotic damage in the dark). |
 | The Gatewright | The engineer who built the two-way gate to paradise, fused with the gate's core and the first thousand minds the local god absorbed. | The Master Builder: reshapes the arena with every attack, raising walls and triggering two floor 4 room tricks per round. The Fractured Horizon (at Bloodied): tears open three portals, to the Archive, to paradise and into Sonder's negative space, and its attacks fire from all three at once. | Grand Reconstruction: the arena cycles through the geometry of floors 1 to 4 each round, triggering that floor's signature hazard. |
+
+- **Signature hazard:** a floor's signature hazard is the Shift Action of the boss the party beat on that floor this run. If that isn't known, the DM picks from that floor's three bosses' Shift Actions. It uses the Gatewright's save DC.
 
 ### Boss stat scaling *(proposed)*
 
@@ -1409,7 +1414,7 @@ The app replaces the character sheet: characters are saved in it, and the DM loa
 
 - **Main stage:** the current room fills most of the screen. It's generated from this Bible and the Campaign Lorebook: room type, layout and terrain, encounter, room tricks and hidden condition, plus the boss and its Shift Action on boss rooms.
 - **Run tracker:** a smaller panel for floor and room progress, active Pressures, and the descend-or-extract choice at post-boss rooms.
-- **Descend or extract vote:** after each boss on floors 1 to 4, every living player votes Descend or Extract on their device and can change their vote. The DM's screen shows the tally and who hasn't voted; the DM still makes the final call.
+- **Descend or extract vote:** after each boss on floors 1 to 4, every living player votes Descend or Extract on their device, by tapping the Descend or Extract card, and can change their vote. The DM's screen shows the tally and who hasn't voted; the DM still makes the final call.
 - **Player sidebar:** one card per player that opens into their boon slots, levels, evolutions, combinations, hidden boon and suppressed boons; stat track ranks and Devotions; and their upgrade path, where they can buy upgrades with Quantum Basalts.
 - **Group rewards:** run loot, Quantum Basalts earned and passed Basalts, tracked for the whole party.
 

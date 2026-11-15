@@ -15,6 +15,7 @@ import { PlayerDraft } from './PlayerDraft'
 import { PlayerRoom } from './PlayerRoom'
 import { submitChoice, useChoices, useExitVotes, useLootRequests, type ChoiceDoc } from '../runStore'
 import { ExitVoteButtons, ExitVoteTally } from './ExitVote'
+import { useExitVote } from './useExitVote'
 import { PlayerLoot } from './LootScreens'
 import { RecoveryPanel } from './RecoveryPanel'
 import { describeReprieve } from '../rules/reprieve'
@@ -44,6 +45,7 @@ export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
   const floor = floorInfo(run.floor)
   const bossRoom = isBossRoom(state)
   const mine = players.filter((p) => myCharacterIds.includes(p.characterId))
+  const ballot = useExitVote(state, mine, votes, readOnly)
   // Your characters first, then the rest of the party.
   const party = [...mine, ...players.filter((p) => !myCharacterIds.includes(p.characterId))]
 
@@ -88,9 +90,12 @@ export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
 
           {run.awaitingChoice && (
             <Panel>
-              <PostBossScene state={state} />
+              <PostBossScene
+                state={state}
+                vote={{ current: ballot.current, onVote: ballot.castAll, disabled: readOnly || ballot.sending }}
+              />
               <ShrinePanel state={state} mine={mine} readOnly={readOnly} />
-              <ExitVoteButtons state={state} mine={mine} votes={votes} readOnly={readOnly} />
+              <ExitVoteButtons state={state} mine={mine} votes={votes} readOnly={readOnly} ballot={ballot} />
               <ExitVoteTally state={state} votes={votes} />
             </Panel>
           )}
