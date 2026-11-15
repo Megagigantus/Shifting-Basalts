@@ -4,7 +4,8 @@
 // one column, with the party cards (yours first) right after the banner.
 import { hasFullClear } from '../rules/upgrades'
 import { useState } from 'react'
-import { Skull } from 'lucide-react'
+import { Compass, Skull } from 'lucide-react'
+import { vanishNote } from '../rules/lostAndFound'
 import type { RunPlayer, RunState } from '../model/run'
 import { boonSummary } from '../rules/boons'
 import { floorInfo, LAST_FLOOR, PRESSURES } from '../rules/run'
@@ -164,7 +165,13 @@ function PartyCard({ player: p, portrait, glow, isMine, open, onToggle, sent, re
             Fallen
           </Pill>
         )}
+        {p.vanished && (
+          <Pill tone="amber" icon={<Compass size={11} />}>
+            In the maze
+          </Pill>
+        )}
       </header>
+      {p.vanished && <p className="m-0 text-[0.6875rem] text-amber-200">{vanishNote(p.vanished)}</p>}
       <div className="flex flex-wrap gap-1.5">
         <Pill tone="purple" mono title="Boss Quantum Basalts, before bonuses. Lost on death.">
           {p.alive ? `Run QB ${p.quantumBasaltsEarned}` : `Run QB ${p.quantumBasaltsEarned} (forfeit)`}

@@ -121,6 +121,8 @@ export function playerPieces(
   canMove: (characterId: string) => boolean,
   isMine: (characterId: string) => boolean,
 ): BoardPiece[] {
+  // Anyone lost in the maze (Lost and Found) is off the board until they return.
+  players = players.filter((pl) => !pl.vanished)
   const summoners = players.filter((pl) => pl.alive && looks[pl.characterId]?.hasSummon)
   const starts = startSquares(map, players.length + summoners.length)
   const out: BoardPiece[] = players.map((pl, i) => {

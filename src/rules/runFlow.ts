@@ -20,6 +20,7 @@ import { emptySlots, hiddenBoon, slotCount, type Slot } from './boons'
 import { keptPercent, partyRewardBonusPercent, planShare, type LootItem, type LootPick } from './loot'
 import { relicStateFor, vaultPending } from './vault'
 import { reprieveWaitingOn } from './reprieve'
+import { inFight, returnVanished, vanish, vanishTiming } from './lostAndFound'
 import {
   deepPocketsPercent,
   extraLootBonusPercent,
@@ -72,6 +73,9 @@ export function newRunState(id: string, joinCode: string, party: Character[], pr
       devotions: 0,
       extraLootBonusPercent: extraLootBonusPercent(c),
       quickReturnDays: quickReturnDays(c),
+      lostAndFoundRank: c.upgrades['lost-and-found'] ?? 0,
+      lostAndFoundUsed: 0,
+      vanished: null,
       slots: emptySlots(slotCount(c.upgrades['extra-boon-slot'] ?? 0)),
       hiddenBoonId: null,
       draftProfile: draftProfileFor(c),
@@ -140,7 +144,8 @@ function requireNoDrafts(state: RunState) {
 }
 
 function awardDevotions(players: RunPlayer[], amount: number): RunPlayer[] {
-  return players.map((p) => (p.alive ? { ...p, devotions: p.devotions + amount } : p))
+  // Anyone lost in the maze until the next room misses this room's Devotion.
+  return players.map((p) => (inFight(p) ? { ...p, devotions: p.devotions + amount } : p))
 }
 
 /** Clear a non-boss room as combat, elite or Reprieve. */
@@ -165,7 +170,7 @@ export function defeatBoss(state: RunState): RunState {
   const { run } = state
   const payout = bossQuantumBasalts(run.floor, run.entryMultiplier)
   const players = awardDevotions(state.players, devotionsForRoom('boss', run.floor)).map((p) =>
-    p.alive ? { ...p, quantumBasaltsEarned: p.quantumBasaltsEarned + payout } : p,
+    inFight(p) ? { ...p, quantumBasaltsEarned: p.quantumBasaltsEarned + payout } : p,
   )
   const next: RunState = {
     ...state,
@@ -192,7 +197,8 @@ export function descend(state: RunState): RunState {
   requireNoDrafts(state)
   if (!state.run.awaitingChoice) throw new Error('You can only descend after a boss.')
   if (state.run.floor >= LAST_FLOOR) throw new Error('There is no deeper floor.')
-  return { ...state, run: { ...state.run, floor: state.run.floor + 1, room: 1, awaitingChoice: false, forgeUsesLeft: 0 } }
+  const next = returnVanished(state)
+  return { ...next, run: { ...next.run, floor: next.run.floor + 1, room: 1, awaitingChoice: false, forgeUsesLeft: 0 } }
 }
 
 /**
@@ -270,22 +276,34 @@ export function setHiddenBoon(state: RunState, characterId: string, hiddenBoonId
   return updatePlayer(state, characterId, (p) => ({ ...p, hiddenBoonId }))
 }
 
-/** A character dies: expelled, locked out, and the run wipes if nobody is left. */
+/**
+ * A character would die: with Lost and Found uses left they vanish into the
+ * maze instead (rules/lostAndFound.ts); otherwise they're expelled and locked
+ * out. If nobody is left in the fight, anyone vanished until the next room is
+ * expelled too, and the run wipes.
+ */
 export function markDead(state: RunState, characterId: string, roll?: Roll): RunState {
   requireActive(state)
   const floor = state.run.floor
-  const players = state.players.map((p) => {
-    if (p.characterId !== characterId) return p
-    if (!p.alive) throw new Error(`${p.name} has already fallen.`)
+  const expel = (p: RunPlayer): RunPlayer => {
     const lockout = rollLockoutDays(floor, roll)
     return {
       ...p,
       alive: false,
+      vanished: null,
       diedOnFloor: floor,
       lockoutDays: shortenedLockout(lockout.days, p.quickReturnDays ?? 0),
       lockoutRolls: lockout.rolls,
     }
+  }
+  let players = state.players.map((p) => {
+    if (p.characterId !== characterId) return p
+    if (!p.alive) throw new Error(`${p.name} has already fallen.`)
+    if (p.vanished) throw new Error(`${p.name} is lost in the maze.`)
+    const timing = vanishTiming(p)
+    return timing ? vanish(p, timing) : expel(p)
   })
+  if (!players.some(inFight)) players = players.map((p) => (p.alive ? expel(p) : p))
   const wiped = players.every((p) => !p.alive)
   return {
     ...state,

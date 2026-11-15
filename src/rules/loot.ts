@@ -6,6 +6,7 @@ import itemData from '../data/loot-items.json'
 import relicData from '../data/relics.json'
 import rules from '../data/rules.json'
 import type { Run, RunPlayer, RunState } from '../model/run'
+import { inFight } from './lostAndFound'
 import type { Random } from './draft'
 import { lootKeptPercent, withPressureBonus } from './run'
 import { baseCost, gearName, gearRow, rollGear, usableBases } from './gear'
@@ -205,7 +206,7 @@ export function applyDrops(state: RunState, drops: Drop[], source: LootSource): 
       loot.credits += drop.amount
       loot.log.push({ ...at, credits: drop.amount })
     } else if (drop.kind === 'basalts') {
-      players = players.map((p) => (p.alive ? { ...p, quantumBasaltsEarned: p.quantumBasaltsEarned + drop.amount } : p))
+      players = players.map((p) => (inFight(p) ? { ...p, quantumBasaltsEarned: p.quantumBasaltsEarned + drop.amount } : p))
       loot.log.push({ ...at, basalts: drop.amount })
     } else {
       const uid = `L${loot.nextUid++}`

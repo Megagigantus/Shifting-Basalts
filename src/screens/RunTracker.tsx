@@ -3,7 +3,8 @@
 // open, it also applies players' draft choices sent from their devices.
 import { hasFullClear } from '../rules/upgrades'
 import { useEffect, useRef, useState } from 'react'
-import { Hourglass, Skull, Sparkles } from 'lucide-react'
+import { Compass, Hourglass, Skull, Sparkles } from 'lucide-react'
+import { lostAndFoundLeft, returnFromMaze, vanishNote, vanishTiming } from '../rules/lostAndFound'
 import type { Character } from '../model/character'
 import type { RoomKind, RunPlayer, RunResult, RunState } from '../model/run'
 import { floorInfo, LAST_FLOOR, PRESSURES, passQuantumBasalts } from '../rules/run'
@@ -342,6 +343,7 @@ interface CardProps {
 function PlayerCard({ player: p, character, sent, open, floor, canTrigger, busy, act, onToggle }: CardProps) {
   const portrait = character?.portrait ? artUrl('portraits', character.portrait) : null
   const glow = character ? hasFullClear(character) : false
+  const vanishing = p.alive && !p.vanished ? vanishTiming(p) : null
   const classBoonId = p.draftProfile ? classHiddenBoon(p.draftProfile.classId) : null
   const classBoon = classBoonId ? hiddenBoon(classBoonId) : null
   const choosing = p.alive && (p.draft || p.hiddenOffer)
@@ -370,6 +372,10 @@ function PlayerCard({ player: p, character, sent, open, floor, canTrigger, busy,
             {!p.alive ? (
               <Pill tone="rose" icon={<Skull size={11} />}>
                 Fallen
+              </Pill>
+            ) : p.vanished ? (
+              <Pill tone="amber" icon={<Compass size={11} />}>
+                In the maze
               </Pill>
             ) : (
               choosing && <Pill tone={sent && !sent.error ? 'emerald' : 'violet'}>{sent && !sent.error ? 'Sent a choice' : 'Choosing…'}</Pill>
@@ -412,6 +418,8 @@ function PlayerCard({ player: p, character, sent, open, floor, canTrigger, busy,
         </p>
       )}
 
+      {p.vanished && <p className="m-0 text-[0.6875rem] text-amber-200">{vanishNote(p.vanished)}</p>}
+
       {p.alive && (
         <div className="flex flex-wrap gap-1.5 border-t border-stone-800 pt-2.5">
           {(p.draft || p.hiddenOffer) && (
@@ -433,19 +441,34 @@ function PlayerCard({ player: p, character, sent, open, floor, canTrigger, busy,
             </ConfirmButton>
           )}
           <span className="ml-auto">
-            <ConfirmButton
-              disabled={busy}
-              confirmLabel={`Yes, ${p.name} died`}
-              onConfirm={() => act((s) => markDead(s, p.characterId))}
-            >
-              <Skull size={12} /> Died
-            </ConfirmButton>
+            {p.vanished ? (
+              <ConfirmButton
+                tone="amber"
+                disabled={busy}
+                confirmLabel={`Yes, ${p.name} is back`}
+                onConfirm={() => act((s) => returnFromMaze(s, p.characterId))}
+              >
+                <Compass size={12} /> Back in the room
+              </ConfirmButton>
+            ) : (
+              <ConfirmButton
+                disabled={busy}
+                confirmLabel={vanishing ? `Yes, ${p.name} vanishes` : `Yes, ${p.name} died`}
+                onConfirm={() => act((s) => markDead(s, p.characterId))}
+              >
+                <Skull size={12} /> Died
+              </ConfirmButton>
+            )}
           </span>
         </div>
       )}
-      {p.alive && (
+      {p.alive && !p.vanished && (
         <p className="m-0 text-[0.625rem] text-stone-500">
-          Died: expelled, loses this run's boss Basalts, locked out {floor}d4 days.
+          {vanishing
+            ? `Died: Lost and Found (${lostAndFoundLeft(p)} left this run). They vanish into the maze instead of being expelled and ${
+                vanishing === 'nextRoom' ? 'reappear at the start of the next room.' : 'return at the end of the round.'
+              }`
+            : `Died: expelled, loses this run's boss Basalts, locked out ${floor}d4 days.`}
         </p>
       )}
       {p.alive && classBoon && (

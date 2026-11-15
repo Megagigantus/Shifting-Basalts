@@ -101,6 +101,15 @@ export interface RunPlayer {
   extraLootBonusPercent?: number
   /** Days this player's Quick Return takes off a death lockout. */
   quickReturnDays?: number
+  /** Lost and Found rank (captured at run start) and uses spent this run (rules/lostAndFound.ts). */
+  lostAndFoundRank?: number
+  lostAndFoundUsed?: number
+  /**
+   * Vanished into the maze instead of being expelled: "nextRoom" misses the
+   * rest of the fight and reappears in the next room; "endOfRound" returns
+   * when the DM says. Null or missing when present.
+   */
+  vanished?: 'nextRoom' | 'endOfRound' | null
   /** Boon slots (3 plus Extra Boon Slot ranks). Boons reset every run. */
   slots?: Slot[]
   /** The hidden boon slot: a class hidden boon or one of Thils's gifts. */

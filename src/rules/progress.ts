@@ -10,13 +10,16 @@ import { clearRoom, defeatBoss, isFullClear } from './runFlow'
 import { openVault } from './vault'
 import { grantRecovery } from './recovery'
 import { reprieveWaitingOn } from './reprieve'
+import { returnVanished } from './lostAndFound'
 
 export function finishRoom(state: RunState, kind: RoomKind, random: Random): RunState {
   if (kind === 'boss') {
     const bossId = state.dm?.room?.boss?.id ?? state.dm?.bossId ?? null
     const beaten = grantRecovery(defeatBoss(bossCache(state, bossId, random)))
-    if (isFullClear(beaten)) return enterRoom(openVault(beaten, random), random)
-    return enterRoom(openDrafts(beaten, 'boss', random), random)
+    // Lost and Found: anyone in the maze reappears in the post-boss room,
+    // after the boss's draft (which they missed).
+    if (isFullClear(beaten)) return enterRoom(openVault(returnVanished(beaten), random), random)
+    return enterRoom(returnVanished(openDrafts(beaten, 'boss', random)), random)
   }
   // Everyone chooses Rest or Reflect before the party leaves a Reprieve.
   const resting = kind === 'reprieve' ? reprieveWaitingOn(state) : []
@@ -24,5 +27,5 @@ export function finishRoom(state: RunState, kind: RoomKind, random: Random): Run
   // A Reprieve pays no Devotion, so it brings no recovery points either.
   const looted = clearRoom(roomLoot(state, kind, random), kind)
   const cleared = kind === 'reprieve' ? looted : grantRecovery(looted)
-  return enterRoom(openDrafts(cleared, kind, random), random)
+  return enterRoom(returnVanished(openDrafts(cleared, kind, random)), random)
 }

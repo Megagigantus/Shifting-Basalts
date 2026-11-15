@@ -5,6 +5,7 @@ import type { RoomKind, RunPlayer, RunState } from '../model/run'
 import { combine, evolve, replaceBoon, takeBoon, type Slot } from './boons'
 import { classHiddenBoon, generateOffer, giftOffer, startingOffer, type DraftCharacter, type Random } from './draft'
 import { pass, setHiddenBoon } from './runFlow'
+import { inFight } from './lostAndFound'
 
 /** Offer size for the run's Pressures: 4, 3 under Narrow Seam, 2 under Narrow Seam II. */
 export function offerSize(pressures: string[]): number {
@@ -43,7 +44,8 @@ export function openDrafts(state: RunState, kind: RoomKind, random: Random): Run
   return {
     ...state,
     players: state.players.map((p) => {
-      if (!p.alive) return p
+      // Anyone lost in the maze until the next room misses this room's draft.
+      if (!inFight(p)) return p
       return {
         ...p,
         draft: {
@@ -154,7 +156,7 @@ export function roomConditionMet(state: RunState, random: Random): RunState {
   return {
     ...state,
     players: state.players.map((p) =>
-      p.alive
+      inFight(p)
         ? {
             ...p,
             hiddenOffer: {
@@ -182,7 +184,7 @@ export function classTriggerMet(state: RunState, characterId: string): RunState 
 /** Whether a player's class trigger can still fire in the current room. */
 export function canTriggerClass(state: RunState, p: RunPlayer): boolean {
   const classBoon = p.draftProfile ? classHiddenBoon(p.draftProfile.classId) : null
-  return Boolean(p.alive && classBoon && p.hiddenBoonId !== classBoon && p.classTriggerRoom !== `${state.run.floor}-${state.run.room}`)
+  return Boolean(inFight(p) && classBoon && p.hiddenBoonId !== classBoon && p.classTriggerRoom !== `${state.run.floor}-${state.run.room}`)
 }
 
 /** Take one of the hidden offer's boons (replacing any held hidden boon). */

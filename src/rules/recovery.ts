@@ -2,6 +2,7 @@
 // costs, Phase 7 defaults). Every function returns a new state or throws.
 import trackData from '../data/stat-tracks.json'
 import type { RunPlayer, RunState } from '../model/run'
+import { inFight } from './lostAndFound'
 import { rankProgress } from './statTracks'
 
 const COSTS = trackData.slotRecovery.costs as Record<string, number>
@@ -43,7 +44,7 @@ export function grantRecovery(state: RunState): RunState {
     ...state,
     players: state.players.map((p) => {
       const rank = recoveryRank(p)
-      return p.alive && rank > 0 ? { ...p, recovery: { points: rank, bought: [], surged: 0 } } : p
+      return inFight(p) && rank > 0 ? { ...p, recovery: { points: rank, bought: [], surged: 0 } } : p
     }),
   }
 }
