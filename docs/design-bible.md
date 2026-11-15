@@ -508,6 +508,7 @@ Pressures are optional challenges that raise the payout of loot and Quantum Basa
 
 - **Selection** *(proposed)***:** the party picks Pressures before entering, and bonuses stack. Percentage bonuses round up per player.
 - **Upgrades:** buying extra Pressures, or harsher versions of them, is part of the permanent upgrade path.
+- **Closing Ring details** *(proposed)***:** the ring applies in combat, elite and boss rooms, not the Reprieve. It starts 5 ft deep at round 1 and grows 5 ft at the start of rounds 3, 6, 9 (2, 4, 6 for Closing Ring II). A creature that enters the ring or starts its turn there takes room trick damage for the floor (PB d6, or PB d8 from floor 3) as force damage. It never covers the centre 10 by 10 ft. The DM advances it each round, and players see it on their battle map.
 
 * **Pale Lodge contracts** *(proposed)***:** the Lodge could list each run as a contract whose lethality rating rises with every Pressure, an in-world way to show the risk the party is choosing.
 
