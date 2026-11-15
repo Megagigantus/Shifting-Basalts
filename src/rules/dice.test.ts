@@ -24,7 +24,6 @@ describe('parseDice', () => {
 
   it('throws an Error including the original input for invalid notation', () => {
     const invalidInputs = [
-      '',
       'abc',
       '2d',
       '0d6',
@@ -46,6 +45,21 @@ describe('parseDice', () => {
         expect((err as Error).message).toContain(input)
       }
     }
+  })
+
+  it('throws a helpful message for notation that does not match the dice pattern', () => {
+    const expectedMessage = (input: string) =>
+      `Invalid dice notation "${input}". Use the form NdS+M, like "2d6+3", "d20" or "4d8-1".`
+
+    expect(() => parseDice('2x6')).toThrowError(new Error(expectedMessage('2x6')))
+    expect(() => parseDice('abc')).toThrowError(new Error(expectedMessage('abc')))
+  })
+
+  it('throws a helpful message for empty or whitespace-only input', () => {
+    const emptyMessage = 'Dice notation is empty. Use a form like "2d6+3".'
+
+    expect(() => parseDice('')).toThrowError(new Error(emptyMessage))
+    expect(() => parseDice('   ')).toThrowError(new Error(emptyMessage))
   })
 })
 

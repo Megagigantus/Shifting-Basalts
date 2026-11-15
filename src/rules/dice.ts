@@ -17,9 +17,15 @@ const DICE_PATTERN = /^\s*(\d+)?\s*[dD]\s*(\d+)\s*(?:([+-])\s*(\d+))?\s*$/
 
 /** Parse standard dice notation (e.g. "2d6+3", "d20", "4d8-1"). */
 export function parseDice(notation: string): { count: number; sides: number; modifier: number } {
+  if (notation.trim() === '') {
+    throw new Error('Dice notation is empty. Use a form like "2d6+3".')
+  }
+
   const match = DICE_PATTERN.exec(notation)
   if (!match) {
-    throw new Error(`Invalid dice notation: "${notation}"`)
+    throw new Error(
+      `Invalid dice notation "${notation}". Use the form NdS+M, like "2d6+3", "d20" or "4d8-1".`,
+    )
   }
 
   const count = match[1] !== undefined ? Number(match[1]) : 1
