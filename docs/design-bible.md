@@ -681,11 +681,11 @@ Each is used up when used. Several mirror room tricks the party has learned to b
 | 11 | Thils's lucky pip | A single die face. Spend it to reroll one d20 test after you see the result. |
 | 12 | Stride spark | Crush it as a Bonus Action to teleport 30 ft, or crush it before a stride roll to add +PB to the roll. |
 
-### Gear (d12)
+### Gear (d20)
 
-Weapons and armor with one small property. Rarity sets the bonus: common has the property only, uncommon +1, rare +2, very rare +3, and legendary +3 with a second property rolled from this table. Each row rolls its exact base, or the DM picks one that suits someone in the party, and the drop shows as an item card with full stats (see Gear item cards).
+Weapons and armor with one small property. Rarity sets the bonus: common has the property only, uncommon +1, rare +2, very rare +3, and legendary +3 with a second property rolled from this table. Items marked Focus are spellcasting focuses: their bonus also applies to spell attack rolls and spell save DCs (common Focus gear has no bonus, so only the property). Item save DCs are 10 + PB. Each row rolls its exact base, or the DM picks one that suits someone in the party, and the drop shows as an item card with full stats (see Gear item cards).
 
-| d12 | Item | Base (roll) | Property |
+| d20 | Item | Base (roll) | Property |
 | --- | --- | --- | --- |
 | 1 | Lodge hunting blade | d3: 1 dagger, 2 shortsword, 3 scimitar | Your first hit against a creature that hasn't acted yet this combat deals +1d6 damage. |
 | 2 | Columnbreaker | d3: 1 light hammer, 2 warhammer, 3 maul | Double damage to objects and structures. Hitting a column or pillar can topple it onto a creature within 10 ft: Dexterity save or PB d6 bludgeoning damage and Prone. |
@@ -699,6 +699,14 @@ Weapons and armor with one small property. Rarity sets the bonus: common has the
 | 10 | Choir shield | Shield | When you take the Dodge action, allies within 5 ft of you have half cover. |
 | 11 | Lodestone shield | Shield | You ignore magnetic pulls like the Magnetic Floor. Once per day, as an action, pull a metal weapon from a creature within 10 ft (Strength save or it lands at your feet). |
 | 12 | Meadowlight breastplate | Breastplate | While Bloodied, you shed golden light in a 10 ft radius and have advantage on Death Saving Throws. |
+| 13 | Finder's staff (Focus) | d4: 1 club, 2 quarterstaff, 3 sickle, 4 mace | Spellcasting focus. Once per turn, when you hit a creature or it fails a save against your spell, it's found: it sheds dim light in a 5 ft radius and can't benefit from being Invisible until the end of your next turn. |
+| 14 | Bellringer | d4: 1 greatclub, 2 flail, 3 morningstar, 4 mace | Once per turn, when you hit, the strike rings like a shrine bell: the target can't take Reactions until the start of its next turn. |
+| 15 | Bentshot bow | d4: 1 shortbow, 2 longbow, 3 light crossbow, 4 heavy crossbow | Your shots ignore half cover. Once per turn, a shot can curve around one column or corner to hit a creature whose location you know, even without line of sight. |
+| 16 | Lodge hush-piece | d2: 1 blowgun, 2 hand crossbow | Attacks with it make no sound, and a miss doesn't reveal you while you're hidden or Invisible. Your first hit each turn against a creature that can't see you deals +1d6 poison damage. |
+| 17 | Stranger's sidearm | d2: 1 pistol, 2 musket | Left behind by a strider from a tech-heavy world. Once per turn, when you hit, the report echoes through the halls: the target makes a Wisdom save or is Frightened of you until the end of its next turn. |
+| 18 | Seamsplitter | d3: 1 battleaxe, 2 greataxe, 3 war pick | A gate-builder's tool for splitting stone. The first time you hit a creature each turn, you open a seam: its AC drops by 1 until the start of your next turn (doesn't stack). |
+| 19 | Charge-pole | d3: 1 lance, 2 pike, 3 spear | If you move at least 20 ft straight toward a creature and hit it with this weapon on the same turn, it takes +1d8 damage and you can push it 10 ft. |
+| 20 | Offering scale | d3: 1 chain shirt, 2 scale mail, 3 half plate | Its scales are pilgrims' offering tokens. Once per day, when you would drop to 0 HP, a scale breaks off and you drop to 1 HP instead. |
 
 ### Who gear drops for
 
@@ -735,6 +743,7 @@ Every gear drop shows as a card with its full stats, bonus already applied, so p
 - **Fields:** name, rarity, value in credits, attunement, type, the base's stats with the bonus applied, the property, and weight.
 - **Value:** rarity value plus the base item's cost, so magic plate is worth more than magic leather.
 - **Attunement:** gear never needs it, except legendary gear.
+- **Spellcasting:** Focus gear adds a line such as "+2 to spell attacks and save DCs", hidden when the bonus is 0.
 - **Mastery:** the card shows the base's mastery, flagged as usable only by characters with Weapon Mastery for that weapon.
 - **Comparison** *(proposed)*: if a player's profile records their AC and main weapon, the card also shows the change, such as AC 16 to 19.
 
@@ -792,27 +801,46 @@ The 2024 Player's Handbook stats for every base the gear table can roll. Costs a
 
 | Weapon | Category | Damage | Properties | Mastery | Weight | Cost |
 | --- | --- | --- | --- | --- | --- | --- |
+| Club | Simple melee | 1d4 bludgeoning | Light | Slow | 2 lb | 1 sp |
 | Dagger | Simple melee | 1d4 piercing | Finesse, Light, Thrown (20/60) | Nick | 1 lb | 2 gp |
-| Dart | Simple ranged | 1d4 piercing | Finesse, Thrown (20/60) | Vex | 1/4 lb | 5 cp |
+| Greatclub | Simple melee | 1d8 bludgeoning | Two-Handed | Push | 10 lb | 2 sp |
 | Handaxe | Simple melee | 1d6 slashing | Light, Thrown (20/60) | Vex | 2 lb | 5 gp |
 | Javelin | Simple melee | 1d6 piercing | Thrown (30/120) | Slow | 2 lb | 5 sp |
 | Light hammer | Simple melee | 1d4 bludgeoning | Light, Thrown (20/60) | Nick | 2 lb | 2 gp |
-| Sling | Simple ranged | 1d4 bludgeoning | Ammunition (30/120, bullet) | Slow | None | 1 sp |
+| Mace | Simple melee | 1d6 bludgeoning | None | Sap | 4 lb | 5 gp |
+| Quarterstaff | Simple melee | 1d6 bludgeoning | Versatile (1d8) | Topple | 4 lb | 2 sp |
+| Sickle | Simple melee | 1d4 slashing | Light | Nick | 2 lb | 1 gp |
 | Spear | Simple melee | 1d6 piercing | Thrown (20/60), Versatile (1d8) | Sap | 3 lb | 1 gp |
+| Dart | Simple ranged | 1d4 piercing | Finesse, Thrown (20/60) | Vex | 1/4 lb | 5 cp |
+| Light crossbow | Simple ranged | 1d8 piercing | Ammunition (80/320, bolt), Loading, Two-Handed | Slow | 5 lb | 25 gp |
+| Shortbow | Simple ranged | 1d6 piercing | Ammunition (80/320, arrow), Two-Handed | Vex | 2 lb | 25 gp |
+| Sling | Simple ranged | 1d4 bludgeoning | Ammunition (30/120, bullet) | Slow | None | 1 sp |
+| Battleaxe | Martial melee | 1d8 slashing | Versatile (1d10) | Topple | 4 lb | 10 gp |
+| Flail | Martial melee | 1d8 bludgeoning | None | Sap | 2 lb | 10 gp |
 | Glaive | Martial melee | 1d10 slashing | Heavy, Reach, Two-Handed | Graze | 6 lb | 20 gp |
+| Greataxe | Martial melee | 1d12 slashing | Heavy, Two-Handed | Cleave | 7 lb | 30 gp |
 | Greatsword | Martial melee | 2d6 slashing | Heavy, Two-Handed | Graze | 6 lb | 50 gp |
 | Halberd | Martial melee | 1d10 slashing | Heavy, Reach, Two-Handed | Cleave | 6 lb | 20 gp |
+| Lance | Martial melee | 1d10 piercing | Heavy, Reach, Two-Handed (unless mounted) | Topple | 6 lb | 10 gp |
 | Longsword | Martial melee | 1d8 slashing | Versatile (1d10) | Sap | 3 lb | 15 gp |
 | Maul | Martial melee | 2d6 bludgeoning | Heavy, Two-Handed | Topple | 10 lb | 10 gp |
+| Morningstar | Martial melee | 1d8 piercing | None | Sap | 4 lb | 15 gp |
 | Pike | Martial melee | 1d10 piercing | Heavy, Reach, Two-Handed | Push | 18 lb | 5 gp |
 | Rapier | Martial melee | 1d8 piercing | Finesse | Vex | 2 lb | 25 gp |
 | Scimitar | Martial melee | 1d6 slashing | Finesse, Light | Nick | 3 lb | 25 gp |
 | Shortsword | Martial melee | 1d6 piercing | Finesse, Light | Vex | 2 lb | 10 gp |
 | Trident | Martial melee | 1d8 piercing | Thrown (20/60), Versatile (1d10) | Topple | 4 lb | 5 gp |
+| War pick | Martial melee | 1d8 piercing | Versatile (1d10) | Sap | 2 lb | 5 gp |
 | Warhammer | Martial melee | 1d8 bludgeoning | Versatile (1d10) | Push | 5 lb | 15 gp |
 | Whip | Martial melee | 1d4 slashing | Finesse, Reach | Slow | 3 lb | 2 gp |
+| Blowgun | Martial ranged | 1 piercing | Ammunition (25/100, needle), Loading | Vex | 1 lb | 10 gp |
+| Hand crossbow | Martial ranged | 1d6 piercing | Ammunition (30/120, bolt), Light, Loading | Vex | 3 lb | 75 gp |
+| Heavy crossbow | Martial ranged | 1d10 piercing | Ammunition (100/400, bolt), Heavy, Loading, Two-Handed | Push | 18 lb | 50 gp |
+| Longbow | Martial ranged | 1d8 piercing | Ammunition (150/600, arrow), Heavy, Two-Handed | Slow | 2 lb | 50 gp |
+| Musket | Martial ranged | 1d12 piercing | Ammunition (40/120, bullet), Loading, Two-Handed | Slow | 10 lb | 500 gp |
+| Pistol | Martial ranged | 1d10 piercing | Ammunition (30/90, bullet), Loading | Vex | 3 lb | 250 gp |
 
-A magic bonus adds to both attack and damage rolls. A magic sling's bonus applies to the sling, not its bullets.
+A magic bonus adds to both attack and damage rolls. On a weapon with the Ammunition property, the bonus applies to the weapon, not its ammunition. Ranged gear with the Ammunition property drops with 20 pieces of its ammunition, and after each room the party recovers half the ammunition spent (round down). Players track ammunition on their own sheets; the app doesn't.
 
 ### Base armor
 
@@ -824,7 +852,10 @@ The 2024 Player's Handbook stats for every base the gear table can roll. A magic
 | Leather | Light | 11 + Dex | None | Normal | 10 lb | 10 gp |
 | Studded leather | Light | 12 + Dex | None | Normal | 13 lb | 45 gp |
 | Hide | Medium | 12 + Dex (max 2) | None | Normal | 12 lb | 10 gp |
+| Chain shirt | Medium | 13 + Dex (max 2) | None | Normal | 20 lb | 50 gp |
+| Scale mail | Medium | 14 + Dex (max 2) | None | Disadvantage | 45 lb | 50 gp |
 | Breastplate | Medium | 14 + Dex (max 2) | None | Normal | 20 lb | 400 gp |
+| Half plate | Medium | 15 + Dex (max 2) | None | Disadvantage | 40 lb | 750 gp |
 | Ring mail | Heavy | 14 | None | Disadvantage | 40 lb | 30 gp |
 | Chain mail | Heavy | 16 | 13 | Disadvantage | 55 lb | 75 gp |
 | Splint | Heavy | 17 | 15 | Disadvantage | 60 lb | 200 gp |
