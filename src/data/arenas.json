@@ -544,6 +544,27 @@
           "stride-pool"
         ]
       },
+      "bloodiedEffect": {
+        "kind": "place",
+        "label": "Crystallize",
+        "art": "floating-shard",
+        "name": "Quantum Basalt shard",
+        "spots": [
+          {
+            "dx": -1,
+            "dy": -1
+          },
+          {
+            "dx": 2,
+            "dy": -1
+          },
+          {
+            "dx": 0,
+            "dy": 2
+          }
+        ],
+        "note": "Shards: AC 15, HP on the boss card. Break all three to Stun the Core until the end of its next turn."
+      },
       "notes": "Core hovers 10 ft over the centre of an open grated floor. Rift Barrage pools are added during the fight; Tilt the Gate slides them."
     },
     "general-vane": {
@@ -675,6 +696,15 @@
         }
       ],
       "areas": [],
+      "shiftEffect": {
+        "kind": "highlight",
+        "label": "Refraction Shift",
+        "art": "mirror-panel",
+        "area": {
+          "kind": "mirror",
+          "name": "Mirrored this round"
+        }
+      },
       "notes": "Hydra at the north end. 4 floor panels flip to mirrors on Refraction Shift. Residue puddles are added when heads are severed."
     },
     "blind-architect": {

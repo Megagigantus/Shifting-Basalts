@@ -967,6 +967,136 @@ function planEclipse(
   }
 }
 
+function planHighlight(
+  map: BattleMap,
+  effect: Extract<ShiftEffect, { kind: 'highlight' }>,
+  ctx: ShiftContext,
+): ShiftPlan {
+  const areas = map.areas ?? []
+  if (areas.some((a) => a.key.startsWith('highlight:'))) {
+    return {
+      map: { ...map, areas: areas.filter((a) => !a.key.startsWith('highlight:')) },
+      moves: [],
+      notes: [],
+    }
+  }
+
+  const added: MapArea[] = map.pieces
+    .filter((p) => p.kind === 'object' && p.id === effect.art && inPhase(p, ctx.phase))
+    .map((p, i) => {
+      const { w, h } = dims(p)
+      return {
+        key: `highlight:${i}`,
+        kind: effect.area.kind,
+        name: effect.area.name,
+        x: p.x,
+        y: p.y,
+        w,
+        h,
+      }
+    })
+
+  return {
+    map: { ...map, areas: [...areas, ...added] },
+    moves: [],
+    notes: [],
+  }
+}
+
+function nearestTouchingSquare(
+  target: { x: number; y: number },
+  boss: { x: number; y: number; w: number; h: number },
+  squares: number,
+  blocked: Set<string>,
+): { x: number; y: number } | null {
+  const minX = Math.max(0, boss.x - 1)
+  const maxX = Math.min(squares - 1, boss.x + boss.w)
+  const minY = Math.max(0, boss.y - 1)
+  const maxY = Math.min(squares - 1, boss.y + boss.h)
+  let best: { x: number; y: number; cheb: number; euclid: number } | null = null
+
+  for (let y = minY; y <= maxY; y++) {
+    for (let x = minX; x <= maxX; x++) {
+      if (x >= boss.x && x < boss.x + boss.w && y >= boss.y && y < boss.y + boss.h) continue
+      if (blocked.has(`${x},${y}`)) continue
+      const dx = Math.abs(x - target.x)
+      const dy = Math.abs(y - target.y)
+      const cheb = Math.max(dx, dy)
+      const euclid = dx * dx + dy * dy
+      if (
+        !best ||
+        cheb < best.cheb ||
+        (cheb === best.cheb &&
+          (euclid < best.euclid ||
+            (euclid === best.euclid && (y < best.y || (y === best.y && x < best.x)))))
+      ) {
+        best = { x, y, cheb, euclid }
+      }
+    }
+  }
+  return best ? { x: best.x, y: best.y } : null
+}
+
+function planPlace(
+  map: BattleMap,
+  effect: Extract<ShiftEffect, { kind: 'place' }>,
+  tokens: TokenPos[],
+  ctx: ShiftContext,
+): ShiftPlan {
+  if (map.pieces.some((p) => p.key.startsWith('place:'))) {
+    return { map, moves: [], notes: ['The shards are already on the map'] }
+  }
+  const boss = map.pieces.find((p) => p.kind === 'boss' && inPhase(p, ctx.phase))
+  if (!boss) {
+    return { map, moves: [], notes: ['No boss on the map'] }
+  }
+
+  const item = PALETTE.find((entry) => entry.art === effect.art)
+  if (!item) throw new Error(`Unknown palette object: ${effect.art}`)
+
+  const bossDims = dims(boss)
+  const workingPieces = [...map.pieces]
+  const blocked = blockedSquares(map, ctx.phase, tokens)
+
+  effect.spots.forEach((spot, i) => {
+    const tx = boss.x + spot.dx
+    const ty = boss.y + spot.dy
+    const targetOk =
+      tx >= 0 &&
+      ty >= 0 &&
+      tx < map.squares &&
+      ty < map.squares &&
+      !blocked.has(`${tx},${ty}`)
+    const dest = targetOk
+      ? { x: tx, y: ty }
+      : nearestTouchingSquare(
+          { x: tx, y: ty },
+          { x: boss.x, y: boss.y, w: bossDims.w, h: bossDims.h },
+          map.squares,
+          blocked,
+        )
+    if (!dest) return
+    markArea(dest.x, dest.y, item.w, item.h, blocked)
+    workingPieces.push({
+      key: `place:${i}`,
+      kind: 'object',
+      id: effect.art,
+      x: dest.x,
+      y: dest.y,
+      size: 1,
+      w: item.w,
+      h: item.h,
+      name: effect.name,
+    })
+  })
+
+  return {
+    map: { ...map, pieces: workingPieces },
+    moves: [],
+    notes: [effect.note],
+  }
+}
+
 /** Plan the map update and any token moves for a boss arena's shift effect. */
 export function planShift(
   map: BattleMap,
@@ -985,12 +1115,16 @@ export function planShift(
       return planGravity(map, effect, tokens, ctx)
     case 'halves':
       return planHalves(map, effect)
+    case 'highlight':
+      return planHighlight(map, effect, ctx)
     case 'march':
       return planMarch(map, effect, tokens, ctx)
     case 'mirror':
       return planMirror(map, tokens)
     case 'orbit':
       return planOrbit(map, effect, tokens, ctx)
+    case 'place':
+      return planPlace(map, effect, tokens, ctx)
     case 'push':
       return planPush(map, effect, tokens, ctx)
     case 'rotate':

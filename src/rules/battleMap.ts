@@ -370,6 +370,20 @@ export type ShiftEffect =
       zenith: { kind: string; name: string }
       umbra: { kind: string; name: string; within: number }
     }
+  | {
+      kind: 'highlight'
+      label?: string
+      art: string
+      area: { kind: string; name: string }
+    }
+  | {
+      kind: 'place'
+      label?: string
+      art: string
+      name: string
+      spots: { dx: number; dy: number }[]
+      note: string
+    }
 
 export interface ArenaData {
   entrance: { x: number; y: number; w: number; h: number }

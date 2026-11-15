@@ -767,6 +767,73 @@ describe('shiftEffects', () => {
         h: 14,
       })
     })
+
+    it('highlight on Glass Hydra arena toggles 4 mirror areas over the mirror panels and keeps other areas', () => {
+      const baseMap = placeArena({ kind: 'boss', boss: { id: 'glass-hydra', partySize: 4 } } as Room)!
+      const otherArea = { key: 'area:keep', kind: 'ledge', name: 'Kept', x: 0, y: 0, w: 1, h: 1 }
+      const map: BattleMap = { ...baseMap, areas: [otherArea] }
+      const effect = shiftEffectOf('glass-hydra')!
+      const ctx = { phase: 1, random: Math.random }
+
+      const p1 = planShift(map, effect, [{ key: 'pc:a', x: 6, y: 12 }], ctx)
+      expect(p1.save).toBeUndefined()
+      expect(p1.moves).toEqual([])
+      expect(p1.notes).toEqual([])
+      expect(p1.map.areas).toEqual([
+        otherArea,
+        { key: 'highlight:0', kind: 'mirror', name: 'Mirrored this round', x: 2, y: 7, w: 2, h: 2 },
+        { key: 'highlight:1', kind: 'mirror', name: 'Mirrored this round', x: 6, y: 7, w: 2, h: 2 },
+        { key: 'highlight:2', kind: 'mirror', name: 'Mirrored this round', x: 10, y: 7, w: 2, h: 2 },
+        { key: 'highlight:3', kind: 'mirror', name: 'Mirrored this round', x: 6, y: 10, w: 2, h: 2 },
+      ])
+
+      const p2 = planShift(p1.map, effect, [], ctx)
+      expect(p2.save).toBeUndefined()
+      expect(p2.moves).toEqual([])
+      expect(p2.notes).toEqual([])
+      expect(p2.map.areas).toEqual([otherArea])
+
+      const p3 = planShift(p2.map, effect, [], ctx)
+      expect(p3.map.areas).toEqual(p1.map.areas)
+    })
+
+    it('place on Stride Core arena places 3 shards touching the core, dodges tokens, and refuses a second press', () => {
+      const map = placeArena({ kind: 'boss', boss: { id: 'stride-core', partySize: 4 } } as Room)!
+      const effect = bloodiedEffectOf('stride-core')!
+      const ctx = { phase: 2, random: Math.random }
+
+      const p1 = planShift(map, effect, [], ctx)
+      expect(p1.save).toBeUndefined()
+      expect(p1.moves).toEqual([])
+      expect(p1.notes).toEqual([
+        'Shards: AC 15, HP on the boss card. Break all three to Stun the Core until the end of its next turn.',
+      ])
+      expect(p1.map.pieces.filter((p) => p.key.startsWith('place:'))).toEqual([
+        { key: 'place:0', kind: 'object', id: 'floating-shard', x: 5, y: 5, size: 1, w: 1, h: 1, name: 'Quantum Basalt shard' },
+        { key: 'place:1', kind: 'object', id: 'floating-shard', x: 8, y: 5, size: 1, w: 1, h: 1, name: 'Quantum Basalt shard' },
+        { key: 'place:2', kind: 'object', id: 'floating-shard', x: 6, y: 8, size: 1, w: 1, h: 1, name: 'Quantum Basalt shard' },
+      ])
+
+      const p2 = planShift(p1.map, effect, [], ctx)
+      expect(p2.moves).toEqual([])
+      expect(p2.map.pieces).toEqual(p1.map.pieces)
+      expect(p2.notes).toEqual(['The shards are already on the map'])
+
+      const blockedPlan = planShift(map, effect, [{ key: 'pc:a', x: 5, y: 5 }], ctx)
+      expect(blockedPlan.map.pieces.filter((p) => p.key.startsWith('place:'))).toEqual([
+        { key: 'place:0', kind: 'object', id: 'floating-shard', x: 6, y: 5, size: 1, w: 1, h: 1, name: 'Quantum Basalt shard' },
+        { key: 'place:1', kind: 'object', id: 'floating-shard', x: 8, y: 5, size: 1, w: 1, h: 1, name: 'Quantum Basalt shard' },
+        { key: 'place:2', kind: 'object', id: 'floating-shard', x: 6, y: 8, size: 1, w: 1, h: 1, name: 'Quantum Basalt shard' },
+      ])
+
+      const noBossMap: BattleMap = { squares: 14, entrance: 'south', pieces: [] }
+      const noBossPlan = planShift(noBossMap, effect, [], ctx)
+      expect(noBossPlan).toEqual({
+        map: noBossMap,
+        moves: [],
+        notes: ['No boss on the map'],
+      })
+    })
   })
 
   describe('rotateBoxClockwise', () => {
