@@ -9,11 +9,12 @@ import type { Room } from '../rules/rooms'
 import { bossBloodied, hpTrackers } from '../rules/hp'
 import { ringOf } from '../rules/closingRing'
 import { arenaOf, currentForm, inPhase, mapPhase, PALETTE, shiftEffectOf, type MapPiece } from '../rules/battleMap'
-import { dropMapObject, layOutMap, moveMapPiece, removeMapObject, shiftMap, swapBossForm } from '../rules/roomFlow'
+import { dropMapObject, layOutMap, moveMapPiece, removeMapObject, swapBossForm } from '../rules/roomFlow'
 import { moveToken, roomKeyOf, useTokens } from '../runStore'
 import { artUrl } from '../art'
 import { BattleBoard } from './BattleBoard'
 import { playerPieces, roomPieces, spotAfterMove, tokenOwner, useLooks } from './mapPieces'
+import { useShiftMap } from './useShiftMap'
 import { Grid3x3 } from 'lucide-react'
 import { ConfirmButton } from '../ui/ConfirmButton'
 import { Panel } from '../ui/Panel'
@@ -33,6 +34,7 @@ interface Props {
 export function DmBattleMap({ state, room, busy, act }: Props) {
   const tokens = useTokens(state.run.id)
   const looks = useLooks()
+  const triggerShift = useShiftMap(state, room, act)
   const [toDrop, setToDrop] = useState(PALETTE[0]?.art ?? '')
   const map = room.map ?? null
 
@@ -141,9 +143,14 @@ export function DmBattleMap({ state, room, busy, act }: Props) {
               Swap form (now {form === 'vyr' ? 'Vyr' : 'Kaelen'})
             </button>
           )}
-          {shiftEffect?.kind === 'march' && (
-            <button type="button" className={SMALL_BUTTON} disabled={busy} onClick={() => act((s) => shiftMap(s))}>
+          {shiftEffect?.kind === 'march' && triggerShift && (
+            <button type="button" className={SMALL_BUTTON} disabled={busy} onClick={triggerShift}>
               {hasMarchWalls ? 'March 15 ft' : 'Raise Marching Columns'}
+            </button>
+          )}
+          {shiftEffect?.kind === 'mirror' && triggerShift && (
+            <button type="button" className={SMALL_BUTTON} disabled={busy} onClick={triggerShift}>
+              Fold Space
             </button>
           )}
           <ConfirmButton
@@ -163,6 +170,7 @@ export function DmBattleMap({ state, room, busy, act }: Props) {
         door={map.door}
         areas={(map.areas ?? []).filter((a) => inPhase(a, phase))}
         mapArt={mapArt}
+        flipArt={Boolean(map.flipped)}
         pieces={pieces}
         busy={busy}
         ringWidth={ring?.width ?? 0}

@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest'
 import { emptyDungeonLayer, emptyProfile, type Character } from '../model/character'
 import { newRunState } from './runFlow'
 import { changeHp, layOutMap, moveMapPiece, rerollEncounter, reveal, startFloor } from './roomFlow'
-import { avoidSquares, entranceSquares, footprint, movePiece, placeMap, playerMap, startSquares, type BattleMap } from './battleMap'
+import { avoidSquares, entranceSquares, footprint, mirrorMap, movePiece, placeMap, playerMap, startSquares, type BattleMap } from './battleMap'
+import { mirroredTokenSpots } from '../screens/mapPieces'
+import type { BoardPiece } from '../screens/BattleBoard'
 import { hpTrackers } from './hp'
 import { generateRoom, type Room } from './rooms'
 import { generateEncounter } from './encounters'
@@ -242,5 +244,37 @@ describe('the battle map during a run', () => {
     const map = placeMap(room(31), seeded(32))!
     const p = map.pieces[0]
     expect(movePiece(map, p.key, p.x, p.y)).toBe(map)
+  })
+
+  it('mirrorMap flips multi-square objects and areas north-to-south while toggling flipped', () => {
+    const map: BattleMap = {
+      squares: 14,
+      entrance: 'south',
+      pieces: [{ key: 'obj:0', kind: 'object', id: 'pit', x: 4, y: 0, size: 1, w: 2, h: 2 }],
+      areas: [{ key: 'area:0', kind: 'ledge', name: 'Ledge', x: 2, y: 1, w: 3, h: 2 }],
+    }
+    const flipped = mirrorMap(map)
+    expect(flipped.flipped).toBe(true)
+    expect(flipped.pieces[0]).toMatchObject({ x: 4, y: 12 })
+    expect(flipped.areas![0]).toMatchObject({ x: 2, y: 11 })
+
+    const back = mirrorMap(flipped)
+    expect(back.flipped).toBe(false)
+    expect(back.pieces[0]).toMatchObject({ x: 4, y: 0 })
+    expect(back.areas![0]).toMatchObject({ x: 2, y: 1 })
+  })
+
+  it('mirroredTokenSpots mirrors player and summon tokens north-to-south with x unchanged', () => {
+    const base = { art: null, fallback: 'A', label: 'A', movable: true }
+    const pieces: BoardPiece[] = [
+      { ...base, key: 'boss:0', kind: 'boss', x: 6, y: 4, size: 2 },
+      { ...base, key: 'pc:a', kind: 'player', x: 6, y: 13, size: 1 },
+      { ...base, key: 'sm:a', kind: 'summon', x: 7, y: 12, size: 1 },
+      { ...base, key: 'pc:b', kind: 'player', x: 5, y: 11, size: 1 },
+    ]
+    expect(mirroredTokenSpots(pieces, 14)).toEqual([
+      { characterId: 'a', spot: { x: 6, y: 0, sx: 7, sy: 1 } },
+      { characterId: 'b', spot: { x: 5, y: 2 } },
+    ])
   })
 })

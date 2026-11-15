@@ -658,6 +658,9 @@
         }
       ],
       "areas": [],
+      "shiftEffect": {
+        "kind": "mirror"
+      },
       "notes": "Architect centre-north, ringed by 4 floating shards. Fold Space swaps halves, so the layout stays roughly symmetrical."
     },
     "chorus-unseen-angles": {

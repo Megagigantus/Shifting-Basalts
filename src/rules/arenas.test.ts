@@ -174,4 +174,26 @@ describe('boss arenas', () => {
 
     expect(() => shiftMap(inBossRoom('tessellated-warden'))).toThrow()
   })
+
+  it('the Blind Architect\'s Fold Space mirrors objects north-to-south, leaves the boss in place, and flips back on a second trigger', () => {
+    const initial = inBossRoom('blind-architect')
+    const initialMap = initial.dm!.room!.map!
+    const bossBefore = initialMap.pieces.find((p) => p.kind === 'boss')!
+    const shardAt3 = initialMap.pieces.find((p) => p.kind === 'object' && p.x === 3 && p.y === 3)!
+
+    const flipped = shiftMap(initial)
+    const flippedMap = flipped.dm!.room!.map!
+    expect(flippedMap.flipped).toBe(true)
+    expect(flippedMap.pieces.find((p) => p.key === bossBefore.key)).toEqual(bossBefore)
+    expect(flippedMap.pieces.find((p) => p.key === shardAt3.key)!.y).toBe(10)
+    expect(flipped.dm!.room!.shifts![0].revealed).toBe(true)
+    expect(flipped.run.roomView!.shifts).toEqual(['blind-architect'])
+    expect(flipped.run.roomView!.map!.flipped).toBe(true)
+    expect(flipped.run.roomView!.map!.pieces.find((p) => p.key === shardAt3.key)!.y).toBe(10)
+
+    const restored = shiftMap(flipped)
+    expect(restored.dm!.room!.map!.flipped).toBe(false)
+    expect(restored.dm!.room!.map!.pieces).toEqual(initialMap.pieces)
+    expect(restored.run.roomView!.map!.flipped).toBeUndefined()
+  })
 })

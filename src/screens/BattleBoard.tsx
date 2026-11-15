@@ -40,6 +40,8 @@ interface Props {
   door?: { x: number; y: number; w: number; h: number }
   areas?: MapArea[]
   mapArt: string | null
+  /** Flip the arena art north-to-south (Fold Space). */
+  flipArt?: boolean
   pieces: BoardPiece[]
   busy: boolean
   /** Closing Ring: how many squares deep the hazardous outer ring is (0 or unset for none). */
@@ -56,7 +58,7 @@ interface Drag {
   y: number
 }
 
-export function BattleBoard({ squares: n, entrance, door, areas = [], mapArt, pieces, busy, ringWidth = 0, onMove, onRemove }: Props) {
+export function BattleBoard({ squares: n, entrance, door, areas = [], mapArt, flipArt = false, pieces, busy, ringWidth = 0, onMove, onRemove }: Props) {
   const ring = Math.min(ringWidth, Math.floor(n / 2))
   const boardRef = useRef<HTMLDivElement>(null)
   const [drag, setDrag] = useState<Drag | null>(null)
@@ -96,7 +98,7 @@ export function BattleBoard({ squares: n, entrance, door, areas = [], mapArt, pi
       }}
       onPointerCancel={() => setDrag(null)}
     >
-      {mapArt && <img className="battle-map-art" src={mapArt} alt="" draggable={false} />}
+      {mapArt && <img className={flipArt ? 'battle-map-art is-flipped' : 'battle-map-art'} src={mapArt} alt="" draggable={false} />}
       <svg className="battle-map-grid" viewBox={`0 0 ${n} ${n}`} preserveAspectRatio="none" aria-hidden="true">
         {ring > 0 && (
           <g className="closing-ring">

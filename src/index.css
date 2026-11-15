@@ -873,6 +873,10 @@
     pointer-events: none;
   }
 
+  .battle-map-art.is-flipped {
+    transform: scaleY(-1);
+  }
+
   .battle-map-grid {
     position: absolute;
     inset: 0;

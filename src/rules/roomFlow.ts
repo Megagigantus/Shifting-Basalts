@@ -10,7 +10,7 @@ import { isBossRoom } from './runFlow'
 import { generateEncounter } from './encounters'
 import { pickBoss, restlessShiftActions } from './bosses'
 import { applyHp, emptyHp, hpShown, hpTrackers } from './hp'
-import { addObject, marchColumns, movePiece, placeArena, placeMap, removeObject, shiftEffectOf, swapForm } from './battleMap'
+import { addObject, marchColumns, mirrorMap, movePiece, placeArena, placeMap, removeObject, shiftEffectOf, swapForm } from './battleMap'
 import { advanceRing, nextRound, pullBackRing, ringOf, ringSettings, squaresAcross, startRing, type RingState } from './closingRing'
 
 function withRoom(state: RunState, room: Room | null, floorPlan = state.dm?.floorPlan ?? []): RunState {
@@ -194,7 +194,7 @@ export function shiftMap(state: RunState): RunState {
   const bossId = room.boss.id
   const effect = shiftEffectOf(bossId)
   if (!effect) throw new Error('This boss has no map shift effect.')
-  const map = effect.kind === 'march' ? marchColumns(room.map) : room.map
+  const map = effect.kind === 'march' ? marchColumns(room.map) : mirrorMap(room.map)
   const shifts = (room.shifts ?? []).map((s) => (s.bossId === bossId ? { ...s, revealed: true } : s))
   return withRoom(state, { ...room, map, shifts })
 }
