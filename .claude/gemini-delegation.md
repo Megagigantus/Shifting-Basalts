@@ -85,6 +85,7 @@ The Final Gate checks the feature as a whole, not task by task. It must run on C
 
 - If this session is running Opus 5.5, do the Final Gate yourself.
 - If this session is running any other model (for example, the user switched models), hand the Final Gate to the `opus-final-reviewer` subagent instead.
+- If the session is not on Opus 5.5 and `opus-final-reviewer` is unavailable, stop and tell the user. Do not run the Final Gate on another model.
 
 **Testing**
 1. Confirm the working tree is clean and you are on the feature branch.
@@ -118,6 +119,10 @@ If `agy` itself fails (command not found, auth or sign-in error, rate limit or q
 2. Tell the user in one line what failed.
 3. Route all remaining implementation tasks in this session to the **`sonnet-implementer`** subagent, using the same specs and the same Review process.
 4. Try `agy` again only if the user asks.
+
+## Missing Subagents
+
+Before routing work to `sonnet-implementer` or `opus-final-reviewer`, confirm the subagent exists in `.claude/agents/`. If it is missing, stop, tell the user which file is missing, and ask how to proceed. Do not substitute a different model or do the work yourself unless the user says to.
 
 ## Task Spec Template
 
