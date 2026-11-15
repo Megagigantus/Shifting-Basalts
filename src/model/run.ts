@@ -151,6 +151,8 @@ export interface RunPlayer {
   counters?: Record<string, number>
   /** Owns the Healing Font upgrade (each owner beyond the first adds temp HP). */
   healingFontOwner?: boolean
+  /** Owns the Reclamation Shrine (it stands in post-boss rooms if anyone does; rules/shrine.ts). */
+  shrineOwner?: boolean
   /** Relics this character already owns (captured at run start; never offered again). */
   relicsOwned?: string[]
   /** Thils's Vault: the relics offered, until the player takes one. */

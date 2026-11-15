@@ -20,6 +20,7 @@ import { RecoveryPanel } from './RecoveryPanel'
 import { describeReprieve } from '../rules/reprieve'
 import { CounterList } from './CountersPanel'
 import { PostBossScene } from './Scene'
+import { ShrinePanel } from './ShrinePanel'
 import { useLooks } from './mapPieces'
 import { artUrl } from '../art'
 import { Panel } from '../ui/Panel'
@@ -88,6 +89,7 @@ export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
           {run.awaitingChoice && (
             <Panel>
               <PostBossScene state={state} />
+              <ShrinePanel state={state} mine={mine} readOnly={readOnly} />
               <ExitVoteButtons state={state} mine={mine} votes={votes} readOnly={readOnly} />
               <ExitVoteTally state={state} votes={votes} />
             </Panel>

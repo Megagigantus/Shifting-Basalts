@@ -92,6 +92,7 @@ export function newRunState(id: string, joinCode: string, party: Character[], pr
       recovery: null,
       counters: {},
       healingFontOwner: (c.upgrades['healing-font'] ?? 0) > 0,
+      shrineOwner: (c.upgrades['reclamation-shrine'] ?? 0) > 0,
       diedOnFloor: null,
       lockoutDays: null,
       lockoutRolls: null,

@@ -19,6 +19,7 @@ import { ClosingRingNote } from './ClosingRing'
 import { bossOf } from '../rules/bosses'
 import { DmFight } from './DmFight'
 import { PostBossScene, ReprieveScene } from './Scene'
+import { ShrinePanel } from './ShrinePanel'
 import { RoomCard } from './RoomCard'
 import { DmBattleMap } from './DmBattleMap'
 import { RevealControl } from './RevealControl'
@@ -63,6 +64,7 @@ export function DmRoom({ state, busy, act }: Props) {
     return (
       <Panel>
         <PostBossScene state={state} forDm />
+        <ShrinePanel state={state} forDm />
       </Panel>
     )
   }

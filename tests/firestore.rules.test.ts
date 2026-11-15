@@ -644,4 +644,17 @@ describe('Thils\'s Vault and loot requests', () => {
     await assertFails(setDoc(doc(as(PLAYER), 'runs', 'over', 'votes', OWNED), { vote: 'extract', floor: 2, updatedAt: now() }))
     await assertFails(getDoc(doc(as(STRANGER), 'runs', 'live', 'votes', OWNED)))
   })
+
+  it('a player pledges Basalts at the Reclamation Shrine for their own character; everyone invited sees pledges', async () => {
+    const ref = doc(as(PLAYER), 'runs', 'live', 'pledges', OWNED)
+    await assertSucceeds(setDoc(ref, { targetId: OTHERS, amount: 5, floor: 1, updatedAt: now() }))
+    await assertSucceeds(getDoc(doc(as(DM), 'runs', 'live', 'pledges', OWNED)))
+    await assertSucceeds(deleteDoc(ref))
+    await assertFails(setDoc(ref, { targetId: OTHERS, amount: -1, floor: 1, updatedAt: now() }))
+    await assertFails(setDoc(ref, { targetId: OTHERS, amount: 2.5, floor: 1, updatedAt: now() }))
+    await assertFails(setDoc(ref, { targetId: OTHERS, amount: 5, floor: 1, paid: true, updatedAt: now() }))
+    await assertFails(setDoc(doc(as(PLAYER), 'runs', 'live', 'pledges', OTHERS), { targetId: OWNED, amount: 5, floor: 1, updatedAt: now() }))
+    await assertFails(setDoc(doc(as(PLAYER), 'runs', 'over', 'pledges', OWNED), { targetId: OTHERS, amount: 5, floor: 1, updatedAt: now() }))
+    await assertFails(getDoc(doc(as(STRANGER), 'runs', 'live', 'pledges', OWNED)))
+  })
 })

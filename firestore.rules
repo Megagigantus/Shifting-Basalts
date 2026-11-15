@@ -325,6 +325,22 @@ service cloud.firestore {
         allow delete: if ownsRunCharacter(runId, characterId);
       }
 
+      // A player's Reclamation Shrine pledge: Basalts toward bringing back one
+      // fallen ally. Everyone in the app can see pledges; only that character's
+      // player writes one. The DM's app checks each pledge against what the
+      // player actually earned and takes the Basalts when the DM reclaims.
+      match /pledges/{characterId} {
+        allow read: if isInvited();
+        allow write: if isDM();
+        allow create, update: if ownsRunCharacter(runId, characterId)
+          && request.resource.data.keys().hasOnly(['targetId', 'amount', 'floor', 'updatedAt'])
+          && request.resource.data.targetId is string && request.resource.data.targetId.size() <= 64
+          && request.resource.data.amount is int && request.resource.data.amount >= 0 && request.resource.data.amount <= 100000
+          && request.resource.data.floor is int
+          && request.resource.data.updatedAt == request.time;
+        allow delete: if ownsRunCharacter(runId, characterId);
+      }
+
       // A player's wish list from the party's loot. Everyone in the app can see
       // requests; only that character's player writes them, as a short list of
       // item ids. The DM decides who gets what at extraction.
