@@ -1788,3 +1788,43 @@
     background-color: var(--color-stone-800);
   }
 }
+
+/* Boon icon glows (src/ui/BoonIcon.tsx): evolutions purple, combinations blue, hidden boons indigo. */
+@layer components {
+  .boon-glow-evolution {
+    --boon-glow-rgb: 168 85 247;
+  }
+
+  .boon-glow-combination {
+    --boon-glow-rgb: 59 130 246;
+  }
+
+  .boon-glow-hidden {
+    --boon-glow-rgb: 99 102 241;
+  }
+
+  .boon-glow-evolution,
+  .boon-glow-combination,
+  .boon-glow-hidden {
+    box-shadow: 0 0 0 2px rgb(var(--boon-glow-rgb) / 0.9), 0 0 14px 4px rgb(var(--boon-glow-rgb) / 0.55);
+    animation: boon-glow-pulse 2.4s ease-in-out infinite;
+  }
+
+  @keyframes boon-glow-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 2px rgb(var(--boon-glow-rgb) / 0.9), 0 0 14px 4px rgb(var(--boon-glow-rgb) / 0.35);
+    }
+    50% {
+      box-shadow: 0 0 0 2px rgb(var(--boon-glow-rgb) / 0.9), 0 0 14px 4px rgb(var(--boon-glow-rgb) / 0.7);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .boon-glow-evolution,
+    .boon-glow-combination,
+    .boon-glow-hidden {
+      animation: none;
+    }
+  }
+}
