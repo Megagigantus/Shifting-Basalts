@@ -78,11 +78,14 @@ export function RoomClearedPopup({
   player,
   sent,
   requests,
+  who,
 }: {
   state: RunState
   player: RunPlayer
   sent: ChoiceDoc | undefined
   requests: Record<string, string[]>
+  /** The character's name, shown in the title when you play more than one. */
+  who?: string
 }) {
   const popupKey = `${state.run.id}:${player.characterId}:${state.run.log.length}`
   const storageKey = storageKeyFor(state.run.id, player.characterId)
@@ -110,7 +113,8 @@ export function RoomClearedPopup({
   const seen = dismissedKey === popupKey || readSeenKey(storageKey) === popupKey
   if (!player.alive || (!hasOffer && !hasLoot) || seen) return null
 
-  const title = player.draft?.starting ? 'Choose your Starting Boon' : 'Room cleared'
+  const base = player.draft?.starting ? 'Choose your Starting Boon' : 'Room cleared'
+  const title = who ? `${base}: ${who}` : base
   const myRequests = requests[player.characterId] ?? []
 
   async function toggleRequest(uid: string) {
