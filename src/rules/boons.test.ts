@@ -26,7 +26,7 @@ const toLevel3 = (slots: Slot[], id: string) => takeBoon(takeBoon(takeBoon(slots
 
 describe('the catalogue', () => {
   it('matches the bible counts', () => {
-    expect(BOONS).toHaveLength(69)
+    expect(BOONS).toHaveLength(70)
     expect(EVOLUTIONS).toHaveLength(49)
     expect(COMBINATIONS).toHaveLength(21)
     expect(HIDDEN_BOONS.filter((h) => h.kind === 'class')).toHaveLength(12)

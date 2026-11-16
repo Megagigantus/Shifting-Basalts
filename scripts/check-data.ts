@@ -12,7 +12,7 @@ const TAGS = [
 const KINDS = ['normal', 'core', 'payoff']
 const STATUSES = ['locked', 'proposed']
 const TRACKS = [
-  'max-hp', 'spell-slot-recovery', 'opening-temp-hp', 'flat-damage',
+  'max-hp', 'spell-slot-recovery', 'martial-resource-recovery', 'opening-temp-hp', 'flat-damage',
   'healing-received', 'speed', 'fortune-dice',
 ]
 

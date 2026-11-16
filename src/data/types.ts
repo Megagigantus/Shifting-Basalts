@@ -26,6 +26,7 @@ export type Tag =
 export type StatTrackId =
   | 'max-hp'
   | 'spell-slot-recovery'
+  | 'martial-resource-recovery'
   | 'opening-temp-hp'
   | 'flat-damage'
   | 'healing-received'

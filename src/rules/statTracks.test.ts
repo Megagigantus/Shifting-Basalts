@@ -53,7 +53,7 @@ describe('effects', () => {
 
   it('every track id matches a payoff track id used by boons', () => {
     expect(STAT_TRACKS.map((t) => t.id).sort()).toEqual(
-      ['fortune-dice', 'flat-damage', 'healing-received', 'max-hp', 'opening-temp-hp', 'speed', 'spell-slot-recovery'].sort(),
+      ['fortune-dice', 'flat-damage', 'healing-received', 'martial-resource-recovery', 'max-hp', 'opening-temp-hp', 'speed', 'spell-slot-recovery'].sort(),
     )
   })
 })

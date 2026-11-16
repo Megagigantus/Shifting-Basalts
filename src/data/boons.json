@@ -324,7 +324,7 @@
     ],
     "kind": "payoff",
     "levels": [
-      "Unspent recovery points can be spent on a damaging spell for +1d6 force damage per point.",
+      "Once per turn, unspent recovery points can be spent on a damaging spell for +1d6 force damage per point.",
       "The force dice become d8s.",
       "Each creature the boosted spell kills refunds 1 point."
     ],
@@ -333,6 +333,21 @@
       "spells"
     ],
     "status": "locked"
+  },
+  {
+    "id": "momentum",
+    "name": "Momentum",
+    "tags": [
+      "Payoff"
+    ],
+    "kind": "payoff",
+    "levels": [
+      "Once per turn, on a weapon hit, unspent martial recovery points can be spent for +1d6 damage of the weapon's type per point.",
+      "The dice become d8s.",
+      "Each creature the boosted hit kills refunds 1 point."
+    ],
+    "payoffTrack": "martial-resource-recovery",
+    "status": "proposed"
   },
   {
     "id": "deadeye-stance",
