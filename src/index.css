@@ -1169,6 +1169,14 @@
     justify-content: flex-start;
   }
 
+  /* An area's picture (battle-map.json areaArt), faded on its own so the outline stays solid. */
+  .map-area-art {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
   .map-area-label {
     position: absolute;
     z-index: 4;

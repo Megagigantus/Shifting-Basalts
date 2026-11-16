@@ -370,12 +370,12 @@
       "place": "a weeping statue beside a shrine or alcove"
     }
   },
-  "areaArtNote": "Pictures for painted map areas, by area kind. art is \"<folder>:<file name>\" in src/art. tile: true repeats the picture every tileSquares squares (for areas of any size); otherwise it is stretched over the whole area. Area kinds missing here, or whose file isn't added yet, show only their outline and tint.",
+  "areaArtNote": "Pictures for painted map areas, by area kind. art is \"<folder>:<file name>\" in src/art. tile: true repeats the picture every tileSquares squares (for areas of any size); otherwise it is stretched over the whole area. opacity (0 to 1, default 1) lets the arena show through the picture. Area kinds missing here, or whose file isn't added yet, show only their outline and tint.",
   "areaArt": {
     "raised": { "art": "areas:raised-section", "tile": false },
     "pit": { "art": "objects:pit", "tile": false },
     "chasm": { "art": "areas:void-chasm", "tile": true, "tileSquares": 2 },
-    "meadow": { "art": "areas:golden-meadow", "tile": true, "tileSquares": 2 },
-    "stone": { "art": "areas:shattered-stone", "tile": true, "tileSquares": 2 }
+    "meadow": { "art": "areas:golden-meadow", "tile": true, "tileSquares": 2, "opacity": 0.45 },
+    "stone": { "art": "areas:shattered-stone", "tile": true, "tileSquares": 2, "opacity": 0.45 }
   }
 }
