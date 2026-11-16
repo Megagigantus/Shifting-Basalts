@@ -32,8 +32,6 @@ export interface CharacterProfile {
   /** Homebrew class: the player's own boon tags (up to 3 each). */
   homebrewTags: { primary: string[]; secondary: string[] }
   casterType: CasterType
-  /** Spell slot levels the character has (1 to 9). Empty for non-casters. */
-  slotLevels: number[]
   hasSummon: boolean
   attackStyle: AttackStyle
   /**
@@ -108,7 +106,6 @@ export function emptyProfile(): CharacterProfile {
     masteries: [],
     homebrewTags: { primary: [], secondary: [] },
     casterType: 'none',
-    slotLevels: [],
     hasSummon: false,
     attackStyle: 'melee',
     favoredTags: [],
@@ -143,7 +140,6 @@ export function profileOf(c: Character): CharacterProfile {
     level: c.level,
     ...buildOf(c),
     casterType: c.casterType,
-    slotLevels: c.slotLevels,
     hasSummon: c.hasSummon,
     attackStyle: c.attackStyle,
     favoredTags: c.favoredTags ?? [],

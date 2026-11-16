@@ -74,9 +74,6 @@ export function StatTracks({ character, canCorrect = true, canSpend = true }: Pr
                 </Pill>
               </div>
               <p className="m-0 text-[0.6875rem] text-stone-400">{track.perRank}</p>
-              {track.id === 'spell-slot-recovery' && character.casterType === 'none' && (
-                <p className="m-0 text-[0.6875rem] text-amber-300">This character has no spell slots.</p>
-              )}
               <div className="flex items-center gap-2">
                 <span className="block h-1.5 flex-1 overflow-hidden rounded-full bg-stone-800" aria-hidden="true">
                   <span className={cx('block h-full rounded-full', atCap ? 'bg-stone-500' : 'bg-indigo-400')} style={{ width: `${pct}%` }} />
