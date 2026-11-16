@@ -14,12 +14,13 @@ import type { BoardPiece } from './BattleBoard'
 const ART: Record<'exit' | 'terrain' | 'trick' | 'enemy', ArtKind> = { exit: 'exits', terrain: 'terrain', trick: 'tricks', enemy: 'creatures' }
 
 /**
- * Art for a boss token ("<folder>:<file>"). In phase 2 a boss portrait
- * becomes its phase 2 portrait when one exists.
+ * Art for a boss token ("<folder>:<file>"). Once the boss is Bloodied a boss
+ * portrait becomes its phase 2 portrait when one exists, even when the arena
+ * itself has no phase 2 (e.g. Ophaniel).
  */
-function bossTokenArt(id: string, phase: number): string | null {
+function bossTokenArt(id: string, bloodied: boolean): string | null {
   const [folder, file] = id.split(':') as [ArtKind, string]
-  if (phase === 2 && folder === 'bosses') {
+  if (bloodied && folder === 'bosses') {
     const second = artUrl('bosses', `${file}-phase-2`)
     if (second) return second
   }
@@ -46,6 +47,8 @@ export function roomPieces(
     movable: boolean
     /** The boss arena phase on show (1, or 2 from Bloodied). Pieces of the other phase are left out. */
     phase?: number
+    /** The boss is Bloodied: boss portraits switch to their phase 2 art. Defaults to phase === 2. */
+    bloodied?: boolean
     hidden?: (p: MapPiece) => boolean
     /** A label to use instead of the name, or undefined to keep the name. */
     label?: (p: MapPiece) => string | undefined
@@ -68,7 +71,7 @@ export function roomPieces(
               : (p.name ?? p.id)
     const art =
       p.kind === 'boss'
-        ? bossTokenArt(p.id, phase)
+        ? bossTokenArt(p.id, opts.bloodied ?? phase === 2)
         : p.kind === 'object'
           ? artUrl('objects', p.id)
           : artUrl(ART[p.kind], p.kind === 'exit' ? (isTrue ? 'true-exit' : 'exit') : p.id)

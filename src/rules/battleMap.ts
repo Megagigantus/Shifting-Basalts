@@ -49,6 +49,8 @@ export interface MapArea {
   w: number
   h: number
   phase?: number
+  /** Shown on the DM map only; never sent to players (e.g. where General Vane's columns will rise). */
+  secret?: boolean
 }
 
 export interface BattleMap {
@@ -391,7 +393,7 @@ export interface ArenaData {
   entrance: { x: number; y: number; w: number; h: number }
   tokens: { name: string; size: number; art: string; hp: string; x: number; y: number; note?: string; forms?: Record<string, string> }[]
   objects: { art: string; name: string; x: number; y: number; w: number; h: number; phase?: number; note?: string }[]
-  areas: { kind: string; name: string; x: number; y: number; w: number; h: number; phase?: number }[]
+  areas: { kind: string; name: string; x: number; y: number; w: number; h: number; phase?: number; secret?: boolean }[]
   shiftEffect?: ShiftEffect
   bloodiedEffect?: ShiftEffect
   phase2?: boolean
@@ -423,7 +425,9 @@ export function placeArena(room: Room): BattleMap | null {
       withPhase({ key: `obj:${i}`, kind: 'object' as const, id: o.art, x: o.x, y: o.y, size: 1, w: o.w, h: o.h, name: o.name }, o.phase),
     ),
   ]
-  const areas: MapArea[] = arena.areas.map((a, i) => withPhase({ key: `area:${i}`, kind: a.kind, name: a.name, x: a.x, y: a.y, w: a.w, h: a.h }, a.phase))
+  const areas: MapArea[] = arena.areas.map((a, i) =>
+    withPhase({ key: `area:${i}`, kind: a.kind, name: a.name, x: a.x, y: a.y, w: a.w, h: a.h, ...(a.secret ? { secret: true } : {}) }, a.phase),
+  )
   return { squares: arenaData.squares, entrance: 'south', door: arena.entrance, arena: bossId, pieces, areas }
 }
 
@@ -436,6 +440,11 @@ export function arenaHasPhase2(bossId: string | undefined | null): boolean {
 /** The arena phase to show: 2 once the boss is Bloodied (if its arena has a phase 2), else 1. */
 export const mapPhase = (map: Pick<BattleMap, 'arena'> | null | undefined, bossBloodied: boolean) =>
   map?.arena && bossBloodied && arenaHasPhase2(map.arena) ? 2 : 1
+
+const AREA_ART = mapData.areaArt as Record<string, { art: string; tile: boolean; tileSquares?: number }>
+
+/** Picture settings for an area kind (e.g. "chasm"), or undefined when it has none. */
+export const areaArtOf = (kind: string) => AREA_ART[kind]
 
 /** Kaelen and Vyr: swap the boss token's art to the other form. */
 export function swapForm(map: BattleMap): BattleMap {
@@ -565,7 +574,8 @@ export function playerMap(room: Room): PlayerMap | null {
   }
   if (map.arena) out.arena = map.arena
   if (map.door) out.door = map.door
-  if (map.areas) out.areas = map.areas
+  // Players see each area's outline (and art) but never its name, and never secret areas.
+  if (map.areas) out.areas = map.areas.filter((a) => !a.secret).map((a) => ({ ...a, name: '' }))
   if (map.flipped) out.flipped = true
   return out
 }

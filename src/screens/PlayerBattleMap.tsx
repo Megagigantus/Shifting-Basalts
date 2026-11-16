@@ -42,7 +42,7 @@ export function PlayerBattleMap({ state, myIds, readOnly }: Props) {
     : artUrl('maps', view.shape)
 
   const pieces = [
-    ...roomPieces(map.pieces, { trueExit: view.trueExit, groupCounts: counts, movable: false, phase }),
+    ...roomPieces(map.pieces, { trueExit: view.trueExit, groupCounts: counts, movable: false, phase, bloodied: Boolean(view.bossBloodied) }),
     ...playerPieces(state.players, looks, map, tokens, roomKey, (id) => !readOnly && mine(id), mine),
   ]
 

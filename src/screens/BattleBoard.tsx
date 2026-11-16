@@ -4,8 +4,9 @@
 // grid and `onMove` saves them. Removable pieces (objects, for the DM) show a
 // small remove button when selected. Callers decide what's on the board and
 // what each viewer may move.
-import { useRef, useState } from 'react'
-import { dims, doorSquares, type MapArea, type Side } from '../rules/battleMap'
+import { useRef, useState, type CSSProperties } from 'react'
+import { areaArtOf, dims, doorSquares, type MapArea, type Side } from '../rules/battleMap'
+import { artUrl, type ArtKind } from '../art'
 
 export interface BoardPiece {
   key: string
@@ -56,6 +57,21 @@ interface Drag {
   dy: number
   x: number
   y: number
+}
+
+/** The area's picture (src/data/battle-map.json areaArt), tiled or stretched, or no style when it has none. */
+function areaBackground(a: MapArea): CSSProperties {
+  const cfg = areaArtOf(a.kind)
+  if (!cfg) return {}
+  const [folder, file] = cfg.art.split(':') as [ArtKind, string]
+  const url = artUrl(folder, file)
+  if (!url) return {}
+  const t = cfg.tileSquares ?? 2
+  return {
+    backgroundImage: `url(${url})`,
+    backgroundSize: cfg.tile ? `${(t / a.w) * 100}% ${(t / a.h) * 100}%` : '100% 100%',
+    backgroundRepeat: cfg.tile ? 'repeat' : 'no-repeat',
+  }
 }
 
 export function BattleBoard({ squares: n, entrance, door, areas = [], mapArt, flipArt = false, pieces, busy, ringWidth = 0, onMove, onRemove }: Props) {
@@ -121,11 +137,9 @@ export function BattleBoard({ squares: n, entrance, door, areas = [], mapArt, fl
         <div
           key={a.key}
           className={`map-area map-area-${a.kind}`}
-          style={{ left: pct(a.x), top: pct(a.y), width: pct(a.w), height: pct(a.h) }}
-          title={a.name}
-        >
-          <span>{a.name}</span>
-        </div>
+          style={{ left: pct(a.x), top: pct(a.y), width: pct(a.w), height: pct(a.h), ...areaBackground(a) }}
+          title={a.name || undefined}
+        />
       ))}
       {pieces.map((p) => {
         const { w, h } = dims(p)
@@ -198,6 +212,14 @@ export function BattleBoard({ squares: n, entrance, door, areas = [], mapArt, fl
           </button>
         )
       })}
+      {/* Area names (DM map only; players get them blank) sit above the pieces so art never hides them. */}
+      {areas
+        .filter((a) => a.name)
+        .map((a) => (
+          <span key={`label:${a.key}`} className="map-area-label" style={{ left: pct(a.x), top: pct(a.y) }}>
+            {a.name}
+          </span>
+        ))}
     </div>
   )
 }

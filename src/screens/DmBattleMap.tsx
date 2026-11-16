@@ -88,6 +88,7 @@ export function DmBattleMap({ state, room, busy, act }: Props) {
       movable: true,
       removable: true,
       phase,
+      bloodied,
       hidden: isHidden,
       label: (p) => {
         const t = trackerOf(p)

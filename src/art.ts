@@ -14,6 +14,7 @@ export type ArtKind =
   | 'families'
   | 'maps'
   | 'arenas'
+  | 'areas'
   | 'objects'
   | 'summons'
   | 'portraits'

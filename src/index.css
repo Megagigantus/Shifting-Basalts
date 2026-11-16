@@ -1169,13 +1169,17 @@
     justify-content: flex-start;
   }
 
-  .map-area span {
+  .map-area-label {
+    position: absolute;
+    z-index: 4;
     margin: 2px;
     padding: 0 0.3rem;
     border-radius: 3px;
     background: rgb(20 19 24 / 0.75);
     font-size: 0.65rem;
     line-height: 1.2;
+    pointer-events: none;
+    white-space: nowrap;
   }
 
   .map-area-portal {

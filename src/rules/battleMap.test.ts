@@ -2,11 +2,13 @@ import { describe, expect, it } from 'vitest'
 import { emptyDungeonLayer, emptyProfile, type Character } from '../model/character'
 import { newRunState } from './runFlow'
 import { changeHp, layOutMap, moveMapPiece, rerollEncounter, reveal, startFloor } from './roomFlow'
-import { avoidSquares, entranceSquares, footprint, mirrorMap, movePiece, placeMap, playerMap, startSquares, type BattleMap } from './battleMap'
+import { areaArtOf, avoidSquares, entranceSquares, placeArena, footprint, mirrorMap, movePiece, placeMap, playerMap, startSquares, type BattleMap } from './battleMap'
 import { mirroredTokenSpots } from '../screens/mapPieces'
 import type { BoardPiece } from '../screens/BattleBoard'
 import { hpTrackers } from './hp'
 import { generateRoom, type Room } from './rooms'
+import { artUrl, type ArtKind } from '../art'
+import mapData from '../data/battle-map.json'
 import { generateEncounter } from './encounters'
 
 function seeded(seed: number) {
@@ -191,6 +193,21 @@ describe('what players see of the map', () => {
     expect(shown.pieces.filter((p) => p.kind === 'enemy')).toHaveLength(withMap.map!.pieces.filter((p) => p.kind === 'enemy').length)
   })
 
+  it('gives players area outlines without names, and leaves out secret areas', () => {
+    const bossRoom = (id: string) => ({ ...room(7), kind: 'boss', boss: { id, partySize: 4 } }) as Room
+    const vane = bossRoom('general-vane')
+    const vaneMap = placeArena(vane)!
+    expect(vaneMap.areas!.some((a) => a.secret && a.name)).toBe(true)
+    expect(playerMap({ ...vane, map: vaneMap })!.areas ?? []).toHaveLength(0)
+
+    const herd = bossRoom('gilded-excavation-herd')
+    const herdMap = placeArena(herd)!
+    const seen = playerMap({ ...herd, map: herdMap })!.areas!
+    expect(seen).toHaveLength(herdMap.areas!.length)
+    expect(seen.every((a) => a.name === '')).toBe(true)
+    expect(herdMap.areas!.every((a) => a.name !== '')).toBe(true)
+  })
+
   it('marks revealed enemies Bloodied or Down in the player view, never with HP', () => {
     let state = reveal(start(), 'enemies')
     const ctx = { partyLevel: state.run.partyLevel, pressures: state.run.pressures }
@@ -276,5 +293,20 @@ describe('the battle map during a run', () => {
       { characterId: 'a', spot: { x: 6, y: 0, sx: 7, sy: 1 } },
       { characterId: 'b', spot: { x: 5, y: 2 } },
     ])
+  })
+})
+
+describe('area art', () => {
+  it('points every area kind at a real art folder, and uses objects:pit for the Warden pit', () => {
+    const folders: ArtKind[] = ['areas', 'objects', 'terrain']
+    for (const kind of Object.keys(mapData.areaArt)) {
+      const cfg = areaArtOf(kind)!
+      const [folder, file] = cfg.art.split(':')
+      expect(folders).toContain(folder)
+      expect(file).toBeTruthy()
+    }
+    expect(areaArtOf('pit')!.art).toBe('objects:pit')
+    expect(artUrl('objects', 'pit')).not.toBeNull()
+    expect(areaArtOf('ledge')).toBeUndefined()
   })
 })
