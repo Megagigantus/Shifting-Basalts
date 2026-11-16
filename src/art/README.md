@@ -17,6 +17,7 @@ Any id without a file just shows text, so you can add art a bit at a time.
 | `creatures/` | `enemies.json` → `creatures` (e.g. `hexling.webp`) | 512px square |
 | `bosses/` | `bosses.json` → `bosses` (e.g. `tessellated-warden.webp`), plus `<id>-phase-2` for a second phase | 1024px square |
 | `boss-parts/` | boss id + part name in lower case with dashes (e.g. `choir-hollow-column-pipe-cluster.webp`) | 256px square |
+| `areas/` | `battle-map.json` → `areaArt` (e.g. `void-chasm.webp`), painted onto boss arenas by Shift Actions | 256px square, some tileable |
 | `families/` | `enemies.json` → `families` (e.g. `wardstones.webp`) | 512px square |
 | `rooms/` | scene ids (`forge`, `reprieve`, `thils-vault`…) plus hub art: `basalt-entrance` and `basalts-int` (page backdrops outside and during a run), `basalt-shrine` and `basalt-markets` (Characters tab banners) | 1600×900 landscape |
 
