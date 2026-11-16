@@ -2,6 +2,21 @@
   "model": "claude-opus-5-5",
   "effortLevel": "medium",
   "permissions": {
-    "ask": ["Bash(timeout:*)", "Bash(agy:*)"]
+    "ask": [
+      "Bash(timeout *)",
+      "Bash(agy *)",
+      "Bash(git merge *)",
+      "Bash(git push *)",
+      "Bash(git branch -d *)",
+      "Bash(git branch -D *)",
+      "Bash(git reset --hard *)",
+      "Bash(npm install *)"
+    ],
+    "deny": [
+      "Bash(git push --force *)",
+      "Bash(git push -f *)",
+      "Read(./.env)",
+      "Read(./.env.*)"
+    ]
   }
 }
