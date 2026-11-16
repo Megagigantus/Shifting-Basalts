@@ -19,6 +19,7 @@ export type ArtKind =
   | 'summons'
   | 'portraits'
   | 'rooms'
+  | 'relics'
 
 const files = import.meta.glob<string>('./art/*/*.{webp,png,jpg,jpeg,svg}', {
   eager: true,

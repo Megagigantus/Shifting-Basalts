@@ -24,6 +24,8 @@ const RULES: Record<string, { maxWidth: number; quality: number }> = {
   rooms: { maxWidth: 1600, quality: 75 },
   shapes: { maxWidth: 1600, quality: 78 },
   bosses: { maxWidth: 1024, quality: 80 },
+  // Relic pictures show on Vault cards, at most about 300 px wide.
+  relics: { maxWidth: 768, quality: 80 },
 }
 
 const MIN_SAVING = 0.2
