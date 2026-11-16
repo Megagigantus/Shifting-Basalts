@@ -46,6 +46,9 @@ describe('eligibility', () => {
     expect(canUse(boon('spillover'), { ...wizard, trackDevotions: { 'healing-received': 3 } })).toBe(true)
     // Leyline Surge also needs spells, even with a rank.
     expect(canUse(boon('leyline-surge'), { ...fighter, trackDevotions: { 'spell-slot-recovery': 3 } })).toBe(false)
+    expect(canUse(boon('momentum'), fighter)).toBe(false)
+    expect(canUse(boon('momentum'), { ...fighter, trackDevotions: { 'martial-resource-recovery': 3 } })).toBe(true)
+    expect(canUse(boon('momentum'), { ...wizard, trackDevotions: { 'martial-resource-recovery': 3 } })).toBe(true)
   })
 
   it('drops banished and held boons', () => {

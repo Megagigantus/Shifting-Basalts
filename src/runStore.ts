@@ -206,8 +206,11 @@ export interface ChoiceDoc {
   combinationId?: string
   /** Thils's Vault: the relic taken. */
   relicId?: string
-  /** Slot recovery: the spell slot level to recover. */
-  slotLevel?: number
+  /** Recovery spend: the recovery track id and cost preset id. */
+  recoveryTrack?: string
+  presetId?: string
+  /** Recovery payoff spend or Level 3 refund: the payoff boon id. */
+  boonId?: string
   /** The offer this choice was made against (null for hidden-offer choices). */
   draftKey: string | null
   /** Set by the DM's app when the choice couldn't be applied. */
@@ -224,7 +227,11 @@ export async function submitChoice(runId: string, characterId: string, choice: D
   }
   if (choice.action === 'hidden') data.hiddenBoonId = choice.hiddenBoonId
   if (choice.action === 'relic') data.relicId = choice.relicId
-  if (choice.action === 'recover') data.slotLevel = choice.slotLevel
+  if (choice.action === 'recover') {
+    data.recoveryTrack = choice.track
+    data.presetId = choice.presetId
+  }
+  if (choice.action === 'payoffSpend' || choice.action === 'payoffRefund') data.boonId = choice.boonId
   if (choice.action === 'reprieveReflect') data.slotIndex = choice.slotIndex
   if (choice.action === 'forge') {
     data.forgeKind = choice.forge.kind
@@ -263,7 +270,11 @@ function choiceFromDoc(c: ChoiceDoc): DraftChoice {
     case 'relic':
       return { action: 'relic', relicId: c.relicId ?? '' }
     case 'recover':
-      return { action: 'recover', slotLevel: c.slotLevel ?? 0 }
+      return { action: 'recover', track: c.recoveryTrack ?? '', presetId: c.presetId ?? '' }
+    case 'payoffSpend':
+      return { action: 'payoffSpend', boonId: c.boonId ?? '' }
+    case 'payoffRefund':
+      return { action: 'payoffRefund', boonId: c.boonId ?? '' }
     case 'reprieveReflect':
       return { action: 'reprieveReflect', slotIndex: c.slotIndex ?? -1 }
     case 'forge':

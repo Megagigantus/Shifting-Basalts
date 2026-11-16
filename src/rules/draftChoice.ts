@@ -5,7 +5,7 @@ import type { Random } from './draft'
 import { chooseHidden, chooseOffer, passDraft, passHidden, rerollDraft } from './draftFlow'
 import { spendForge, type ForgeAction } from './forge'
 import { chooseRelic, passVault } from './vault'
-import { recoverSlot, spendSurge } from './recovery'
+import { recover, refundPayoff, spendPayoff } from './recovery'
 import { chooseReprieve } from './reprieve'
 
 export type DraftChoice =
@@ -21,10 +21,12 @@ export type DraftChoice =
   | { action: 'relic'; relicId: string }
   /** Pass Thils's Vault (when already owning a relic) for Quantum Basalts. */
   | { action: 'relicPass' }
-  /** Spend slot recovery points on a spell slot of this level. */
-  | { action: 'recover'; slotLevel: number }
-  /** Spend 1 slot recovery point on Leyline Surge. */
-  | { action: 'surge' }
+  /** Spend recovery points on a track preset (a spell slot or class resource). */
+  | { action: 'recover'; track: string; presetId: string }
+  /** Spend 1 recovery point on a held recovery payoff boon (Leyline Surge, Momentum). */
+  | { action: 'payoffSpend'; boonId: string }
+  /** Level 3 recovery payoff refund (+1 point to its track). */
+  | { action: 'payoffRefund'; boonId: string }
   /** Reprieve: Rest (recorded; applied at the table). */
   | { action: 'reprieveRest' }
   /** Reprieve: Reflect, leveling up the boon in this slot. */
@@ -65,9 +67,11 @@ export function applyChoice(state: RunState, characterId: string, choice: DraftC
     case 'relicPass':
       return passVault(state, characterId)
     case 'recover':
-      return recoverSlot(state, characterId, choice.slotLevel)
-    case 'surge':
-      return spendSurge(state, characterId)
+      return recover(state, characterId, choice.track, choice.presetId)
+    case 'payoffSpend':
+      return spendPayoff(state, characterId, choice.boonId)
+    case 'payoffRefund':
+      return refundPayoff(state, characterId, choice.boonId)
     case 'reprieveRest':
       return chooseReprieve(state, characterId, { kind: 'rest' })
     case 'reprieveReflect':
