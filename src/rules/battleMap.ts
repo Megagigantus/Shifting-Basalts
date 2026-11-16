@@ -441,7 +441,7 @@ export function arenaHasPhase2(bossId: string | undefined | null): boolean {
 export const mapPhase = (map: Pick<BattleMap, 'arena'> | null | undefined, bossBloodied: boolean) =>
   map?.arena && bossBloodied && arenaHasPhase2(map.arena) ? 2 : 1
 
-const AREA_ART = mapData.areaArt as Record<string, { art: string; tile: boolean; tileSquares?: number }>
+const AREA_ART = mapData.areaArt as Record<string, { art: string; tile: boolean; tileSquares?: number; opacity?: number }>
 
 /** Picture settings for an area kind (e.g. "chasm"), or undefined when it has none. */
 export const areaArtOf = (kind: string) => AREA_ART[kind]

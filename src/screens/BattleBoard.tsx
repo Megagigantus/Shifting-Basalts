@@ -59,18 +59,23 @@ interface Drag {
   y: number
 }
 
-/** The area's picture (src/data/battle-map.json areaArt), tiled or stretched, or no style when it has none. */
-function areaBackground(a: MapArea): CSSProperties {
+/**
+ * The area's picture layer (src/data/battle-map.json areaArt), tiled or
+ * stretched and faded by its opacity, or null when it has none. It sits
+ * inside the area so only the picture fades, not the outline.
+ */
+function areaArtStyle(a: MapArea): CSSProperties | null {
   const cfg = areaArtOf(a.kind)
-  if (!cfg) return {}
+  if (!cfg) return null
   const [folder, file] = cfg.art.split(':') as [ArtKind, string]
   const url = artUrl(folder, file)
-  if (!url) return {}
+  if (!url) return null
   const t = cfg.tileSquares ?? 2
   return {
     backgroundImage: `url(${url})`,
     backgroundSize: cfg.tile ? `${(t / a.w) * 100}% ${(t / a.h) * 100}%` : '100% 100%',
     backgroundRepeat: cfg.tile ? 'repeat' : 'no-repeat',
+    opacity: cfg.opacity ?? 1,
   }
 }
 
@@ -133,14 +138,19 @@ export function BattleBoard({ squares: n, entrance, door, areas = [], mapArt, fl
           </g>
         ))}
       </svg>
-      {areas.map((a) => (
-        <div
-          key={a.key}
-          className={`map-area map-area-${a.kind}`}
-          style={{ left: pct(a.x), top: pct(a.y), width: pct(a.w), height: pct(a.h), ...areaBackground(a) }}
-          title={a.name || undefined}
-        />
-      ))}
+      {areas.map((a) => {
+        const art = areaArtStyle(a)
+        return (
+          <div
+            key={a.key}
+            className={`map-area map-area-${a.kind}`}
+            style={{ left: pct(a.x), top: pct(a.y), width: pct(a.w), height: pct(a.h) }}
+            title={a.name || undefined}
+          >
+            {art && <div className="map-area-art" style={art} />}
+          </div>
+        )
+      })}
       {pieces.map((p) => {
         const { w, h } = dims(p)
         const stillMoving = dropped?.key === p.key && dropped.fromX === p.x && dropped.fromY === p.y

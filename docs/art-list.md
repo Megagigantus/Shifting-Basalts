@@ -204,10 +204,10 @@ Which picture each area kind uses is set in `src/data/battle-map.json` → `area
 **Tileable** pictures repeat every 2 squares to fill an area of any size, so the left edge must
 continue seamlessly into the right edge and the top into the bottom. No borders or vignettes.
 
-- [ ] `raised-section`: **Raised section** (Tessellated Warden, Piston Floor). 256 × 256, fills 2 × 2 squares. The flat top of a hex basalt column pushed 15 ft up: lit edges, a slight shadow along two sides.
-- [ ] `void-chasm`: **Void chasm** (Inverted Reliquary, Slot Scramble). 256 × 256, **tileable**. Fills two crossing strips, each 2 squares wide and 14 long. Bottomless purple-black void with faint distant specks of light.
-- [ ] `golden-meadow`: **Golden meadow** (Ophaniel, Paradise Bleed). 256 × 256, **tileable**. Fills half the arena (7 × 14). Gold grass and small blossoms growing up through the stone, warm glow.
-- [ ] `shattered-stone`: **Shattered stone** (Ophaniel, Paradise Bleed). 256 × 256, **tileable**. Fills the other half (7 × 14). Grey fractured stone and ash, cold and airless.
+- [x] `raised-section`: **Raised section** (Tessellated Warden, Piston Floor). 256 × 256, fills 2 × 2 squares. The flat top of a hex basalt column pushed 15 ft up: lit edges, a slight shadow along two sides.
+- [x] `void-chasm`: **Void chasm** (Inverted Reliquary, Slot Scramble). 256 × 256, **tileable**. Fills two crossing strips, each 2 squares wide and 14 long. Bottomless purple-black void with faint distant specks of light.
+- [x] `golden-meadow`: **Golden meadow** (Ophaniel, Paradise Bleed). 256 × 256, **tileable**. Fills half the arena (7 × 14). Gold grass and small blossoms growing up through the stone, warm glow.
+- [x] `shattered-stone`: **Shattered stone** (Ophaniel, Paradise Bleed). 256 × 256, **tileable**. Fills the other half (7 × 14). Grey fractured stone and ash, cold and airless.
 
 The Warden's **pit** reuses `objects/pit` (already added), so it needs no new file.
 

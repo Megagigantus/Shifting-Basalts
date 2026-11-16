@@ -305,6 +305,13 @@ describe('area art', () => {
       expect(folders).toContain(folder)
       expect(file).toBeTruthy()
     }
+    for (const kind of Object.keys(mapData.areaArt)) {
+      const opacity = areaArtOf(kind)!.opacity ?? 1
+      expect(opacity).toBeGreaterThan(0)
+      expect(opacity).toBeLessThanOrEqual(1)
+    }
+    expect(areaArtOf('meadow')!.opacity).toBeLessThan(1)
+    expect(areaArtOf('stone')!.opacity).toBeLessThan(1)
     expect(areaArtOf('pit')!.art).toBe('objects:pit')
     expect(artUrl('objects', 'pit')).not.toBeNull()
     expect(areaArtOf('ledge')).toBeUndefined()
