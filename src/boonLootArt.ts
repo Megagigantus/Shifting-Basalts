@@ -2,7 +2,7 @@
 // items and run currencies, with fallbacks when specific art isn't added yet.
 import { artUrl, type ArtKind } from './art'
 import gearBases from './data/gear-bases.json'
-import { boon, combination, evolution, hiddenBoon } from './rules/boons'
+import { boon, combination, evolution, hiddenBoon, type SlotContent } from './rules/boons'
 import { GEAR_ROWS } from './rules/gear'
 import type { LootItem } from './rules/loot'
 
@@ -58,6 +58,13 @@ export function boonArt(ref: BoonArtRef, lookup: ArtLookup = artUrl): string[] {
       return asArray(lookup('boon-tags', 'hidden'))
     }
   }
+}
+
+/** Which picture a filled boon slot shows. */
+export function slotArtRef(slot: SlotContent): BoonArtRef {
+  if (slot.kind === 'boon') return { kind: 'boon', id: slot.boonId }
+  if (slot.kind === 'evolution') return { kind: 'evolution', id: slot.evolutionId }
+  return { kind: 'combination', id: slot.combinationId }
 }
 
 function gearKindArtId(item: Pick<LootItem, 'ref' | 'base'>): 'gear-shield' | 'gear-armor' | 'gear-weapon' {

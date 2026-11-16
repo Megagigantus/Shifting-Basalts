@@ -1,6 +1,6 @@
 // Tests for boon, evolution, combination, hidden boon, loot and currency art lookups and fallback order.
 import { describe, expect, it } from 'vitest'
-import { boonArt, currencyArt, lootArt, tagArtId, type ArtLookup } from './boonLootArt'
+import { boonArt, currencyArt, lootArt, slotArtRef, tagArtId, type ArtLookup } from './boonLootArt'
 
 function fakeLookup(keys: string[]): ArtLookup {
   const available = new Set(keys)
@@ -181,5 +181,13 @@ describe('currencyArt', () => {
     expect(currencyArt('credits', lookup)).toBe('url:loot-kinds/credits')
     expect(currencyArt('quantum-basalts', lookup)).toBe('url:loot-kinds/quantum-basalts')
     expect(currencyArt('credits', fakeLookup([]))).toBeNull()
+  })
+})
+
+describe('slotArtRef', () => {
+  it('points each slot kind at its own picture', () => {
+    expect(slotArtRef({ kind: 'boon', boonId: 'traverts-echoes', level: 2 })).toEqual({ kind: 'boon', id: 'traverts-echoes' })
+    expect(slotArtRef({ kind: 'evolution', evolutionId: 'chain-of-echoes' })).toEqual({ kind: 'evolution', id: 'chain-of-echoes' })
+    expect(slotArtRef({ kind: 'combination', combinationId: 'shooting-gallery' })).toEqual({ kind: 'combination', id: 'shooting-gallery' })
   })
 })
