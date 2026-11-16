@@ -117,7 +117,7 @@ describe('card rows', () => {
       Mastery: expect.stringMatching(/^Sap/),
     })
     expect(sword.Property).toMatch(/^When an ally within 30 ft drops to 0 HP/)
-    expect(sword['When Woken']).toMatch(/^Once per day, become Apotheos/)
+    expect(sword['When Awoken']).toMatch(/^Once per day, become Apotheos/)
   })
 })
 

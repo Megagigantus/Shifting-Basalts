@@ -1668,7 +1668,7 @@
 }
 
 /* Relic names (src/ui/rarity.ts): a rainbow gradient across the letters, and
-   a golden glow once the relic is Woken. */
+   a golden glow once the relic is Awoken. */
 @layer components {
   .relic-name {
     background-image: linear-gradient(90deg, #f87171, #fb923c, #facc15, #4ade80, #38bdf8, #818cf8, #e879f9);
@@ -1681,7 +1681,7 @@
     filter: drop-shadow(0 0 4px rgb(250 204 21 / 0.85)) drop-shadow(0 0 10px rgb(245 158 11 / 0.5));
   }
 
-  /* A Woken relic's picture on its Vault card: the same gold, as a ring and halo. */
+  /* An Awoken relic's picture on its Vault card: the same gold, as a ring and halo. */
   .relic-art-woken {
     box-shadow: 0 0 0 2px rgb(250 204 21 / 0.85), 0 0 14px 4px rgb(245 158 11 / 0.5);
   }

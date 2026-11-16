@@ -34,7 +34,7 @@ export function cardFields(item: LootItem): CardField[] | null {
   if (item.kind === 'relic') {
     const r = relicOf(item.ref) as ReturnType<typeof relicOf> & RelicBase
     const woken = item.relicState === 'woken'
-    const state = woken ? 'Woken (legendary strength)' : 'Dormant (very rare strength)'
+    const state = woken ? 'Awoken (legendary strength)' : 'Dormant (very rare strength)'
     const fields: CardField[] = [
       { label: 'Rarity and value', value: `Relic, ${state}; none, can't be sold` },
       { label: 'Attunement', value: 'Required' },
@@ -42,10 +42,10 @@ export function cardFields(item: LootItem): CardField[] | null {
     if (r.base && r.bonus) {
       fields.push(...baseFields(r.base, woken ? r.bonus.woken : r.bonus.dormant))
       fields.push({ label: 'Property', value: withoutBaseSentence(r.dormant) })
-      fields.push({ label: woken ? 'Woken' : 'When Woken', value: withoutBaseSentence(r.woken) })
+      fields.push({ label: woken ? 'Awoken' : 'When Awoken', value: withoutBaseSentence(r.woken) })
     } else {
       fields.push({ label: 'Effect', value: r.dormant })
-      fields.push({ label: woken ? 'Woken' : 'When Woken', value: r.woken })
+      fields.push({ label: woken ? 'Awoken' : 'When Awoken', value: r.woken })
     }
     return fields
   }

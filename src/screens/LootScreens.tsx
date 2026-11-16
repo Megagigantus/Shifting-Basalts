@@ -64,7 +64,7 @@ function ItemLine({ item, players, children }: { item: LootItem; players?: RunPl
     item.kind === 'trinket' ? (
       <Pill>Trinket</Pill>
     ) : item.kind === 'relic' ? (
-      <Pill tone="fuchsia">Relic, {item.relicState}</Pill>
+      <Pill tone="fuchsia">Relic, {item.relicState === 'woken' ? 'Awoken' : 'Dormant'}</Pill>
     ) : (
       <Pill tone={RARITY_TONES[item.rarity ?? 'common']}>
         {rarityName(item.rarity ?? 'common')} {item.kind}
@@ -422,7 +422,7 @@ export function VaultPanel({ state, busy, act }: { state: RunState; busy: boolea
   )
 }
 
-/** One relic offer: picture (glowing gold once Woken), name, build, state and its text. */
+/** One relic offer: picture (glowing gold once Awoken), name, build, state and its text. */
 function RelicCard({ id, partyLevel, children }: { id: string; partyLevel: number; children?: ReactNode }) {
   const r = relicOf(id)
   const woken = relicStateFor(partyLevel) === 'woken'
@@ -435,11 +435,11 @@ function RelicCard({ id, partyLevel, children }: { id: string; partyLevel: numbe
       <strong className={cx('self-start text-sm', relicNameClass(woken))}>{r.name}</strong>
       <div className="flex flex-wrap gap-1">
         <Pill>{r.build}</Pill>
-        <Pill tone={woken ? 'amber' : 'stone'}>{woken ? 'Woken' : 'Dormant'}</Pill>
+        <Pill tone={woken ? 'amber' : 'stone'}>{woken ? 'Awoken' : 'Dormant'}</Pill>
       </div>
       <p className="m-0 flex-1 text-[0.6875rem] text-stone-300">
         {r.dormant}
-        {woken && ` Woken: ${r.woken}`}
+        {woken && ` Awoken: ${r.woken}`}
       </p>
       {children && <div className="flex flex-wrap gap-1.5">{children}</div>}
     </div>

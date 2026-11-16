@@ -267,7 +267,7 @@ function Trophies() {
 
 function Relics() {
   return (
-    <DataTable head={['Relic', 'Build', 'Dormant', 'Woken (adds)']}>
+    <DataTable head={['Relic', 'Build', 'Dormant', 'Awoken (adds)']}>
       {relicData.relics.map((r) => (
         <tr key={r.id}>
           <td>

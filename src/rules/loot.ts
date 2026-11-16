@@ -31,7 +31,7 @@ export interface LootItem {
   floor: number
   room: number
   source: LootSource
-  /** Relics only: Dormant or Woken. */
+  /** Relics only: Dormant or Awoken (stored as 'woken'). */
   relicState?: 'dormant' | 'woken'
 }
 
@@ -151,7 +151,7 @@ export function itemText(item: LootItem): string {
       return trophyOf(item.ref).effect
     case 'relic': {
       const r = relicOf(item.ref)
-      return item.relicState === 'woken' ? `${r.dormant} Woken: ${r.woken}` : r.dormant
+      return item.relicState === 'woken' ? `${r.dormant} Awoken: ${r.woken}` : r.dormant
     }
   }
 }

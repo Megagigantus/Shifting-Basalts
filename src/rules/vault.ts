@@ -51,7 +51,7 @@ function weightedPick(ids: string[], weight: (id: string) => number, random: Ran
   return ids[ids.length - 1]
 }
 
-/** Relics come Dormant at entry 5 to 10 and Woken from entry 11. */
+/** Relics come Dormant at entry 5 to 10 and Awoken from entry 11. */
 export function relicStateFor(partyLevel: number): 'dormant' | 'woken' {
   return entryTier(partyLevel) >= relicData.wokenFromTier ? 'woken' : 'dormant'
 }

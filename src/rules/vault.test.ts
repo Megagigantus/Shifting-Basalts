@@ -70,7 +70,7 @@ describe('Thils\'s Vault', () => {
     expect(vaultPending(state)).toBe(false)
   })
 
-  it('relics are Dormant at entry 5 to 10 and Woken from 11', () => {
+  it('relics are Dormant at entry 5 to 10 and Awoken from 11', () => {
     expect(relicStateFor(10)).toBe('dormant')
     expect(relicStateFor(11)).toBe('woken')
     expect(RELICS).toHaveLength(15)
