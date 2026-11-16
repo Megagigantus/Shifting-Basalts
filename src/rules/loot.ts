@@ -391,3 +391,17 @@ export function gearBaseChoices(state: RunState, item: LootItem): { id: string; 
   const usable = new Set(usableBases(gearRow(item.ref), training))
   return gearRow(item.ref).bases.map((id) => ({ id, usable: usable.has(id) }))
 }
+
+/** What the room just cleared added to the pool (Room cleared pop-up): its items, credits, and the Basalts each player got. Vault relics are left out. */
+export function roomDrops(state: RunState): { items: LootItem[]; credits: number; basalts: number } {
+  const last = state.run.log.at(-1)
+  const loot = state.run.loot
+  if (!last || !loot) return { items: [], credits: 0, basalts: 0 }
+  const here = loot.log.filter((l) => l.floor === last.floor && l.room === last.room && l.source !== 'vault')
+  const uids = new Set(here.map((l) => l.itemUid).filter(Boolean))
+  return {
+    items: loot.items.filter((i) => uids.has(i.uid)),
+    credits: here.reduce((sum, l) => sum + (l.credits ?? 0), 0),
+    basalts: here.reduce((sum, l) => sum + (l.basalts ?? 0), 0),
+  }
+}

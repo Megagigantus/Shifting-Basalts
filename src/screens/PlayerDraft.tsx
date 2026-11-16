@@ -22,6 +22,8 @@ interface Props {
   readOnly?: boolean
   /** In the DM's preview: the DM picks for this player (the DM's app applies it like a player's choice). */
   dmChoosing?: boolean
+  /** Render the draft contents without the surrounding Panel or the ForgePanel (e.g. inside a modal). */
+  bare?: boolean
 }
 
 const ACTION_LABELS: Record<ChoiceDoc['action'], string> = {
@@ -42,7 +44,7 @@ const ACTION_LABELS: Record<ChoiceDoc['action'], string> = {
   reprieveBasalts: 'your Reprieve choice (catch-up Basalts)',
 }
 
-export function PlayerDraft({ state, player, sent, readOnly = false, dmChoosing = false }: Props) {
+export function PlayerDraft({ state, player, sent, readOnly = false, dmChoosing = false, bare = false }: Props) {
   const locked = readOnly && !dmChoosing
   const [error, setError] = useState<string | null>(null)
   const [sending, setSending] = useState(false)
@@ -81,10 +83,11 @@ export function PlayerDraft({ state, player, sent, readOnly = false, dmChoosing 
   }
 
   const forgeUses = forgeUsesLeft(state)
-  if (!player.alive || (!player.draft && !player.hiddenOffer && forgeUses < 1)) return null
+  const hasDraft = Boolean(player.draft || player.hiddenOffer)
+  if (!player.alive || (bare ? !hasDraft : !hasDraft && forgeUses < 1)) return null
 
-  return (
-    <Panel tone="violet" title={player.draft || player.hiddenOffer ? 'Your draft' : 'The Forge'}>
+  const body = (
+    <>
       {waiting && (
         <p className="m-0 flex flex-wrap items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-200">
           <Hourglass size={14} />
@@ -108,14 +111,24 @@ export function PlayerDraft({ state, player, sent, readOnly = false, dmChoosing 
         busy={locked || sending || waiting}
         onChoose={choose}
       />
-      <ForgePanel
-        players={[player]}
-        usesLeft={forgeUses}
-        busy={locked || sending || waiting}
-        intro="The Forge is shared by the party, so agree on who uses it."
-        onUse={(_, forge) => choose({ action: 'forge', forge })}
-      />
+      {!bare && (
+        <ForgePanel
+          players={[player]}
+          usesLeft={forgeUses}
+          busy={locked || sending || waiting}
+          intro="The Forge is shared by the party, so agree on who uses it."
+          onUse={(_, forge) => choose({ action: 'forge', forge })}
+        />
+      )}
       {error && <p className="m-0 text-xs text-rose-300">{error}</p>}
+    </>
+  )
+
+  if (bare) return <div className="flex flex-col gap-3">{body}</div>
+
+  return (
+    <Panel tone="violet" title={hasDraft ? 'Your draft' : 'The Forge'}>
+      {body}
     </Panel>
   )
 }

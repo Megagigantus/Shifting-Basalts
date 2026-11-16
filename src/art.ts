@@ -20,6 +20,13 @@ export type ArtKind =
   | 'portraits'
   | 'rooms'
   | 'relics'
+  | 'boons'
+  | 'evolutions'
+  | 'combinations'
+  | 'hidden-boons'
+  | 'boon-tags'
+  | 'loot'
+  | 'loot-kinds'
 
 const files = import.meta.glob<string>('./art/*/*.{webp,png,jpg,jpeg,svg}', {
   eager: true,

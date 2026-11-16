@@ -20,6 +20,13 @@ Any id without a file just shows text, so you can add art a bit at a time.
 | `areas/` | `battle-map.json` → `areaArt` (e.g. `void-chasm.webp`), painted onto boss arenas by Shift Actions | 256px square, some tileable |
 | `families/` | `enemies.json` → `families` (e.g. `wardstones.webp`) | 512px square |
 | `rooms/` | scene ids (`forge`, `reprieve`, `thils-vault`…) plus hub art: `basalt-entrance` and `basalts-int` (page backdrops outside and during a run), `basalt-shrine` and `basalt-markets` (Characters tab banners) | 1600×900 landscape |
+| `boons/` | `boons.json` ids (e.g. `traverts-echoes.webp`) | 256px square |
+| `evolutions/` | `evolutions.json` ids; falls back to the original boon's art | 256px square |
+| `combinations/` | `combinations.json` ids; falls back to both boons' art | 256px square |
+| `hidden-boons/` | `hidden-boons.json` ids; falls back to `boon-tags/hidden` | 256px square |
+| `boon-tags/` | one per boon tag in lower case (`echo`, `reaper`…), plus `hidden`; the fallback for boons | 256px square |
+| `loot/` | consumable, gear, wondrous and trophy ids in `loot-items.json` | 256px square |
+| `loot-kinds/` | `trinket`, `consumable`, `healing-potion`, `gear-weapon`, `gear-armor`, `gear-shield`, `wondrous`, `trophy`, `credits`, `quantum-basalts`; the fallback for loot | 256px square |
 
 The full list with descriptions is in `docs/art-list.md`.
 
