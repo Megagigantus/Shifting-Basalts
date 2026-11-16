@@ -13,6 +13,7 @@ import { canExtract, isBossRoom, lootKeptIfExtracting } from '../rules/runFlow'
 import { BoonList } from './BoonList'
 import { PlayerDraft } from './PlayerDraft'
 import { PlayerRoom } from './PlayerRoom'
+import { RoomClearedPopup } from './RoomClearedPopup'
 import { submitChoice, useChoices, useExitVotes, useLootRequests, type ChoiceDoc } from '../runStore'
 import { ExitVoteButtons, ExitVoteTally } from './ExitVote'
 import { useExitVote } from './useExitVote'
@@ -45,6 +46,7 @@ export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
   const floor = floorInfo(run.floor)
   const bossRoom = isBossRoom(state)
   const mine = players.filter((p) => myCharacterIds.includes(p.characterId))
+  const firstAlive = mine.find((p) => p.alive)
   const ballot = useExitVote(state, mine, votes, readOnly)
   // Your characters first, then the rest of the party.
   const party = [...mine, ...players.filter((p) => !myCharacterIds.includes(p.characterId))]
@@ -59,6 +61,9 @@ export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
 
   return (
     <div className="mt-6 flex flex-col gap-4">
+      {!readOnly && firstAlive && (
+        <RoomClearedPopup state={state} player={firstAlive} sent={choices[firstAlive.characterId]} />
+      )}
       <Panel hero tone="amber">
         <div className="flex flex-wrap items-center gap-1.5">
           <Pill tone="amber">

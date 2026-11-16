@@ -3,10 +3,13 @@
 // DM's app). The screen itself never changes the run; it calls onChoose.
 import { useState } from 'react'
 import type { RunPlayer } from '../model/run'
+import type { Offer } from '../rules/draft'
 import type { DraftChoice } from '../rules/draftChoice'
-import { hiddenBoon, slotName, type Slot } from '../rules/boons'
+import { boon, combination, evolution, hiddenBoon, slotName, type Slot } from '../rules/boons'
+import { offerArtRef } from '../boonLootArt'
 import { describeHidden, describeOffer } from '../offerText'
 import { EyeOff, RefreshCw, Sparkles } from 'lucide-react'
+import { BoonIcon } from '../ui/BoonIcon'
 import { Pill } from '../ui/Pill'
 import { FIELD, PRIMARY_BUTTON, QUIET_BUTTON } from '../ui/styles'
 import { cx, toneClasses, type Tone } from '../ui/tone'
@@ -58,11 +61,18 @@ export function DraftOffers({ player, passValue, rerollsLeft, busy, onChoose, wh
               const tone = offerTone(text.label)
               return (
                 <div key={i} className={cx('flex flex-col gap-2 rounded-xl border bg-stone-950/70 p-3', toneClasses[tone].border)}>
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <Pill tone={tone}>{text.label}</Pill>
-                    {text.tag && <Pill>{text.tag}</Pill>}
+                  <div className="flex items-start gap-3">
+                    <div className="shrink-0 p-1">
+                      <BoonIcon art={offerArtRef(offer)} name={offerName(offer)} size="lg" />
+                    </div>
+                    <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <Pill tone={tone}>{text.label}</Pill>
+                        {text.tag && <Pill>{text.tag}</Pill>}
+                      </div>
+                      <strong className="text-sm text-stone-50">{text.heading}</strong>
+                    </div>
                   </div>
-                  <strong className="text-sm text-stone-50">{text.heading}</strong>
                   <p className="m-0 flex-1 text-xs text-stone-300">{text.text}</p>
                   {needsReplace ? (
                     <div className="flex flex-wrap gap-1.5">
@@ -123,10 +133,17 @@ export function DraftOffers({ player, passValue, rerollsLeft, busy, onChoose, wh
               const text = describeHidden(id)
               return (
                 <div key={id} className="flex flex-col gap-2 rounded-xl border border-violet-500/30 bg-stone-950/70 p-3">
-                  <Pill tone="violet" className="self-start">
-                    {id === hidden.classBoon ? 'Class hidden boon' : "Thils's gift"}
-                  </Pill>
-                  <strong className="text-sm text-stone-50">{text.heading}</strong>
+                  <div className="flex items-start gap-3">
+                    <div className="shrink-0 p-1">
+                      <BoonIcon art={{ kind: 'hidden', id }} name={text.heading} size="lg" />
+                    </div>
+                    <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+                      <Pill tone="violet" className="self-start">
+                        {id === hidden.classBoon ? 'Class hidden boon' : "Thils's gift"}
+                      </Pill>
+                      <strong className="text-sm text-stone-50">{text.heading}</strong>
+                    </div>
+                  </div>
                   <p className="m-0 flex-1 text-xs text-stone-300">{text.text}</p>
                   <button
                     type="button"
@@ -149,10 +166,16 @@ export function DraftOffers({ player, passValue, rerollsLeft, busy, onChoose, wh
   )
 }
 
-/** Badge color for an offer: amber level-ups, violet evolutions, emerald combinations, neutral new boons. */
+function offerName(offer: Offer): string {
+  if (offer.kind === 'evolution') return evolution(offer.evolutionId).name
+  if (offer.kind === 'combination') return combination(offer.combinationId).name
+  return boon(offer.boonId).name
+}
+
+/** Badge color for an offer: amber level-ups, violet evolutions, sky combinations, neutral new boons. */
 function offerTone(label: string): Tone {
   if (label.startsWith('Level')) return 'amber'
   if (label.includes('Evolution')) return 'violet'
-  if (label.includes('Combination')) return 'emerald'
+  if (label.includes('Combination')) return 'sky'
   return 'stone'
 }
