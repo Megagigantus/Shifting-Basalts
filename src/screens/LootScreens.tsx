@@ -31,6 +31,7 @@ import {
 } from '../rules/loot'
 import { canExtract, extract, isFullClear } from '../rules/runFlow'
 import { chooseRelic, heldRelics, mustTradeOrPass, passVault, relicStateFor, vaultPending } from '../rules/vault'
+import { artUrl } from '../art'
 import { SceneBanner } from './Scene'
 import { setLootRequests, submitChoice } from '../runStore'
 import { ConfirmButton } from '../ui/ConfirmButton'
@@ -421,12 +422,16 @@ export function VaultPanel({ state, busy, act }: { state: RunState; busy: boolea
   )
 }
 
-/** One relic offer: name, build, state and its text. */
+/** One relic offer: picture (glowing gold once Woken), name, build, state and its text. */
 function RelicCard({ id, partyLevel, children }: { id: string; partyLevel: number; children?: ReactNode }) {
   const r = relicOf(id)
   const woken = relicStateFor(partyLevel) === 'woken'
+  const art = artUrl('relics', id)
   return (
     <div className="flex flex-col gap-1.5 rounded-xl border border-fuchsia-500/30 bg-stone-950/70 p-3">
+      {art && (
+        <img src={art} alt="" loading="lazy" className={cx('aspect-square w-full rounded-lg object-cover', woken && 'relic-art-woken')} />
+      )}
       <strong className={cx('self-start text-sm', relicNameClass(woken))}>{r.name}</strong>
       <div className="flex flex-wrap gap-1">
         <Pill>{r.build}</Pill>

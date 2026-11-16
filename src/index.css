@@ -1680,6 +1680,11 @@
   .relic-name-woken {
     filter: drop-shadow(0 0 4px rgb(250 204 21 / 0.85)) drop-shadow(0 0 10px rgb(245 158 11 / 0.5));
   }
+
+  /* A Woken relic's picture on its Vault card: the same gold, as a ring and halo. */
+  .relic-art-woken {
+    box-shadow: 0 0 0 2px rgb(250 204 21 / 0.85), 0 0 14px 4px rgb(245 158 11 / 0.5);
+  }
 }
 
 /* A character who survived a full clear: a light golden glow around their
