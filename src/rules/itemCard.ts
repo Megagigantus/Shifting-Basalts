@@ -14,6 +14,31 @@ interface RelicBase {
 /** Drop a relic text's leading "A +2 longsword." (the card shows those stats as rows). */
 const withoutBaseSentence = (text: string) => text.replace(/^An? \+\d+ [^.]+\.\s*/, '')
 
+/** Card rows for one relic in its current state (used on item lists and Vault card backs). */
+export function relicCardFields(
+  id: string,
+  state: 'dormant' | 'woken',
+  options?: { wakeEffect?: boolean },
+): CardField[] {
+  const r = relicOf(id) as ReturnType<typeof relicOf> & RelicBase
+  const woken = state === 'woken'
+  const showWake = woken || (options?.wakeEffect ?? true)
+  const rarityState = woken ? 'Awoken (legendary strength)' : 'Dormant (very rare strength)'
+  const fields: CardField[] = [
+    { label: 'Rarity and value', value: `Relic, ${rarityState}; none, can't be sold` },
+    { label: 'Attunement', value: 'Required' },
+  ]
+  if (r.base && r.bonus) {
+    fields.push(...baseFields(r.base, woken ? r.bonus.woken : r.bonus.dormant))
+    fields.push({ label: 'Property', value: withoutBaseSentence(r.dormant) })
+    if (showWake) fields.push({ label: woken ? 'Awoken' : 'When Awoken', value: withoutBaseSentence(r.woken) })
+  } else {
+    fields.push({ label: 'Effect', value: r.dormant })
+    if (showWake) fields.push({ label: woken ? 'Awoken' : 'When Awoken', value: r.woken })
+  }
+  return fields
+}
+
 /** Card rows for gear and relics, or null for items that show only their text. */
 export function cardFields(item: LootItem): CardField[] | null {
   if (item.kind === 'gear') {
@@ -32,22 +57,7 @@ export function cardFields(item: LootItem): CardField[] | null {
     return fields
   }
   if (item.kind === 'relic') {
-    const r = relicOf(item.ref) as ReturnType<typeof relicOf> & RelicBase
-    const woken = item.relicState === 'woken'
-    const state = woken ? 'Awoken (legendary strength)' : 'Dormant (very rare strength)'
-    const fields: CardField[] = [
-      { label: 'Rarity and value', value: `Relic, ${state}; none, can't be sold` },
-      { label: 'Attunement', value: 'Required' },
-    ]
-    if (r.base && r.bonus) {
-      fields.push(...baseFields(r.base, woken ? r.bonus.woken : r.bonus.dormant))
-      fields.push({ label: 'Property', value: withoutBaseSentence(r.dormant) })
-      fields.push({ label: woken ? 'Awoken' : 'When Awoken', value: withoutBaseSentence(r.woken) })
-    } else {
-      fields.push({ label: 'Effect', value: r.dormant })
-      fields.push({ label: woken ? 'Awoken' : 'When Awoken', value: r.woken })
-    }
-    return fields
+    return relicCardFields(item.ref, item.relicState ?? 'dormant')
   }
   return null
 }

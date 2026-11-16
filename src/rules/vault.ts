@@ -56,6 +56,13 @@ export function relicStateFor(partyLevel: number): 'dormant' | 'woken' {
   return entryTier(partyLevel) >= relicData.wokenFromTier ? 'woken' : 'dormant'
 }
 
+/** Line shown on a Dormant Vault card back explaining how to wake the relic. */
+export function wakeLine(): string {
+  return relicData.wakeText
+    .replace('{level}', String(relicData.wakeLevel))
+    .replace('{cost}', String(relicData.wakeCostQuantumBasalts))
+}
+
 /** Open the Vault: each surviving player gets 3 relic offers (4 at entry 17 to 20). */
 export function openVault(state: RunState, random: Random): RunState {
   const count = entryTier(state.run.partyLevel) === 3 ? relicData.offersAtTier3 : relicData.offers

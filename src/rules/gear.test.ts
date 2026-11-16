@@ -119,6 +119,24 @@ describe('card rows', () => {
     expect(sword.Property).toMatch(/^When an ally within 30 ft drops to 0 HP/)
     expect(sword['When Awoken']).toMatch(/^Once per day, become Apotheos/)
   })
+
+  it('builds relic card rows with optional dormant wake effect', async () => {
+    const { relicCardFields } = await import('./itemCard')
+    const toMap = (fields: ReturnType<typeof relicCardFields>) => Object.fromEntries(fields.map((f) => [f.label, f.value]))
+
+    const dormantSword = toMap(relicCardFields('sword-of-apotheos', 'dormant', { wakeEffect: false }))
+    expect(dormantSword['When Awoken']).toBeUndefined()
+    expect(dormantSword['Attack and damage']).toBe('+2 to attack rolls; 1d8 + 2 slashing, or 1d10 + 2 two-handed')
+    expect(dormantSword.Property).toMatch(/^When an ally within 30 ft drops to 0 HP/)
+
+    const wokenGauntlet = toMap(relicCardFields('travert-tuning-gauntlet', 'woken', { wakeEffect: false }))
+    expect(wokenGauntlet.Awoken).toBeDefined()
+    expect(wokenGauntlet.Effect).toBeDefined()
+    expect(wokenGauntlet['Rarity and value']).toContain('Awoken (legendary strength)')
+
+    const dormantGauntlet = toMap(relicCardFields('travert-tuning-gauntlet', 'dormant'))
+    expect(dormantGauntlet['When Awoken']).toBeDefined()
+  })
 })
 
 describe('full gear coverage (Gear d20)', () => {

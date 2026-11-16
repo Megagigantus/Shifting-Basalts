@@ -1687,6 +1687,75 @@
   }
 }
 
+/* Vault relic offer card flip (RelicCard in src/screens/LootScreens.tsx). */
+@layer components {
+  .relic-flip {
+    perspective: 1200px;
+  }
+
+  .relic-flip:focus-visible {
+    outline: 2px solid #e879f9;
+    outline-offset: 2px;
+    border-radius: 0.5rem;
+  }
+
+  .relic-flip-inner {
+    display: grid;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.5s ease;
+  }
+
+  .relic-flip.is-flipped .relic-flip-inner {
+    transform: rotateY(180deg);
+  }
+
+  .relic-flip-face {
+    grid-area: 1 / 1;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+
+  .relic-flip-back {
+    transform: rotateY(180deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .relic-flip-inner,
+    .relic-flip-back {
+      transform: none;
+      transition: none;
+    }
+
+    .relic-flip.is-flipped .relic-flip-inner {
+      transform: none;
+    }
+
+    .relic-flip-face {
+      transition: opacity 0.2s;
+    }
+
+    .relic-flip-front {
+      opacity: 1;
+    }
+
+    .relic-flip-back {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .relic-flip.is-flipped .relic-flip-front {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .relic-flip.is-flipped .relic-flip-back {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+}
+
 /* A character who survived a full clear: a light golden glow around their
    portrait (FULL_CLEAR_GLOW in src/ui/styles.ts) and battle map token. */
 @layer components {

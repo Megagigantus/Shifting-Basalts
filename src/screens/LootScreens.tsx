@@ -1,13 +1,13 @@
 // Loot screens: the party's pool (DM and players), strider remains and shrine
 // offerings, the extraction share, Thils's Vault, and characters' own loot.
 // Run loot is shared party information, so players see the whole pool.
-import { Fragment, useMemo, useState, type ReactNode } from 'react'
-import { Coins, Gem, Package, TriangleExclamationPoint } from 'lucide-react'
+import { Fragment, useMemo, useState, type KeyboardEvent, type ReactNode } from 'react'
+import { Coins, Gem, Package, RotateCw, TriangleExclamationPoint } from 'lucide-react'
 import relicData from '../data/relics.json'
 import type { OwnedLoot } from '../model/character'
 import type { RunPlayer, RunState } from '../model/run'
-import { cardFields } from '../rules/itemCard'
-import { baseName, untrainedNames } from '../rules/gear'
+import { cardFields, relicCardFields } from '../rules/itemCard'
+import { baseName, untrainedNames, type CardField } from '../rules/gear'
 import {
   itemName,
   itemText,
@@ -30,7 +30,7 @@ import {
   type Rarity,
 } from '../rules/loot'
 import { canExtract, extract, isFullClear } from '../rules/runFlow'
-import { chooseRelic, heldRelics, mustTradeOrPass, passVault, relicStateFor, vaultPending } from '../rules/vault'
+import { chooseRelic, heldRelics, mustTradeOrPass, passVault, relicStateFor, vaultPending, wakeLine } from '../rules/vault'
 import { artUrl } from '../art'
 import { SceneBanner } from './Scene'
 import { setLootRequests, submitChoice } from '../runStore'
@@ -53,6 +53,19 @@ const RARITY_TONES: Record<Rarity, Tone> = {
   rare: 'sky',
   'very-rare': 'purple',
   legendary: 'amber',
+}
+
+function CardRows({ fields }: { fields: CardField[] }) {
+  return (
+    <dl className="m-0 grid grid-cols-[minmax(6rem,auto)_1fr] gap-x-3 gap-y-1 text-[0.6875rem]">
+      {fields.map((f) => (
+        <Fragment key={f.label}>
+          <dt className="font-semibold text-stone-500">{f.label}</dt>
+          <dd className="m-0 text-stone-300">{f.value}</dd>
+        </Fragment>
+      ))}
+    </dl>
+  )
 }
 
 /** One item: name, type and rarity chips, value, floor, then its card (gear, relics) or text, and any controls. */
@@ -83,14 +96,7 @@ function ItemLine({ item, players, children }: { item: LootItem; players?: RunPl
         <Pill mono>F{item.floor}</Pill>
       </div>
       {fields ? (
-        <dl className="m-0 grid grid-cols-[minmax(6rem,auto)_1fr] gap-x-3 gap-y-1 text-[0.6875rem]">
-          {fields.map((f) => (
-            <Fragment key={f.label}>
-              <dt className="font-semibold text-stone-500">{f.label}</dt>
-              <dd className="m-0 text-stone-300">{f.value}</dd>
-            </Fragment>
-          ))}
-        </dl>
+        <CardRows fields={fields} />
       ) : (
         <p className="m-0 text-[0.6875rem] text-stone-400">{itemText(item)}</p>
       )}
@@ -422,25 +428,58 @@ export function VaultPanel({ state, busy, act }: { state: RunState; busy: boolea
   )
 }
 
-/** One relic offer: picture (glowing gold once Awoken), name, build, state and its text. */
+/** One relic offer: front shows picture (glowing gold once Awoken), name and chips; back shows lore and relic card rows. */
 function RelicCard({ id, partyLevel, children }: { id: string; partyLevel: number; children?: ReactNode }) {
+  const [flipped, setFlipped] = useState(false)
   const r = relicOf(id)
-  const woken = relicStateFor(partyLevel) === 'woken'
+  const state = relicStateFor(partyLevel)
+  const woken = state === 'woken'
   const art = artUrl('relics', id)
+  const fields = relicCardFields(id, state, { wakeEffect: false })
+
+  const toggle = () => setFlipped((f) => !f)
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      toggle()
+    }
+  }
+
   return (
     <div className="flex flex-col gap-1.5 rounded-xl border border-fuchsia-500/30 bg-stone-950/70 p-3">
-      {art && (
-        <img src={art} alt="" loading="lazy" className={cx('aspect-square w-full rounded-lg object-cover', woken && 'relic-art-woken')} />
-      )}
-      <strong className={cx('self-start text-sm', relicNameClass(woken))}>{r.name}</strong>
-      <div className="flex flex-wrap gap-1">
-        <Pill>{r.build}</Pill>
-        <Pill tone={woken ? 'amber' : 'stone'}>{woken ? 'Awoken' : 'Dormant'}</Pill>
+      <div
+        role="button"
+        tabIndex={0}
+        aria-pressed={flipped}
+        aria-label={flipped ? `Show picture of ${r.name}` : `Show lore and details for ${r.name}`}
+        onClick={toggle}
+        onKeyDown={onKeyDown}
+        className={cx('relic-flip flex-1 cursor-pointer', flipped && 'is-flipped')}
+      >
+        <div className="relic-flip-inner">
+          <div className="relic-flip-face relic-flip-front flex flex-col gap-1.5" aria-hidden={flipped || undefined}>
+            {art && (
+              <img src={art} alt="" loading="lazy" className={cx('aspect-square w-full rounded-lg object-cover', woken && 'relic-art-woken')} />
+            )}
+            <strong className={cx('self-start text-sm', relicNameClass(woken))}>{r.name}</strong>
+            <div className="flex flex-wrap gap-1">
+              <Pill>{r.build}</Pill>
+              <Pill tone={woken ? 'amber' : 'stone'}>{woken ? 'Awoken' : 'Dormant'}</Pill>
+            </div>
+            <span className="mt-auto inline-flex items-center gap-1 pt-1 text-[0.6875rem] text-stone-500">
+              <RotateCw size={11} /> Tap to read
+            </span>
+          </div>
+          <div className="relic-flip-face relic-flip-back flex flex-col gap-2" aria-hidden={!flipped || undefined}>
+            <p className="m-0 text-xs italic text-stone-300">{r.lore}</p>
+            <CardRows fields={fields} />
+            {!woken && <p className="m-0 text-[0.6875rem] text-amber-300">{wakeLine()}</p>}
+            <span className="mt-auto inline-flex items-center gap-1 pt-1 text-[0.6875rem] text-stone-500">
+              <RotateCw size={11} /> Tap to flip back
+            </span>
+          </div>
+        </div>
       </div>
-      <p className="m-0 flex-1 text-[0.6875rem] text-stone-300">
-        {r.dormant}
-        {woken && ` Awoken: ${r.woken}`}
-      </p>
       {children && <div className="flex flex-wrap gap-1.5">{children}</div>}
     </div>
   )
