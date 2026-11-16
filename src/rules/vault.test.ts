@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { emptyDungeonLayer, emptyProfile, type Character } from '../model/character'
 import type { RunState } from '../model/run'
 import { newRunState, markDead } from './runFlow'
-import { chooseRelic, heldRelics, mustTradeOrPass, openVault, passVault, relicStateFor, relicWeight, vaultPending, RELICS } from './vault'
+import { chooseRelic, heldRelics, mustTradeOrPass, openVault, passVault, relicStateFor, relicWeight, vaultPending, wakeLine, RELICS } from './vault'
 
 function seeded(seed: number) {
   let s = seed >>> 0
@@ -70,7 +70,7 @@ describe('Thils\'s Vault', () => {
     expect(vaultPending(state)).toBe(false)
   })
 
-  it('relics are Dormant at entry 5 to 10 and Woken from 11', () => {
+  it('relics are Dormant at entry 5 to 10 and Awoken from 11', () => {
     expect(relicStateFor(10)).toBe('dormant')
     expect(relicStateFor(11)).toBe('woken')
     expect(RELICS).toHaveLength(15)
@@ -128,5 +128,10 @@ describe('Thils\'s Vault', () => {
     expect(() => passVault(state, 'b')).toThrow('fell before the Vault')
     state = chooseRelic(state, 'a', state.players[0].vaultOffer![0])
     expect(() => passVault(state, 'a')).toThrow('already chose')
+  })
+
+  it('formats the wake line from data without placeholders', () => {
+    expect(wakeLine()).toBe('Wakes when its bearer reaches level 11 and offers 40 Quantum Basalts at a shrine to Thils.')
+    expect(wakeLine()).not.toContain('{')
   })
 })

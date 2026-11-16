@@ -783,7 +783,9 @@ A relic built on a weapon or armor uses the same card, with three fields changed
 
 - **Value:** None, can't be sold.
 - **Attunement:** Required.
-- **State:** the card shows Dormant or Woken, with the bonus and stats for that state, and updates when the relic wakes.
+- **State:** the card shows Dormant or Awoken, with the bonus and stats for that state, and updates when the relic wakes.
+
+**Vault offer cards:** each relic offered in Thils's Vault shows its picture on the front, ringed in a golden glow when it's Awoken. Clicking the card flips it to the back: the relic's lore, then its relic card (the weapon card for a relic with a base, like the Sword of Apotheos; the short wondrous card otherwise). The back shows the Awoken effect only when the relic is Awoken. A Dormant relic's back instead reads "Wakes when its bearer reaches level 11 and offers 40 Quantum Basalts at a shrine to Thils."
 
 **Example: relic card (Dormant)**
 
@@ -796,7 +798,7 @@ A relic built on a weapon or armor uses the same card, with three fields changed
 | Properties | Versatile (1d10) |
 | Mastery | Sap |
 | Property | When an ally within 30 ft drops to 0 HP, your next hit before the end of your next turn deals +PB d8 radiant damage. |
-| When Woken | Becomes +3 (1d8 + 3, or 1d10 + 3 two-handed). Once per day, become Apotheos for 1 minute: you're Large, have resistance to all damage, and your hits deal +PB d6 radiant damage. |
+| When Awoken | Becomes +3 (1d8 + 3, or 1d10 + 3 two-handed). Once per day, become Apotheos for 1 minute: you're Large, have resistance to all damage, and your hits deal +PB d6 radiant damage. |
 | Weight | 3 lb |
 
 ### Base weapons
@@ -975,12 +977,12 @@ Every boss has one trophy, found in its cache on a d6 roll of 6. Trophies are fr
 A full clear opens Thils's Vault, his private collection of what legendary striders lost in the labyrinth. Each player drafts one relic. Boons are the techniques Thils kept; relics are the things those striders carried, so they work anywhere.
 
 - **Draft:** each player sees 3 relics weighted to their class and boon tags (4 at entry 17 to 20) and takes one, like a boon offer. A relic anyone in the party owns never appears.
-- **Dormant and Woken:** entry 5 to 10 clears give a Dormant relic (very rare strength); entry 11 and up gives it Woken (legendary). A Dormant relic wakes when its bearer reaches level 11 and offers 40 Quantum Basalts at a shrine to Thils.
+- **Dormant and Awoken:** entry 5 to 10 clears give a Dormant relic (very rare strength); entry 11 and up gives it Awoken (legendary). A Dormant relic wakes when its bearer reaches level 11 and offers 40 Quantum Basalts at a shrine to Thils.
 - **One per character** *(proposed)*: a character can own only one relic. A player who already owns one still sees an offer, but must either trade theirs in for one of the offered relics (the old relic leaves them on extraction and returns to the Vault) or pass for a flat 100 Quantum Basalts, which extract like passed Basalts.
 - **Attunement:** required, unlike totems.
 - **No market:** relics can't be sold. Thils reclaims any relic traded for credits, and it returns to the Vault.
 
-| Relic | Lost by | Build | Dormant | Woken (adds) |
+| Relic | Lost by | Build | Dormant | Awoken (adds) |
 | --- | --- | --- | --- | --- |
 | Travert's tuning gauntlet | Travert, whose blows rang twice | Melee striker | Once per turn, when you hit with a weapon or unarmed strike, an echo hits another creature within 10 ft of the target for half the damage, as force. | The echo hits every enemy you choose within 10 ft of the target, and a creature dropped by an echo echoes again from its own space. |
 | Elemain's ricochet ring | Elemain, who never missed twice | Ranged | Once per turn, a ranged hit bounces to a second creature within 15 ft for half damage. | Bounces up to PB times, each to a new creature. Each bounce rolls a d20 and is a critical hit on a 20. |
@@ -997,6 +999,24 @@ A full clear opens Thils's Vault, his private collection of what legendary strid
 | The Express's pocket watch | The Express, who ran a hundred rooms without stopping | Monk or multi-hit | Each hit after your first in a turn deals +2 damage per earlier hit that turn. | Land 4 or more hits in a turn and the last pushes the target 15 ft and knocks it Prone, and your speed doubles until your next turn. |
 | The Glint's scabbard | The Glint, a duelist who struck once | Duelist | As a Bonus Action, sheathe and anchor. Until you draw, you can't attack but have resistance to bludgeoning, piercing and slashing damage, and each of your turns stores a weapon damage die (up to PB). Your first hit after drawing adds them. | Your draw strike teleports you to any creature within 60 ft and hits automatically, then you can return to where you started. |
 | The Collector's cage | The Collector, who kept one of everything | Summoner, druid or beast master | Your summons, familiar, companion and Wild Shape forms gain 2 × PB temp HP when they appear and deal +PB damage once per turn. | Once per day, when you cast a spell that summons one creature, a second copy appears with half its HP, and neither needs your Concentration. |
+
+**Relic lore** (ships in the app and names who lost each relic; player-safe):
+
+- **Travert's tuning gauntlet:** Travert struck every blow twice, once with the fist and once with the note that rang after it. Somewhere deep in the labyrinth the second ring faded, and Thils kept the gauntlet.
+- **Elemain's ricochet ring:** Elemain claimed she never missed twice because her shots never stopped looking for a target. The ring reached the Vault still warm.
+- **The Reaper's toll:** No one remembers the Reaper's real name, only the bell that rang each time another foe fell. It rang one last time in the Basalts, and then it belonged to Thils.
+- **Lenn's plumb line:** Lenn dropped this line into every pit, shaft and stairwell of the labyrinth to learn how far down things go. One day the cord came back up without her.
+- **Corrow's fishhook:** Corrow spent years fishing lost striders out of the maze's dead ends. Thils collects lost things, and eventually he reeled in the fisher.
+- **Thalisane's shuttle:** Thalisane, master of the Pale Lodge's Weavers, spun lifelines between hunters so no one fell alone. She left the labyrinth alive, but her shuttle stayed behind.
+- **Zolic's ninth eye:** Zolic ground each lens from the eye of something larger than a world, one per kill. The ninth was meant for one more hunt.
+- **Breaker's wraps:** Breaker fought best with broken knuckles and mended these wraps with gold after every fight. The gold held them together long after Breaker came apart.
+- **The Gleam Dealer's deck:** The Gleam Dealer once bet against a god and won. This deck is what was left on the table the night the luck ran out.
+- **Pog's unfinished map:** Pog swore the labyrinth could be mapped if you drew fast enough. Half the map is finished; the other half is still waiting for Pog.
+- **The Sword of Apotheos:** The blade of Apo, legendary hero of the Aranphere, lost in the Basalts. Hunters still take contracts to retrieve it, and few come back.
+- **The Spellslinger's holster:** An Archive strider who drew spells faster than most draw breath, the Spellslinger never stopped casting, not even at the end. The holster still smells of spent magic.
+- **The Express's pocket watch:** The Express ran a hundred rooms without stopping and timed every one. The watch never wound down; its owner did.
+- **The Glint's scabbard:** The Glint struck once per duel, and once was always enough. The blade hasn't left this scabbard since its owner's last draw.
+- **The Collector's cage:** The Collector kept one of everything, holding each creature just long enough to know it before letting it go. The door has stood open ever since Thils collected the Collector.
 
 Canon tie: the Pale Lodge rates retrieving the Sword of Apotheos at lethality 6.2 to 9.8, and clients want it for a war, so its bearer turns up on contract boards.
 
@@ -1660,7 +1680,7 @@ Everything rolled for a room is DM-only until revealed, and the DM gets a reveal
 - **Assigning items:** if anyone extracts, the DM can assign kept items to any character in the run, fallen ones included. A wipe loses the pool.
 - **Thils's Vault:** survivors only. The fallen were expelled before the party reached it.
 - **Relic weighting:** each relic carries the boon tags that fit its Build, and offers are weighted like boon offers: a class primary tag ×3, a secondary ×2, a tag the player holds ×2.
-- **Text that ships:** item names and effects ship as written, except the relics' Lost by column, which stays out. Pog's unfinished map's Woken effect reads "even the way out of a god's own labyrinth." Paradise Bleed reads "half the arena becomes a golden meadow," the Gravity Inversion Tile triggers on "a gravity rune tile," and Meadow in a jar is "a living patch of a sunlit meadow."
+- **Text that ships:** item names and effects ship as written, except the relics' Lost by column, which stays out. Relic lore ships as written and may name who lost the relic. Pog's unfinished map's Awoken effect reads "even the way out of a god's own labyrinth." Paradise Bleed reads "half the arena becomes a golden meadow," the Gravity Inversion Tile triggers on "a gravity rune tile," and Meadow in a jar is "a living patch of a sunlit meadow."
 - **Lore check:** Thilsavrass and Sonder never appear in app data. Gatewright, paradise and inverted or inversion appear only inside an approved list of names players meet in play: the bosses, the Inverted Paradise family and its creatures, the Gravity Inversion Tile, Inverted overgrowth, Paradise Spores, Paradise Bleed, Inverted Gravity Beam, Paradise honey, Paradise seed, Inverted bloom and Gatewright's three keys.
 
 ### Phase 7 defaults *(proposed)*

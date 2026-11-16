@@ -51,9 +51,16 @@ function weightedPick(ids: string[], weight: (id: string) => number, random: Ran
   return ids[ids.length - 1]
 }
 
-/** Relics come Dormant at entry 5 to 10 and Woken from entry 11. */
+/** Relics come Dormant at entry 5 to 10 and Awoken from entry 11. */
 export function relicStateFor(partyLevel: number): 'dormant' | 'woken' {
   return entryTier(partyLevel) >= relicData.wokenFromTier ? 'woken' : 'dormant'
+}
+
+/** Line shown on a Dormant Vault card back explaining how to wake the relic. */
+export function wakeLine(): string {
+  return relicData.wakeText
+    .replace('{level}', String(relicData.wakeLevel))
+    .replace('{cost}', String(relicData.wakeCostQuantumBasalts))
 }
 
 /** Open the Vault: each surviving player gets 3 relic offers (4 at entry 17 to 20). */
