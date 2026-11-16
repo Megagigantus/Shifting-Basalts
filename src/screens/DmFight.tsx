@@ -11,7 +11,8 @@ import { BloodiedControl, HpList, StatLine } from './HpTracker'
 import { bossOf, buildBoss, floorBossDc, signatureHazards, type AbilityProfile, type BossStats } from '../rules/bosses'
 import { ABILITIES, type Ability } from '../rules/encounters'
 import { boon } from '../rules/boons'
-import { changeHp, cycleShift, rerollEncounter, reveal, setBossBloodied } from '../rules/roomFlow'
+import { currentForm } from '../rules/battleMap'
+import { changeHp, cycleShift, rerollEncounter, reveal, setBossBloodied, swapBossForm } from '../rules/roomFlow'
 import { artUrl, partArtId, phase2ArtId, type ArtKind } from '../art'
 import { RevealControl } from './RevealControl'
 import { useShiftMap } from './useShiftMap'
@@ -190,6 +191,7 @@ export function BossBlock({
   onTrigger,
   hp,
   cycle,
+  form,
 }: {
   boss: BossStats
   revealed: boolean
@@ -197,12 +199,19 @@ export function BossBlock({
   onTrigger?: () => void
   hp?: BossHp
   cycle?: ShiftCycle
+  form?: { current: string; onSwap: () => void }
 }) {
   const showArt = useLightbox()
   const mainArt = artUrl('bosses', boss.bossId)
   const phase2Art = artUrl('bosses', phase2ArtId(boss.bossId))
   const bloodied = hp?.bloodied ?? false
   const current = hp && bloodied && phase2Art ? phase2Art : mainArt
+  const formKey = form?.current.toLowerCase() ?? null
+  const activePart = formKey !== null ? boss.parts.find((p) => p.name.toLowerCase() === formKey) : undefined
+  const formLabel = activePart?.name ?? (form ? form.current.charAt(0).toUpperCase() + form.current.slice(1) : '')
+  const activeProfile = form
+    ? (boss.partAbilities.find((p) => p.name.toLowerCase() === formLabel.toLowerCase())?.abilities ?? boss.abilities)
+    : boss.abilities
   return (
     <Panel tone="rose" hero icon={<Crown size={16} />} title={boss.name} subtitle={boss.role} actions={<Pill tone="rose" mono>CR {boss.cr}</Pill>}>
       <div className="flex flex-col gap-4 sm:flex-row">
@@ -240,18 +249,40 @@ export function BossBlock({
           )}
           <Fact label="Defense">
             AC {boss.ac} · {boss.hp} HP{boss.sharedHp && ' (shared)'}
+            {form && (
+              <div className="mt-1.5">
+                <button type="button" className={SMALL_BUTTON} disabled={busy} onClick={form.onSwap}>
+                  Swap form (now {formLabel})
+                </button>
+              </div>
+            )}
             {boss.parts.length > 0 && (
               <div className="mt-1.5 grid grid-cols-1 gap-1.5 sm:grid-cols-2">
-                {boss.parts.map((p) => (
-                  <div key={p.name} className="flex items-center gap-2 rounded-lg border border-fuchsia-500/25 bg-stone-950/60 p-1.5">
-                    <Portrait kind="boss-parts" id={partArtId(boss.bossId, p.name)} name={p.name} size="h-8 w-8" square />
-                    <span className="text-[0.6875rem]">
-                      {p.count > 1 && `${p.count} × `}
-                      <strong className="text-fuchsia-200">{p.name}</strong>: AC {p.ac}
-                      {p.hp !== null && `, ${p.hp} HP${p.count > 1 ? ' each' : ''}`}
-                    </span>
-                  </div>
-                ))}
+                {boss.parts.map((p) => {
+                  const isActive = formKey !== null && p.name.toLowerCase() === formKey
+                  return (
+                    <div
+                      key={p.name}
+                      className={cx(
+                        'flex items-center gap-2 rounded-lg border p-1.5',
+                        isActive ? 'border-fuchsia-400 bg-fuchsia-500/10' : 'border-fuchsia-500/25 bg-stone-950/60',
+                        formKey !== null && !isActive && 'opacity-60',
+                      )}
+                    >
+                      <Portrait kind="boss-parts" id={partArtId(boss.bossId, p.name)} name={p.name} size="h-8 w-8" square />
+                      <span className="text-[0.6875rem]">
+                        {p.count > 1 && `${p.count} × `}
+                        <strong className="text-fuchsia-200">{p.name}</strong>: AC {p.ac}
+                        {p.hp !== null && `, ${p.hp} HP${p.count > 1 ? ' each' : ''}`}
+                      </span>
+                      {isActive && (
+                        <Pill tone="fuchsia" className="ml-auto">
+                          Active
+                        </Pill>
+                      )}
+                    </div>
+                  )
+                })}
               </div>
             )}
           </Fact>
@@ -262,13 +293,22 @@ export function BossBlock({
       </div>
 
       <Fact label="Abilities">
-        <StatLine abilities={scoresOf(boss.abilities)} saves={savesOf(boss.abilities)} />
-        {boss.partAbilities.map((p) => (
-          <div key={p.name} className="mt-1.5 flex flex-col gap-1">
-            <span className="text-[0.6875rem] text-stone-400">{p.name}:</span>
-            <StatLine abilities={scoresOf(p.abilities)} saves={savesOf(p.abilities)} />
+        {form ? (
+          <div className="flex flex-col gap-1">
+            <span className="text-[0.6875rem] text-stone-400">{formLabel}:</span>
+            <StatLine abilities={scoresOf(activeProfile)} saves={savesOf(activeProfile)} />
           </div>
-        ))}
+        ) : (
+          <>
+            <StatLine abilities={scoresOf(boss.abilities)} saves={savesOf(boss.abilities)} />
+            {boss.partAbilities.map((p) => (
+              <div key={p.name} className="mt-1.5 flex flex-col gap-1">
+                <span className="text-[0.6875rem] text-stone-400">{p.name}:</span>
+                <StatLine abilities={scoresOf(p.abilities)} saves={savesOf(p.abilities)} />
+              </div>
+            ))}
+          </>
+        )}
         {boss.profileNote && <p className="m-0 mt-1 text-[0.6875rem] text-stone-500">{boss.profileNote}</p>}
       </Fact>
 
@@ -278,8 +318,9 @@ export function BossBlock({
         <ul className="m-0 list-none flex flex-col gap-1.5 p-0">
           {boss.attacks.map((a, i) => {
             const heading = a.group && a.group !== boss.attacks[i - 1]?.group ? a.group : null
+            const dimmed = Boolean(formKey !== null && a.group && a.group.toLowerCase() !== formKey)
             return (
-              <li key={a.name}>
+              <li key={a.name} className={dimmed ? 'opacity-50' : undefined}>
                 {heading && <div className="text-[0.6875rem] font-semibold text-stone-500">{heading}:</div>}
                 <strong className="text-stone-100">
                   {a.name}
@@ -403,6 +444,7 @@ export function DmFight({ state, room, busy, act }: { state: RunState; room: Roo
     const boss = buildBoss(room.boss.id, run.partyLevel, room.boss.partySize, run.pressures)
     const roomShift = room.shifts?.find((s) => s.bossId === room.boss!.id)
     const hazards = signatureHazards(room.boss.id, room.cycle ?? 0, state.dm?.bossesBeaten)
+    const activeForm = currentForm(room.map)
     return (
       <>
         <BossBlock
@@ -410,6 +452,7 @@ export function DmFight({ state, room, busy, act }: { state: RunState; room: Roo
           revealed={Boolean(roomShift?.revealed)}
           busy={busy}
           onTrigger={shift ? shift.trigger : () => act((s) => reveal(s, { shift: room.boss!.id }))}
+          form={activeForm !== null ? { current: activeForm, onSwap: () => act((s) => swapBossForm(s)) } : undefined}
           cycle={
             hazards
               ? {

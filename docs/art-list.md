@@ -7,8 +7,8 @@ Save each file as `src/art/<folder>/<file name>` with a `.webp`, `.png`, `.jpg` 
 Descriptions come from the data files. "Based on" names the Monster Manual creature a monster
 borrows its stat block from. Use it as a hint for size and silhouette only. Don't copy WotC art.
 
-**Total: 105 pictures**: 8 shapes, 20 terrain, 12 tricks, 2 exits, 33 creatures and 15 bosses,
-plus 15 extras (section 7).
+**Total: 109 pictures**: 8 shapes, 20 terrain, 12 tricks, 2 exits, 33 creatures and 15 bosses,
+plus 15 extras (section 7) and 4 arena areas (section 8).
 Start with the shapes and terrain: those 28 alone give you a picture of every room.
 
 ## Style notes
@@ -194,3 +194,20 @@ These appear on the DM's screens only.
 - [ ] `absorbed-echoes`: **Absorbed Echoes.** Ghostly copies of adventurers, each carrying a boon.
 - [ ] `gate-born`: **Gate-Born.** Creatures of force and rift energy that leave glowing pools when they drop.
 - [ ] `inverted-paradise`: **Inverted Paradise.** Holy and natural things turned wrong: wilted, upside down, healing that hurts.
+
+## 8. Arena areas, `areas/` (4)
+Areas that boss Shift Actions paint onto the boss arena during the fight. Until a file exists the app
+shows a tinted outline. Players see the picture and outline but never the area's name.
+Boss arenas are 14 × 14 squares, about 128px per square. Top-down, matching the arena art.
+Which picture each area kind uses is set in `src/data/battle-map.json` → `areaArt`.
+
+**Tileable** pictures repeat every 2 squares to fill an area of any size, so the left edge must
+continue seamlessly into the right edge and the top into the bottom. No borders or vignettes.
+
+- [ ] `raised-section`: **Raised section** (Tessellated Warden, Piston Floor). 256 × 256, fills 2 × 2 squares. The flat top of a hex basalt column pushed 15 ft up: lit edges, a slight shadow along two sides.
+- [ ] `void-chasm`: **Void chasm** (Inverted Reliquary, Slot Scramble). 256 × 256, **tileable**. Fills two crossing strips, each 2 squares wide and 14 long. Bottomless purple-black void with faint distant specks of light.
+- [ ] `golden-meadow`: **Golden meadow** (Ophaniel, Paradise Bleed). 256 × 256, **tileable**. Fills half the arena (7 × 14). Gold grass and small blossoms growing up through the stone, warm glow.
+- [ ] `shattered-stone`: **Shattered stone** (Ophaniel, Paradise Bleed). 256 × 256, **tileable**. Fills the other half (7 × 14). Grey fractured stone and ash, cold and airless.
+
+The Warden's **pit** reuses `objects/pit` (already added), so it needs no new file.
+

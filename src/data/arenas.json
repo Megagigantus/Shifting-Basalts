@@ -626,6 +626,7 @@
         {
           "kind": "line",
           "name": "Marching Columns rise here",
+          "secret": true,
           "x": 3,
           "y": 4,
           "w": 8,
