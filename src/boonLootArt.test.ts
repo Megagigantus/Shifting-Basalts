@@ -1,6 +1,6 @@
 // Tests for boon, evolution, combination, hidden boon, loot and currency art lookups and fallback order.
 import { describe, expect, it } from 'vitest'
-import { boonArt, currencyArt, lootArt, slotArtRef, tagArtId, type ArtLookup } from './boonLootArt'
+import { boonArt, currencyArt, lootArt, offerArtRef, slotArtRef, tagArtId, type ArtLookup } from './boonLootArt'
 
 function fakeLookup(keys: string[]): ArtLookup {
   const available = new Set(keys)
@@ -189,5 +189,13 @@ describe('slotArtRef', () => {
     expect(slotArtRef({ kind: 'boon', boonId: 'traverts-echoes', level: 2 })).toEqual({ kind: 'boon', id: 'traverts-echoes' })
     expect(slotArtRef({ kind: 'evolution', evolutionId: 'chain-of-echoes' })).toEqual({ kind: 'evolution', id: 'chain-of-echoes' })
     expect(slotArtRef({ kind: 'combination', combinationId: 'shooting-gallery' })).toEqual({ kind: 'combination', id: 'shooting-gallery' })
+  })
+})
+
+describe('offerArtRef', () => {
+  it('points each offer kind at its own picture', () => {
+    expect(offerArtRef({ kind: 'boon', boonId: 'traverts-echoes', source: 'held' })).toEqual({ kind: 'boon', id: 'traverts-echoes' })
+    expect(offerArtRef({ kind: 'evolution', evolutionId: 'chain-of-echoes', slotIndex: 0, source: 'wildcard' })).toEqual({ kind: 'evolution', id: 'chain-of-echoes' })
+    expect(offerArtRef({ kind: 'combination', combinationId: 'shooting-gallery', source: 'wildcard' })).toEqual({ kind: 'combination', id: 'shooting-gallery' })
   })
 })

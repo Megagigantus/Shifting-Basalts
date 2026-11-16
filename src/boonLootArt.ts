@@ -3,6 +3,7 @@
 import { artUrl, type ArtKind } from './art'
 import gearBases from './data/gear-bases.json'
 import { boon, combination, evolution, hiddenBoon, type SlotContent } from './rules/boons'
+import type { Offer } from './rules/draft'
 import { GEAR_ROWS } from './rules/gear'
 import type { LootItem } from './rules/loot'
 
@@ -65,6 +66,13 @@ export function slotArtRef(slot: SlotContent): BoonArtRef {
   if (slot.kind === 'boon') return { kind: 'boon', id: slot.boonId }
   if (slot.kind === 'evolution') return { kind: 'evolution', id: slot.evolutionId }
   return { kind: 'combination', id: slot.combinationId }
+}
+
+/** Which picture a draft offer shows: a level-up or new boon shows the boon itself. */
+export function offerArtRef(offer: Offer): BoonArtRef {
+  if (offer.kind === 'evolution') return { kind: 'evolution', id: offer.evolutionId }
+  if (offer.kind === 'combination') return { kind: 'combination', id: offer.combinationId }
+  return { kind: 'boon', id: offer.boonId }
 }
 
 function gearKindArtId(item: Pick<LootItem, 'ref' | 'base'>): 'gear-shield' | 'gear-armor' | 'gear-weapon' {
