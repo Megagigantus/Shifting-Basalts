@@ -62,7 +62,7 @@ export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
   return (
     <div className="mt-6 flex flex-col gap-4">
       {!readOnly && firstAlive && (
-        <RoomClearedPopup state={state} player={firstAlive} sent={choices[firstAlive.characterId]} />
+        <RoomClearedPopup state={state} player={firstAlive} sent={choices[firstAlive.characterId]} requests={requests} />
       )}
       <Panel hero tone="amber">
         <div className="flex flex-wrap items-center gap-1.5">
