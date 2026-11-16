@@ -66,7 +66,6 @@ const characters: Record<string, { [key: string]: Value }> = {
     subclass: 'Champion',
     level: 5,
     casterType: 'none',
-    slotLevels: [],
     hasSummon: false,
     attackStyle: 'melee',
     ...dungeonLayer,
@@ -96,13 +95,12 @@ const characters: Record<string, { [key: string]: Value }> = {
     subclass: 'Evoker',
     level: 5,
     casterType: 'full',
-    slotLevels: [1, 2, 3],
     // A familiar, so summon tokens on the battle map can be tested locally.
     hasSummon: true,
     attackStyle: 'spells',
     ...dungeonLayer,
-    // Spell slot recovery rank 5 (15 Devotions), and a second Healing Font owner.
-    trackDevotions: { 'spell-slot-recovery': 15 },
+    // Spell slot recovery rank 5 (15 Devotions) and Martial resource recovery rank 2 (6 Devotions), and a second Healing Font owner.
+    trackDevotions: { 'spell-slot-recovery': 15, 'martial-resource-recovery': 6 },
     upgrades: { 'healing-font': 1 },
   },
 }

@@ -101,7 +101,6 @@ export function CharacterHub({ character: c, mode, actions }: Props) {
             </p>
             <p className="m-0 text-[0.6875rem] text-stone-500">
               {CASTER_TYPES.find((t) => t.id === c.casterType)?.label}
-              {c.slotLevels.length > 0 && ` (slots ${c.slotLevels.join(', ')})`}
               {c.hasSummon && ' · summon/companion'}
               {mode === 'dm' && ` · ${c.playerEmail || 'no player assigned'}`}
             </p>

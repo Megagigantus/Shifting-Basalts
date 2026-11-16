@@ -77,7 +77,7 @@ service cloud.firestore {
 
     // Every boon id (from src/data/boons.json), for checking Banish lists.
     function boonIds() {
-      return ['traverts-echoes', 'reapers-sprint', 'spellslingers-delight', 'critical-delight', 'crits-are-for-suckers', 'a-fine-steels-glint', 'stand-off', 'elemains-flight-of-fancy', 'overhealing', 'hardened-hide', 'cleansing-nova', 'riposte-step', 'a-healthy-dose-of-pain', 'avalanche-stride', 'spillover', 'overchannel', 'conduit', 'unbroken-focus', 'elemental-residue', 'leyline-surge', 'deadeye-stance', 'scatter-volley', 'fading-veil', 'first-strike', 'vanishing-step', 'twin-flame', 'bolster', 'kindled-ally', 'ostras-coin', 'lenns-descent', 'corrows-lure', 'collectors-menagerie', 'thalisanes-weave', 'the-express', 'breakers-last-stand', 'thilss-favor', 'zolics-nine-eyes', 'deflector-burst', 'hunters-tally', 'gleam-dealers-gamble', 'fleet-foot', 'unshackled', 'elemental-ward', 'pocket-sweep', 'quick-cantrip', 'hardy', 'honed', 'keen-reflexes', 'steady-will', 'night-eyes', 'resounding-blow', 'echoing-step', 'last-rites', 'harvest', 'marked-quarry', 'weak-point', 'thousand-cuts', 'second-hand', 'bleed-out', 'red-mist', 'lucky-break', 'iron-root', 'pack-tactics', 'swap-places', 'elemental-quiver', 'battle-standard', 'ulmas-thread', 'the-archivists-index', 'weavers-mending'];
+      return ['traverts-echoes', 'reapers-sprint', 'spellslingers-delight', 'critical-delight', 'crits-are-for-suckers', 'a-fine-steels-glint', 'stand-off', 'elemains-flight-of-fancy', 'overhealing', 'hardened-hide', 'cleansing-nova', 'riposte-step', 'a-healthy-dose-of-pain', 'avalanche-stride', 'spillover', 'overchannel', 'conduit', 'unbroken-focus', 'elemental-residue', 'leyline-surge', 'momentum', 'deadeye-stance', 'scatter-volley', 'fading-veil', 'first-strike', 'vanishing-step', 'twin-flame', 'bolster', 'kindled-ally', 'ostras-coin', 'lenns-descent', 'corrows-lure', 'collectors-menagerie', 'thalisanes-weave', 'the-express', 'breakers-last-stand', 'thilss-favor', 'zolics-nine-eyes', 'deflector-burst', 'hunters-tally', 'gleam-dealers-gamble', 'fleet-foot', 'unshackled', 'elemental-ward', 'pocket-sweep', 'quick-cantrip', 'hardy', 'honed', 'keen-reflexes', 'steady-will', 'night-eyes', 'resounding-blow', 'echoing-step', 'last-rites', 'harvest', 'marked-quarry', 'weak-point', 'thousand-cuts', 'second-hand', 'bleed-out', 'red-mist', 'lucky-break', 'iron-root', 'pack-tactics', 'swap-places', 'elemental-quiver', 'battle-standard', 'ulmas-thread', 'the-archivists-index', 'weavers-mending'];
     }
 
     // Every boon tag, for checking Attunement choices.
@@ -89,6 +89,7 @@ service cloud.firestore {
     function anyTrackSpend() {
       return devotionSpendOn('max-hp')
         || devotionSpendOn('spell-slot-recovery')
+        || devotionSpendOn('martial-resource-recovery')
         || devotionSpendOn('opening-temp-hp')
         || devotionSpendOn('flat-damage')
         || devotionSpendOn('healing-received')
@@ -300,8 +301,8 @@ service cloud.firestore {
         allow read: if isInvited();
         allow write: if isDM();
         allow create, update: if ownsRunCharacter(runId, characterId)
-          && request.resource.data.keys().hasOnly(['action', 'index', 'replaceSlot', 'hiddenBoonId', 'forgeKind', 'slotIndex', 'combinationId', 'relicId', 'slotLevel', 'draftKey', 'createdAt'])
-          && request.resource.data.action in ['take', 'pass', 'reroll', 'hidden', 'passHidden', 'forge', 'hiddenSight', 'relic', 'relicPass', 'recover', 'surge', 'reprieveRest', 'reprieveReflect', 'reprieveBasalts']
+          && request.resource.data.keys().hasOnly(['action', 'index', 'replaceSlot', 'hiddenBoonId', 'forgeKind', 'slotIndex', 'combinationId', 'relicId', 'recoveryTrack', 'presetId', 'boonId', 'draftKey', 'createdAt'])
+          && request.resource.data.action in ['take', 'pass', 'reroll', 'hidden', 'passHidden', 'forge', 'hiddenSight', 'relic', 'relicPass', 'recover', 'payoffSpend', 'payoffRefund', 'reprieveRest', 'reprieveReflect', 'reprieveBasalts']
           && request.resource.data.createdAt == request.time;
         allow delete: if ownsRunCharacter(runId, characterId);
       }

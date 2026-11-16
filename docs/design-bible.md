@@ -189,7 +189,7 @@ When 2 or more players hold at least one boon with the same tag, each of them ga
 
 ## Boon catalogue
 
-Fifteen draft boons are in the main table: ten from Brian and five proposed. Four more batches follow it, bringing the pool to 69. Payoff boons sit in the same pool and read from the stat tracks listed after this table. Status tracks what still needs work before the boon goes into the app.
+Fifteen draft boons are in the main table: ten from Brian and five proposed. Four more batches follow it, bringing the pool to 70. Payoff boons sit in the same pool and read from the stat tracks listed after this table. Status tracks what still needs work before the boon goes into the app.
 
 ### Boons
 
@@ -221,7 +221,8 @@ Thirteen boons for casters, ranged builds, stealth and support.
 | Conduit | Spell | Once per turn, a creature your spell damages takes extra damage equal to PB. | The extra damage also hits one other creature within 10 ft of it. | The extra damage becomes 2 × PB and ignores resistance. | Evolves into Arc Conduit | Locked |
 | Unbroken Focus | Spell | Advantage on saves to maintain concentration. | Once per turn, taking damage while concentrating grants PB temp HP. | Once per room, when you would lose concentration, you don't. | Evolves into Twin Focus | Locked |
 | Elemental Residue | Spell | When a creature fails a save against your damaging spell, a 5 ft puddle of that spell's damage type forms in its space until the end of your next turn. Creatures entering or starting their turn there take PB damage of that type. | Puddles last the whole room, deal 2 × PB, and gain their element's rider. | A creature that fails a save while standing in a puddle of the same element takes maximum damage from the spell. | Evolves into Battlefield Artist | Locked |
-| Leyline Surge | Payoff (Spell slot recovery) | Unspent recovery points can be spent on a damaging spell for +1d6 force damage per point. | The force dice become d8s. | Each creature the boosted spell kills refunds 1 point. | Grows with its track | Locked |
+| Leyline Surge | Payoff (Spell slot recovery) | Once per turn, unspent recovery points can be spent on a damaging spell for +1d6 force damage per point. | The force dice become d8s. | Each creature the boosted spell kills refunds 1 point. | Grows with its track | Locked |
+| Momentum | Payoff (Martial resource recovery) | Once per turn, on a weapon hit, unspent martial recovery points can be spent for +1d6 damage of the weapon's type per point. | The dice become d8s. | Each creature the boosted hit kills refunds 1 point. | Grows with its track | Proposed |
 | Deadeye Stance | Volley | If you haven't moved this turn, your ranged attacks ignore half cover and deal +PB damage. | They also ignore three-quarters cover. | Once per round, a hit pins the target: its speed is 0 until the end of its next turn. | Evolves into Every Moving Thing | Locked |
 | Scatter Volley | Volley | Once per room, as an action, make a ranged attack against up to 3 creatures within 10 ft of a point you can see. | Up to PB creatures. | Twice per room, and creatures hit are pushed 10 ft. | Evolves into Rain of Splinters | Locked |
 | Fading Veil | Shadow | Once per turn, after you drop an enemy, take the Hide action without spending an action. | You can Hide while only lightly obscured. | If an attack you make from hiding drops the target, you stay hidden. | Evolves into Gone in the Gaps | Locked |
@@ -359,6 +360,7 @@ The hidden boons unlocked by room conditions. Like class hidden boons, they sit 
 | --- | --- | --- |
 | Max HP | +2 max HP | Draft |
 | Spell slot recovery | 1 recovery point per room clear, spent to recover spell slots. Rank 20 means 20 points a room. | Draft |
+| Martial resource recovery | 1 martial recovery point per room clear, spent to recover class resources. Kept in its own pool, separate from slot recovery points. | Proposed |
 | Opening temp HP | +2 temp HP at the start of each room | Proposed |
 | Flat damage | +1 to one damage roll per turn | Proposed |
 | Healing received | +1 HP to every heal you receive | Proposed |
@@ -369,6 +371,7 @@ The hidden boons unlocked by room conditions. Like class hidden boons, they sit 
 - **Tier caps** *(proposed)***:** max rank 5 at levels 5 to 10, rank 10 at levels 11 to 16, and rank 20 at levels 17 to 20. Devotions earned past a cap are banked until the character reaches the next tier.
 
 * **Slot recovery costs** *(proposed)***:** use the 2024 Sorcerer's Font of Magic costs: 2 points for a 1st-level slot, 3 for 2nd, 5 for 3rd, 6 for 4th and 7 for 5th. Slots above 5th level can't be recovered this way, which keeps 20 points a room from refilling 9th-level slots. Points can be spent any time until the next room clear, then leftovers fade, so Leyline Surge has a window to spend them as damage.
+* **Martial recovery costs** *(proposed)***:** 1 point for a Focus Point (Monk), 2 for a Superiority die (Battle Master), 2 for a Psionic Energy die (Psi Warrior, Soulknife) and 3 for a Rage use (Barbarian). Points fade at the next room clear the same way, so Momentum has a window to spend them as damage.
 
 ### Evolutions
 
@@ -1427,8 +1430,8 @@ The DM hosts the run; players join on their own devices with a lighter view.
 
 ### Characters
 
-- **Lean profile, not a full sheet:** characters level up through story between runs, so a saved full sheet would go stale. The app keeps only what it needs to run the dungeon, and each player confirms it at run setup: name, class and subclass (plus a second class and subclass for a multiclass), level (total level sets PB), caster type (none, half, full or Pact Magic) with available slot levels, whether they have a summon or companion, their main attack style (melee, ranged or spells), and their weapon and armor training and Weapon Mastery picks (see Character setup).
-- **Why those fields:** they set boon offer eligibility, class hidden boon triggers, every PB-based boon number, and spell slot recovery.
+- **Lean profile, not a full sheet:** characters level up through story between runs, so a saved full sheet would go stale. The app keeps only what it needs to run the dungeon, and each player confirms it at run setup: name, class and subclass (plus a second class and subclass for a multiclass), level (total level sets PB), caster type (none, half, full or Pact Magic), whether they have a summon or companion, their main attack style (melee, ranged or spells), and their weapon and armor training and Weapon Mastery picks (see Character setup).
+- **Why those fields:** they set boon offer eligibility, class hidden boon triggers, and every PB-based boon number.
 - **Modifiers, not totals:** the app shows what the dungeon adds, like +10 max HP or +20 ft speed, and players apply it to their own sheets. It never tries to track their full stats.
 - **The dungeon layer:** boon slots, boon levels, evolutions and combinations; the hidden boon and any suppressed boons; stat track ranks and banked Devotions; upgrades and ranks; Quantum Basalts (banked, earned this run and passed); loot assigned to them; lockout timer; deepest floor reached; and run history.
 
@@ -1487,7 +1490,7 @@ What a second class adds. Simple weapons always come from the primary class.
 - **Pressure votes:** before a run, each player marks the Pressures they'd like on their device, from the ones the party can pick. The DM's lobby shows how many players want each one; the DM still chooses.
 - Track floor, room, loot collected, and loot kept if the party extracted now.
 - Track each player's boon slots (3 base, up to 5 with upgrades, plus a hidden boon slot), boon levels, and Evolutions or Combinations.
-- Track boon counters such as banked echoes and Reaper chain jumps, plus each caster's slot recovery points and the slots they buy.
+- Track boon counters such as banked echoes and Reaper chain jumps, plus each player's recovery points for each recovery track (Spell slot recovery and Martial resource recovery). The app tracks only the points, never spell slots or class resources; players keep those on their own sheets.
 - Award each player a Devotion on every room clear, record deaths and start lockout timers automatically. Track each player's passed Basalts separately, since they survive death. Also track boons temporarily suppressed by bosses and room tricks, like the Inverted Reliquary and Memory Drain.
 
 ### Draft screen
@@ -1662,9 +1665,9 @@ Everything rolled for a room is DM-only until revealed, and the DM gets a reveal
 
 ### Phase 7 defaults *(proposed)*
 
-- **Slot recovery points:** a caster with the Spell slot recovery track gains points equal to their track rank at each room clear that pays a Devotion (combat, elite and boss rooms; a Reprieve gives none). Leftover points fade at the next clear, when the new points replace them.
-- **Buying slots:** 2, 3, 5, 6 or 7 points for a 1st- to 5th-level slot (Slot recovery costs), only for slot levels the character has. Pact Magic slots cost the same. Players spend their own points from their device; the DM can spend for them.
-- **Leyline Surge:** a holder can spend recovery points as damage from the app, 1 point at a time.
+- **Recovery points:** each recovery track (Spell slot recovery, Martial resource recovery) has its own point pool. Anyone with ranks in a track gains points equal to their rank at each room clear that pays a Devotion (combat, elite and boss rooms; a Reprieve gives none); the app doesn't check class. Leftover points fade at the next clear, when the new points replace them. The DM can edit any player's balance at any time, refresh points by hand, or skip a clear's refresh.
+- **Recovering:** a Recover control lists the cost presets for the track (Slot recovery costs, Martial recovery costs) and only deducts points. Players update their own sheets; the app doesn't check whether the character has the slot or resource, or its maximum. Players spend their own points from their device; the DM can spend for them.
+- **Payoff spends:** Leyline Surge and Momentum each have a Spend 1 button that deducts 1 point from their own track's pool. Once per turn is a table rule; the app doesn't track turns. A Level 3 holder also gets a +1 refund button for each creature the boosted attack kills, usable by the player or the DM.
 - **Boon counters:** the DM keeps named counters per player, such as banked echoes or Reaper chain jumps, and players see their own. The numbers stay at the table until the bible fixes them.
 - **Healing Font:** owners are counted at run start, like the Forge. The post-boss room shows the Font's effect and the temp HP each player gains: +5 per owner beyond the first.
 - **Run history:** players see the runs their own characters were in; the DM sees every run.

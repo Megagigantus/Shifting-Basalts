@@ -16,6 +16,13 @@
       "status": "locked"
     },
     {
+      "id": "martial-resource-recovery",
+      "name": "Martial resource recovery",
+      "perRank": "1 martial recovery point per room clear, spent to recover class resources",
+      "effect": { "every": 1, "amount": 1, "unit": "martial recovery points per room clear" },
+      "status": "proposed"
+    },
+    {
       "id": "opening-temp-hp",
       "name": "Opening temp HP",
       "perRank": "+2 temp HP at the start of each room",
@@ -56,10 +63,27 @@
     { "fromRank": 6, "toRank": 10, "devotions": 5 },
     { "fromRank": 11, "toRank": 20, "devotions": 8 }
   ],
-  "slotRecovery": {
-    "_source": "Slot recovery costs and Phase 7 defaults: points to recover a slot of each level (1st to 5th). Pact Magic slots cost the same.",
-    "costs": { "1": 2, "2": 3, "3": 5, "4": 6, "5": 7 },
-    "surgeBoonId": "leyline-surge"
+  "recoveryTracks": {
+    "_source": "Slot recovery costs and Martial recovery costs (both proposed). Each recovery track has its own point pool; presets only deduct points.",
+    "spell-slot-recovery": {
+      "pointsLabel": "Slot recovery points",
+      "presets": [
+        { "id": "slot-1", "label": "1st-level slot", "cost": 2 },
+        { "id": "slot-2", "label": "2nd-level slot", "cost": 3 },
+        { "id": "slot-3", "label": "3rd-level slot", "cost": 5 },
+        { "id": "slot-4", "label": "4th-level slot", "cost": 6 },
+        { "id": "slot-5", "label": "5th-level slot", "cost": 7 }
+      ]
+    },
+    "martial-resource-recovery": {
+      "pointsLabel": "Martial recovery points",
+      "presets": [
+        { "id": "focus", "label": "Focus Point", "cost": 1 },
+        { "id": "superiority", "label": "Superiority die", "cost": 2 },
+        { "id": "psionic", "label": "Psionic Energy die", "cost": 2 },
+        { "id": "rage", "label": "Rage use", "cost": 3 }
+      ]
+    }
   },
   "tierCaps": [
     { "minLevel": 5, "maxLevel": 10, "maxRank": 5 },

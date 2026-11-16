@@ -15,11 +15,9 @@ import { BOONS } from '../rules/boons'
 import { FIELD, FIELD_LABEL, PRIMARY_BUTTON, QUIET_BUTTON } from '../ui/styles'
 import { cx } from '../ui/tone'
 
-const SLOT_LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 // Tags a subclass might favor (Core and Payoff aren't weighted by class).
 const FAVORABLE_TAGS = [...new Set(BOONS.flatMap((b) => b.tags))].filter((t) => t !== 'Core' && t !== 'Payoff')
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const ordinal = (n: number) => `${n}${n === 1 ? 'st' : n === 2 ? 'nd' : n === 3 ? 'rd' : 'th'}`
 
 interface Props {
   initial: CharacterProfile
@@ -36,17 +34,7 @@ export function CharacterForm({ initial, onSave, onCancel }: Props) {
     setProfile((p) => ({ ...p, [key]: value }))
 
   function setCasterType(casterType: CasterType) {
-    // Non-casters have no slots, so clear any that were ticked.
-    setProfile((p) => ({ ...p, casterType, slotLevels: casterType === 'none' ? [] : p.slotLevels }))
-  }
-
-  function toggleSlot(level: number) {
-    setProfile((p) => ({
-      ...p,
-      slotLevels: p.slotLevels.includes(level)
-        ? p.slotLevels.filter((l) => l !== level)
-        : [...p.slotLevels, level].sort((a, b) => a - b),
-    }))
+    set('casterType', casterType)
   }
 
   async function submit(event: FormEvent) {
@@ -64,9 +52,6 @@ export function CharacterForm({ initial, onSave, onCancel }: Props) {
     if (problem) return setError(problem)
     if (cleaned.playerEmail && !EMAIL_PATTERN.test(cleaned.playerEmail)) {
       return setError('The player email doesn\'t look like an email address.')
-    }
-    if (cleaned.casterType !== 'none' && cleaned.slotLevels.length === 0) {
-      return setError('Tick at least one spell slot level, or set caster type to None.')
     }
     setError(null)
     setSaving(true)
@@ -127,20 +112,6 @@ export function CharacterForm({ initial, onSave, onCancel }: Props) {
       </div>
 
       <BuildEditor value={profile} onChange={(b: BuildFields) => setProfile((p) => ({ ...p, ...b }))} />
-
-      {profile.casterType !== 'none' && (
-        <fieldset className="m-0 flex flex-col gap-1.5 border-0 p-0">
-          <legend className="mb-1.5 p-0 text-xs font-semibold text-stone-300">Spell slot levels available</legend>
-          <div className="flex flex-wrap gap-1.5">
-            {SLOT_LEVELS.map((level) => (
-              <label key={level} className={chip(profile.slotLevels.includes(level))}>
-                <input type="checkbox" className="sr-only" checked={profile.slotLevels.includes(level)} onChange={() => toggleSlot(level)} />
-                {ordinal(level)}
-              </label>
-            ))}
-          </div>
-        </fieldset>
-      )}
 
       <fieldset className="m-0 flex flex-col gap-1.5 border-0 p-0">
         <legend className="mb-1.5 p-0 text-xs font-semibold text-stone-300">

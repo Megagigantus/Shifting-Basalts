@@ -19,7 +19,8 @@ import {
 import { canTriggerClass, classTriggerMet, rerollsLeft } from '../rules/draftFlow'
 import { finishRoom } from '../rules/progress'
 import { DmLootPanel, ExtractPanel, VaultPanel } from './LootScreens'
-import { RecoveryPanel } from './RecoveryPanel'
+import { RecoveryEditor, RecoveryPanel } from './RecoveryPanel'
+import { RECOVERY_TRACKS, refreshRecovery, trackRank } from '../rules/recovery'
 import { describeReprieve } from '../rules/reprieve'
 import { CounterList, CountersEditor } from './CountersPanel'
 import { useExitVotes, useLootRequests } from '../runStore'
@@ -59,6 +60,7 @@ export function RunTracker({ state, characters, onEnded }: Props) {
   const [open, setOpen] = useState<{ id: string; kind: 'boons' | 'draft' } | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [extracting, setExtracting] = useState(false)
+  const [refreshOnClear, setRefreshOnClear] = useState(true)
   const { run, players } = state
   const requests = useLootRequests(run.id)
   const votes = useExitVotes(run.id)
@@ -90,7 +92,16 @@ export function RunTracker({ state, characters, onEnded }: Props) {
   }
 
   /** Clear a room (or beat the boss): its loot, then everyone's draft (or Thils's Vault after the legendary boss). */
-  const clearAndDraft = (kind: RoomKind) => act((s) => finishRoom(s, kind, Math.random))
+  const clearAndDraft = (kind: RoomKind) => {
+    let cleared = false
+    act((s) => {
+      const next = finishRoom(s, kind, Math.random, { refreshRecovery: refreshOnClear })
+      cleared = true
+      return next
+    })
+    if (cleared) setRefreshOnClear(true)
+  }
+  const hasRecovery = players.some((p) => RECOVERY_TRACKS.some((t) => trackRank(p, t) > 0))
   // The generated room's kind (elite, Reprieve...), when this run has rooms.
   const roomKind = state.dm?.room?.kind ?? null
 
@@ -227,6 +238,31 @@ export function RunTracker({ state, characters, onEnded }: Props) {
               {roomButton('Reprieve room', () => clearAndDraft('reprieve'))}
             </>
           )}
+          {!run.awaitingChoice && hasRecovery && (
+            <>
+              <label
+                className="inline-flex cursor-pointer items-center gap-1.5 text-xs text-stone-300"
+                title="Untick to skip the recovery point refresh on the next clear."
+              >
+                <input
+                  type="checkbox"
+                  checked={refreshOnClear}
+                  disabled={busy}
+                  onChange={(e) => setRefreshOnClear(e.target.checked)}
+                  className="cursor-pointer accent-amber-500"
+                />
+                Refresh recovery points
+              </label>
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => act((s) => refreshRecovery(s), 'Refresh everyone\'s recovery points now? Leftover points are replaced.')}
+                className={cx(SMALL_BUTTON, 'border-stone-700 bg-stone-900 text-stone-200 hover:bg-stone-800')}
+              >
+                Refresh points now
+              </button>
+            </>
+          )}
           {busy && <span className="text-xs text-stone-400">Saving…</span>}
           <span className="ml-auto">
             <ConfirmButton disabled={busy} confirmLabel="Yes, cancel the run" keepLabel="Keep the run" onConfirm={cancel}>
@@ -258,6 +294,7 @@ export function RunTracker({ state, characters, onEnded }: Props) {
                 <>
                   <PlayerBoons player={openPlayer} character={openCharacter} busy={busy} act={act} />
                   <CountersEditor player={openPlayer} busy={busy} act={act} />
+                  <RecoveryEditor player={openPlayer} busy={busy} act={act} />
                 </>
               ) : (
                 <DraftOffers
