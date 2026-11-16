@@ -15,7 +15,9 @@ import {
   planShare,
   poolValue,
   rerollableItems,
+  roomDrops,
   roomLoot,
+  applyDrops,
   searchStriderRemains,
   shrineOffering,
   type LootItem,
@@ -274,5 +276,22 @@ describe('extraction', () => {
     expect(() => planShare(state, [{ uid: 'A', characterId: 'a' }, { uid: 'A', characterId: 'b' }])).toThrow('twice')
     const poor = withPool(run(), items, 0)
     expect(() => planShare(poor, [{ uid: 'A', characterId: 'a' }])).toThrow('the party keeps 1,000')
+  })
+})
+
+describe('roomDrops', () => {
+  it('lists only what the room just cleared added', () => {
+    let state = run()
+    state = { ...state, run: { ...state.run, floor: 1, room: 1 } }
+    state = applyDrops(state, [{ kind: 'credits', amount: 50 }, { kind: 'item', item: { kind: 'trinket', ref: '0', rarity: null } }], 'room')
+    state = { ...state, run: { ...state.run, room: 2, log: [{ floor: 1, room: 1, kind: 'combat' }] } }
+    expect(roomDrops(state)).toMatchObject({ credits: 50, basalts: 0, items: [{ kind: 'trinket', room: 1 }] })
+    state = applyDrops(state, [{ kind: 'basalts', amount: 4 }, { kind: 'basalts', amount: 3 }, { kind: 'credits', amount: 20 }], 'elite')
+    state = { ...state, run: { ...state.run, log: [...state.run.log, { floor: 1, room: 2, kind: 'elite' }] } }
+    expect(roomDrops(state)).toEqual({ items: [], credits: 20, basalts: 7 })
+  })
+
+  it('is empty before any room is cleared', () => {
+    expect(roomDrops(run())).toEqual({ items: [], credits: 0, basalts: 0 })
   })
 })
