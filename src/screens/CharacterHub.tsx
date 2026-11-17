@@ -24,11 +24,16 @@ import { useLightbox } from '../ui/lightboxContext'
 import { cx, toneClasses, type Tone } from '../ui/tone'
 
 
-/** What the dungeon adds to this character, as modifiers for their own sheet. */
+/**
+ * What the dungeon adds to this character, as modifiers for their own sheet.
+ * A track with ranks but no bonus yet (Fortune Dice below rank 5) says when it starts.
+ */
 function trackEffects(c: Character): string[] {
-  return STAT_TRACKS.map((t) => effectAtRank(t, rankProgress(c.trackDevotions[t.id] ?? 0).rank)).filter(
-    (e): e is string => e !== null,
-  )
+  return STAT_TRACKS.flatMap((t) => {
+    const rank = rankProgress(c.trackDevotions[t.id] ?? 0).rank
+    if (rank === 0) return []
+    return [effectAtRank(t, rank) ?? `${t.name}: first bonus at rank ${t.effect.every}`]
+  })
 }
 
 /** Upgrades owned, e.g. ["Forge", "Extra Boon Slot 2"]. */

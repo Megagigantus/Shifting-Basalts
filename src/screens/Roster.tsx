@@ -1,6 +1,8 @@
 // The list of characters on the left of the Characters screens: portrait,
-// name, level and class, banked Quantum Basalts, and a lockout warning.
+// name, level and class, banked Quantum Basalts, Fortune Dice per run, and a lockout warning.
+import { Dices } from 'lucide-react'
 import { hasFullClear } from '../rules/upgrades'
+import { fortuneDicePerRun } from '../rules/fortune'
 import { buildOf, type Character } from '../model/character'
 import { buildSummary } from '../rules/build'
 import { Avatar } from './LookPicker'
@@ -32,7 +34,14 @@ export function Roster({ characters, selectedId, onSelect, title = 'Strider rost
           <span className="flex min-w-0 flex-1 flex-col">
             <span className="flex items-center justify-between gap-2">
               <span className="truncate text-sm font-bold text-stone-100">{c.name}</span>
-              <span className="shrink-0 font-mono text-[0.6875rem] font-bold text-purple-300">{c.bankedQuantumBasalts} QB</span>
+              <span className="flex shrink-0 items-center gap-2 font-mono text-[0.6875rem] font-bold">
+                {fortuneDicePerRun(c.trackDevotions) > 0 && (
+                  <span className="flex items-center gap-0.5 text-amber-300" title="Fortune Dice each run">
+                    <Dices size={11} aria-hidden /> {fortuneDicePerRun(c.trackDevotions)}
+                  </span>
+                )}
+                <span className="text-purple-300">{c.bankedQuantumBasalts} QB</span>
+              </span>
             </span>
             <span className="truncate text-[0.6875rem] text-stone-400">
               Lv {c.level} · {buildSummary({ ...c, ...buildOf(c) })}
