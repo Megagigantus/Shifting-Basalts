@@ -175,6 +175,8 @@ export async function saveRunState(
         ...(echoes?.evolutions.length ? { 'echoes.evolutions': arrayUnion(...echoes.evolutions) } : {}),
         ...(echoes?.combinations.length ? { 'echoes.combinations': arrayUnion(...echoes.combinations) } : {}),
         ...(echoes?.hidden.length ? { 'echoes.hidden': arrayUnion(...echoes.hidden) } : {}),
+        ...(r.banished ? { banished: r.banished } : {}),
+        ...(r.banishedThisRun?.length ? { banishHistory: arrayUnion(...r.banishedThisRun) } : {}),
         activeRunId: null,
         updatedAt: serverTimestamp(),
       })

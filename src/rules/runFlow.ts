@@ -364,6 +364,10 @@ export function runResults(state: RunState): RunResult[] {
       lockoutDays: p.lockoutDays,
       fullClear: keepsEarned && isFullClear(state),
       echoes: mergeEchoes(p.echoes, echoesOf(p.slots, p.hiddenBoonId)),
+      // Draft banishes change the standing Banish list, alive or not.
+      ...(p.banishedThisRun?.length
+        ? { banished: [...(p.draftProfile?.banished ?? [])], banishedThisRun: [...p.banishedThisRun] }
+        : {}),
     }
   })
 }

@@ -196,8 +196,9 @@ service cloud.firestore {
       return resource.data.get('activeRunId', null) == null;
     }
 
-    // A player edits their Banish list: real boon ids, no repeats, and no
-    // longer than their Banish rank.
+    // A player edits their Banish list: real boon ids, no repeats, no longer
+    // than their Banish rank, and only boons they banished from a draft before
+    // (their banish history) or already on the list.
     function isBanishEdit() {
       let list = request.resource.data.banished;
       return changedFields().hasOnly(['banished', 'updatedAt'])
@@ -206,7 +207,8 @@ service cloud.firestore {
         && list is list
         && list.size() <= resource.data.get('upgrades', {}).get('banish', 0)
         && list.toSet().size() == list.size()
-        && list.hasOnly(boonIds());
+        && list.hasOnly(boonIds())
+        && list.hasOnly(resource.data.get('banishHistory', []).concat(resource.data.get('banished', [])));
     }
 
     // A player sets (or clears) their Attunement tag, if they own Attunement.
