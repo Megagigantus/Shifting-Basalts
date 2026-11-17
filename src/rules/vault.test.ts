@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { emptyDungeonLayer, emptyProfile, type Character } from '../model/character'
+import { emptyDungeonLayer, emptyProfile, type Character, type OwnedLoot } from '../model/character'
 import type { RunState } from '../model/run'
 import { newRunState, markDead } from './runFlow'
-import { chooseRelic, heldRelics, mustTradeOrPass, openVault, passVault, relicStateFor, relicWeight, vaultPending, wakeLine, RELICS } from './vault'
+import { chooseRelic, dormantRelics, heldRelics, mustTradeOrPass, openVault, passVault, relicStateFor, relicWeight, vaultPending, wakeBlocker, wakeLine, wakeRelic, RELICS, WAKE_COST, WAKE_LEVEL } from './vault'
 
 function seeded(seed: number) {
   let s = seed >>> 0
@@ -133,5 +133,27 @@ describe('Thils\'s Vault', () => {
   it('formats the wake line from data without placeholders', () => {
     expect(wakeLine()).toBe('Wakes when its bearer reaches level 11 and offers 40 Quantum Basalts at a shrine to Thils.')
     expect(wakeLine()).not.toContain('{')
+  })
+})
+
+describe('waking a Dormant relic', () => {
+  const relic = (state: 'dormant' | 'woken' = 'dormant') =>
+    ({ uid: 'relic-x', kind: 'relic', ref: RELICS[0].id, rarity: null, floor: 5, room: 0, source: 'vault', relicState: state, runId: 'r' }) as unknown as OwnedLoot
+  const bearer = (level: number, qb: number, loot: OwnedLoot[] = [relic()]) => ({ level, bankedQuantumBasalts: qb, loot })
+
+  it('needs a Dormant relic, the wake level and the Basalts', () => {
+    expect(dormantRelics(bearer(11, 40))).toHaveLength(1)
+    expect(wakeBlocker(bearer(11, 40), RELICS[0].id)).toBeNull()
+    expect(wakeBlocker(bearer(10, 99), RELICS[0].id)).toBe(`A relic wakes once its bearer reaches level ${WAKE_LEVEL}.`)
+    expect(wakeBlocker(bearer(11, 39), RELICS[0].id)).toBe(`Waking it takes ${WAKE_COST} banked Quantum Basalts.`)
+    expect(wakeBlocker(bearer(11, 40, [relic('woken')]), RELICS[0].id)).toMatch('isn\'t a Dormant relic')
+    expect(wakeBlocker(bearer(11, 40), RELICS[1].id)).toMatch('isn\'t a Dormant relic')
+  })
+
+  it('spends the Basalts and marks the relic Awoken', () => {
+    const woken = wakeRelic(bearer(12, 55), RELICS[0].id)
+    expect(woken.bankedQuantumBasalts).toBe(15)
+    expect(woken.loot[0].relicState).toBe('woken')
+    expect(() => wakeRelic(bearer(12, 10), RELICS[0].id)).toThrow()
   })
 })

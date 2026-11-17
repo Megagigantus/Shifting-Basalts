@@ -2,6 +2,7 @@
 // clear opens it: every surviving player drafts one relic.
 import relicData from '../data/relics.json'
 import classTagData from '../data/class-tags.json'
+import type { Character, OwnedLoot } from '../model/character'
 import type { RunPlayer, RunState } from '../model/run'
 import { classFactor, type Random } from './draft'
 import { slotTags } from './boons'
@@ -131,5 +132,38 @@ export function passVault(state: RunState, characterId: string): RunState {
           }
         : p,
     ),
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Waking a Dormant relic (Thils's Vault: relics): its bearer reaches the wake
+// level and offers Quantum Basalts at a shrine to Thils. The shrine itself is
+// checked where the offering is made (rules/loot.ts shrineHereThils).
+
+type Bearer = Pick<Character, 'level' | 'bankedQuantumBasalts' | 'loot'>
+
+export const WAKE_LEVEL = relicData.wakeLevel
+export const WAKE_COST = relicData.wakeCostQuantumBasalts
+
+/** The bearer's Dormant relics. */
+export function dormantRelics(c: Bearer): OwnedLoot[] {
+  return (c.loot ?? []).filter((i) => i.kind === 'relic' && i.relicState !== 'woken')
+}
+
+/** Why this relic can't wake right now, or null if it can. */
+export function wakeBlocker(c: Bearer, relicId: string): string | null {
+  if (!dormantRelics(c).some((i) => i.ref === relicId)) return 'That relic isn\'t a Dormant relic this character carries.'
+  if (c.level < WAKE_LEVEL) return `A relic wakes once its bearer reaches level ${WAKE_LEVEL}.`
+  if (c.bankedQuantumBasalts < WAKE_COST) return `Waking it takes ${WAKE_COST} banked Quantum Basalts.`
+  return null
+}
+
+/** Wake a Dormant relic: spends the Basalts and returns the changed fields. */
+export function wakeRelic(c: Bearer, relicId: string): { bankedQuantumBasalts: number; loot: OwnedLoot[] } {
+  const blocker = wakeBlocker(c, relicId)
+  if (blocker) throw new Error(blocker)
+  return {
+    bankedQuantumBasalts: c.bankedQuantumBasalts - WAKE_COST,
+    loot: (c.loot ?? []).map((i) => (i.kind === 'relic' && i.ref === relicId ? { ...i, relicState: 'woken' as const } : i)),
   }
 }
