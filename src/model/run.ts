@@ -4,6 +4,7 @@
 // Hidden information (runs/{runId}/dmOnly) arrives with the room generator.
 import type { Slot } from '../rules/boons'
 import type { DraftCharacter, Offer } from '../rules/draft'
+import type { Echoes } from '../rules/echoes'
 import type { Room, RoomView } from '../rules/rooms'
 import type { LootItem, LootShare, RunLoot } from '../rules/loot'
 
@@ -115,6 +116,8 @@ export interface RunPlayer {
   slots?: Slot[]
   /** The hidden boon slot: a class hidden boon or one of Thils's gifts. */
   hiddenBoonId?: string | null
+  /** Everything this player has held this run, for Basalt Echoes (rules/echoes.ts). */
+  echoes?: Echoes
   /** What the draft needs to know about the character, captured at run start. */
   draftProfile?: DraftCharacter & {
     /** Offer rerolls allowed per floor (Reroll upgrade rank). */
@@ -203,4 +206,6 @@ export interface RunResult {
   loot: LootItem[]
   /** Relic ids traded in at Thils's Vault (removed from the character on extraction). */
   relicsTradedIn?: string[]
+  /** Everything this character held this run, for Basalt Echoes (rules/echoes.ts). */
+  echoes?: Echoes
 }

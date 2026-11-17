@@ -25,6 +25,7 @@ import { db } from './firebase'
 import type { Character } from './model/character'
 import type { DmRunState, Run, RunPlayer, RunResult, RunState } from './model/run'
 import { shrineHereThils } from './rules/loot'
+import { recordEchoes } from './rules/echoes'
 import { spendHiddenSight } from './rules/roomFlow'
 import { runResults } from './rules/runFlow'
 import { applyChoice, draftKey, isDraftChoice, type DraftChoice } from './rules/draftChoice'
@@ -109,11 +110,12 @@ export function newRunId(): string {
  * succeeds or fails together.
  */
 export async function saveRunState(
-  next: RunState,
+  nextIn: RunState,
   previous: RunState | null,
   characters: Character[],
 ): Promise<RunResult[] | null> {
   if (!db) throw new Error('Firebase is not set up.')
+  const next = recordEchoes(nextIn)
   const batch = writeBatch(db)
   const { id, ...runData } = next.run
   // Only write what changed, so a save never overwrites a player's choice
@@ -161,6 +163,7 @@ export async function saveRunState(
         : newLoot.length
           ? { loot: arrayUnion(...newLoot) }
           : {}
+      const echoes = r.echoes
       batch.update(doc(db, 'characters', r.characterId), {
         bankedQuantumBasalts: increment(r.quantumBasaltsGained),
         bankedDevotions: increment(r.devotions),
@@ -168,6 +171,10 @@ export async function saveRunState(
         ...(r.fullClear ? { fullClears: increment(1) } : {}),
         ...(r.lockoutDays !== null ? { lockoutDays: r.lockoutDays } : {}),
         ...lootUpdate,
+        ...(echoes?.boons.length ? { 'echoes.boons': arrayUnion(...echoes.boons) } : {}),
+        ...(echoes?.evolutions.length ? { 'echoes.evolutions': arrayUnion(...echoes.evolutions) } : {}),
+        ...(echoes?.combinations.length ? { 'echoes.combinations': arrayUnion(...echoes.combinations) } : {}),
+        ...(echoes?.hidden.length ? { 'echoes.hidden': arrayUnion(...echoes.hidden) } : {}),
         activeRunId: null,
         updatedAt: serverTimestamp(),
       })
@@ -337,6 +344,7 @@ export async function applyChoiceDoc(state: RunState, characterId: string, choic
       throw new Error('Your offer changed before your choice arrived. Please choose again.')
     }
     next = applyChoice(state, characterId, parsed, Math.random)
+    next = recordEchoes(next)
   } catch (err) {
     await updateDoc(choiceRef, { error: (err as Error).message })
     return

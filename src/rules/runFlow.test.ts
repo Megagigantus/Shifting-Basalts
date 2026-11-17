@@ -296,6 +296,16 @@ describe('death', () => {
     expect(state.run.lootKeptPercent).toBe(0)
     expect(runResults(state).every((r) => r.quantumBasaltsGained === 0)).toBe(true)
   })
+
+  it('records held boons in echoes even when the player dies', () => {
+    let state = start([5, 5])
+    state = changeSlots(state, 'c1', (s) => takeBoon(s, 'hardy'))
+    state = markDead(state, 'c1', twos)
+    state = extract(clearFloor(state))
+    const [, dead] = runResults(state)
+    expect(dead.survived).toBe(false)
+    expect(dead.echoes?.boons).toContain('hardy')
+  })
 })
 
 describe('upgrades in a run', () => {

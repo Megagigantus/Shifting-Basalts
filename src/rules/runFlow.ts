@@ -17,6 +17,7 @@ import {
   withPressureBonus,
 } from './run'
 import { emptySlots, hiddenBoon, slotCount, type Slot } from './boons'
+import { echoesOf, mergeEchoes } from './echoes'
 import { keptPercent, partyRewardBonusPercent, planShare, type LootItem, type LootPick } from './loot'
 import { relicStateFor, vaultPending } from './vault'
 import { reprieveWaitingOn } from './reprieve'
@@ -361,6 +362,7 @@ export function runResults(state: RunState): RunResult[] {
       deepestFloor: p.diedOnFloor ?? run.floor,
       lockoutDays: p.lockoutDays,
       fullClear: keepsEarned && isFullClear(state),
+      echoes: mergeEchoes(p.echoes, echoesOf(p.slots, p.hiddenBoonId)),
     }
   })
 }
