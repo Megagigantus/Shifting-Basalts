@@ -53,6 +53,8 @@ export interface Boon {
   combinesWith?: string[]
   /** Payoff boons only: the stat track it reads from. */
   payoffTrack?: StatTrackId
+  /** Payoff boons only: track rank needed before it is offered (default 1). */
+  payoffMinRank?: number
   /**
    * Extra things a character needs to be offered this boon, beyond its tag
    * (Spell boons always need spells; Bond boons always need a summon).

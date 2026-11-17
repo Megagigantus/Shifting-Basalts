@@ -677,6 +677,7 @@
       "Stake up to PB dice at once."
     ],
     "payoffTrack": "fortune-dice",
+    "payoffMinRank": 5,
     "status": "locked"
   },
   {

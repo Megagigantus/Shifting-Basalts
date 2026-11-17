@@ -51,6 +51,12 @@ describe('eligibility', () => {
     expect(canUse(boon('momentum'), { ...wizard, trackDevotions: { 'martial-resource-recovery': 3 } })).toBe(true)
   })
 
+  it("offers Gleam Dealer's Gamble only from Fortune Dice rank 5", () => {
+    // Ranks 1 to 5 cost 3 Devotions each: 12 is rank 4, 15 is rank 5.
+    expect(canUse(boon('gleam-dealers-gamble'), { ...fighter, trackDevotions: { 'fortune-dice': 12 } })).toBe(false)
+    expect(canUse(boon('gleam-dealers-gamble'), { ...fighter, trackDevotions: { 'fortune-dice': 15 } })).toBe(true)
+  })
+
   it('drops banished and held boons', () => {
     const pool = eligibleBoons({ ...wizard, banished: ['hardy'] }, ['honed'])
     expect(pool.some((b) => b.id === 'hardy' || b.id === 'honed')).toBe(false)
