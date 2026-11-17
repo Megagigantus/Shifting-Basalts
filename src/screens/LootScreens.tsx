@@ -18,9 +18,7 @@ import {
   poolValue,
   rarityName,
   relicOf,
-  rerollableItems,
   searchStriderRemains,
-  shrineOffering,
   gearBaseChoices,
   reaimGear,
   setGearBase,
@@ -33,6 +31,7 @@ import { canExtract, extract, isFullClear } from '../rules/runFlow'
 import { chooseRelic, heldRelics, mustTradeOrPass, passVault, relicStateFor, vaultPending, wakeLine } from '../rules/vault'
 import { artUrl } from '../art'
 import { SceneBanner } from './Scene'
+import { ThilsShrinePanel } from './ThilsShrinePanel'
 import { markLootDone, setLootRequests, submitChoice } from '../runStore'
 import { ConfirmButton } from '../ui/ConfirmButton'
 import { Panel, SectionLabel } from '../ui/Panel'
@@ -149,10 +148,6 @@ export function DmLootPanel({ state, busy, act, requests }: { state: RunState; b
   const terrain = state.dm?.room?.terrain ?? []
   const items = run.loot?.items ?? []
   const searched = run.loot?.searched.includes(`${run.floor}-${run.room}`)
-  const trinkets = items.filter((i) => i.kind === 'trinket')
-  const targets = rerollableItems(state)
-  const [offer, setOffer] = useState('')
-  const [target, setTarget] = useState('')
   return (
     <Panel tone="purple" icon={<Package size={15} />} title="Run loot" subtitle="The party's shared pool. It's only kept if the party extracts after a boss.">
       <PoolSummary state={state} />
@@ -175,42 +170,7 @@ export function DmLootPanel({ state, busy, act, requests }: { state: RunState; b
           )}
         </div>
       )}
-      {terrain.includes('shrine-to-thils') && trinkets.length > 0 && targets.length > 0 && (
-        <div className={cx(WELL, 'flex flex-wrap items-center gap-2 text-xs')}>
-          <span>Shrine to Thils: offer</span>
-          <select value={offer} onChange={(e) => setOffer(e.target.value)} className={cx(FIELD, 'py-1 text-xs')}>
-            <option value="">a trinket…</option>
-            {trinkets.map((t) => (
-              <option key={t.uid} value={t.uid}>
-                {itemText(t).slice(0, 40)}…
-              </option>
-            ))}
-          </select>
-          <span>to reroll</span>
-          <select value={target} onChange={(e) => setTarget(e.target.value)} className={cx(FIELD, 'py-1 text-xs')}>
-            <option value="">a loot roll from this floor…</option>
-            {targets
-              .filter((t) => t.uid !== offer)
-              .map((t) => (
-                <option key={t.uid} value={t.uid}>
-                  {t.kind === 'trinket' ? `Trinket: ${itemText(t).slice(0, 40)}…` : itemName(t)}
-                </option>
-              ))}
-          </select>
-          <button
-            type="button"
-            className={SMALL_BUTTON}
-            disabled={busy || !offer || !target}
-            onClick={() => {
-              act((s) => shrineOffering(s, offer, target, Math.random))
-              setOffer('')
-              setTarget('')
-            }}
-          >
-            Make the offering
-          </button>
-        </div>
-      )}
+      <ThilsShrinePanel mode="dm" state={state} act={act} busy={busy} />
       {items.length > 0 ? (
         <ItemList>
           {items.map((i) => (
