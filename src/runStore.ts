@@ -14,6 +14,7 @@ import {
   onSnapshot,
   orderBy,
   query,
+  runTransaction,
   serverTimestamp,
   setDoc,
   updateDoc,
@@ -23,11 +24,13 @@ import {
 import { db } from './firebase'
 import type { Character } from './model/character'
 import type { DmRunState, Run, RunPlayer, RunResult, RunState } from './model/run'
+import { shrineHereThils } from './rules/loot'
 import { spendHiddenSight } from './rules/roomFlow'
 import { runResults } from './rules/runFlow'
 import { applyChoice, draftKey, isDraftChoice, type DraftChoice } from './rules/draftChoice'
 import type { ExitVote, ExitVoteDoc } from './rules/votes'
 import { reclaim, type Pledge } from './rules/shrine'
+import { wakeRelic } from './rules/vault'
 
 /**
  * Live view of the run currently in progress, if any. Only the DM's screen
@@ -204,7 +207,7 @@ export interface ChoiceDoc {
   forgeKind?: 'level' | 'evolve' | 'combine'
   slotIndex?: number
   combinationId?: string
-  /** Thils's Vault: the relic taken. */
+  /** Thils's Vault: the relic taken (or woken at a Shrine to Thils). */
   relicId?: string
   /** Recovery spend: the recovery track id and cost preset id. */
   recoveryTrack?: string
@@ -229,7 +232,7 @@ export async function submitChoice(runId: string, characterId: string, choice: D
     data.replaceSlot = choice.replaceSlot ?? null
   }
   if (choice.action === 'hidden') data.hiddenBoonId = choice.hiddenBoonId
-  if (choice.action === 'relic') data.relicId = choice.relicId
+  if (choice.action === 'relic' || choice.action === 'wakeRelic') data.relicId = choice.relicId
   if (choice.action === 'recover') {
     data.recoveryTrack = choice.track
     data.presetId = choice.presetId
@@ -276,6 +279,8 @@ function choiceFromDoc(c: ChoiceDoc): DraftChoice {
       return { action: 'hidden', hiddenBoonId: c.hiddenBoonId ?? '' }
     case 'relic':
       return { action: 'relic', relicId: c.relicId ?? '' }
+    case 'wakeRelic':
+      return { action: 'wakeRelic', relicId: c.relicId ?? '' }
     case 'recover':
       return { action: 'recover', track: c.recoveryTrack ?? '', presetId: c.presetId ?? '' }
     case 'payoffSpend':
@@ -313,6 +318,10 @@ export async function applyChoiceDoc(state: RunState, characterId: string, choic
   // already picked for them): just clear it.
   if (parsed.action === 'hiddenSight') {
     await applyHiddenSight(state, characterId, choiceRef)
+    return
+  }
+  if (parsed.action === 'wakeRelic') {
+    await wakeRelicAtShrine(state, characterId, parsed.relicId, choiceRef)
     return
   }
   // Only boon draft and hidden-offer answers depend on an open offer.
@@ -641,4 +650,45 @@ export function usePrivateHints(runId: string | null, characterId: string | null
     )
   }, [runId, characterId])
   return loaded && loaded.key === key ? loaded.hints : []
+}
+
+/**
+ * Wake one of a living player's Dormant relics at a Shrine to Thils, paying
+ * from their character's banked Quantum Basalts. `choiceRef`, if given, is the
+ * player's request, deleted in the same transaction on success or marked with
+ * the error on failure.
+ */
+export async function wakeRelicAtShrine(
+  state: RunState,
+  characterId: string,
+  relicId: string,
+  choiceRef?: ReturnType<typeof doc>,
+): Promise<void> {
+  if (!db) throw new Error('Firebase is not set up.')
+  const firestore = db
+  try {
+    if (!shrineHereThils(state)) throw new Error('There\'s no Shrine to Thils in this room.')
+    if (state.run.status !== 'active') throw new Error('The run isn\'t active.')
+    const player = state.players.find((p) => p.characterId === characterId)
+    if (!player || !player.alive) throw new Error('Only a living player can wake a relic.')
+
+    await runTransaction(firestore, async (tx) => {
+      const charRef = doc(firestore, 'characters', characterId)
+      const snapshot = await tx.get(charRef)
+      if (!snapshot.exists()) throw new Error('That character no longer exists.')
+      const data = snapshot.data() as Partial<Character>
+      const { bankedQuantumBasalts, loot } = wakeRelic(
+        { level: data.level ?? 0, bankedQuantumBasalts: data.bankedQuantumBasalts ?? 0, loot: data.loot },
+        relicId,
+      )
+      tx.update(charRef, { bankedQuantumBasalts, loot, updatedAt: serverTimestamp() })
+      if (choiceRef) tx.delete(choiceRef)
+    })
+  } catch (err) {
+    if (choiceRef) {
+      await updateDoc(choiceRef, { error: err instanceof Error ? err.message : String(err) })
+      return
+    }
+    throw err
+  }
 }

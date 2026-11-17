@@ -73,6 +73,10 @@ describe('draft choices as data', () => {
     expect(() => applyChoice(dead, 'a', choice, random)).toThrow('Only a living player can make an offering.')
     expect(() => applyChoice(state, 'missing', choice, random)).toThrow('Only a living player can make an offering.')
   })
+
+  it('wakeRelic is applied separately', () => {
+    expect(() => applyChoice(drafted(), 'a', { action: 'wakeRelic', relicId: 'breakers-wraps' }, random)).toThrow('Waking a relic is applied separately.')
+  })
 })
 
 describe('draft keys', () => {

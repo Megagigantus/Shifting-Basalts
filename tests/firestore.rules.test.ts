@@ -634,6 +634,26 @@ describe('Thils\'s Vault and loot requests', () => {
     )
   })
 
+  it('a player can ask to wake a Dormant relic at a Shrine to Thils for their own character, and not for another', async () => {
+    const choiceRef = (id: string) => doc(as(PLAYER), 'runs', 'live', 'choices', id)
+    await assertSucceeds(
+      setDoc(choiceRef(OWNED), {
+        action: 'wakeRelic',
+        relicId: 'breakers-wraps',
+        draftKey: null,
+        createdAt: now(),
+      }),
+    )
+    await assertFails(
+      setDoc(choiceRef(OTHERS), {
+        action: 'wakeRelic',
+        relicId: 'breakers-wraps',
+        draftKey: null,
+        createdAt: now(),
+      }),
+    )
+  })
+
   it('a player can set and clear their own loot requests, and everyone invited can read them', async () => {
     const ref = doc(as(PLAYER), 'runs', 'live', 'requests', OWNED)
     await assertSucceeds(setDoc(ref, { uids: ['L1', 'L4'], updatedAt: now() }))
