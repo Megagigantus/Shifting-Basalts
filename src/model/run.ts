@@ -16,6 +16,8 @@ export interface DraftOffer {
   offers: Offer[]
   /** The Starting Boon offer before room 1, rather than a room's draft. */
   starting?: boolean
+  /** Cards banished from this offer so far (part of the draft key, so stale choices are refused). */
+  banishes?: number
 }
 
 /** A hidden offer: Thils's gifts (room condition met) and/or the class hidden boon. */
@@ -126,6 +128,8 @@ export interface RunPlayer {
     rerollsPerFloor: number
     /** Attunement: tag the first offer of the run includes, if set. */
     attuneTag?: string | null
+    /** Banish list size (Banish upgrade rank); 0 or missing means no draft banishing. */
+    banishSlots?: number
   }
   /** The open draft offer, until the player chooses. */
   draft?: DraftOffer | null
