@@ -27,6 +27,7 @@ export type ArtKind =
   | 'boon-tags'
   | 'loot'
   | 'loot-kinds'
+  | 'logo'
 
 const files = import.meta.glob<string>('./art/*/*.{webp,png,jpg,jpeg,svg}', {
   eager: true,

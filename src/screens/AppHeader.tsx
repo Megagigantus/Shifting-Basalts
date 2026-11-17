@@ -5,6 +5,7 @@ import { BookOpen, Download, Eye, FlaskConical, ClockArrowLeft, Link2, LogOut, S
 import { db } from '../firebase'
 import { downloadBackup } from '../backup'
 import { cx } from '../ui/tone'
+import { artUrl } from '../art'
 import { DM_TABS, type DmTab } from './dmTabs'
 
 const TAB_ICONS: Record<DmTab, ReactNode> = {
@@ -13,6 +14,8 @@ const TAB_ICONS: Record<DmTab, ReactNode> = {
   history: <ClockArrowLeft size={14} />,
   tables: <BookOpen size={14} />,
 }
+
+const LOGO_ICON = artUrl('logo', 'logo-icon')
 
 const SMALL_BUTTON =
   'inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-semibold cursor-pointer transition-colors'
@@ -40,9 +43,12 @@ export function AppHeader({ email, role, testMode, dm, onSignOut }: Props) {
   return (
     <header className="sticky top-0 z-40 border-b border-stone-800 bg-stone-900/95 backdrop-blur">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2.5">
-        <div className="mr-auto min-w-0">
-          <div className="text-lg font-bold leading-tight text-amber-400">Shifting Basalts</div>
-          <div className="text-[0.6875rem] text-stone-400">Dungeon tracker &amp; generator</div>
+        <div className="mr-auto flex min-w-0 items-center gap-2.5">
+          {LOGO_ICON && <img src={LOGO_ICON} alt="" className="h-10 w-10 shrink-0 rounded-full" />}
+          <div className="min-w-0">
+            <div className="text-lg font-bold leading-tight text-amber-400">Shifting Basalts</div>
+            <div className="text-[0.6875rem] text-stone-400">Dungeon tracker &amp; generator</div>
+          </div>
         </div>
 
         {dm && !dm.playerView && (
