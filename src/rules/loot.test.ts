@@ -20,6 +20,7 @@ import {
   applyDrops,
   searchStriderRemains,
   shrineOffering,
+  shrineUsedHere,
   type LootItem,
 } from './loot'
 import { markDead, newRunState, rewardBonusPercent } from './runFlow'
@@ -218,6 +219,13 @@ describe('strider remains and shrines', () => {
     expect(rerolled).toMatchObject({ kind: target.kind, rarity: target.rarity, source: 'shrine' })
     expect(rerolled.ref).not.toBe(target.ref)
     expect(() => shrineOffering(state, target.uid, trinket.uid, seeded(6))).toThrow()
+    // One offering per shrine room.
+    expect(shrineUsedHere(state)).toBe(false)
+    expect(shrineUsedHere(next)).toBe(true)
+    const again = next.run.loot!.items.at(-1)!
+    expect(() => shrineOffering(next, again.uid, again.uid, seeded(7))).toThrow('already taken an offering')
+    // A different room's shrine is fresh.
+    expect(shrineUsedHere({ ...next, run: { ...next.run, room: next.run.room + 1 } })).toBe(false)
   })
 })
 

@@ -53,6 +53,8 @@ export interface RunLoot {
   log: LootLogEntry[]
   /** Rooms whose strider remains were searched ("floor-room"). */
   searched: string[]
+  /** Shrine to Thils rooms that already took their one offering ("floor-room"). Missing on older runs. */
+  shrinesUsed?: string[]
 }
 
 export const emptyLoot = (): RunLoot => ({ items: [], credits: 0, nextUid: 1, log: [], searched: [] })
@@ -265,8 +267,17 @@ export function rerollableItems(state: RunState): LootItem[] {
   return (state.run.loot?.items ?? []).filter((i) => i.floor === state.run.floor && REROLLABLE.includes(i.source))
 }
 
-/** Shrine to Thils: offer a trinket to reroll one loot roll from this floor into a new item of the same kind. */
+/** This room's Shrine to Thils already took its one offering. */
+export function shrineUsedHere(state: RunState): boolean {
+  return state.run.loot?.shrinesUsed?.includes(`${state.run.floor}-${state.run.room}`) ?? false
+}
+
+/**
+ * Shrine to Thils: offer a trinket to reroll one loot roll from this floor into
+ * a new item of the same kind. Each shrine room takes one offering.
+ */
 export function shrineOffering(state: RunState, trinketUid: string, targetUid: string, random: Random): RunState {
+  if (shrineUsedHere(state)) throw new Error('This shrine has already taken an offering.')
   const loot = state.run.loot
   const trinket = loot?.items.find((i) => i.uid === trinketUid)
   if (!trinket || trinket.kind !== 'trinket') throw new Error('Offer a trinket from the party\'s loot.')
@@ -283,7 +294,9 @@ export function shrineOffering(state: RunState, trinketUid: string, targetUid: s
   const reroll = () => rollItem(kind, target.rarity ?? 'common', random, state.players, target.forCharacterId)
   let item = reroll()
   for (let tries = 0; item.ref === target.ref && tries < 20; tries++) item = reroll()
-  return applyDrops(without, [{ kind: 'item', item }], 'shrine')
+  const next = applyDrops(without, [{ kind: 'item', item }], 'shrine')
+  const key = `${state.run.floor}-${state.run.room}`
+  return { ...next, run: { ...next.run, loot: { ...next.run.loot!, shrinesUsed: [...(next.run.loot!.shrinesUsed ?? []), key] } } }
 }
 
 // ---------------------------------------------------------------------------
