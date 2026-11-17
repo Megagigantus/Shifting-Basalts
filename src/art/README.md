@@ -26,6 +26,7 @@ Any id without a file just shows text, so you can add art a bit at a time.
 | `hidden-boons/` | `hidden-boons.json` ids; falls back to `boon-tags/hidden` | 256px square |
 | `boon-tags/` | one per boon tag in lower case (`echo`, `reaper`…), plus `hidden`; the fallback for boons | 256px square |
 | `loot/` | consumable, gear, wondrous and trophy ids in `loot-items.json` | 256px square |
+| `logo/` | `logo-banner` (sign-in screen) and `logo-icon` (header). The browser tab icons are copies in `public/` (`favicon.png` 64px, `apple-touch-icon.png` 180px) | banner about 1200×400, icon 256px square |
 | `loot-kinds/` | `trinket`, `consumable`, `healing-potion`, `gear-weapon`, `gear-armor`, `gear-shield`, `wondrous`, `trophy`, `credits`, `quantum-basalts`; the fallback for loot | 256px square |
 
 The full list with descriptions is in `docs/art-list.md`.

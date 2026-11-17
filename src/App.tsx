@@ -18,6 +18,9 @@ import { DM_TABS, type DmTab } from './screens/dmTabs'
 import { Backdrop } from './screens/Backdrop'
 import { Modal } from './ui/Modal'
 import { cx } from './ui/tone'
+import { artUrl } from './art'
+
+const LOGO_BANNER = artUrl('logo', 'logo-banner')
 
 const TAB_KEY = 'sb-dm-tab'
 
@@ -63,7 +66,13 @@ function App() {
       <Backdrop inRun={false} />
       <main className="mx-auto max-w-md px-4 py-12 sm:py-20">
         <div className="mb-6 text-center">
-          <h1 className="m-0 text-3xl font-bold text-amber-400">Shifting Basalts</h1>
+          <h1 className="m-0 text-3xl font-bold text-amber-400">
+            {LOGO_BANNER ? (
+              <img src={LOGO_BANNER} alt="The Shifting Basalts" className="block w-full rounded-xl border border-stone-800 shadow-lg shadow-black/50" />
+            ) : (
+              'Shifting Basalts'
+            )}
+          </h1>
           <p className="m-0 mt-1 text-xs text-stone-400">Dungeon tracker · invite-only table access</p>
           {usingEmulators && (
             <p className="m-0 mt-3 text-xs font-semibold text-amber-300">Local test mode: using the emulators on this computer, not real data.</p>
