@@ -21,6 +21,7 @@ import { keptPercent, partyRewardBonusPercent, planShare, type LootItem, type Lo
 import { relicStateFor, vaultPending } from './vault'
 import { reprieveWaitingOn } from './reprieve'
 import { inFight, returnVanished, vanish, vanishTiming } from './lostAndFound'
+import { fortuneDicePerRun } from './fortune'
 import {
   deepPocketsPercent,
   extraLootBonusPercent,
@@ -89,6 +90,7 @@ export function newRunState(id: string, joinCode: string, party: Character[], pr
       hiddenSightFloor: null,
       relicsOwned: (c.loot ?? []).filter((i) => i.kind === 'relic').map((i) => i.ref),
       recoveryPoints: null,
+      fortuneDice: fortuneDicePerRun(c.trackDevotions),
       counters: {},
       healingFontOwner: (c.upgrades['healing-font'] ?? 0) > 0,
       shrineOwner: (c.upgrades['reclamation-shrine'] ?? 0) > 0,
