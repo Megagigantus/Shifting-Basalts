@@ -58,7 +58,7 @@ export function canUse(b: Boon, character: DraftCharacter): boolean {
   const needsSummon = b.tags.includes('Bond') || b.requires?.includes('summon')
   if (needsSpells && character.casterType === 'none') return false
   if (needsSummon && !character.hasSummon) return false
-  if (b.payoffTrack && rankProgress(character.trackDevotions[b.payoffTrack] ?? 0).rank < 1) return false
+  if (b.payoffTrack && rankProgress(character.trackDevotions[b.payoffTrack] ?? 0).rank < (b.payoffMinRank ?? 1)) return false
   return true
 }
 

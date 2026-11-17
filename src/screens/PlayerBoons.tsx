@@ -49,8 +49,8 @@ function fitWarnings(boonId: string, character: Character | undefined): string[]
   const warnings: string[] = []
   if (b.tags.includes('Spell') && character.casterType === 'none') warnings.push('Spell boon, but this character has no spells.')
   if (b.tags.includes('Bond') && !character.hasSummon) warnings.push('Bond boon, but this character has no summon or companion.')
-  if (b.payoffTrack && rankProgress(character.trackDevotions[b.payoffTrack] ?? 0).rank < 1) {
-    warnings.push('Payoff boon, but this character has no rank in its stat track yet.')
+  if (b.payoffTrack && rankProgress(character.trackDevotions[b.payoffTrack] ?? 0).rank < (b.payoffMinRank ?? 1)) {
+    warnings.push(`Payoff boon, but this character needs rank ${b.payoffMinRank ?? 1} in its stat track.`)
   }
   return warnings
 }

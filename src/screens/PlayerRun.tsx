@@ -19,6 +19,7 @@ import { submitChoice, useChoices, useExitVotes, useLootDone, useLootRequests, t
 import { ExitVoteButtons, ExitVoteTally } from './ExitVote'
 import { useExitVote } from './useExitVote'
 import { PlayerLoot } from './LootScreens'
+import { FortuneDiceBadge } from './FortuneDice'
 import { RecoveryPanel } from './RecoveryPanel'
 import { describeReprieve } from '../rules/reprieve'
 import { CounterList } from './CountersPanel'
@@ -166,6 +167,7 @@ export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
               sent={choices[p.characterId]}
               readOnly={readOnly}
               onSpend={(choice) => submitChoice(run.id, p.characterId, choice, null)}
+              onUseFortune={() => submitChoice(run.id, p.characterId, { action: 'fortuneUse' }, null)}
             />
           ))}
         </aside>
@@ -185,10 +187,11 @@ interface CardProps {
   sent: ChoiceDoc | undefined
   readOnly: boolean
   onSpend: Parameters<typeof RecoveryPanel>[0]['onSpend']
+  onUseFortune: () => void
 }
 
 /** One party member: rewards so far, boons (tap to open), counters, and your own slot recovery. */
-function PartyCard({ player: p, portrait, glow, isMine, open, onToggle, sent, readOnly, onSpend }: CardProps) {
+function PartyCard({ player: p, portrait, glow, isMine, open, onToggle, sent, readOnly, onSpend, onUseFortune }: CardProps) {
   const url = portrait ? artUrl('portraits', portrait) : null
   const summary = boonSummary(p.slots, p.hiddenBoonId)
   return (
@@ -220,7 +223,7 @@ function PartyCard({ player: p, portrait, glow, isMine, open, onToggle, sent, re
         )}
       </header>
       {p.vanished && <p className="m-0 text-[0.6875rem] text-amber-200">{vanishNote(p.vanished)}</p>}
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex flex-wrap items-center gap-1.5">
         <Pill tone="purple" mono title="Boss Quantum Basalts, before bonuses. Lost on death.">
           {p.alive ? `Run QB ${p.quantumBasaltsEarned}` : `Run QB ${p.quantumBasaltsEarned} (forfeit)`}
         </Pill>
@@ -230,6 +233,11 @@ function PartyCard({ player: p, portrait, glow, isMine, open, onToggle, sent, re
         <Pill tone="indigo" mono title="Devotions earned this run">
           {p.devotions} Devotions
         </Pill>
+        <FortuneDiceBadge
+          player={p}
+          busy={readOnly || Boolean(sent && !sent.error)}
+          onUse={isMine && !readOnly ? onUseFortune : undefined}
+        />
       </div>
       {summary && !open && <p className="m-0 text-[0.6875rem] text-stone-300">{summary}</p>}
       <CounterList player={p} />

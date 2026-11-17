@@ -52,7 +52,7 @@ export function StatTracks({ character, canCorrect = true, canSpend = true }: Pr
         <Pill>
           Tier cap: rank {cap} at level {character.level}
         </Pill>
-        {cap < MAX_RANK && <span className="text-[0.6875rem] text-stone-500">Rises at the next tier of play.</span>}
+        {cap < MAX_RANK && <span className="text-[0.6875rem] text-white">Rises at the next tier of play.</span>}
         {busy && <span className="text-[0.6875rem] text-stone-400">Saving…</span>}
       </div>
 
@@ -120,7 +120,7 @@ export function StatTracks({ character, canCorrect = true, canSpend = true }: Pr
           )
         })}
       </div>
-      <p className="m-0 text-[0.6875rem] text-stone-500">
+      <p className="m-0 text-[0.6875rem] text-white">
         {RANK_COSTS.map((b) => `Ranks ${b.fromRank} to ${b.toRank} cost ${b.devotions} each`).join(', ')}. Maxing a track takes {devotionsForRank(MAX_RANK)} Devotions.
         {canCorrect && ' −1 is for correcting mistakes and refunds the Devotion to the bank.'}
         {!canCorrect && ' Spent Devotions are permanent; ask your DM if you make a mistake.'}

@@ -38,6 +38,7 @@ const ACTION_LABELS: Record<ChoiceDoc['action'], string> = {
   recover: 'your recovery spend',
   payoffSpend: 'your payoff spend',
   payoffRefund: 'your payoff refund',
+  fortuneUse: 'your Fortune Die',
   reprieveRest: 'your Reprieve choice (Rest)',
   reprieveReflect: 'your Reprieve choice (Reflect)',
   reprieveBasalts: 'your Reprieve choice (catch-up Basalts)',

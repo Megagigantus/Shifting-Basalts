@@ -120,7 +120,7 @@ Each player starts with 3 boon slots and can buy up to 5 with Quantum Basalts. E
 - **No slots:** tracks never use boon slots, never evolve and never combine.
 - **Safe stats only:** tracks grow numbers 5e lets scale freely. Ability scores, skills, attack bonus, AC and save DCs are off limits to protect bounded accuracy.
 - **Tier caps** *(proposed)***:** maximum ranks rise with the 2024 tiers of play, so higher-level runs have new ceilings to reach.
-- **Payoff boons:** a tag in the regular boon pool. A payoff boon reads from a stat track, such as A Healthy Dose of Pain reading from Max HP, so drafting one shows players why their tracks matter. Payoff boons don't evolve or combine, because they already grow with their track. A payoff only appears in your offers once you have at least 1 rank in its track.
+- **Payoff boons:** a tag in the regular boon pool. A payoff boon reads from a stat track, such as A Healthy Dose of Pain reading from Max HP, so drafting one shows players why their tracks matter. Payoff boons don't evolve or combine, because they already grow with their track. A payoff only appears in your offers once you have at least 1 rank in its track. Exception: Gleam Dealer's Gamble needs rank 5 in Fortune Dice, the first rank that grants a die.
 
 ### Hidden boon conditions (examples)
 

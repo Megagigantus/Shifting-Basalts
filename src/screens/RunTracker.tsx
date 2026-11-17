@@ -19,6 +19,8 @@ import {
 import { canTriggerClass, classTriggerMet, rerollsLeft } from '../rules/draftFlow'
 import { finishRoom } from '../rules/progress'
 import { DmLootPanel, ExtractPanel, VaultPanel } from './LootScreens'
+import { FortuneDiceBadge } from './FortuneDice'
+import { setFortuneDice, spendFortuneDie } from '../rules/fortune'
 import { RecoveryEditor, RecoveryPanel } from './RecoveryPanel'
 import { RECOVERY_TRACKS, refreshRecovery, trackRank } from '../rules/recovery'
 import { describeReprieve } from '../rules/reprieve'
@@ -431,7 +433,7 @@ function PlayerCard({ player: p, character, sent, open, floor, canTrigger, busy,
         </div>
       </header>
 
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex flex-wrap items-center gap-1.5">
         <Pill tone="purple" mono title="Boss Quantum Basalts, before Pressure bonuses. Lost on death.">
           {p.alive ? `Run QB ${p.quantumBasaltsEarned}` : `Run QB ${p.quantumBasaltsEarned} (forfeit)`}
         </Pill>
@@ -441,6 +443,12 @@ function PlayerCard({ player: p, character, sent, open, floor, canTrigger, busy,
         <Pill tone="indigo" mono title="Devotions earned this run">
           {p.devotions} Devotions
         </Pill>
+        <FortuneDiceBadge
+          player={p}
+          busy={busy}
+          onUse={() => act((s) => spendFortuneDie(s, p.characterId))}
+          onSet={(n) => act((s) => setFortuneDice(s, p.characterId, n))}
+        />
       </div>
 
       {summary && <p className="m-0 text-[0.6875rem] text-stone-300">{summary}</p>}

@@ -100,7 +100,7 @@ export function UpgradeShop({ character, canCorrect = true, canSpend = true }: P
           )
         })}
       </div>
-      <p className="m-0 text-[0.6875rem] text-stone-500">
+      <p className="m-0 text-[0.6875rem] text-white">
         Upgrades bought during a run take effect from the next run.
         {canCorrect ? ' Refund undoes the last rank bought, to correct mistakes.' : ' Purchases are permanent; ask your DM if you make a mistake.'}
       </p>

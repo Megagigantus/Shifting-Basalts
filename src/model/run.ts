@@ -146,6 +146,8 @@ export interface RunPlayer {
   hiddenSightFloor?: number | null
   /** Recovery points left per recovery track id (rules/recovery.ts); refreshed at each clear that pays a Devotion. */
   recoveryPoints?: Record<string, number> | null
+  /** Fortune Dice left this run (rules/fortune.ts); set at run start from the Fortune Dice track. */
+  fortuneDice?: number
   /** Boon counters the DM keeps, e.g. "Banked echoes" -> 2. */
   counters?: Record<string, number>
   /** Owns the Healing Font upgrade (each owner beyond the first adds temp HP). */

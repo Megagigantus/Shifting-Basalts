@@ -7,6 +7,7 @@ import { spendForge, type ForgeAction } from './forge'
 import { chooseRelic, passVault } from './vault'
 import { recover, refundPayoff, spendPayoff } from './recovery'
 import { chooseReprieve } from './reprieve'
+import { spendFortuneDie } from './fortune'
 
 export type DraftChoice =
   | { action: 'take'; index: number; replaceSlot?: number | null }
@@ -27,6 +28,8 @@ export type DraftChoice =
   | { action: 'payoffSpend'; boonId: string }
   /** Level 3 recovery payoff refund (+1 point to its track). */
   | { action: 'payoffRefund'; boonId: string }
+  /** Use (or lose) one Fortune Die: a reroll or a failed Gleam Dealer's Gamble stake. */
+  | { action: 'fortuneUse' }
   /** Reprieve: Rest (recorded; applied at the table). */
   | { action: 'reprieveRest' }
   /** Reprieve: Reflect, leveling up the boon in this slot. */
@@ -72,6 +75,8 @@ export function applyChoice(state: RunState, characterId: string, choice: DraftC
       return spendPayoff(state, characterId, choice.boonId)
     case 'payoffRefund':
       return refundPayoff(state, characterId, choice.boonId)
+    case 'fortuneUse':
+      return spendFortuneDie(state, characterId)
     case 'reprieveRest':
       return chooseReprieve(state, characterId, { kind: 'rest' })
     case 'reprieveReflect':

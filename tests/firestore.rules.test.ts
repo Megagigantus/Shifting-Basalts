@@ -568,6 +568,7 @@ describe('Thils\'s Vault and loot requests', () => {
     )
     await assertSucceeds(setDoc(ref, { action: 'payoffSpend', boonId: 'leyline-surge', draftKey: null, createdAt: now() }))
     await assertSucceeds(setDoc(ref, { action: 'payoffRefund', boonId: 'leyline-surge', draftKey: null, createdAt: now() }))
+    await assertSucceeds(setDoc(ref, { action: 'fortuneUse', draftKey: null, createdAt: now() }))
     await assertFails(
       setDoc(doc(as(PLAYER), 'runs', 'live', 'choices', OTHERS), {
         action: 'payoffSpend',
