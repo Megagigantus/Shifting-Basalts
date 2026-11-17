@@ -13,8 +13,9 @@ import { canExtract, isBossRoom, lootKeptIfExtracting } from '../rules/runFlow'
 import { BoonList } from './BoonList'
 import { PlayerDraft, PlayerForge } from './PlayerDraft'
 import { PlayerRoom } from './PlayerRoom'
+import { LootCallPopup } from './LootCallPopup'
 import { RoomClearedPopup } from './RoomClearedPopup'
-import { submitChoice, useChoices, useExitVotes, useLootRequests, type ChoiceDoc } from '../runStore'
+import { submitChoice, useChoices, useExitVotes, useLootDone, useLootRequests, type ChoiceDoc } from '../runStore'
 import { ExitVoteButtons, ExitVoteTally } from './ExitVote'
 import { useExitVote } from './useExitVote'
 import { PlayerLoot } from './LootScreens'
@@ -40,6 +41,7 @@ export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
   const { run, players } = state
   const choices = useChoices(run.id)
   const requests = useLootRequests(run.id)
+  const lootDone = useLootDone(run.id)
   const votes = useExitVotes(run.id)
   const looks = useLooks()
   const [open, setOpen] = useState<string | null>(myCharacterIds[0] ?? null)
@@ -69,6 +71,16 @@ export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
           player={p}
           sent={choices[p.characterId]}
           requests={requests}
+          who={aliveMine.length > 1 ? p.name : undefined}
+        />
+      ))}
+      {!readOnly && aliveMine.map((p) => (
+        <LootCallPopup
+          key={p.characterId}
+          state={state}
+          player={p}
+          requests={requests}
+          done={lootDone}
           who={aliveMine.length > 1 ? p.name : undefined}
         />
       ))}
@@ -137,7 +149,7 @@ export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
             readOnly={readOnly}
           />
 
-          <PlayerLoot state={state} myCharacterIds={myCharacterIds} requests={requests} readOnly={readOnly} />
+          <PlayerLoot state={state} myCharacterIds={myCharacterIds} requests={requests} done={lootDone} readOnly={readOnly} />
         </div>
 
         {/* On phones this comes right after the banner, so your own card is near the top. */}

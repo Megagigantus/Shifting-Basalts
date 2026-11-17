@@ -423,6 +423,14 @@ export async function markLootDone(runId: string, characterId: string, uids: str
   await setLootRequests(runId, characterId, uids, true)
 }
 
+/** DM's app: clear everyone's Done flag when a new loot call opens (requests stay). */
+export async function clearLootDone(runId: string, characterIds: string[]) {
+  if (!db || characterIds.length === 0) return
+  const batch = writeBatch(db)
+  for (const id of characterIds) batch.set(doc(db, 'runs', runId, 'requests', id), { done: false }, { merge: true })
+  await batch.commit()
+}
+
 /** A player's descend-or-extract vote for the floor whose boss was just beaten. */
 export async function setExitVote(runId: string, characterId: string, vote: ExitVote, floor: number) {
   if (!db) throw new Error('Firebase is not set up.')
