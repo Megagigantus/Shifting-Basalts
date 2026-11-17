@@ -15,7 +15,9 @@ import { artUrl } from '../art'
 import { BasaltEchoes } from './BasaltEchoes'
 import { BuildPanel } from './BuildPanel'
 import { DraftPreferences } from './DraftPreferences'
-import { Avatar, LookPicker } from './LookPicker'
+import { LookPicker } from './LookPicker'
+import { Portrait } from '../ui/Portrait'
+import { portraitHonors } from '../rules/portraitHonors'
 import { CharacterLoot } from './LootScreens'
 import { StatTracks } from './StatTracks'
 import { UpgradeShop } from './UpgradeShop'
@@ -70,6 +72,7 @@ export function CharacterHub({ character: c, mode, actions }: Props) {
   const portraitUrl = c.portrait ? artUrl('portraits', c.portrait) : null
   const effects = trackEffects(c)
   const owned = upgradesOwned(c)
+  const honors = portraitHonors(c)
   const { overall } = mode === 'dm' ? echoCounts(c) : visibleEchoCounts(c)
   const canEdit = mode !== 'preview'
   const canCorrect = mode === 'dm'
@@ -93,10 +96,10 @@ export function CharacterHub({ character: c, mode, actions }: Props) {
               aria-label={`Enlarge ${c.name}'s portrait`}
               className="cursor-pointer rounded-full border-0 bg-transparent p-0"
             >
-              <Avatar portrait={c.portrait} name={c.name} size="h-20 w-20" glow={hasFullClear(c)} />
+              <Portrait portrait={c.portrait} name={c.name} size="h-20 w-20" badgeSize={13} honors={honors} />
             </button>
           ) : (
-            <Avatar portrait={c.portrait} name={c.name} size="h-20 w-20" glow={hasFullClear(c)} />
+            <Portrait portrait={c.portrait} name={c.name} size="h-20 w-20" badgeSize={13} honors={honors} />
           )}
           <div className="flex min-w-0 flex-1 flex-col gap-1.5">
             <div className="flex flex-wrap items-center gap-2">

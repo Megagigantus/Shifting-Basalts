@@ -1,12 +1,12 @@
 // DM screen: pick who's entering and which Pressures, then start a run.
-import { hasFullClear } from '../rules/upgrades'
+import { portraitHonors } from '../rules/portraitHonors'
+import { Portrait } from '../ui/Portrait'
 import { useState } from 'react'
 import { DoorOpen, Lock, Swords } from 'lucide-react'
-import { artUrl } from '../art'
 import { Panel, SectionLabel } from '../ui/Panel'
 import { StatStrip } from '../ui/StatStrip'
 import { PRIMARY_BUTTON, WELL } from '../ui/styles'
-import { cx, initials } from '../ui/tone'
+import { cx } from '../ui/tone'
 import { buildOf, type Character } from '../model/character'
 import { buildSummary } from '../rules/build'
 import { BuildSummary } from './BuildPanel'
@@ -99,7 +99,6 @@ export function StartRun({ characters }: Props) {
         {characters.map((c) => {
           const locked = c.lockoutDays > 0
           const chosen = picked.includes(c.id)
-          const portrait = c.portrait ? artUrl('portraits', c.portrait) : null
           return (
             <button
               key={c.id}
@@ -116,13 +115,7 @@ export function StartRun({ characters }: Props) {
                     : 'border-stone-800 bg-stone-950/60 opacity-70 hover:opacity-100',
               )}
             >
-              {portrait ? (
-                <img src={portrait} alt="" className={cx('h-10 w-10 shrink-0 rounded-full border border-stone-700 object-cover', hasFullClear(c) && 'full-clear-glow')} />
-              ) : (
-                <span className={cx(hasFullClear(c) && 'full-clear-glow', 'flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-stone-700 bg-stone-800 font-mono text-xs font-bold text-stone-400')}>
-                  {initials(c.name)}
-                </span>
-              )}
+              <Portrait portrait={c.portrait} name={c.name} honors={portraitHonors(c)} />
               <span className="min-w-0 flex-1">
                 <span className="flex items-center justify-between gap-2">
                   <span className="truncate text-sm font-bold text-stone-100">{c.name}</span>
