@@ -2,7 +2,8 @@
 // party is and everyone's boons; never anything from the DM-only data.
 // Wide screens: main column (draft, room, loot) plus a party sidebar. Phones:
 // one column, with the party cards (yours first) right after the banner.
-import { hasFullClear } from '../rules/upgrades'
+import { portraitHonors, type PortraitHonors } from '../rules/portraitHonors'
+import { Portrait } from '../ui/Portrait'
 import { useState } from 'react'
 import { Compass, Skull } from 'lucide-react'
 import { vanishNote } from '../rules/lostAndFound'
@@ -27,10 +28,9 @@ import { PostBossScene } from './Scene'
 import { ShrinePanel } from './ShrinePanel'
 import { ThilsShrinePanel } from './ThilsShrinePanel'
 import { useLooks } from './mapPieces'
-import { artUrl } from '../art'
 import { Panel } from '../ui/Panel'
 import { Pill } from '../ui/Pill'
-import { cx, initials } from '../ui/tone'
+import { cx } from '../ui/tone'
 
 interface Props {
   state: RunState
@@ -173,7 +173,7 @@ export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
               key={p.characterId}
               player={p}
               portrait={looks[p.characterId]?.portrait}
-              glow={hasFullClear(looks[p.characterId] ?? {})}
+              honors={portraitHonors(looks[p.characterId])}
               isMine={myCharacterIds.includes(p.characterId)}
               open={open === p.characterId}
               onToggle={() => setOpen(open === p.characterId ? null : p.characterId)}
@@ -192,8 +192,8 @@ export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
 interface CardProps {
   player: RunPlayer
   portrait: string | undefined
-  /** Survived a full clear: a golden glow around the portrait. */
-  glow: boolean
+  /** Full-clear glow, diamonds and full-collection badge for the portrait. */
+  honors: PortraitHonors
   isMine: boolean
   open: boolean
   onToggle: () => void
@@ -204,8 +204,7 @@ interface CardProps {
 }
 
 /** One party member: rewards so far, boons (tap to open), counters, and your own slot recovery. */
-function PartyCard({ player: p, portrait, glow, isMine, open, onToggle, sent, readOnly, onSpend, onUseFortune }: CardProps) {
-  const url = portrait ? artUrl('portraits', portrait) : null
+function PartyCard({ player: p, portrait, honors, isMine, open, onToggle, sent, readOnly, onSpend, onUseFortune }: CardProps) {
   const summary = boonSummary(p.slots, p.hiddenBoonId)
   return (
     <section
@@ -215,13 +214,7 @@ function PartyCard({ player: p, portrait, glow, isMine, open, onToggle, sent, re
       )}
     >
       <header className="flex items-center gap-3">
-        {url ? (
-          <img src={url} alt="" className={cx('h-11 w-11 shrink-0 rounded-full border border-stone-700 object-cover', glow && 'full-clear-glow')} />
-        ) : (
-          <span className={cx(glow && 'full-clear-glow', 'flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-stone-700 bg-stone-800 font-mono text-xs font-bold text-stone-400')}>
-            {initials(p.name)}
-          </span>
-        )}
+        <Portrait portrait={portrait} name={p.name} size="h-11 w-11" honors={honors} />
         <h3 className="m-0 min-w-0 flex-1 truncate text-sm font-bold">{p.name}</h3>
         {isMine && <Pill tone="sky">You</Pill>}
         {!p.alive && (

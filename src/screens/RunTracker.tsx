@@ -1,7 +1,8 @@
 // DM screen: the run in progress. Every button runs one step from
 // rules/runFlow.ts or rules/draftFlow.ts, then saves the new state. While
 // open, it also applies players' draft choices sent from their devices.
-import { hasFullClear } from '../rules/upgrades'
+import { portraitHonors } from '../rules/portraitHonors'
+import { Portrait } from '../ui/Portrait'
 import { useEffect, useRef, useState } from 'react'
 import { Compass, Hourglass, Skull, Sparkles } from 'lucide-react'
 import { lostAndFoundLeft, returnFromMaze, vanishNote, vanishTiming } from '../rules/lostAndFound'
@@ -35,13 +36,12 @@ import { PlayerBoons } from './PlayerBoons'
 import { DraftOffers } from './DraftOffers'
 import { DmRoom } from './DmRoom'
 import { startFloor } from '../rules/roomFlow'
-import { artUrl } from '../art'
 import { proficiencyBonus } from '../rules/proficiency'
 import { ConfirmButton } from '../ui/ConfirmButton'
 import { Panel } from '../ui/Panel'
 import { Pill } from '../ui/Pill'
 import { QUIET_BUTTON } from '../ui/styles'
-import { cx, initials, toneClasses } from '../ui/tone'
+import { cx, toneClasses } from '../ui/tone'
 
 const ROOM_LABELS = { combat: 'Combat', elite: 'Elite', reprieve: 'Reprieve', boss: 'Boss' }
 
@@ -385,8 +385,6 @@ interface CardProps {
 
 /** A player's card in the sidebar: rewards so far, boons, counters, slot recovery and the DM's buttons. */
 function PlayerCard({ player: p, character, sent, open, floor, canTrigger, busy, act, onToggle }: CardProps) {
-  const portrait = character?.portrait ? artUrl('portraits', character.portrait) : null
-  const glow = character ? hasFullClear(character) : false
   const vanishing = p.alive && !p.vanished ? vanishTiming(p) : null
   const classBoonId = p.draftProfile ? classHiddenBoon(p.draftProfile.classId) : null
   const classBoon = classBoonId ? hiddenBoon(classBoonId) : null
@@ -403,13 +401,7 @@ function PlayerCard({ player: p, character, sent, open, floor, canTrigger, busy,
       )}
     >
       <header className="flex items-start gap-3">
-        {portrait ? (
-          <img src={portrait} alt="" className={cx('h-11 w-11 shrink-0 rounded-full border border-stone-700 object-cover', glow && 'full-clear-glow')} />
-        ) : (
-          <span className={cx(glow && 'full-clear-glow', 'flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-stone-700 bg-stone-800 font-mono text-xs font-bold text-stone-400')}>
-            {initials(p.name)}
-          </span>
-        )}
+        <Portrait portrait={character?.portrait} name={p.name} size="h-11 w-11" honors={portraitHonors(character)} />
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-2">
             <h3 className="m-0 truncate text-sm font-bold">{p.name}</h3>

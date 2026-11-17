@@ -1,5 +1,5 @@
 // Turning map data into board pieces for the DM and player screens.
-import { hasFullClear } from '../rules/upgrades'
+import { honorClasses, portraitHonors } from '../rules/portraitHonors'
 import type { RunPlayer } from '../model/run'
 import type { Character } from '../model/character'
 import { useMemo } from 'react'
@@ -98,14 +98,22 @@ export function roomPieces(
   })
 }
 
-/** The bits of a character the map needs: their portrait and summon. */
-export type CharacterLook = Pick<Character, 'portrait' | 'summonArt' | 'hasSummon' | 'fullClears'>
+/** The bits of a character the map and party cards need: portrait, summon and honors. */
+export type CharacterLook = Pick<Character, 'portrait' | 'summonArt' | 'hasSummon' | 'fullClears' | 'classId' | 'secondClassId' | 'echoes'>
 
 /** Live portraits and summons by character id (every invited user can read characters). */
 export function useLooks(): Record<string, CharacterLook | undefined> {
   const { characters } = useCharacters()
   return useMemo(
-    () => Object.fromEntries((characters ?? []).map((c) => [c.id, { portrait: c.portrait, summonArt: c.summonArt, hasSummon: c.hasSummon, fullClears: c.fullClears }])),
+    () => Object.fromEntries((characters ?? []).map((c) => [c.id, {
+          portrait: c.portrait,
+          summonArt: c.summonArt,
+          hasSummon: c.hasSummon,
+          fullClears: c.fullClears,
+          classId: c.classId,
+          secondClassId: c.secondClassId,
+          echoes: c.echoes,
+        }])),
     [characters],
   )
 }
@@ -142,7 +150,7 @@ export function playerPieces(
       label: pl.alive ? pl.name : `${pl.name} (fallen)`,
       fallback: initials(pl.name),
       state: pl.alive ? null : 'down',
-      glow: hasFullClear(look ?? {}),
+      honorClass: honorClasses(portraitHonors(look)),
       mine: isMine(pl.characterId),
       movable: pl.alive && canMove(pl.characterId),
     }
