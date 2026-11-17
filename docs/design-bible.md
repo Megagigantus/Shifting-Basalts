@@ -1041,14 +1041,16 @@ Quantum Basalts are a rare resource awarded to each player on extraction. They a
 | Extra Pressures | 2 | 20, 40 | Rank 1 unlocks Restless Stone and Heavy Crown; rank 2 unlocks the harsher version of every Pressure. Each owner in the party adds 5% to rewards. | Brian |
 | Reprieve | 4 | 20, 35, 55, 80 | A 20%, 35%, 50%, then 65% chance of a Reprieve room mid-floor. Every owner rolls separately. | Brian |
 | Attunement | 1 | 15 | Your Starting Boon and your first offer of each run include a tag you choose. | Proposed |
-| Banish | 3 | 10, 20, 30 | Keep a standing list of 1, 2, then 3 boons that never appear in your offers. Edit it between runs. | Proposed |
+| Banish | 3 | 10, 20, 30 | Keep a standing list of 1, 2, then 3 boons that never appear in your offers. Banish a boon straight from a draft offer; between runs, swap the list among boons you've banished before. | Proposed |
 | Hidden Sight | 1 | 20 | One hint per floor about a room's secret condition. | Proposed |
 | Deep Pockets | 3 | 25, 50, 80 | +5% loot kept on extraction per rank, up to 100%. Party-wide: the highest rank in the party applies. | Proposed |
 | Quick Return | 3 | 10, 20, 30 | Shorten your death lockout by 1 day per rank, to a minimum of 1 day. | Proposed |
 
 ### Full clear rewards *(proposed)*
 
-These only appear in the Basalt Markets once a character has survived a full clear: beaten the floor 5 legendary boss and extracted alive. A character with a full clear wears a light golden glow around their portrait and battle map token.
+These only appear in the Basalt Markets once a character has survived a full clear: beaten the floor 5 legendary boss and extracted alive. A character with a full clear wears a golden glow around their portrait and battle map token. The glow grows stronger with each full clear up to 5. From the 6th to the 10th full clear, each one adds a diamond to the top of the portrait (up to 5 diamonds). Battle map tokens show the glow but not the diamonds.
+
+**Full collection *(proposed)*:** a character who has held every entry in Basalt Echoes (every boon, Evolution, Combination and every hidden boon they can receive) wears a green glow on top of any golden glow, with an open book at the bottom center of the portrait ring. Battle map tokens show the green glow but not the book. The Echoes log keeps hidden boons out of sight until the first one is received, and its hidden and overall totals count only hidden boons already found, so the full count is never spoiled.
 
 | Upgrade | Ranks | Cost per rank | Effect | Origin |
 | --- | --- | --- | --- | --- |
@@ -1582,7 +1584,8 @@ Every draft is built in three steps.
 ### Banish
 
 - **Permanent list:** each owner keeps a standing list of up to 1, 2 or 3 boons (by rank) that never appear in their offers, run after run.
-- **Editable between runs only:** players can swap boons on or off their list at run setup, never mid-run.
+- **Banish from the draft:** a boon gets on the list only by banishing it from a draft offer. Any new boon card can be banished (not a held boon's level-up card, an Evolution or a Combination). The banished card is replaced by a fresh roll for the same offer slot, with the list applied. If the list is full, the player picks a listed boon to drop, which can appear again right away.
+- **Banish history:** every boon a character has ever banished from a draft is remembered. Between runs, players can swap their list among boons in that history, never mid-run, and never to a boon they haven't banished from a draft.
 - **Everywhere a boon is rolled:** the list applies to weighted rolls, the wildcard's random pick and the Starting Boon roll.
 
 ### Reward math

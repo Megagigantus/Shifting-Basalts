@@ -83,7 +83,7 @@ describe('draft keys', () => {
   it('change when the offer changes, so stale choices can be spotted', () => {
     const state = drafted()
     const before = draftKey(state.players[0])
-    expect(before).toBe('1-1-1-0')
+    expect(before).toBe('1-1-1-0-0')
     const rerolled = applyChoice(state, 'a', { action: 'reroll' }, random)
     expect(draftKey(rerolled.players[0])).not.toBe(before)
     expect(draftKey(applyChoice(state, 'a', { action: 'pass' }, random).players[0])).toBeNull()

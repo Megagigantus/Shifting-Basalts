@@ -119,6 +119,7 @@ export function draftProfileFor(c: Character): NonNullable<RunPlayer['draftProfi
     banished: [...(c.banished ?? [])],
     favoredTags: [...(c.favoredTags ?? [])],
     rerollsPerFloor: c.upgrades.reroll ?? 0,
+    banishSlots: c.upgrades.banish ?? 0,
     attuneTag: (c.upgrades.attunement ?? 0) > 0 ? (c.attuneTag ?? null) : null,
   }
 }
@@ -363,6 +364,10 @@ export function runResults(state: RunState): RunResult[] {
       lockoutDays: p.lockoutDays,
       fullClear: keepsEarned && isFullClear(state),
       echoes: mergeEchoes(p.echoes, echoesOf(p.slots, p.hiddenBoonId)),
+      // Draft banishes change the standing Banish list, alive or not.
+      ...(p.banishedThisRun?.length
+        ? { banished: [...(p.draftProfile?.banished ?? [])], banishedThisRun: [...p.banishedThisRun] }
+        : {}),
     }
   })
 }

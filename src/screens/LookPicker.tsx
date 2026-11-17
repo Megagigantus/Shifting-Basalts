@@ -5,8 +5,10 @@ import { useState } from 'react'
 import type { Character } from '../model/character'
 import { setCharacterLook } from '../characterStore'
 import { artIds, artUrl } from '../art'
+import type { PortraitHonors } from '../rules/portraitHonors'
+import { Portrait } from '../ui/Portrait'
 import { FIELD, SMALL_BUTTON } from '../ui/styles'
-import { cx, initials } from '../ui/tone'
+import { cx } from '../ui/tone'
 
 const SUMMON_NAMES: Record<string, string> = {
   beast: 'Beast',
@@ -19,16 +21,9 @@ const SUMMON_NAMES: Record<string, string> = {
   other: 'Other',
 }
 
-/** A round portrait of a set size, or the character's initials. */
-export function Avatar({ portrait, name, size = 'h-10 w-10', glow }: { portrait?: string; name: string; size?: string; glow?: boolean }) {
-  const url = portrait ? artUrl('portraits', portrait) : null
-  return url ? (
-    <img src={url} alt="" className={cx(size, 'shrink-0 rounded-full border border-stone-700 object-cover', glow && 'full-clear-glow')} />
-  ) : (
-    <span className={cx(size, glow && 'full-clear-glow', 'flex shrink-0 items-center justify-center rounded-full border border-stone-700 bg-stone-800 font-mono text-xs font-bold text-stone-400')}>
-      {initials(name)}
-    </span>
-  )
+/** A round portrait of a set size, or the character's initials, with any honors (glow, diamonds, book). */
+export function Avatar({ portrait, name, size = 'h-10 w-10', honors }: { portrait?: string; name: string; size?: string; honors?: PortraitHonors }) {
+  return <Portrait portrait={portrait} name={name} size={size} honors={honors} />
 }
 
 export function LookPicker({ character, canEdit = true }: { character: Character; canEdit?: boolean }) {

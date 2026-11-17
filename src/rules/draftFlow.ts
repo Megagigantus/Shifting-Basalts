@@ -3,7 +3,7 @@
 // every function returns a new state or throws if the move isn't allowed.
 import type { RoomKind, RunPlayer, RunState } from '../model/run'
 import { combine, evolve, replaceBoon, takeBoon, type Slot } from './boons'
-import { classHiddenBoon, generateOffer, giftOffer, startingOffer, type DraftCharacter, type Random } from './draft'
+import { classHiddenBoon, generateOffer, giftOffer, replacementOffer, startingOffer, type DraftCharacter, type Random } from './draft'
 import { pass, setHiddenBoon } from './runFlow'
 import { inFight } from './lostAndFound'
 
@@ -130,6 +130,69 @@ export function rerollDraft(state: RunState, characterId: string, random: Random
           : buildOffer(state, rerolled, draft.elite, random),
       },
       rerolls: { floor, used: used + 1 },
+    }
+  })
+}
+
+/**
+ * Banish offer `index` from the current draft: add it to the player's Banish
+ * list (dropping `dropBoonId` when the list is full) and replace that card
+ * with a fresh roll, without spending a reroll.
+ */
+export function banishOffer(
+  state: RunState,
+  characterId: string,
+  index: number,
+  dropBoonId: string | undefined,
+  random: Random,
+): RunState {
+  return updateOne(state, characterId, (p) => {
+    const draft = requireDraft(p)
+    const profile = p.draftProfile
+    const banishSlots = profile?.banishSlots ?? 0
+    if (!profile || banishSlots <= 0) throw new Error('You don\'t own Banish.')
+
+    const offer = draft.offers[index]
+    if (!offer) throw new Error('That offer doesn\'t exist.')
+    if (offer.kind !== 'boon') throw new Error('Only a boon card can be banished.')
+    if (offer.source === 'held') throw new Error('A held boon\'s level-up card can\'t be banished.')
+
+    const banished = profile.banished ?? []
+    if (banished.length >= banishSlots) {
+      if (!dropBoonId) throw new Error('Banish list is full; pick a boon to drop.')
+      if (!banished.includes(dropBoonId)) throw new Error('That boon isn\'t on the Banish list.')
+    } else if (dropBoonId !== undefined) {
+      throw new Error('Banish list isn\'t full; no boon to drop.')
+    }
+
+    const nextBanished = [
+      ...(dropBoonId !== undefined ? banished.filter((id) => id !== dropBoonId) : banished),
+      offer.boonId,
+    ]
+    const nextProfile = { ...profile, banished: nextBanished }
+    const prevThisRun = p.banishedThisRun ?? []
+    const nextThisRun = prevThisRun.includes(offer.boonId) ? prevThisRun : [...prevThisRun, offer.boonId]
+
+    const replacement = replacementOffer({
+      character: nextProfile,
+      slots: p.slots ?? [],
+      offers: draft.offers,
+      index,
+      random,
+    })
+    const nextOffers = replacement
+      ? draft.offers.map((o, i) => (i === index ? replacement : o))
+      : draft.offers.filter((_, i) => i !== index)
+
+    return {
+      ...p,
+      draftProfile: nextProfile,
+      banishedThisRun: nextThisRun,
+      draft: {
+        ...draft,
+        offers: nextOffers,
+        banishes: (draft.banishes ?? 0) + 1,
+      },
     }
   })
 }

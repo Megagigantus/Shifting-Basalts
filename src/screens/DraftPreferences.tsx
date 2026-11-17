@@ -25,6 +25,13 @@ export function DraftPreferences({ character, canEdit = true }: Props) {
   const inRun = Boolean(character.activeRunId)
   const editable = canEdit && !inRun && !busy
   const banished = character.banished ?? []
+  const historySet = new Set([...(character.banishHistory ?? []), ...banished])
+  const availableBoons = BOONS.filter((b) => historySet.has(b.id) && !banished.includes(b.id))
+  const availableGroups = TAGS.map((tag) => ({
+    tag,
+    boons: availableBoons.filter((b) => b.tags[0] === tag),
+  })).filter((g) => g.boons.length > 0)
+  const selectedAdding = availableBoons.some((b) => b.id === adding) ? adding : ''
 
   if (banishRank === 0 && !hasAttunement) return null
 
@@ -50,7 +57,7 @@ export function DraftPreferences({ character, canEdit = true }: Props) {
       {banishRank > 0 && (
         <div className="flex flex-col gap-1.5">
           <span className="text-[0.6875rem] text-stone-400">
-            Banish list ({banished.length} of {banishRank}): these boons never appear in your offers.
+            Banish list ({banished.length} of {banishRank}): these boons never appear in your offers. Banish new boons from a draft offer; between runs, swap among boons you've banished before.
           </span>
           {banished.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
@@ -72,33 +79,37 @@ export function DraftPreferences({ character, canEdit = true }: Props) {
             </div>
           )}
           {editable && banished.length < banishRank && (
-            <div className="flex flex-wrap gap-1.5">
-              <select value={adding} onChange={(e) => setAdding(e.target.value)} aria-label="Boon to banish" className={cx(FIELD, 'min-w-0 flex-1 py-1.5 text-xs')}>
-                <option value="">Banish a boon…</option>
-                {TAGS.map((tag) => (
-                  <optgroup key={tag} label={tag}>
-                    {BOONS.filter((b) => b.tags[0] === tag && !banished.includes(b.id)).map((b) => (
-                      <option key={b.id} value={b.id}>
-                        {b.name}
-                      </option>
-                    ))}
-                  </optgroup>
-                ))}
-              </select>
-              <button
-                type="button"
-                className={SMALL_BUTTON}
-                disabled={!adding}
-                onClick={() =>
-                  save(async () => {
-                    await setBanished(character.id, [...banished, adding])
-                    setAdding('')
-                  })
-                }
-              >
-                Banish
-              </button>
-            </div>
+            availableGroups.length > 0 ? (
+              <div className="flex flex-wrap gap-1.5">
+                <select value={selectedAdding} onChange={(e) => setAdding(e.target.value)} aria-label="Boon to banish" className={cx(FIELD, 'min-w-0 flex-1 py-1.5 text-xs')}>
+                  <option value="">Banish a boon…</option>
+                  {availableGroups.map(({ tag, boons }) => (
+                    <optgroup key={tag} label={tag}>
+                      {boons.map((b) => (
+                        <option key={b.id} value={b.id}>
+                          {b.name}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  className={SMALL_BUTTON}
+                  disabled={!selectedAdding}
+                  onClick={() =>
+                    save(async () => {
+                      await setBanished(character.id, [...banished, selectedAdding])
+                      setAdding('')
+                    })
+                  }
+                >
+                  Banish
+                </button>
+              </div>
+            ) : (
+              <span className="text-[0.6875rem] text-stone-400">Banish a boon from a draft offer to add it here.</span>
+            )
           )}
         </div>
       )}

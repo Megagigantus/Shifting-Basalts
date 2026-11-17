@@ -460,11 +460,21 @@ describe('character builds', () => {
 
 describe('Banish list and Attunement tag', () => {
   const owned = () => doc(as(PLAYER), 'characters', OWNED)
-  beforeEach(() => seedCharacters({ upgrades: { banish: 2, attunement: 1 }, banished: [], attuneTag: null }))
+  beforeEach(() =>
+    seedCharacters({ upgrades: { banish: 2, attunement: 1 }, banished: [], banishHistory: ['hardy', 'honed', 'fleet-foot'], attuneTag: null }),
+  )
 
-  it('a player can set a Banish list up to their rank, with real boons', async () => {
+  it('a player can set a Banish list up to their rank, from boons they banished at a draft', async () => {
     await assertSucceeds(updateDoc(owned(), { banished: ['hardy', 'honed'], updatedAt: now() }))
     await assertSucceeds(updateDoc(owned(), { banished: [], updatedAt: now() }))
+  })
+
+  it('refuses a boon never banished from a draft, but keeps what is already listed', async () => {
+    await assertFails(updateDoc(owned(), { banished: ['steady-will'], updatedAt: now() }))
+    await seedCharacters({ upgrades: { banish: 2 }, banished: ['steady-will'], banishHistory: ['hardy'] })
+    await assertSucceeds(updateDoc(owned(), { banished: ['steady-will', 'hardy'], updatedAt: now() }))
+    await seedCharacters({ upgrades: { banish: 2 }, banished: [] })
+    await assertFails(updateDoc(owned(), { banished: ['hardy'], updatedAt: now() }))
   })
 
   it('refuses a list that is too long, repeats, or names unknown boons', async () => {

@@ -1,8 +1,12 @@
 import { describe, expect, it } from 'vitest'
+import type { Boon } from '../data/types'
 import { emptyDungeonLayer, emptyProfile, type Character } from '../model/character'
 import type { RunState } from '../model/run'
-import { boon, BOONS } from './boons'
+import { boon, BOONS, COMBINATIONS, EVOLUTIONS } from './boons'
+import { eligibleBoons } from './draft'
+import { applyChoice, draftKey, isDraftChoice } from './draftChoice'
 import {
+  banishOffer,
   chooseHidden,
   chooseOffer,
   canTriggerClass,
@@ -249,5 +253,137 @@ describe('Starting Boon', () => {
     const onlyHardy = [character('a', { upgrades: { 'starting-boon': 1 }, banished })]
     const offered = openStartingBoons(start([], onlyHardy), ['a'], seeded(8)).players[0].draft!.offers[0]
     expect(offered).toMatchObject({ boonId: 'hardy' })
+  })
+})
+
+describe('banishOffer', () => {
+  it('banishes a weighted card with room on the list and replaces it without using a reroll', () => {
+    const chars = [character('a', { upgrades: { banish: 2, reroll: 1 } })]
+    let state = clearAndDraft(start([], chars), seeded(1))
+    const before = state.players[0].draft!.offers
+    const idx = before.findIndex((o) => o.kind === 'boon' && o.source === 'weighted')
+    const target = before[idx]
+    if (target.kind !== 'boon') throw new Error('expected boon')
+    const otherIds = before.filter((_, i) => i !== idx).flatMap((o) => (o.kind === 'boon' ? [o.boonId] : []))
+
+    state = banishOffer(state, 'a', idx, undefined, seeded(2))
+    const after = state.players[0].draft!.offers
+    const replacement = after[idx]
+
+    expect(state.players[0].draftProfile?.banished).toEqual([target.boonId])
+    expect(state.players[0].banishedThisRun).toEqual([target.boonId])
+    expect(state.players[0].draft?.banishes).toBe(1)
+    expect(rerollsLeft(state.players[0], 1)).toBe(1)
+    expect(after).toHaveLength(before.length)
+    expect(replacement).toMatchObject({ kind: 'boon', source: 'weighted' })
+    if (replacement.kind !== 'boon') throw new Error('expected boon')
+    expect(replacement.boonId).not.toBe(target.boonId)
+    expect(state.players[0].draftProfile?.banished).not.toContain(replacement.boonId)
+    expect(otherIds).not.toContain(replacement.boonId)
+    expect(after.filter((_, i) => i !== idx)).toEqual(before.filter((_, i) => i !== idx))
+  })
+
+  it('requires a dropBoonId when full, swaps it out for the banished boon, and rejects dropping when not full', () => {
+    const withRoom = clearAndDraft(start([], [character('a', { upgrades: { banish: 2 }, banished: ['hardy'] })]), seeded(1))
+    expect(() => banishOffer(withRoom, 'a', 0, 'hardy', seeded(2))).toThrow('isn\'t full')
+
+    const chars = [character('a', { upgrades: { banish: 2 }, banished: ['hardy', 'honed'] })]
+    let state = clearAndDraft(start([], chars), seeded(3))
+    const idx = state.players[0].draft!.offers.findIndex((o) => o.kind === 'boon' && o.source === 'weighted')
+    const target = state.players[0].draft!.offers[idx]
+    if (target.kind !== 'boon') throw new Error('expected boon')
+
+    expect(() => banishOffer(state, 'a', idx, undefined, seeded(4))).toThrow('full')
+    expect(() => banishOffer(state, 'a', idx, 'fleet-foot', seeded(4))).toThrow('on the Banish list')
+
+    state = banishOffer(state, 'a', idx, 'hardy', seeded(4))
+    expect(state.players[0].draftProfile?.banished).toEqual(['honed', target.boonId])
+    expect(state.players[0].banishedThisRun).toEqual([target.boonId])
+  })
+
+  it('throws for a held card, an evolution or combination card, and when banishSlots is 0', () => {
+    const noBanish = clearAndDraft(start([], [character('a')]), seeded(1))
+    expect(() => banishOffer(noBanish, 'a', 0, undefined, seeded(2))).toThrow('You don\'t own Banish.')
+
+    let heldState = chooseOffer(clearAndDraft(start([], [character('a', { upgrades: { banish: 1 } })])), 'a', 0)
+    heldState = clearAndDraft(heldState, seeded(8))
+    const heldIdx = heldState.players[0].draft!.offers.findIndex((o) => o.kind === 'boon' && o.source === 'held')
+    expect(heldIdx).toBeGreaterThanOrEqual(0)
+    expect(() => banishOffer(heldState, 'a', heldIdx, undefined, seeded(9))).toThrow('held')
+
+    const base = clearAndDraft(start([], [character('a', { upgrades: { banish: 1 } })]), seeded(1))
+    const withSpecials: RunState = {
+      ...base,
+      players: base.players.map((p, i) =>
+        i === 0 && p.draft
+          ? {
+              ...p,
+              draft: {
+                ...p.draft,
+                offers: [
+                  { kind: 'evolution', evolutionId: EVOLUTIONS[0].id, slotIndex: 0, source: 'wildcard' },
+                  { kind: 'combination', combinationId: COMBINATIONS[0].id, source: 'wildcard' },
+                  ...p.draft.offers.slice(2),
+                ],
+              },
+            }
+          : p,
+      ),
+    }
+    expect(() => banishOffer(withSpecials, 'a', 0, undefined, seeded(2))).toThrow('Only a boon card')
+    expect(() => banishOffer(withSpecials, 'a', 1, undefined, seeded(2))).toThrow('Only a boon card')
+  })
+
+  it('keeps a banished boon out of subsequent openDrafts offers', () => {
+    const chars = [character('a', { upgrades: { banish: 1 } })]
+    let state = clearAndDraft(start([], chars), seeded(10))
+    const idx = state.players[0].draft!.offers.findIndex((o) => o.kind === 'boon' && o.source === 'weighted')
+    const target = state.players[0].draft!.offers[idx]
+    if (target.kind !== 'boon') throw new Error('expected boon')
+
+    state = passDraft(banishOffer(state, 'a', idx, undefined, seeded(11)), 'a')
+    for (let seed = 1; seed <= 50; seed++) {
+      const next = clearAndDraft(state, seeded(seed)).players[0].draft!.offers
+      for (const o of next) {
+        if (o.kind === 'boon') expect(o.boonId).not.toBe(target.boonId)
+      }
+    }
+  })
+
+  it('removes the card when no replacement candidate is left', () => {
+    const probe = start([], [character('a', { upgrades: { banish: BOONS.length } })])
+    const eligible = eligibleBoons(probe.players[0].draftProfile!, [])
+    const fourDistinct: Boon[] = []
+    for (const b of eligible) {
+      if (!fourDistinct.some((x) => x.tags[0] === b.tags[0])) fourDistinct.push(b)
+      if (fourDistinct.length === 4) break
+    }
+    expect(fourDistinct).toHaveLength(4)
+    const keep = new Set(fourDistinct.map((b) => b.id))
+    const banished = BOONS.map((b) => b.id).filter((id) => !keep.has(id))
+
+    let state = clearAndDraft(start([], [character('a', { upgrades: { banish: BOONS.length }, banished })]), seeded(1))
+    const before = state.players[0].draft!.offers
+    expect(before).toHaveLength(4)
+
+    state = banishOffer(state, 'a', 1, undefined, seeded(2))
+    const after = state.players[0].draft!.offers
+    expect(after).toHaveLength(3)
+    expect(after).toEqual(before.filter((_, i) => i !== 1))
+  })
+
+  it('changes draftKey and applies through applyChoice', () => {
+    const chars = [character('a', { upgrades: { banish: 2 } })]
+    const before = clearAndDraft(start([], chars), seeded(1))
+    const keyBefore = draftKey(before.players[0])
+    expect(isDraftChoice({ action: 'banish', index: 1 })).toBe(true)
+
+    const target = before.players[0].draft!.offers[1]
+    if (target.kind !== 'boon') throw new Error('expected boon')
+
+    const after = applyChoice(before, 'a', { action: 'banish', index: 1, dropBoonId: null }, seeded(2))
+    expect(draftKey(after.players[0])).not.toBe(keyBefore)
+    expect(after.players[0].draft?.banishes).toBe(1)
+    expect(after.players[0].draftProfile?.banished).toContain(target.boonId)
   })
 })

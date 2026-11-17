@@ -2,7 +2,7 @@
 // app can apply it with the same rules (rules/draftFlow.ts).
 import type { RunPlayer, RunState } from '../model/run'
 import type { Random } from './draft'
-import { chooseHidden, chooseOffer, passDraft, passHidden, rerollDraft } from './draftFlow'
+import { banishOffer, chooseHidden, chooseOffer, passDraft, passHidden, rerollDraft } from './draftFlow'
 import { spendForge, type ForgeAction } from './forge'
 import { chooseRelic, passVault } from './vault'
 import { recover, refundPayoff, spendPayoff } from './recovery'
@@ -14,6 +14,8 @@ export type DraftChoice =
   | { action: 'take'; index: number; replaceSlot?: number | null }
   | { action: 'pass' }
   | { action: 'reroll' }
+  /** Banish one new boon card from the current offer (dropping one if the Banish list is full). */
+  | { action: 'banish'; index: number; dropBoonId?: string | null }
   | { action: 'hidden'; hiddenBoonId: string }
   | { action: 'passHidden' }
   | { action: 'forge'; forge: ForgeAction }
@@ -44,12 +46,12 @@ export type DraftChoice =
 
 /**
  * Identifies the exact offer a choice was made against. If the offer changes
- * (a reroll, the next room) before the choice is applied, the key no longer
- * matches and the stale choice is refused.
+ * (a reroll, a banish, the next room) before the choice is applied, the key
+ * no longer matches and the stale choice is refused.
  */
 export function draftKey(p: RunPlayer): string | null {
   if (!p.draft) return null
-  return `${p.draft.floor}-${p.draft.room}-${p.draftsSeen ?? 0}-${p.rerolls?.used ?? 0}`
+  return `${p.draft.floor}-${p.draft.room}-${p.draftsSeen ?? 0}-${p.rerolls?.used ?? 0}-${p.draft.banishes ?? 0}`
 }
 
 /** Apply one player's choice to the run, or throw if it isn't allowed. */
@@ -61,6 +63,8 @@ export function applyChoice(state: RunState, characterId: string, choice: DraftC
       return passDraft(state, characterId)
     case 'reroll':
       return rerollDraft(state, characterId, random)
+    case 'banish':
+      return banishOffer(state, characterId, choice.index, choice.dropBoonId ?? undefined, random)
     case 'hidden':
       return chooseHidden(state, characterId, choice.hiddenBoonId)
     case 'passHidden':
@@ -101,5 +105,5 @@ export function applyChoice(state: RunState, characterId: string, choice: DraftC
 
 /** Choices that answer the current draft offer (others aren't tied to one). */
 export function isDraftChoice(choice: DraftChoice): boolean {
-  return choice.action === 'take' || choice.action === 'pass' || choice.action === 'reroll'
+  return choice.action === 'take' || choice.action === 'pass' || choice.action === 'reroll' || choice.action === 'banish'
 }

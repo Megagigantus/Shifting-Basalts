@@ -8,8 +8,9 @@ import type { DraftChoice } from '../rules/draftChoice'
 import { boon, combination, evolution, hiddenBoon, slotName, type Slot } from '../rules/boons'
 import { offerArtRef } from '../boonLootArt'
 import { describeHidden, describeOffer } from '../offerText'
-import { EyeOff, RefreshCw, Sparkles } from 'lucide-react'
+import { Ban, EyeOff, RefreshCw, Sparkles } from 'lucide-react'
 import { BoonIcon } from '../ui/BoonIcon'
+import { ConfirmButton } from '../ui/ConfirmButton'
 import { Pill } from '../ui/Pill'
 import { FIELD, PRIMARY_BUTTON, QUIET_BUTTON } from '../ui/styles'
 import { cx, toneClasses, type Tone } from '../ui/tone'
@@ -25,15 +26,21 @@ interface Props {
   who?: string
 }
 
+const BANISH_BUTTON = 'inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold cursor-pointer disabled:opacity-50'
+
 export function DraftOffers({ player, passValue, rerollsLeft, busy, onChoose, who }: Props) {
   const slots: Slot[] = player.slots ?? []
   const hasEmpty = slots.some((s) => s === null)
   const [replaceSlot, setReplaceSlot] = useState<Record<number, number>>({})
+  const [dropBoon, setDropBoon] = useState<Record<number, string>>({})
   const draft = player.draft
   const hidden = player.hiddenOffer
 
   if (!draft && !hidden) return null
 
+  const banishSlots = player.draftProfile?.banishSlots ?? 0
+  const banished = player.draftProfile?.banished ?? []
+  const banishFull = banished.length >= banishSlots
   const passLabel = `Pass (+${passValue} Quantum Basalt${passValue === 1 ? '' : 's'})`
 
   return (
@@ -59,11 +66,15 @@ export function DraftOffers({ player, passValue, rerollsLeft, busy, onChoose, wh
               const needsReplace = text.needsSlot && !hasEmpty
               const target = replaceSlot[i] ?? 0
               const tone = offerTone(text.label)
+              const banishable = banishSlots > 0 && offer.kind === 'boon' && offer.source !== 'held'
+              const pickingDrop = dropBoon[i] !== undefined
+              const selectedDrop = banished.includes(dropBoon[i]) ? dropBoon[i] : (banished[0] ?? '')
+              const boonName = offerName(offer)
               return (
                 <div key={i} className={cx('flex flex-col gap-2 rounded-xl border bg-stone-950/70 p-3', toneClasses[tone].border)}>
                   <div className="flex items-start gap-3">
                     <div className="shrink-0 p-1">
-                      <BoonIcon art={offerArtRef(offer)} name={offerName(offer)} size="lg" />
+                      <BoonIcon art={offerArtRef(offer)} name={boonName} size="lg" />
                     </div>
                     <div className="flex min-w-0 flex-1 flex-col gap-1.5">
                       <div className="flex flex-wrap items-center gap-1.5">
@@ -102,6 +113,74 @@ export function DraftOffers({ player, passValue, rerollsLeft, busy, onChoose, wh
                       Take
                     </button>
                   )}
+                  {banishable && (
+                    !banishFull ? (
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <ConfirmButton
+                          tone="rose"
+                          disabled={busy}
+                          confirmLabel={`Yes, banish ${boonName}`}
+                          onConfirm={() => onChoose({ action: 'banish', index: i })}
+                        >
+                          <Ban size={13} /> Banish
+                        </ConfirmButton>
+                      </div>
+                    ) : pickingDrop ? (
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <select
+                          value={selectedDrop}
+                          disabled={busy}
+                          onChange={(e) => setDropBoon({ ...dropBoon, [i]: e.target.value })}
+                          aria-label="Boon to drop from your Banish list"
+                          className={cx(FIELD, 'min-w-0 flex-1 py-1.5 text-xs')}
+                        >
+                          {banished.map((id) => (
+                            <option key={id} value={id}>
+                              {boon(id).name}
+                            </option>
+                          ))}
+                        </select>
+                        <button
+                          type="button"
+                          disabled={busy || !selectedDrop}
+                          onClick={() => {
+                            setDropBoon((prev) => {
+                              const next = { ...prev }
+                              delete next[i]
+                              return next
+                            })
+                            onChoose({ action: 'banish', index: i, dropBoonId: selectedDrop })
+                          }}
+                          className={cx(BANISH_BUTTON, 'border-0', toneClasses.rose.button)}
+                        >
+                          Banish {boonName}
+                        </button>
+                        <button
+                          type="button"
+                          disabled={busy}
+                          onClick={() =>
+                            setDropBoon((prev) => {
+                              const next = { ...prev }
+                              delete next[i]
+                              return next
+                            })
+                          }
+                          className={cx(BANISH_BUTTON, toneClasses.stone.button)}
+                        >
+                          Keep
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        disabled={busy}
+                        onClick={() => setDropBoon({ ...dropBoon, [i]: banished[0] ?? '' })}
+                        className={cx(BANISH_BUTTON, 'self-start', toneClasses.stone.button)}
+                      >
+                        <Ban size={13} /> Banish
+                      </button>
+                    )
+                  )}
                 </div>
               )
             })}
@@ -116,6 +195,25 @@ export function DraftOffers({ player, passValue, rerollsLeft, busy, onChoose, wh
               </button>
             )}
           </div>
+          {banishSlots > 0 && (
+            <div
+              className="flex flex-wrap items-center gap-1.5 text-[0.6875rem] text-stone-400"
+              title="Banished boons never appear in your offers. Banish a new boon card to add it; a full list drops the one you pick."
+            >
+              <span>
+                Banish list ({banished.length} of {banishSlots})
+              </span>
+              {banished.length === 0 ? (
+                <span>empty</span>
+              ) : (
+                banished.map((id) => (
+                  <Pill key={id} tone="rose">
+                    {boon(id).name}
+                  </Pill>
+                ))
+              )}
+            </div>
+          )}
         </div>
       )}
 

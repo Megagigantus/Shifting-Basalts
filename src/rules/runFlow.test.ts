@@ -306,6 +306,24 @@ describe('death', () => {
     expect(dead.survived).toBe(false)
     expect(dead.echoes?.boons).toContain('hardy')
   })
+
+  it('reports the Banish list only when the player banished from a draft', () => {
+    let state = start([5, 5])
+    state = {
+      ...state,
+      players: state.players.map((p) =>
+        p.characterId === 'c0'
+          ? { ...p, draftProfile: { ...p.draftProfile!, banished: ['honed', 'hardy'] }, banishedThisRun: ['hardy'] }
+          : p,
+      ),
+    }
+    state = extract(clearFloor(state))
+    const [banisher, other] = runResults(state)
+    expect(banisher.banished).toEqual(['honed', 'hardy'])
+    expect(banisher.banishedThisRun).toEqual(['hardy'])
+    expect(other.banished).toBeUndefined()
+    expect(other.banishedThisRun).toBeUndefined()
+  })
 })
 
 describe('upgrades in a run', () => {

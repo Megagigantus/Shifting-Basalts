@@ -16,6 +16,8 @@ export interface DraftOffer {
   offers: Offer[]
   /** The Starting Boon offer before room 1, rather than a room's draft. */
   starting?: boolean
+  /** Cards banished from this offer so far (part of the draft key, so stale choices are refused). */
+  banishes?: number
 }
 
 /** A hidden offer: Thils's gifts (room condition met) and/or the class hidden boon. */
@@ -118,12 +120,16 @@ export interface RunPlayer {
   hiddenBoonId?: string | null
   /** Everything this player has held this run, for Basalt Echoes (rules/echoes.ts). */
   echoes?: Echoes
+  /** Boon ids this player banished from a draft offer this run (rules/draftFlow.ts banishOffer). */
+  banishedThisRun?: string[]
   /** What the draft needs to know about the character, captured at run start. */
   draftProfile?: DraftCharacter & {
     /** Offer rerolls allowed per floor (Reroll upgrade rank). */
     rerollsPerFloor: number
     /** Attunement: tag the first offer of the run includes, if set. */
     attuneTag?: string | null
+    /** Banish list size (Banish upgrade rank); 0 or missing means no draft banishing. */
+    banishSlots?: number
   }
   /** The open draft offer, until the player chooses. */
   draft?: DraftOffer | null
@@ -208,4 +214,8 @@ export interface RunResult {
   relicsTradedIn?: string[]
   /** Everything this character held this run, for Basalt Echoes (rules/echoes.ts). */
   echoes?: Echoes
+  /** The character's Banish list at the end of the run (changed by draft banishes). */
+  banished?: string[]
+  /** Boon ids banished from a draft this run, added to the character's banish history. */
+  banishedThisRun?: string[]
 }

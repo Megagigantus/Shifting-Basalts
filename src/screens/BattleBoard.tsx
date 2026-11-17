@@ -28,8 +28,8 @@ export interface BoardPiece {
   state?: 'bloodied' | 'down' | null
   /** The viewer's own token. */
   mine?: boolean
-  /** A character who survived a full clear: a golden glow. */
-  glow?: boolean
+  /** Honor glow classes (rules/portraitHonors.ts honorClasses): full-clear gold, full-collection green. */
+  honorClass?: string
   movable: boolean
   /** The DM can remove it (objects). */
   removable?: boolean
@@ -162,7 +162,7 @@ export function BattleBoard({ squares: n, entrance, door, areas = [], mapArt, fl
           p.hidden ? 'is-hidden' : '',
           p.state === 'down' ? 'is-down' : p.state === 'bloodied' ? 'is-bloodied' : '',
           p.mine ? 'is-mine' : '',
-          p.glow ? 'is-glowing' : '',
+          p.honorClass ?? '',
           p.movable ? 'is-movable' : '',
           selected === p.key ? 'is-selected' : '',
           drag?.key === p.key ? 'is-dragging' : '',

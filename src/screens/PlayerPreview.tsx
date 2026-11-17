@@ -4,6 +4,7 @@ import { Eye } from 'lucide-react'
 import type { Character } from '../model/character'
 import { useCharacters } from '../useCharacters'
 import { Avatar } from './LookPicker'
+import { portraitHonors } from '../rules/portraitHonors'
 import { PlayerHome } from './PlayerHome'
 import { Panel } from '../ui/Panel'
 import { SMALL_BUTTON, WELL } from '../ui/styles'
@@ -56,7 +57,7 @@ export function PlayerPreview() {
                   <span className="flex min-w-0 flex-col gap-2">
                     {chars.map((c) => (
                       <span key={c.id} className="flex min-w-0 items-center gap-2.5">
-                        <Avatar portrait={c.portrait} name={c.name} size="h-9 w-9" />
+                        <Avatar portrait={c.portrait} name={c.name} size="h-9 w-9" honors={portraitHonors(c)} />
                         <span className="min-w-0 truncate text-sm font-semibold text-stone-100">{c.name}</span>
                       </span>
                     ))}

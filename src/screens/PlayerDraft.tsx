@@ -29,6 +29,7 @@ const ACTION_LABELS: Record<ChoiceDoc['action'], string> = {
   take: 'your pick',
   pass: 'a pass',
   reroll: 'a reroll',
+  banish: 'a banish',
   hidden: 'your hidden boon pick',
   passHidden: 'a pass on the hidden offer',
   forge: 'your Forge use',

@@ -102,3 +102,32 @@ export function echoCounts(
   const all = Object.values(groups)
   return { ...groups, overall: { seen: all.reduce((s, g) => s + g.seen, 0), total: all.reduce((s, g) => s + g.total, 0) } }
 }
+
+/**
+ * Player-facing counts: hidden total equals hidden seen so unfound hidden
+ * boons are not spoiled, and overall total uses that hidden total.
+ */
+export function visibleEchoCounts(
+  c: { classId: string; secondClassId?: string; echoes?: Echoes },
+): Record<EchoGroup | 'overall', { seen: number; total: number }> {
+  const counts = echoCounts(c)
+  const hidden = { seen: counts.hidden.seen, total: counts.hidden.seen }
+  return {
+    ...counts,
+    hidden,
+    overall: {
+      seen: counts.overall.seen,
+      total: counts.boons.total + counts.evolutions.total + counts.combinations.total + hidden.total,
+    },
+  }
+}
+
+/**
+ * True only when the character has seen every entry in their true collection
+ * (including hidden boons), so full-collection status never triggers early
+ * without spoiling how many hidden boons exist.
+ */
+export function hasFullCollection(c: { classId: string; secondClassId?: string; echoes?: Echoes }): boolean {
+  const { overall } = echoCounts(c)
+  return overall.total > 0 && overall.seen === overall.total
+}

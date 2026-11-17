@@ -4,7 +4,7 @@ import { Lock } from 'lucide-react'
 import { setEchoSeen } from '../characterStore'
 import type { Character } from '../model/character'
 import { boon, combination, evolution, hiddenBoon } from '../rules/boons'
-import { echoCounts, echoPool, type EchoGroup } from '../rules/echoes'
+import { echoCounts, echoPool, visibleEchoCounts, type EchoGroup } from '../rules/echoes'
 import { Pill } from '../ui/Pill'
 import { StatStrip } from '../ui/StatStrip'
 import { SMALL_BUTTON } from '../ui/styles'
@@ -25,17 +25,22 @@ export function BasaltEchoes({ character, canMark = false }: { character: Charac
   const [group, setGroup] = useState<EchoGroup>('boons')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const counts = echoCounts(character)
+  const counts = canMark ? echoCounts(character) : visibleEchoCounts(character)
+  const showHidden = canMark || counts.hidden.seen > 0
+  const activeGroup: EchoGroup = group === 'hidden' && !showHidden ? 'boons' : group
   const pool = echoPool(character)
-  const seenIds = new Set(character.echoes?.[group] ?? [])
-  const ids = pool[group]
-  const orderedIds = [...ids.filter((id) => seenIds.has(id)), ...ids.filter((id) => !seenIds.has(id))]
+  const seenIds = new Set(character.echoes?.[activeGroup] ?? [])
+  const ids = pool[activeGroup]
+  const orderedIds =
+    !canMark && activeGroup === 'hidden'
+      ? ids.filter((id) => seenIds.has(id))
+      : [...ids.filter((id) => seenIds.has(id)), ...ids.filter((id) => !seenIds.has(id))]
 
   async function toggleSeen(id: string, seen: boolean) {
     setError(null)
     setBusy(true)
     try {
-      await setEchoSeen(character.id, group, id, seen)
+      await setEchoSeen(character.id, activeGroup, id, seen)
     } catch {
       setError('Could not save. Please try again.')
     } finally {
@@ -51,13 +56,13 @@ export function BasaltEchoes({ character, canMark = false }: { character: Charac
           { label: 'Boons', value: `${counts.boons.seen} of ${counts.boons.total}` },
           { label: 'Evolutions', value: `${counts.evolutions.seen} of ${counts.evolutions.total}` },
           { label: 'Combinations', value: `${counts.combinations.seen} of ${counts.combinations.total}` },
-          { label: 'Hidden', value: `${counts.hidden.seen} of ${counts.hidden.total}` },
+          ...(showHidden ? [{ label: 'Hidden', value: `${counts.hidden.seen} of ${counts.hidden.total}` }] : []),
         ]}
       />
 
       <div className="flex flex-wrap gap-1.5">
-        {GROUPS.map((g) => {
-          const active = group === g.id
+        {GROUPS.filter((g) => showHidden || g.id !== 'hidden').map((g) => {
+          const active = activeGroup === g.id
           const { seen, total } = counts[g.id]
           return (
             <button
@@ -81,7 +86,9 @@ export function BasaltEchoes({ character, canMark = false }: { character: Charac
 
       {counts.overall.seen === 0 && (
         <p className="m-0 text-xs text-stone-400">
-          No echoes yet. Every boon, Evolution, Combination and hidden boon you hold in a run is recorded here.
+          {canMark
+            ? 'No echoes yet. Every boon, Evolution, Combination and hidden boon you hold in a run is recorded here.'
+            : 'No echoes yet. Every boon, Evolution and Combination you hold in a run is recorded here.'}
         </p>
       )}
 
@@ -90,9 +97,9 @@ export function BasaltEchoes({ character, canMark = false }: { character: Charac
       <div className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3">
         {orderedIds.map((id) =>
           seenIds.has(id) ? (
-            <SeenCard key={id} group={group} id={id} canMark={canMark} busy={busy} onUnmark={() => toggleSeen(id, false)} />
+            <SeenCard key={id} group={activeGroup} id={id} canMark={canMark} busy={busy} onUnmark={() => toggleSeen(id, false)} />
           ) : (
-            <UnseenCard key={id} group={group} id={id} canMark={canMark} busy={busy} onMark={() => toggleSeen(id, true)} />
+            <UnseenCard key={id} group={activeGroup} id={id} canMark={canMark} busy={busy} onMark={() => toggleSeen(id, true)} />
           ),
         )}
       </div>

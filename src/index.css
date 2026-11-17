@@ -1759,18 +1759,65 @@
 /* A character who survived a full clear: a light golden glow around their
    portrait (FULL_CLEAR_GLOW in src/ui/styles.ts) and battle map token. */
 @layer components {
-  .full-clear-glow {
-    box-shadow: 0 0 0 2px rgb(250 204 21 / 0.75), 0 0 12px 3px rgb(245 158 11 / 0.45);
+  /* Portrait honors (src/ui/Portrait.tsx, src/rules/portraitHonors.ts): tiered
+     golden full-clear glow and emerald full Basalt Echoes collection glow. */
+  /* Each honor sets a ring and a halo. Rings stack above halos, and the gold
+     ring sits on top of the wider green ring, so both always show. */
+  .honor-gold-1 {
+    --honor-gold-ring: 0 0 0 2px rgb(250 204 21 / 0.75);
+    --honor-gold-halo: 0 0 10px 2px rgb(245 158 11 / 0.4);
   }
 
-  .map-player.is-glowing img,
-  .map-player.is-glowing .map-fallback {
-    box-shadow: 0 0 0 2px #facc15, 0 0 10px 3px rgb(250 204 21 / 0.6), 0 2px 4px rgb(0 0 0 / 0.6);
+  .honor-gold-2 {
+    --honor-gold-ring: 0 0 0 2px rgb(250 204 21 / 0.82);
+    --honor-gold-halo: 0 0 15px 4px rgb(245 158 11 / 0.5);
   }
 
-  .map-player.is-glowing.is-mine img,
-  .map-player.is-glowing.is-mine .map-fallback {
-    box-shadow: 0 0 0 3px #facc15, 0 0 12px 5px rgb(250 204 21 / 0.6), 0 2px 4px rgb(0 0 0 / 0.6);
+  .honor-gold-3 {
+    --honor-gold-ring: 0 0 0 2.5px rgb(250 204 21 / 0.88);
+    --honor-gold-halo: 0 0 20px 6px rgb(245 158 11 / 0.6);
+  }
+
+  .honor-gold-4 {
+    --honor-gold-ring: 0 0 0 3px rgb(253 224 71 / 0.92);
+    --honor-gold-halo: 0 0 25px 8px rgb(245 158 11 / 0.7);
+  }
+
+  .honor-gold-5 {
+    --honor-gold-ring: 0 0 0 3px rgb(254 240 138 / 1);
+    --honor-gold-halo: 0 0 32px 11px rgb(245 158 11 / 0.8);
+  }
+
+  .honor-green {
+    --honor-green-ring: 0 0 0 6px rgb(52 211 153 / 0.95);
+    --honor-green-halo: 0 0 14px 7px rgb(16 185 129 / 0.5);
+  }
+
+  /* Green alone: its ring starts at the edge, with no gold inside it. */
+  .honor-green:not([class*='honor-gold-']) {
+    --honor-green-ring: 0 0 0 3px rgb(52 211 153 / 0.95);
+  }
+
+  .honor-ring {
+    box-shadow:
+      var(--honor-gold-ring, 0 0 #0000),
+      var(--honor-green-ring, 0 0 #0000),
+      var(--honor-green-halo, 0 0 #0000),
+      var(--honor-gold-halo, 0 0 #0000);
+  }
+
+  .map-player.honor-ring {
+    box-shadow: none;
+  }
+
+  .map-player.honor-ring img,
+  .map-player.honor-ring .map-fallback {
+    box-shadow:
+      var(--honor-gold-ring, 0 0 #0000),
+      var(--honor-green-ring, 0 0 #0000),
+      var(--honor-green-halo, 0 0 #0000),
+      var(--honor-gold-halo, 0 0 #0000),
+      0 2px 4px rgb(0 0 0 / 0.6);
   }
 }
 
