@@ -1534,7 +1534,7 @@ Rules the app follows where the rest of the Bible implies an answer without spel
 4. **Payoff and Core boons:** they level through drafts and the Forge like other boons, but never evolve or combine.
 5. **Tags:** an Evolution keeps its source boon's tag, and a Combination carries both source tags, for Resonance and offer weighting.
 6. **Reprieve:** it replaces one of a floor's 4 rooms, so that floor has 3 combat rooms, the Reprieve and the boss. It grants no Devotion and no draft. Every living player chooses Rest or Reflect before the party moves on. Rest is applied at the table; the app only records it. Reflect levels up one plain boon below Level 3. **Catch-up Basalts:** a player with no boon that can level up (none held, or all at Level 3, Evolutions or Combinations) instead takes 1 Quantum Basalt times the entry-level multiplier, the same as a Pass, counted as passed so it extracts even on death.
-7. **The boon pool:** 69 boons across the main table and Batches 1 to 4. Kept separately: 49 Evolutions, 21 Combinations, 12 class hidden boons and 8 of Thils's hidden gifts.
+7. **The boon pool:** 70 boons across the main table and Batches 1 to 4. Kept separately: 49 Evolutions, 21 Combinations, 12 class hidden boons and 8 of Thils's hidden gifts.
 8. **Death:** if even one player survives to extract, the party's loot pool stays whole and is shared as usual. Only a wipe loses it. A fallen character still forfeits the Quantum Basalts they earned that run, except passed ones.
 
 ### Offer weighting
