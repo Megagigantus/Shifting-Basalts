@@ -31,10 +31,8 @@ import { applyChoiceDoc, cancelRun, saveRunState, useChoices, type ChoiceDoc } f
 import { boonSummary, hiddenBoon } from '../rules/boons'
 import { PlayerBoons } from './PlayerBoons'
 import { DraftOffers } from './DraftOffers'
-import { ForgePanel } from './ForgePanel'
 import { DmRoom } from './DmRoom'
 import { startFloor } from '../rules/roomFlow'
-import { forgeUsesLeft, spendForge } from '../rules/forge'
 import { artUrl } from '../art'
 import { proficiencyBonus } from '../rules/proficiency'
 import { ConfirmButton } from '../ui/ConfirmButton'
@@ -319,12 +317,6 @@ export function RunTracker({ state, characters, onEnded }: Props) {
 
           <DmLootPanel state={state} busy={busy} act={act} requests={requests} />
 
-          <ForgePanel
-            players={players}
-            usesLeft={forgeUsesLeft(state)}
-            busy={busy}
-            onUse={(characterId, action) => act((s) => spendForge(s, characterId, action))}
-          />
 
           {run.log.length > 0 && (
             <Panel title={`Rooms cleared (${run.log.length})`}>

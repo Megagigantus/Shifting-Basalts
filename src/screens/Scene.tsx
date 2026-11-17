@@ -1,8 +1,11 @@
 // Scene art for the rooms that aren't fights: the post-boss room (Forge,
 // Healing Font, descend or extract), the Reprieve (Rest or Reflect) and
 // Thils's Vault. Pictures come from src/art/rooms; anything missing just
-// shows its text. Shared by the DM and player screens. These are pictures
-// and explanations only; the choices themselves happen where they did before.
+// shows its text. Shared by the DM and player screens. In the post-boss room,
+// the Forge and Healing Font cards flip open (and the Forge is used on its
+// card), and players can vote on the Descend and Extract cards.
+import { useState, type KeyboardEvent, type ReactNode } from 'react'
+import { RotateCw } from 'lucide-react'
 import type { RunState } from '../model/run'
 import { artUrl } from '../art'
 import { LAST_FLOOR } from '../rules/run'
@@ -57,6 +60,8 @@ export interface Card {
   onClick?: () => void
   selected?: boolean
   disabled?: boolean
+  back?: ReactNode
+  backTitle?: string
 }
 
 /** Each station's accent color. */
@@ -84,6 +89,69 @@ const SELECTED_RING: Record<Tone, string> = {
   stone: 'border-stone-400 ring-2 ring-stone-400/60',
 }
 
+function FlipCard({ card: c, url, tone }: { card: Card; url: string | null; tone: Tone }) {
+  const [flipped, setFlipped] = useState(false)
+  const toggle = () => setFlipped((f) => !f)
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      toggle()
+    }
+  }
+
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      aria-pressed={flipped}
+      aria-label={flipped ? `Show front of ${c.title}` : `Open ${c.title}`}
+      onClick={toggle}
+      onKeyDown={onKeyDown}
+      className={cx(
+        'group relic-flip flex w-full cursor-pointer flex-col overflow-hidden rounded-xl border bg-stone-950/70 text-left',
+        toneClasses[tone].border,
+        c.faded && 'opacity-50 grayscale',
+        flipped && 'is-flipped',
+      )}
+    >
+      <div className="relic-flip-inner">
+        <div className="relic-flip-face relic-flip-front flex flex-col" aria-hidden={flipped || undefined} inert={flipped}>
+          {url && (
+            <div className="relative aspect-[16/7] w-full overflow-hidden">
+              <img
+                src={url}
+                alt=""
+                className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+              />
+              <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-stone-950 to-transparent" />
+            </div>
+          )}
+          <div className="flex flex-1 flex-col gap-1 p-3">
+            <strong className={cx('text-sm', toneClasses[tone].text)}>{c.title}</strong>
+            <span className="text-xs text-stone-300">{c.text}</span>
+            <span className="mt-auto inline-flex items-center gap-1 pt-1 text-[0.6875rem] text-stone-500">
+              <RotateCw size={11} /> Tap to open
+            </span>
+          </div>
+        </div>
+        <div className="relic-flip-face relic-flip-back flex flex-col gap-2 p-3" aria-hidden={!flipped || undefined} inert={!flipped}>
+          <strong className={cx('text-sm', toneClasses[tone].text)}>{c.backTitle ?? c.title}</strong>
+          <div
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
+            className="flex flex-col gap-2 text-xs text-stone-200"
+          >
+            {c.back}
+          </div>
+          <span className="mt-auto inline-flex items-center gap-1 pt-1 text-[0.6875rem] text-stone-500">
+            <RotateCw size={11} /> Tap to flip back
+          </span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 /** A grid of station cards: picture, title and what it does. */
 export function SceneCards({ cards }: { cards: Card[] }) {
   if (cards.length === 0) return null
@@ -92,6 +160,13 @@ export function SceneCards({ cards }: { cards: Card[] }) {
       {cards.map((c) => {
         const url = artUrl('rooms', c.id)
         const tone = STATION_TONES[c.id] ?? 'stone'
+        if (c.back) {
+          return (
+            <li key={c.id} className="flex">
+              <FlipCard card={c} url={url} tone={tone} />
+            </li>
+          )
+        }
         const content = (
           <>
             {url && (
@@ -162,10 +237,12 @@ export function PostBossScene({
   state,
   forDm = false,
   vote,
+  forgeBack,
 }: {
   state: RunState
   forDm?: boolean
   vote?: { current: ExitVote | null; onVote: (v: ExitVote) => void; disabled: boolean }
+  forgeBack?: ReactNode
 }) {
   const { run } = state
   if (!run.awaitingChoice) return null
@@ -180,6 +257,7 @@ export function PostBossScene({
       title: 'The Forge',
       text: uses > 0 ? `${uses} use${uses === 1 ? '' : 's'} left: level up a boon, or evolve or combine Level 3 boons.` : 'Cooled for this floor.',
       faded: uses === 0,
+      back: uses > 0 ? forgeBack : undefined,
     })
   }
   if (font) {
@@ -190,6 +268,17 @@ export function PostBossScene({
         font.tempHp > 0
           ? `Restores the party. With ${font.owners} owners, everyone also gains ${font.tempHp} temp HP.`
           : 'Restores the party between floors.',
+      back: (
+        <>
+          <p className="m-0 font-semibold text-emerald-200">Heal to full Hit Points.</p>
+          {font.tempHp > 0 && (
+            <p className="m-0 text-emerald-200">
+              Then everyone gains {font.tempHp} temp HP ({font.owners} owners).
+            </p>
+          )}
+          <p className="m-0 text-stone-300">Every living player heals.</p>
+        </>
+      ),
     })
   }
   if (shrineHere(state)) {

@@ -11,7 +11,7 @@ import { boonSummary } from '../rules/boons'
 import { floorInfo, LAST_FLOOR, PRESSURES } from '../rules/run'
 import { canExtract, isBossRoom, lootKeptIfExtracting } from '../rules/runFlow'
 import { BoonList } from './BoonList'
-import { PlayerDraft } from './PlayerDraft'
+import { PlayerDraft, PlayerForge } from './PlayerDraft'
 import { PlayerRoom } from './PlayerRoom'
 import { RoomClearedPopup } from './RoomClearedPopup'
 import { submitChoice, useChoices, useExitVotes, useLootRequests, type ChoiceDoc } from '../runStore'
@@ -106,6 +106,22 @@ export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
               <PostBossScene
                 state={state}
                 vote={{ current: ballot.current, onVote: ballot.castAll, disabled: readOnly || ballot.sending }}
+                forgeBack={
+                  aliveMine.length > 0 ? (
+                    <>
+                      {aliveMine.map((p) => (
+                        <PlayerForge
+                          key={p.characterId}
+                          state={state}
+                          player={p}
+                          sent={choices[p.characterId]}
+                          readOnly={readOnly}
+                          dmChoosing={readOnly}
+                        />
+                      ))}
+                    </>
+                  ) : undefined
+                }
               />
               <ShrinePanel state={state} mine={mine} readOnly={readOnly} />
               <ExitVoteButtons state={state} mine={mine} votes={votes} readOnly={readOnly} ballot={ballot} />

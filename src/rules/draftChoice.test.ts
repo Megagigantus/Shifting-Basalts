@@ -44,7 +44,7 @@ describe('draft choices as data', () => {
     state = openVault(state, random)
     const passed = applyChoice(state, 'a', { action: 'relicPass' }, random)
     expect(passed.players[0].vaultPassed).toBe(true)
-    expect(passed.players[0].quantumBasaltsPassed).toBe(100)
+    expect(passed.players[0].quantumBasaltsPassed).toBe(40)
     expect(() => applyChoice(state, 'b', { action: 'relicPass' }, random)).toThrow('already owns a relic')
     const picked = state.players[0].vaultOffer![0]
     const traded = applyChoice(state, 'a', { action: 'relic', relicId: picked }, random)

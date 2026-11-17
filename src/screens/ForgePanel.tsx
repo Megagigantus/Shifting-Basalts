@@ -1,9 +1,8 @@
 // The Forge in the post-boss room: what each player can do with a use.
+import type { ReactNode } from 'react'
 import type { RunPlayer } from '../model/run'
 import { boon, combination, evolutionFor, slotName } from '../rules/boons'
 import { forgeOptions, type ForgeAction } from '../rules/forge'
-import { Hammer } from 'lucide-react'
-import { Panel } from '../ui/Panel'
 import { SMALL_BUTTON, WELL } from '../ui/styles'
 import { cx } from '../ui/tone'
 
@@ -24,19 +23,15 @@ interface Props {
   usesLeft: number
   busy: boolean
   onUse: (characterId: string, action: ForgeAction) => void
-  /** Shown above the options, e.g. "Use the party's Forge". */
-  intro?: string
+  /** Shown above the options. */
+  note?: ReactNode
 }
 
-export function ForgePanel({ players, usesLeft, busy, onUse, intro }: Props) {
+export function ForgeOptions({ players, usesLeft, busy, onUse, note }: Props) {
   if (usesLeft < 1) return null
   return (
-    <Panel
-      tone="amber"
-      icon={<Hammer size={15} />}
-      title={`The Forge: ${usesLeft} use${usesLeft === 1 ? '' : 's'} left`}
-      subtitle={`${intro ?? 'Each use levels up a boon, or evolves or combines Level 3 boons.'} It cools when the party descends.`}
-    >
+    <div className="flex flex-col gap-2">
+      {note && <p className="m-0 text-[0.6875rem] text-stone-400">{note}</p>}
       {players
         .filter((p) => p.alive)
         .map((p) => {
@@ -64,6 +59,6 @@ export function ForgePanel({ players, usesLeft, busy, onUse, intro }: Props) {
             </div>
           )
         })}
-    </Panel>
+    </div>
   )
 }
