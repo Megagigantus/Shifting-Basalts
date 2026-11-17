@@ -588,7 +588,7 @@ export function PlayerLoot({ state, myCharacterIds, requests, done, readOnly = f
         icon={<Package size={15} />}
         title="Party loot"
         actions={
-          run.lootCall && me ? (
+          run.lootCall && run.awaitingChoice && me ? (
             isDone ? (
               <Pill tone="emerald">Done</Pill>
             ) : (

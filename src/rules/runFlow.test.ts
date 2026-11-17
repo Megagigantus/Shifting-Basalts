@@ -92,6 +92,12 @@ describe('floor progress', () => {
     expect(() => extract(state)).toThrow()
   })
 
+  it('descending ends an open loot call', () => {
+    const atBoss = clearFloor(start())
+    const called = { ...atBoss, run: { ...atBoss.run, lootCall: true } }
+    expect(descend(called).run.lootCall).toBe(false)
+  })
+
   it('descending moves to the next floor', () => {
     const state = descend(clearFloor(start()))
     expect(state.run.floor).toBe(2)

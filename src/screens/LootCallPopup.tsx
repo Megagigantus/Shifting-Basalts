@@ -35,6 +35,7 @@ export function LootCallPopup({
   if (
     run.status !== 'active' ||
     !run.lootCall ||
+    !run.awaitingChoice ||
     !player.alive ||
     done[player.characterId] ||
     vaultChoicePending ||
