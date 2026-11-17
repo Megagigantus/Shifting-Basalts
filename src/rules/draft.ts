@@ -211,6 +211,57 @@ function isDuplicate(offers: Offer[], offer: Offer): boolean {
 }
 
 /**
+ * Roll a replacement boon card for `offers[index]` with the character's current
+ * Banish list applied, respecting the offer's per-tag cap and no-duplicate rule.
+ * Returns null when no eligible candidate remains.
+ */
+export function replacementOffer({
+  character,
+  slots,
+  offers,
+  index,
+  random,
+}: {
+  character: DraftCharacter
+  slots: Slot[]
+  offers: Offer[]
+  index: number
+  random: Random
+}): Offer | null {
+  const current = offers[index]
+  if (!current || current.kind !== 'boon' || current.source === 'held') return null
+
+  const held = slots.filter((s): s is SlotContent => s !== null)
+  const heldBoonIds = held.flatMap(boonsIn)
+  const heldTags = new Set(held.flatMap((s) => slotTags(s)))
+
+  const excluded = new Set<string>([current.boonId])
+  const tagCounts = new Map<string, number>()
+  offers.forEach((o, i) => {
+    if (i === index || o.kind !== 'boon') return
+    excluded.add(o.boonId)
+    const tag = boon(o.boonId).tags[0]
+    tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1)
+  })
+
+  const candidates = eligibleBoons(character, heldBoonIds).filter(
+    (b) => !excluded.has(b.id) && (tagCounts.get(b.tags[0]) ?? 0) < MAX_PER_TAG,
+  )
+  if (candidates.length === 0) return null
+
+  const picked =
+    current.source === 'weighted'
+      ? weightedPick(
+          candidates,
+          (b) => boonWeight(b, character.classId, heldTags, character.favoredTags, character.tagWeights),
+          random,
+        )
+      : candidates[Math.floor(random() * candidates.length)]
+  if (!picked) return null
+  return { kind: 'boon', boonId: picked.id, source: current.source }
+}
+
+/**
  * Starting Boon upgrade: one random eligible boon at even odds (Banish applies).
  * With Attunement, it rolls from the attuned tag when any boon there is eligible.
  * Returns an empty offer if nothing is eligible.

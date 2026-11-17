@@ -239,6 +239,11 @@ export async function submitChoice(runId: string, characterId: string, choice: D
     data.replaceSlot = choice.replaceSlot ?? null
   }
   if (choice.action === 'hidden') data.hiddenBoonId = choice.hiddenBoonId
+  if (choice.action === 'banish') {
+    // boonId carries the listed boon to drop when the Banish list is full.
+    data.index = choice.index
+    data.boonId = choice.dropBoonId ?? null
+  }
   if (choice.action === 'relic' || choice.action === 'wakeRelic') data.relicId = choice.relicId
   if (choice.action === 'recover') {
     data.recoveryTrack = choice.track
@@ -284,6 +289,8 @@ function choiceFromDoc(c: ChoiceDoc): DraftChoice {
       return { action: 'take', index: c.index ?? -1, replaceSlot: c.replaceSlot ?? null }
     case 'hidden':
       return { action: 'hidden', hiddenBoonId: c.hiddenBoonId ?? '' }
+    case 'banish':
+      return { action: 'banish', index: c.index ?? -1, dropBoonId: c.boonId ?? null }
     case 'relic':
       return { action: 'relic', relicId: c.relicId ?? '' }
     case 'wakeRelic':
