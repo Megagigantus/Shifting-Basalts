@@ -1,6 +1,7 @@
 // Basalt Echoes: every boon, Evolution, Combination and hidden boon this character has held.
 import { useState } from 'react'
 import { Lock } from 'lucide-react'
+import { setEchoSeen } from '../characterStore'
 import type { Character } from '../model/character'
 import { boon, combination, evolution, hiddenBoon } from '../rules/boons'
 import { echoCounts, echoPool, type EchoGroup } from '../rules/echoes'
@@ -19,14 +20,28 @@ const GROUPS: { id: EchoGroup; label: string }[] = [
 const SEEN_CARD = 'flex flex-col gap-2 rounded-lg border border-emerald-500/35 bg-stone-950/70 p-3'
 const UNSEEN_CARD = 'flex min-h-24 flex-col gap-2 rounded-lg border border-stone-800 bg-stone-950/50 p-3 opacity-60'
 
-/** Read-only collection of every echo a character has held across runs, with locked placeholders for the rest. */
-export function BasaltEchoes({ character }: { character: Character }) {
+/** Collection of every echo a character has held across runs, with locked placeholders for the rest. */
+export function BasaltEchoes({ character, canMark = false }: { character: Character; canMark?: boolean }) {
   const [group, setGroup] = useState<EchoGroup>('boons')
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const counts = echoCounts(character)
   const pool = echoPool(character)
   const seenIds = new Set(character.echoes?.[group] ?? [])
   const ids = pool[group]
   const orderedIds = [...ids.filter((id) => seenIds.has(id)), ...ids.filter((id) => !seenIds.has(id))]
+
+  async function toggleSeen(id: string, seen: boolean) {
+    setError(null)
+    setBusy(true)
+    try {
+      await setEchoSeen(character.id, group, id, seen)
+    } catch {
+      setError('Could not save. Please try again.')
+    } finally {
+      setBusy(false)
+    }
+  }
 
   return (
     <div className="flex flex-col gap-3">
@@ -70,34 +85,85 @@ export function BasaltEchoes({ character }: { character: Character }) {
         </p>
       )}
 
+      {error && <p className="m-0 text-xs text-rose-300">{error}</p>}
+
       <div className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3">
         {orderedIds.map((id) =>
-          seenIds.has(id) ? <SeenCard key={id} group={group} id={id} /> : <UnseenCard key={id} />,
+          seenIds.has(id) ? (
+            <SeenCard key={id} group={group} id={id} canMark={canMark} busy={busy} onUnmark={() => toggleSeen(id, false)} />
+          ) : (
+            <UnseenCard key={id} group={group} id={id} canMark={canMark} busy={busy} onMark={() => toggleSeen(id, true)} />
+          ),
         )}
       </div>
     </div>
   )
 }
 
-function SeenCard({ group, id }: { group: EchoGroup; id: string }) {
+function echoName(group: EchoGroup, id: string): string {
+  if (group === 'boons') return boon(id).name
+  if (group === 'evolutions') return evolution(id).name
+  if (group === 'combinations') return combination(id).name
+  return hiddenBoon(id).name
+}
+
+function SeenCard({
+  group,
+  id,
+  canMark,
+  busy,
+  onUnmark,
+}: {
+  group: EchoGroup
+  id: string
+  canMark: boolean
+  busy: boolean
+  onUnmark: () => void
+}) {
   return (
     <div className={SEEN_CARD}>
       {group === 'boons' && <BoonDetails id={id} />}
       {group === 'evolutions' && <EvolutionDetails id={id} />}
       {group === 'combinations' && <CombinationDetails id={id} />}
       {group === 'hidden' && <HiddenDetails id={id} />}
+      {canMark && (
+        <div className="mt-auto pt-1">
+          <button type="button" className={cx(SMALL_BUTTON, 'text-stone-400')} disabled={busy} onClick={onUnmark}>
+            Unmark
+          </button>
+        </div>
+      )}
     </div>
   )
 }
 
-function UnseenCard() {
+function UnseenCard({
+  group,
+  id,
+  canMark,
+  busy,
+  onMark,
+}: {
+  group: EchoGroup
+  id: string
+  canMark: boolean
+  busy: boolean
+  onMark: () => void
+}) {
   return (
     <div className={UNSEEN_CARD}>
       <div className="flex items-center gap-1.5 text-stone-400">
         <Lock size={14} aria-hidden="true" />
-        <strong className="text-sm font-bold text-stone-400">???</strong>
+        <strong className="text-sm font-bold text-stone-400">{canMark ? echoName(group, id) : '???'}</strong>
       </div>
       <p className="m-0 text-[0.6875rem] text-stone-500">An echo not yet heard.</p>
+      {canMark && (
+        <div className="mt-auto pt-1">
+          <button type="button" className={SMALL_BUTTON} disabled={busy} onClick={onMark}>
+            Mark as seen
+          </button>
+        </div>
+      )}
     </div>
   )
 }

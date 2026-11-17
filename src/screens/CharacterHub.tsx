@@ -213,7 +213,7 @@ export function CharacterHub({ character: c, mode, actions }: Props) {
           title="Basalt Echoes: every boon you've held"
           onLeave={() => setVisiting(null)}
         >
-          <BasaltEchoes character={c} />
+          <BasaltEchoes character={c} canMark={canCorrect} />
         </Location>
       ) : (
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
