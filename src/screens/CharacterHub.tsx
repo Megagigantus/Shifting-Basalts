@@ -149,7 +149,6 @@ export function CharacterHub({ character: c, mode, actions }: Props) {
           <SectionLabel>Active dungeon modifiers (add these to your sheet inside the Basalts)</SectionLabel>
           {effects.length ? (
             <div className="flex flex-wrap gap-1.5">
-              <Pill tone="emerald">PB +{proficiencyBonus(c.level)}</Pill>
               {effects.map((e) => (
                 <Pill key={e} tone="emerald">
                   {e}
