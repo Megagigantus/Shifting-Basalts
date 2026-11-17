@@ -118,6 +118,8 @@ export interface RunPlayer {
   hiddenBoonId?: string | null
   /** Everything this player has held this run, for Basalt Echoes (rules/echoes.ts). */
   echoes?: Echoes
+  /** Boon ids this player banished from a draft offer this run (rules/draftFlow.ts banishOffer). */
+  banishedThisRun?: string[]
   /** What the draft needs to know about the character, captured at run start. */
   draftProfile?: DraftCharacter & {
     /** Offer rerolls allowed per floor (Reroll upgrade rank). */
@@ -208,4 +210,8 @@ export interface RunResult {
   relicsTradedIn?: string[]
   /** Everything this character held this run, for Basalt Echoes (rules/echoes.ts). */
   echoes?: Echoes
+  /** The character's Banish list at the end of the run (changed by draft banishes). */
+  banished?: string[]
+  /** Boon ids banished from a draft this run, added to the character's banish history. */
+  banishedThisRun?: string[]
 }

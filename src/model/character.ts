@@ -62,6 +62,12 @@ export interface DungeonLayer {
   upgrades: Record<string, number>
   /** Banish list: boon ids that never appear in this character's offers (Build clarification 14). */
   banished: string[]
+  /**
+   * Every boon this character has ever banished from a draft offer. Between
+   * runs, the Banish list can only be filled from this history (plus whatever
+   * is already on the list). Missing on older characters.
+   */
+  banishHistory?: string[]
   /** Attunement: the tag the first offer of each run includes. */
   attuneTag: string | null
   /** Set while the character is in a run; Banish and Attunement lock until it clears. */
@@ -127,6 +133,7 @@ export function emptyDungeonLayer(): DungeonLayer {
     lockoutDays: 0,
     upgrades: {},
     banished: [],
+    banishHistory: [],
     attuneTag: null,
     activeRunId: null,
     loot: [],
