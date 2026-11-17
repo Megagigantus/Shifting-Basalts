@@ -2,8 +2,9 @@
 // latest saved values. Each runs as a Firestore transaction: it re-reads the
 // character, checks the rule, then writes, so double-clicks can't overspend.
 import { totalLevel, type BuildFields } from './rules/build'
-import { doc, FieldPath, runTransaction, serverTimestamp, updateDoc } from 'firebase/firestore'
+import { arrayRemove, arrayUnion, doc, FieldPath, runTransaction, serverTimestamp, updateDoc } from 'firebase/firestore'
 import { db } from './firebase'
+import type { EchoGroup } from './rules/echoes'
 import { investmentCap } from './rules/statTracks'
 import { nextRankCost, ownedRankCost, upgradeById } from './rules/upgrades'
 
@@ -128,4 +129,13 @@ export async function setAttuneTag(characterId: string, attuneTag: string | null
 export async function saveBuild(characterId: string, build: BuildFields): Promise<void> {
   if (!db) throw new Error('Firebase is not set up.')
   await updateDoc(doc(db, 'characters', characterId), { ...build, level: totalLevel(build), updatedAt: serverTimestamp() })
+}
+
+/** DM correction: mark or unmark an entry in a character's Basalt Echoes collection. */
+export async function setEchoSeen(characterId: string, group: EchoGroup, id: string, seen: boolean): Promise<void> {
+  if (!db) throw new Error('Firebase is not set up.')
+  await updateDoc(doc(db, 'characters', characterId), {
+    ['echoes.' + group]: seen ? arrayUnion(id) : arrayRemove(id),
+    updatedAt: serverTimestamp(),
+  })
 }

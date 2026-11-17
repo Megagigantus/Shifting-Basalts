@@ -19,9 +19,14 @@ import {
   roomLoot,
   applyDrops,
   searchStriderRemains,
+  SHRINE_TERRAIN,
+  shrineBlocker,
+  shrineHereThils,
   shrineOffering,
+  shrineUsedHere,
   type LootItem,
 } from './loot'
+import type { RoomView } from './rooms'
 import { markDead, newRunState, rewardBonusPercent } from './runFlow'
 
 // mulberry32: neighbouring seeds give unrelated sequences.
@@ -199,7 +204,8 @@ describe('strider remains and shrines', () => {
   })
 
   it('a shrine offering spends a trinket to reroll one of this floor\'s rolls', () => {
-    const searched = searchStriderRemains(run(), false, seeded(3)) // a trinket (strider: not rerollable)
+    const base = searchStriderRemains(run(), false, seeded(3)) // a trinket (strider: not rerollable)
+    const searched: RunState = { ...base, run: { ...base.run, roomView: { terrain: [SHRINE_TERRAIN] } as RoomView } }
     const trinket = searched.run.loot!.items.find((i) => i.kind === 'trinket')!
     let state = searched
     for (let seed = 5; rerollableItems(state).length === 0; seed++) {
@@ -218,6 +224,57 @@ describe('strider remains and shrines', () => {
     expect(rerolled).toMatchObject({ kind: target.kind, rarity: target.rarity, source: 'shrine' })
     expect(rerolled.ref).not.toBe(target.ref)
     expect(() => shrineOffering(state, target.uid, trinket.uid, seeded(6))).toThrow()
+    // One offering per shrine room.
+    expect(shrineUsedHere(state)).toBe(false)
+    expect(shrineUsedHere(next)).toBe(true)
+    const again = next.run.loot!.items.at(-1)!
+    expect(() => shrineOffering(next, again.uid, again.uid, seeded(7))).toThrow('already taken an offering')
+    // A different room's shrine is fresh.
+    expect(shrineUsedHere({ ...next, run: { ...next.run, room: next.run.room + 1 } })).toBe(false)
+  })
+
+  it('shrineBlocker explains why an offering cannot happen, in order, or returns null', () => {
+    const withView = (state: RunState, terrain: string[] | null): RunState => ({
+      ...state,
+      run: { ...state.run, roomView: terrain ? ({ terrain } as RoomView) : null },
+    })
+    const withLoot = (state: RunState, items: LootItem[], shrinesUsed: string[] = []): RunState => ({
+      ...state,
+      run: { ...state.run, loot: { items, credits: 0, nextUid: 10, log: [], searched: [], shrinesUsed } },
+    })
+    const trinket = item({ uid: 'L1', kind: 'trinket', ref: '0', rarity: null, source: 'strider' })
+    const roomTrinket = item({ uid: 'L2', kind: 'trinket', ref: '1', rarity: null, source: 'room' })
+    const roomDrop = item({ uid: 'L3', kind: 'consumable', ref: 'echo-phial', rarity: 'common', source: 'room' })
+
+    const ready = withLoot(withView(run(), [SHRINE_TERRAIN]), [trinket, roomDrop])
+    expect(shrineHereThils(ready)).toBe(true)
+    expect(shrineBlocker(ready)).toBeNull()
+    expect(shrineBlocker(withLoot(withView(run(), [SHRINE_TERRAIN]), [roomTrinket, item({ ...roomTrinket, uid: 'L4' })]))).toBeNull()
+
+    // 1. No shrine in the room (missing roomView or missing terrain id).
+    const noView = withLoot(run(), [trinket, roomDrop])
+    expect(shrineHereThils(noView)).toBe(false)
+    expect(shrineBlocker(noView)).toBe("There's no Shrine to Thils in this room.")
+    expect(shrineBlocker(withView(ready, ['rubble']))).toBe("There's no Shrine to Thils in this room.")
+    expect(() => shrineOffering(noView, trinket.uid, roomDrop.uid, seeded(1))).toThrow("There's no Shrine to Thils in this room.")
+
+    // 2. Run not active.
+    expect(shrineBlocker({ ...ready, run: { ...ready.run, status: 'extracted' } })).toBe("The run isn't active.")
+
+    // 3. Shrine already used in this room.
+    expect(shrineBlocker(withLoot(withView(run(), [SHRINE_TERRAIN]), [trinket, roomDrop], ['1-1']))).toBe(
+      'This shrine has already taken an offering.',
+    )
+
+    // 4. No trinket in the party pool.
+    expect(shrineBlocker(withLoot(withView(run(), [SHRINE_TERRAIN]), [roomDrop]))).toBe("Offer a trinket: the party's loot has none.")
+
+    // 5. No rerollable item that can be paired with a trinket (including a lone room trinket).
+    expect(shrineBlocker(withLoot(withView(run(), [SHRINE_TERRAIN]), [trinket]))).toBe('Nothing from this floor to reroll yet.')
+    expect(shrineBlocker(withLoot(withView(run(), [SHRINE_TERRAIN]), [roomTrinket]))).toBe('Nothing from this floor to reroll yet.')
+    const oldFloorDrop = item({ ...roomDrop, floor: 1 })
+    const floor2 = { ...withLoot(withView(run(), [SHRINE_TERRAIN]), [trinket, oldFloorDrop]), run: { ...withLoot(withView(run(), [SHRINE_TERRAIN]), [trinket, oldFloorDrop]).run, floor: 2 } }
+    expect(shrineBlocker(floor2)).toBe('Nothing from this floor to reroll yet.')
   })
 })
 

@@ -25,6 +25,7 @@ import { describeReprieve } from '../rules/reprieve'
 import { CounterList } from './CountersPanel'
 import { PostBossScene } from './Scene'
 import { ShrinePanel } from './ShrinePanel'
+import { ThilsShrinePanel } from './ThilsShrinePanel'
 import { useLooks } from './mapPieces'
 import { artUrl } from '../art'
 import { Panel } from '../ui/Panel'
@@ -149,6 +150,18 @@ export function PlayerRun({ state, myCharacterIds, readOnly = false }: Props) {
             myCharacterIds={myCharacterIds}
             readOnly={readOnly}
           />
+
+          {aliveMine.map((p) => (
+            <ThilsShrinePanel
+              key={p.characterId}
+              mode="player"
+              state={state}
+              player={p}
+              sent={choices[p.characterId]}
+              readOnly={readOnly}
+              dmChoosing={readOnly}
+            />
+          ))}
 
           <PlayerLoot state={state} myCharacterIds={myCharacterIds} requests={requests} done={lootDone} readOnly={readOnly} />
         </div>

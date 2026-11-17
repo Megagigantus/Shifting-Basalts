@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import { emptyDungeonLayer, emptyProfile, type Character } from '../model/character'
-import { applyChoice, draftKey } from './draftChoice'
+import { applyChoice, draftKey, isDraftChoice } from './draftChoice'
 import { openDrafts, roomConditionMet } from './draftFlow'
-import { clearRoom, newRunState } from './runFlow'
+import { applyDrops, SHRINE_TERRAIN } from './loot'
+import type { RoomView } from './rooms'
+import { clearRoom, markDead, newRunState } from './runFlow'
 import { openVault } from './vault'
 
 const random = () => 0.42
@@ -49,6 +51,31 @@ describe('draft choices as data', () => {
     const picked = state.players[0].vaultOffer![0]
     const traded = applyChoice(state, 'a', { action: 'relic', relicId: picked }, random)
     expect(traded.players[0]).toMatchObject({ vaultRelic: picked, vaultTradeIn: ['breakers-wraps'] })
+  })
+
+  it('shrineOffering removes the trinket and target, adds a shrine item, and refuses a dead player', () => {
+    let state = newRunState('r', 'X', [char('a'), char('b')], [])
+    state = { ...state, run: { ...state.run, roomView: { terrain: [SHRINE_TERRAIN] } as RoomView } }
+    state = applyDrops(state, [{ kind: 'item', item: { kind: 'trinket', ref: '0', rarity: null } }], 'strider')
+    state = applyDrops(state, [{ kind: 'item', item: { kind: 'consumable', ref: 'echo-phial', rarity: 'common' } }], 'room')
+    const [trinket, target] = state.run.loot!.items
+    const choice = { action: 'shrineOffering' as const, trinketUid: trinket.uid, targetUid: target.uid }
+    expect(isDraftChoice(choice)).toBe(false)
+
+    const next = applyChoice(state, 'a', choice, random)
+    const items = next.run.loot!.items
+    expect(items.map((i) => i.uid)).not.toContain(trinket.uid)
+    expect(items.map((i) => i.uid)).not.toContain(target.uid)
+    expect(items).toHaveLength(1)
+    expect(items[0]).toMatchObject({ kind: 'consumable', rarity: 'common', source: 'shrine' })
+
+    const dead = markDead(state, 'a', () => 1)
+    expect(() => applyChoice(dead, 'a', choice, random)).toThrow('Only a living player can make an offering.')
+    expect(() => applyChoice(state, 'missing', choice, random)).toThrow('Only a living player can make an offering.')
+  })
+
+  it('wakeRelic is applied separately', () => {
+    expect(() => applyChoice(drafted(), 'a', { action: 'wakeRelic', relicId: 'breakers-wraps' }, random)).toThrow('Waking a relic is applied separately.')
   })
 })
 

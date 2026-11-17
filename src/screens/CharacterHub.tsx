@@ -1,16 +1,18 @@
 // One character's hub, shared by the DM's Characters tab and the player's
 // home: profile, what the dungeon adds to their sheet, draft preferences,
-// loot, and the Basalt Shrine (stat tracks) and Basalt Markets (upgrades) as
-// art banners that open when visited.
+// loot, and the Basalt Shrine (stat tracks), Basalt Markets (upgrades) and
+// Basalt Echoes (collection) as art banners that open when visited.
 import { useState, type ReactNode } from 'react'
-import { Landmark, LogOut, Minus, Plus, Store } from 'lucide-react'
+import { Landmark, Library, LogOut, Minus, Plus, Store } from 'lucide-react'
 import { changeFullClears } from '../characterStore'
 import { buildOf, CASTER_TYPES, type Character } from '../model/character'
 import { buildSummary } from '../rules/build'
+import { echoCounts } from '../rules/echoes'
 import { proficiencyBonus } from '../rules/proficiency'
 import { effectAtRank, rankProgress, STAT_TRACKS } from '../rules/statTracks'
 import { hasFullClear, UPGRADES } from '../rules/upgrades'
 import { artUrl } from '../art'
+import { BasaltEchoes } from './BasaltEchoes'
 import { BuildPanel } from './BuildPanel'
 import { DraftPreferences } from './DraftPreferences'
 import { Avatar, LookPicker } from './LookPicker'
@@ -50,7 +52,7 @@ interface Props {
 }
 
 export function CharacterHub({ character: c, mode, actions }: Props) {
-  const [visiting, setVisiting] = useState<'shrine' | 'markets' | null>(null)
+  const [visiting, setVisiting] = useState<'shrine' | 'markets' | 'echoes' | null>(null)
   const [savingClears, setSavingClears] = useState(false)
   const [clearsError, setClearsError] = useState<string | null>(null)
   async function adjustFullClears(delta: 1 | -1) {
@@ -68,6 +70,7 @@ export function CharacterHub({ character: c, mode, actions }: Props) {
   const portraitUrl = c.portrait ? artUrl('portraits', c.portrait) : null
   const effects = trackEffects(c)
   const owned = upgradesOwned(c)
+  const { overall } = echoCounts(c)
   const canEdit = mode !== 'preview'
   const canCorrect = mode === 'dm'
   // The Shrine and Markets are closed while the character is in a run.
@@ -202,6 +205,16 @@ export function CharacterHub({ character: c, mode, actions }: Props) {
           {closedNote}
           <UpgradeShop character={c} canCorrect={canCorrect} canSpend={canSpend} />
         </Location>
+      ) : visiting === 'echoes' ? (
+        <Location
+          artId="basalt-lib"
+          tone="emerald"
+          icon={<Library size={16} />}
+          title="Basalt Echoes: every boon you've held"
+          onLeave={() => setVisiting(null)}
+        >
+          <BasaltEchoes character={c} canMark={canCorrect} />
+        </Location>
       ) : (
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           <LocationBanner
@@ -222,6 +235,16 @@ export function CharacterHub({ character: c, mode, actions }: Props) {
             badge={`${c.bankedQuantumBasalts} QB`}
             onVisit={() => setVisiting('markets')}
           />
+          <LocationBanner
+            artId="basalt-lib"
+            tone="emerald"
+            icon={<Library size={16} />}
+            title="Basalt Echoes"
+            text="Every boon, Evolution and Combination you've held, and the echoes still waiting."
+            badge={`${overall.seen} of ${overall.total} seen`}
+            className="md:col-span-2"
+            onVisit={() => setVisiting('echoes')}
+          />
         </div>
       )}
     </div>
@@ -235,14 +258,15 @@ interface BannerProps {
   title: string
   text: string
   badge: string
+  className?: string
   onVisit: () => void
 }
 
 /** A closed location: its art with a title, what it's for, and a Visit button. */
-function LocationBanner({ artId, tone, icon, title, text, badge, onVisit }: BannerProps) {
+function LocationBanner({ artId, tone, icon, title, text, badge, className, onVisit }: BannerProps) {
   const url = artUrl('rooms', artId)
   return (
-    <div className={cx('group relative overflow-hidden rounded-2xl border bg-stone-950', toneClasses[tone].border)}>
+    <div className={cx('group relative overflow-hidden rounded-2xl border bg-stone-950', toneClasses[tone].border, className)}>
       {url && (
         <img
           src={url}

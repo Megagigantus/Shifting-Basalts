@@ -14,6 +14,7 @@ import {
   onSnapshot,
   orderBy,
   query,
+  runTransaction,
   serverTimestamp,
   setDoc,
   updateDoc,
@@ -23,11 +24,14 @@ import {
 import { db } from './firebase'
 import type { Character } from './model/character'
 import type { DmRunState, Run, RunPlayer, RunResult, RunState } from './model/run'
+import { shrineHereThils } from './rules/loot'
+import { recordEchoes } from './rules/echoes'
 import { spendHiddenSight } from './rules/roomFlow'
 import { runResults } from './rules/runFlow'
 import { applyChoice, draftKey, isDraftChoice, type DraftChoice } from './rules/draftChoice'
 import type { ExitVote, ExitVoteDoc } from './rules/votes'
 import { reclaim, type Pledge } from './rules/shrine'
+import { wakeRelic } from './rules/vault'
 
 /**
  * Live view of the run currently in progress, if any. Only the DM's screen
@@ -106,11 +110,12 @@ export function newRunId(): string {
  * succeeds or fails together.
  */
 export async function saveRunState(
-  next: RunState,
+  nextIn: RunState,
   previous: RunState | null,
   characters: Character[],
 ): Promise<RunResult[] | null> {
   if (!db) throw new Error('Firebase is not set up.')
+  const next = recordEchoes(nextIn)
   const batch = writeBatch(db)
   const { id, ...runData } = next.run
   // Only write what changed, so a save never overwrites a player's choice
@@ -158,6 +163,7 @@ export async function saveRunState(
         : newLoot.length
           ? { loot: arrayUnion(...newLoot) }
           : {}
+      const echoes = r.echoes
       batch.update(doc(db, 'characters', r.characterId), {
         bankedQuantumBasalts: increment(r.quantumBasaltsGained),
         bankedDevotions: increment(r.devotions),
@@ -165,6 +171,10 @@ export async function saveRunState(
         ...(r.fullClear ? { fullClears: increment(1) } : {}),
         ...(r.lockoutDays !== null ? { lockoutDays: r.lockoutDays } : {}),
         ...lootUpdate,
+        ...(echoes?.boons.length ? { 'echoes.boons': arrayUnion(...echoes.boons) } : {}),
+        ...(echoes?.evolutions.length ? { 'echoes.evolutions': arrayUnion(...echoes.evolutions) } : {}),
+        ...(echoes?.combinations.length ? { 'echoes.combinations': arrayUnion(...echoes.combinations) } : {}),
+        ...(echoes?.hidden.length ? { 'echoes.hidden': arrayUnion(...echoes.hidden) } : {}),
         activeRunId: null,
         updatedAt: serverTimestamp(),
       })
@@ -204,13 +214,16 @@ export interface ChoiceDoc {
   forgeKind?: 'level' | 'evolve' | 'combine'
   slotIndex?: number
   combinationId?: string
-  /** Thils's Vault: the relic taken. */
+  /** Thils's Vault: the relic taken (or woken at a Shrine to Thils). */
   relicId?: string
   /** Recovery spend: the recovery track id and cost preset id. */
   recoveryTrack?: string
   presetId?: string
   /** Recovery payoff spend or Level 3 refund: the payoff boon id. */
   boonId?: string
+  /** Shrine to Thils offering: the trinket given up and the floor roll rerolled. */
+  trinketUid?: string
+  targetUid?: string
   /** The offer this choice was made against (null for hidden-offer choices). */
   draftKey: string | null
   /** Set by the DM's app when the choice couldn't be applied. */
@@ -226,13 +239,17 @@ export async function submitChoice(runId: string, characterId: string, choice: D
     data.replaceSlot = choice.replaceSlot ?? null
   }
   if (choice.action === 'hidden') data.hiddenBoonId = choice.hiddenBoonId
-  if (choice.action === 'relic') data.relicId = choice.relicId
+  if (choice.action === 'relic' || choice.action === 'wakeRelic') data.relicId = choice.relicId
   if (choice.action === 'recover') {
     data.recoveryTrack = choice.track
     data.presetId = choice.presetId
   }
   if (choice.action === 'payoffSpend' || choice.action === 'payoffRefund') data.boonId = choice.boonId
   if (choice.action === 'reprieveReflect') data.slotIndex = choice.slotIndex
+  if (choice.action === 'shrineOffering') {
+    data.trinketUid = choice.trinketUid
+    data.targetUid = choice.targetUid
+  }
   if (choice.action === 'forge') {
     data.forgeKind = choice.forge.kind
     if (choice.forge.kind === 'combine') data.combinationId = choice.forge.combinationId
@@ -269,6 +286,8 @@ function choiceFromDoc(c: ChoiceDoc): DraftChoice {
       return { action: 'hidden', hiddenBoonId: c.hiddenBoonId ?? '' }
     case 'relic':
       return { action: 'relic', relicId: c.relicId ?? '' }
+    case 'wakeRelic':
+      return { action: 'wakeRelic', relicId: c.relicId ?? '' }
     case 'recover':
       return { action: 'recover', track: c.recoveryTrack ?? '', presetId: c.presetId ?? '' }
     case 'payoffSpend':
@@ -277,6 +296,8 @@ function choiceFromDoc(c: ChoiceDoc): DraftChoice {
       return { action: 'payoffRefund', boonId: c.boonId ?? '' }
     case 'reprieveReflect':
       return { action: 'reprieveReflect', slotIndex: c.slotIndex ?? -1 }
+    case 'shrineOffering':
+      return { action: 'shrineOffering', trinketUid: c.trinketUid ?? '', targetUid: c.targetUid ?? '' }
     case 'forge':
       return {
         action: 'forge',
@@ -306,6 +327,10 @@ export async function applyChoiceDoc(state: RunState, characterId: string, choic
     await applyHiddenSight(state, characterId, choiceRef)
     return
   }
+  if (parsed.action === 'wakeRelic') {
+    await wakeRelicAtShrine(state, characterId, parsed.relicId, choiceRef)
+    return
+  }
   // Only boon draft and hidden-offer answers depend on an open offer.
   const answersOffer = ['take', 'pass', 'reroll', 'hidden', 'passHidden'].includes(parsed.action)
   if (player && answersOffer && !player.draft && !player.hiddenOffer) {
@@ -319,6 +344,7 @@ export async function applyChoiceDoc(state: RunState, characterId: string, choic
       throw new Error('Your offer changed before your choice arrived. Please choose again.')
     }
     next = applyChoice(state, characterId, parsed, Math.random)
+    next = recordEchoes(next)
   } catch (err) {
     await updateDoc(choiceRef, { error: (err as Error).message })
     return
@@ -632,4 +658,45 @@ export function usePrivateHints(runId: string | null, characterId: string | null
     )
   }, [runId, characterId])
   return loaded && loaded.key === key ? loaded.hints : []
+}
+
+/**
+ * Wake one of a living player's Dormant relics at a Shrine to Thils, paying
+ * from their character's banked Quantum Basalts. `choiceRef`, if given, is the
+ * player's request, deleted in the same transaction on success or marked with
+ * the error on failure.
+ */
+export async function wakeRelicAtShrine(
+  state: RunState,
+  characterId: string,
+  relicId: string,
+  choiceRef?: ReturnType<typeof doc>,
+): Promise<void> {
+  if (!db) throw new Error('Firebase is not set up.')
+  const firestore = db
+  try {
+    if (!shrineHereThils(state)) throw new Error('There\'s no Shrine to Thils in this room.')
+    if (state.run.status !== 'active') throw new Error('The run isn\'t active.')
+    const player = state.players.find((p) => p.characterId === characterId)
+    if (!player || !player.alive) throw new Error('Only a living player can wake a relic.')
+
+    await runTransaction(firestore, async (tx) => {
+      const charRef = doc(firestore, 'characters', characterId)
+      const snapshot = await tx.get(charRef)
+      if (!snapshot.exists()) throw new Error('That character no longer exists.')
+      const data = snapshot.data() as Partial<Character>
+      const { bankedQuantumBasalts, loot } = wakeRelic(
+        { level: data.level ?? 0, bankedQuantumBasalts: data.bankedQuantumBasalts ?? 0, loot: data.loot },
+        relicId,
+      )
+      tx.update(charRef, { bankedQuantumBasalts, loot, updatedAt: serverTimestamp() })
+      if (choiceRef) tx.delete(choiceRef)
+    })
+  } catch (err) {
+    if (choiceRef) {
+      await updateDoc(choiceRef, { error: err instanceof Error ? err.message : String(err) })
+      return
+    }
+    throw err
+  }
 }

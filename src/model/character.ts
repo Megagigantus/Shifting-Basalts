@@ -1,5 +1,6 @@
 // A saved character: the lean profile from the design bible's
 // "App requirements > Characters" section, plus the permanent dungeon layer.
+import { emptyEchoes, type Echoes } from '../rules/echoes'
 import type { LootItem } from '../rules/loot'
 
 export type CasterType = 'none' | 'half' | 'full' | 'pact'
@@ -67,6 +68,8 @@ export interface DungeonLayer {
   activeRunId: string | null
   /** Loot this character carried out of the Basalts, relics included (missing on older characters). */
   loot?: OwnedLoot[]
+  /** Basalt Echoes: every boon, Evolution, Combination and hidden boon this character has held in a run. Missing on older characters. */
+  echoes?: Echoes
 }
 
 /** An item a character took home from a run. */
@@ -127,6 +130,7 @@ export function emptyDungeonLayer(): DungeonLayer {
     attuneTag: null,
     activeRunId: null,
     loot: [],
+    echoes: emptyEchoes(),
   }
 }
 

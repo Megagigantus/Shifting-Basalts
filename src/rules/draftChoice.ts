@@ -8,6 +8,7 @@ import { chooseRelic, passVault } from './vault'
 import { recover, refundPayoff, spendPayoff } from './recovery'
 import { chooseReprieve } from './reprieve'
 import { spendFortuneDie } from './fortune'
+import { shrineOffering } from './loot'
 
 export type DraftChoice =
   | { action: 'take'; index: number; replaceSlot?: number | null }
@@ -36,6 +37,10 @@ export type DraftChoice =
   | { action: 'reprieveReflect'; slotIndex: number }
   /** Reprieve: catch-up Basalts, for a player with no boon to level. */
   | { action: 'reprieveBasalts' }
+  /** Shrine to Thils: offer a trinket from the party's loot to reroll one floor roll. */
+  | { action: 'shrineOffering'; trinketUid: string; targetUid: string }
+  /** Shrine to Thils: wake a Dormant relic with banked Quantum Basalts. */
+  | { action: 'wakeRelic'; relicId: string }
 
 /**
  * Identifies the exact offer a choice was made against. If the offer changes
@@ -83,6 +88,14 @@ export function applyChoice(state: RunState, characterId: string, choice: DraftC
       return chooseReprieve(state, characterId, { kind: 'reflect', slotIndex: choice.slotIndex })
     case 'reprieveBasalts':
       return chooseReprieve(state, characterId, { kind: 'basalts' })
+    case 'shrineOffering': {
+      const player = state.players.find((p) => p.characterId === characterId)
+      if (!player || !player.alive) throw new Error('Only a living player can make an offering.')
+      return shrineOffering(state, choice.trinketUid, choice.targetUid, random)
+    }
+    case 'wakeRelic':
+      // Updates the character's permanent record; runStore.wakeRelicAtShrine does that.
+      throw new Error('Waking a relic is applied separately.')
   }
 }
 
