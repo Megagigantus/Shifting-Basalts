@@ -5,7 +5,8 @@
 // run state is saved. Every pick is saved before it can be replaced, so
 // replaced boons are still caught.
 import type { RunState } from '../model/run'
-import { boonsIn, type Slot, type SlotContent } from './boons'
+import type { HiddenBoon } from '../data/types'
+import { BOONS, boonsIn, COMBINATIONS, EVOLUTIONS, HIDDEN_BOONS, type Slot, type SlotContent } from './boons'
 
 export interface Echoes {
   boons: string[]
@@ -65,4 +66,39 @@ export function recordEchoes(state: RunState): RunState {
     return { ...p, echoes }
   })
   return changed ? { ...state, players } : state
+}
+
+// ---------------------------------------------------------------------------
+// The collection: what a character can see in each group, and how much of it
+// they have. Totals come from the data files, so new content counts itself.
+
+export type EchoGroup = 'boons' | 'evolutions' | 'combinations' | 'hidden'
+
+/** Hidden boons a character can ever receive: Thils's gifts plus their own classes' hidden boons. */
+export function hiddenPoolFor(c: { classId: string; secondClassId?: string }): HiddenBoon[] {
+  return HIDDEN_BOONS.filter((h) => h.kind === 'gift' || (h.classId !== undefined && (h.classId === c.classId || h.classId === c.secondClassId)))
+}
+
+/** Every id in each group of this character's collection. */
+export function echoPool(c: { classId: string; secondClassId?: string }): Record<EchoGroup, string[]> {
+  return {
+    boons: BOONS.map((b) => b.id),
+    evolutions: EVOLUTIONS.map((e) => e.id),
+    combinations: COMBINATIONS.map((x) => x.id),
+    hidden: hiddenPoolFor(c).map((h) => h.id),
+  }
+}
+
+/** Seen and total per group, plus overall. Only ids still in the data count as seen. */
+export function echoCounts(
+  c: { classId: string; secondClassId?: string; echoes?: Echoes },
+): Record<EchoGroup | 'overall', { seen: number; total: number }> {
+  const pool = echoPool(c)
+  const count = (group: EchoGroup) => {
+    const seen = new Set(c.echoes?.[group] ?? [])
+    return { seen: pool[group].filter((id) => seen.has(id)).length, total: pool[group].length }
+  }
+  const groups = { boons: count('boons'), evolutions: count('evolutions'), combinations: count('combinations'), hidden: count('hidden') }
+  const all = Object.values(groups)
+  return { ...groups, overall: { seen: all.reduce((s, g) => s + g.seen, 0), total: all.reduce((s, g) => s + g.total, 0) } }
 }

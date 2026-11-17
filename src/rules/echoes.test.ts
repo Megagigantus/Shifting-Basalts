@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { emptyDungeonLayer, emptyProfile, type Character } from '../model/character'
-import { emptySlots, replaceBoon, takeBoon, type Slot } from './boons'
-import { echoesOf, emptyEchoes, mergeEchoes, recordEchoes, type Echoes } from './echoes'
+import { BOONS, COMBINATIONS, EVOLUTIONS, HIDDEN_BOONS, emptySlots, replaceBoon, takeBoon, type Slot } from './boons'
+import { echoCounts, echoesOf, emptyEchoes, mergeEchoes, recordEchoes, type Echoes } from './echoes'
 import { changeSlots, newRunState, setHiddenBoon } from './runFlow'
 
 const char = (id: string): Character => ({
@@ -77,5 +77,30 @@ describe('recordEchoes', () => {
       combinations: [],
       hidden: ['keeper-of-ways'],
     })
+  })
+})
+
+describe('echoCounts', () => {
+  it('counts each group against the data, with hidden limited to gifts plus own classes', () => {
+    const empty = echoCounts({ classId: 'fighter' })
+    expect(empty.boons).toEqual({ seen: 0, total: BOONS.length })
+    expect(empty.evolutions.total).toBe(EVOLUTIONS.length)
+    expect(empty.combinations.total).toBe(COMBINATIONS.length)
+    const gifts = HIDDEN_BOONS.filter((h) => h.kind === 'gift').length
+    expect(empty.hidden.total).toBe(gifts + 1)
+    expect(echoCounts({ classId: 'fighter', secondClassId: 'wizard' }).hidden.total).toBe(gifts + 2)
+    expect(echoCounts({ classId: 'homebrew' }).hidden.total).toBe(gifts)
+  })
+
+  it('counts seen ids once, ignores ids no longer in the data, and sums overall', () => {
+    const c = {
+      classId: 'fighter',
+      echoes: { boons: [BOONS[0].id, BOONS[1].id, 'retired-boon'], evolutions: [EVOLUTIONS[0].id], combinations: [], hidden: [] },
+    }
+    const counts = echoCounts(c)
+    expect(counts.boons.seen).toBe(2)
+    expect(counts.evolutions.seen).toBe(1)
+    expect(counts.overall.seen).toBe(3)
+    expect(counts.overall.total).toBe(counts.boons.total + counts.evolutions.total + counts.combinations.total + counts.hidden.total)
   })
 })
