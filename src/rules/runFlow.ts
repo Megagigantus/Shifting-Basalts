@@ -202,7 +202,7 @@ export function descend(state: RunState): RunState {
   if (!state.run.awaitingChoice) throw new Error('You can only descend after a boss.')
   if (state.run.floor >= LAST_FLOOR) throw new Error('There is no deeper floor.')
   const next = returnVanished(state)
-  return { ...next, run: { ...next.run, floor: next.run.floor + 1, room: 1, awaitingChoice: false, forgeUsesLeft: 0 } }
+  return { ...next, run: { ...next.run, floor: next.run.floor + 1, room: 1, awaitingChoice: false, forgeUsesLeft: 0, lootCall: false } }
 }
 
 /**

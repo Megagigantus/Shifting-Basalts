@@ -23,7 +23,7 @@ import { RecoveryEditor, RecoveryPanel } from './RecoveryPanel'
 import { RECOVERY_TRACKS, refreshRecovery, trackRank } from '../rules/recovery'
 import { describeReprieve } from '../rules/reprieve'
 import { CounterList, CountersEditor } from './CountersPanel'
-import { useExitVotes, useLootRequests } from '../runStore'
+import { clearLootDone, useExitVotes, useLootDone, useLootRequests } from '../runStore'
 import { ExitVoteTally } from './ExitVote'
 import { applyChoice } from '../rules/draftChoice'
 import { classHiddenBoon } from '../rules/draft'
@@ -31,10 +31,8 @@ import { applyChoiceDoc, cancelRun, saveRunState, useChoices, type ChoiceDoc } f
 import { boonSummary, hiddenBoon } from '../rules/boons'
 import { PlayerBoons } from './PlayerBoons'
 import { DraftOffers } from './DraftOffers'
-import { ForgePanel } from './ForgePanel'
 import { DmRoom } from './DmRoom'
 import { startFloor } from '../rules/roomFlow'
-import { forgeUsesLeft, spendForge } from '../rules/forge'
 import { artUrl } from '../art'
 import { proficiencyBonus } from '../rules/proficiency'
 import { ConfirmButton } from '../ui/ConfirmButton'
@@ -59,10 +57,10 @@ export function RunTracker({ state, characters, onEnded }: Props) {
   // Which player's boons or draft panel is open, if any.
   const [open, setOpen] = useState<{ id: string; kind: 'boons' | 'draft' } | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [extracting, setExtracting] = useState(false)
   const [refreshOnClear, setRefreshOnClear] = useState(true)
   const { run, players } = state
   const requests = useLootRequests(run.id)
+  const lootDone = useLootDone(run.id)
   const votes = useExitVotes(run.id)
   const floor = floorInfo(run.floor)
   const bossRoom = isBossRoom(state)
@@ -218,8 +216,14 @@ export function RunTracker({ state, characters, onEnded }: Props) {
                 roomButton(`Descend to floor ${run.floor + 1}`, () => act((s) => startFloor(descend(s), Math.random)), 'indigo')}
               <button
                 type="button"
-                disabled={busy || extracting}
-                onClick={() => setExtracting(true)}
+                disabled={busy || Boolean(run.lootCall)}
+                onClick={() => {
+                  // A fresh loot call: everyone chooses again, then the share opens.
+                  const doneIds = Object.keys(lootDone).filter((id) => lootDone[id])
+                  clearLootDone(run.id, doneIds)
+                    .catch(() => {})
+                    .finally(() => act((s) => ({ ...s, run: { ...s.run, lootCall: true } })))
+                }}
                 className={cx(ACTION_BUTTON, toneClasses.sky.button)}
               >
                 {run.floor >= LAST_FLOOR ? 'Finish the full clear…' : `Extract (keep ${lootKeptIfExtracting(state)}%)…`}
@@ -309,8 +313,15 @@ export function RunTracker({ state, characters, onEnded }: Props) {
             </Panel>
           )}
 
-          {extracting && run.awaitingChoice && (
-            <ExtractPanel state={state} busy={busy} act={act} requests={requests} onClose={() => setExtracting(false)} />
+          {run.lootCall && run.awaitingChoice && (
+            <ExtractPanel
+              state={state}
+              busy={busy}
+              act={act}
+              requests={requests}
+              done={lootDone}
+              onClose={() => act((s) => ({ ...s, run: { ...s.run, lootCall: false } }))}
+            />
           )}
 
           <VaultPanel state={state} busy={busy} act={act} />
@@ -319,12 +330,6 @@ export function RunTracker({ state, characters, onEnded }: Props) {
 
           <DmLootPanel state={state} busy={busy} act={act} requests={requests} />
 
-          <ForgePanel
-            players={players}
-            usesLeft={forgeUsesLeft(state)}
-            busy={busy}
-            onUse={(characterId, action) => act((s) => spendForge(s, characterId, action))}
-          />
 
           {run.log.length > 0 && (
             <Panel title={`Rooms cleared (${run.log.length})`}>

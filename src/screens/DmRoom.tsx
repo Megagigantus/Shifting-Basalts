@@ -18,6 +18,7 @@ import { ringOf } from '../rules/closingRing'
 import { ClosingRingNote } from './ClosingRing'
 import { bossOf } from '../rules/bosses'
 import { DmFight } from './DmFight'
+import { ForgeOptions } from './ForgePanel'
 import { PostBossScene, ReprieveScene } from './Scene'
 import { ShrinePanel } from './ShrinePanel'
 import { RoomCard } from './RoomCard'
@@ -25,6 +26,7 @@ import { DmBattleMap } from './DmBattleMap'
 import { RevealControl } from './RevealControl'
 import { ReprieveChoices } from './ReprieveChoices'
 import { applyChoice } from '../rules/draftChoice'
+import { forgeUsesLeft } from '../rules/forge'
 import { roomConditionMet } from '../rules/draftFlow'
 import {
   conditionOf,
@@ -63,7 +65,18 @@ export function DmRoom({ state, busy, act }: Props) {
   if (run.awaitingChoice) {
     return (
       <Panel>
-        <PostBossScene state={state} forDm />
+        <PostBossScene
+          state={state}
+          forDm
+          forgeBack={
+            <ForgeOptions
+              players={state.players}
+              usesLeft={forgeUsesLeft(state)}
+              busy={busy}
+              onUse={(id, forge) => act((s) => applyChoice(s, id, { action: 'forge', forge }, Math.random))}
+            />
+          }
+        />
         <ShrinePanel state={state} forDm />
       </Panel>
     )

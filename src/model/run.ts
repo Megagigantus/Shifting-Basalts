@@ -82,6 +82,8 @@ export interface Run {
   lootShare?: LootShare | null
   /** Thils's Vault is open (after the floor 5 boss, before the run ends). */
   vaultOpen?: boolean
+  /** The DM has opened the extraction share: players are asked to request loot and tap Done. */
+  lootCall?: boolean
 }
 
 export interface RunPlayer {

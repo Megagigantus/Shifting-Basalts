@@ -33,7 +33,7 @@ import { canExtract, extract, isFullClear } from '../rules/runFlow'
 import { chooseRelic, heldRelics, mustTradeOrPass, passVault, relicStateFor, vaultPending, wakeLine } from '../rules/vault'
 import { artUrl } from '../art'
 import { SceneBanner } from './Scene'
-import { setLootRequests, submitChoice } from '../runStore'
+import { markLootDone, setLootRequests, submitChoice } from '../runStore'
 import { ConfirmButton } from '../ui/ConfirmButton'
 import { Panel, SectionLabel } from '../ui/Panel'
 import { Pill } from '../ui/Pill'
@@ -277,12 +277,14 @@ export function ExtractPanel({
   busy,
   act,
   requests,
+  done = {},
   onClose,
 }: {
   state: RunState
   busy: boolean
   act: Act
   requests: Record<string, string[]>
+  done?: Record<string, boolean>
   onClose: () => void
 }) {
   const items = useMemo(() => state.run.loot?.items ?? [], [state.run.loot])
@@ -299,6 +301,9 @@ export function ExtractPanel({
   }, 0)
   const fullClear = isFullClear(state)
   const over = used > value
+  const survivors = state.players.filter((p) => p.alive)
+  const chosen = survivors.filter((p) => done[p.characterId]).map((p) => p.name)
+  const choosing = survivors.filter((p) => !done[p.characterId]).map((p) => p.name)
   const toggle = (uid: string) =>
     setPicks((p) => {
       const next = { ...p }
@@ -324,6 +329,19 @@ export function ExtractPanel({
           { label: 'Paid in credits', value: credits(Math.max(0, value - used)), tone: 'purple', hint: 'For you to hand out' },
         ]}
       />
+      {survivors.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2 rounded-lg border border-stone-800 bg-stone-950/70 px-3 py-2 text-xs">
+          {choosing.length === 0 ? (
+            <Pill tone="emerald">Everyone has chosen.</Pill>
+          ) : (
+            <>
+              {chosen.length > 0 && <Pill tone="emerald">Done choosing: {chosen.join(', ')}</Pill>}
+              <Pill tone="amber">Still choosing: {choosing.join(', ')}</Pill>
+              <span className="text-stone-400">You can finish without waiting.</span>
+            </>
+          )}
+        </div>
+      )}
       {over && (
         <p className="m-0 flex items-center gap-2 rounded-lg border border-rose-500/40 bg-rose-500/10 px-3 py-2 text-xs text-rose-200">
           <TriangleExclamationPoint size={14} /> That's over the kept value. Drop an item.
@@ -488,15 +506,17 @@ function RelicCard({ id, partyLevel, children }: { id: string; partyLevel: numbe
 // ---------------------------------------------------------------------------
 // Players
 
-export function PlayerLoot({ state, myCharacterIds, requests, readOnly = false }: {
+export function PlayerLoot({ state, myCharacterIds, requests, done, readOnly = false }: {
   state: RunState
   myCharacterIds: string[]
   requests: Record<string, string[]>
+  done?: Record<string, boolean>
   readOnly?: boolean
 }) {
   const { run } = state
   const me = state.players.find((p) => myCharacterIds.includes(p.characterId) && p.alive) ?? null
   const mine = me ? (requests[me.characterId] ?? []) : []
+  const isDone = Boolean(me && done?.[me.characterId])
   const [sending, setSending] = useState(false)
   const items = run.loot?.items ?? []
 
@@ -505,6 +525,12 @@ export function PlayerLoot({ state, myCharacterIds, requests, readOnly = false }
     setSending(true)
     const next = mine.includes(uid) ? mine.filter((u) => u !== uid) : [...mine, uid]
     await setLootRequests(run.id, me.characterId, next).finally(() => setSending(false))
+  }
+
+  async function finishLootCall() {
+    if (!me || readOnly) return
+    setSending(true)
+    await markLootDone(run.id, me.characterId, mine).finally(() => setSending(false))
   }
 
   async function takeRelic(relicId: string) {
@@ -557,7 +583,22 @@ export function PlayerLoot({ state, myCharacterIds, requests, readOnly = false }
           )}
         </Panel>
       )}
-      <Panel tone="purple" icon={<Package size={15} />} title="Party loot">
+      <Panel
+        tone="purple"
+        icon={<Package size={15} />}
+        title="Party loot"
+        actions={
+          run.lootCall && run.awaitingChoice && me ? (
+            isDone ? (
+              <Pill tone="emerald">Done</Pill>
+            ) : (
+              <button type="button" className={PRIMARY_BUTTON} disabled={readOnly || sending} onClick={finishLootCall}>
+                Done choosing
+              </button>
+            )
+          ) : undefined
+        }
+      >
         <PoolSummary state={state} />
         {items.length > 0 ? (
           <ItemList>

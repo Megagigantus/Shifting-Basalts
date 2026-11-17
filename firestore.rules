@@ -337,16 +337,18 @@ service cloud.firestore {
         allow delete: if ownsRunCharacter(runId, characterId);
       }
 
-      // A player's wish list from the party's loot. Everyone in the app can see
-      // requests; only that character's player writes them, as a short list of
-      // item ids. The DM decides who gets what at extraction.
+      // A player's wish list from the party's loot, plus a Done flag once they
+      // finish picking. Everyone in the app can see requests; only that
+      // character's player writes them, as a short list of item ids. The DM
+      // decides who gets what at extraction.
       match /requests/{characterId} {
         allow read: if isInvited();
         allow write: if isDM();
         allow create, update: if ownsRunCharacter(runId, characterId)
-          && request.resource.data.keys().hasOnly(['uids', 'updatedAt'])
+          && request.resource.data.keys().hasOnly(['uids', 'done', 'updatedAt'])
           && request.resource.data.uids is list
           && request.resource.data.uids.size() <= 100
+          && request.resource.data.get('done', false) is bool
           && request.resource.data.updatedAt == request.time;
         allow delete: if ownsRunCharacter(runId, characterId);
       }

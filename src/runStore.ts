@@ -413,9 +413,22 @@ export function useRunHistory(max = 50): { entries: RunHistoryEntry[] | null; er
 // player would like at extraction. The DM decides; this is only a wish list.
 
 /** A player sets the items they'd like from the party's loot. */
-export async function setLootRequests(runId: string, characterId: string, uids: string[]) {
+export async function setLootRequests(runId: string, characterId: string, uids: string[], done = false) {
   if (!db) throw new Error('Firebase is not set up.')
-  await setDoc(doc(db, 'runs', runId, 'requests', characterId), { uids, updatedAt: serverTimestamp() })
+  await setDoc(doc(db, 'runs', runId, 'requests', characterId), { uids, done, updatedAt: serverTimestamp() })
+}
+
+/** A player taps Done on their loot requests. */
+export async function markLootDone(runId: string, characterId: string, uids: string[]) {
+  await setLootRequests(runId, characterId, uids, true)
+}
+
+/** DM's app: clear everyone's Done flag when a new loot call opens (requests stay). */
+export async function clearLootDone(runId: string, characterIds: string[]) {
+  if (!db || characterIds.length === 0) return
+  const batch = writeBatch(db)
+  for (const id of characterIds) batch.set(doc(db, 'runs', runId, 'requests', id), { done: false }, { merge: true })
+  await batch.commit()
 }
 
 /** A player's descend-or-extract vote for the floor whose boss was just beaten. */
@@ -498,6 +511,20 @@ export function useLootRequests(runId: string | null): Record<string, string[]> 
     })
   }, [runId])
   return loaded && loaded.runId === runId ? loaded.requests : {}
+}
+
+/** Live map of characterId -> whether that player tapped Done on loot requests. */
+export function useLootDone(runId: string | null): Record<string, boolean> {
+  const [loaded, setLoaded] = useState<{ runId: string; done: Record<string, boolean> } | null>(null)
+  useEffect(() => {
+    if (!db || !runId) return
+    return onSnapshot(collection(db, 'runs', runId, 'requests'), (snapshot) => {
+      const done: Record<string, boolean> = {}
+      for (const d of snapshot.docs) done[d.id] = d.data().done === true
+      setLoaded({ runId, done })
+    })
+  }, [runId])
+  return loaded && loaded.runId === runId ? loaded.done : {}
 }
 
 // ---------------------------------------------------------------------------
