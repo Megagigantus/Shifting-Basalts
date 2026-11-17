@@ -2,7 +2,7 @@
   "_source": "docs/design-bible.md: Thils's Vault: relics, Loot defaults. Names, builds, lore and effects; the Lost by column stays out of the app (the lore names who lost each relic, player-safe). Tags are proposed weighting tags (Loot defaults: Relic weighting).",
   "status": "proposed",
   "relicsPerCharacter": 1,
-  "passQuantumBasalts": 100,
+  "passQuantumBasalts": 40,
   "offers": 3,
   "offersAtTier3": 4,
   "wokenFromTier": 2,

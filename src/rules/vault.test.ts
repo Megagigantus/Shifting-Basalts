@@ -95,7 +95,7 @@ describe('Thils\'s Vault', () => {
     expect(state.players[1].vaultTradeIn).toBeNull()
   })
 
-  it('a relic owner can pass the Vault for a flat 100 Quantum Basalts, while relic-less players cannot', () => {
+  it('a relic owner can pass the Vault for a flat 40 Quantum Basalts, while relic-less players cannot', () => {
     let state = party([char('a', 'fighter', 18), char('b', 'fighter', 18)])
     expect(state.run.entryMultiplier).toBe(4)
     state = { ...state, players: state.players.map((p) => (p.characterId === 'a' ? { ...p, relicsOwned: ['breakers-wraps'] } : p)) }
@@ -111,7 +111,7 @@ describe('Thils\'s Vault', () => {
       vaultOffer: null,
       vaultRelic: null,
       vaultTradeIn: null,
-      quantumBasaltsPassed: 100,
+      quantumBasaltsPassed: 40,
     })
     expect(() => passVault(state, 'a')).toThrow('already chose')
     expect(vaultPending(state)).toBe(true)

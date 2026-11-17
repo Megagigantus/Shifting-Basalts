@@ -978,7 +978,7 @@ A full clear opens Thils's Vault, his private collection of what legendary strid
 
 - **Draft:** each player sees 3 relics weighted to their class and boon tags (4 at entry 17 to 20) and takes one, like a boon offer. A relic anyone in the party owns never appears.
 - **Dormant and Awoken:** entry 5 to 10 clears give a Dormant relic (very rare strength); entry 11 and up gives it Awoken (legendary). A Dormant relic wakes when its bearer reaches level 11 and offers 40 Quantum Basalts at a shrine to Thils.
-- **One per character** *(proposed)*: a character can own only one relic. A player who already owns one still sees an offer, but must either trade theirs in for one of the offered relics (the old relic leaves them on extraction and returns to the Vault) or pass for a flat 100 Quantum Basalts, which extract like passed Basalts.
+- **One per character** *(proposed)*: a character can own only one relic. A player who already owns one still sees an offer, but must either trade theirs in for one of the offered relics (the old relic leaves them on extraction and returns to the Vault) or pass for a flat 40 Quantum Basalts, which extract like passed Basalts.
 - **Attunement:** required, unlike totems.
 - **No market:** relics can't be sold. Thils reclaims any relic traded for credits, and it returns to the Vault.
 
@@ -1677,6 +1677,7 @@ Everything rolled for a room is DM-only until revealed, and the DM gets a reveal
 - **Floor 5:** its boss cache uses floor 4's loot tables, and its bonus item is one rarity above floor 4's.
 - **Collector's Eye:** if any surviving player holds it at extraction, the party keeps 10 percentage points more, like Deep Pockets' +5 per rank. Several holders still add only 10, and the total never goes above 100%.
 - **Choosing the share:** at extraction the party picks items whose combined value fits the kept value. The rest of the kept value is paid out in credits, which the app shows and records in run history; the DM hands them out at the table.
+- **Loot call:** when the DM opens the extraction share (Extract or Finish the full clear), each surviving player gets a pop-up of the party's loot to request items, then taps Done. The DM's share screen shows who is done; the DM can still finish without waiting.
 - **Assigning items:** if anyone extracts, the DM can assign kept items to any character in the run, fallen ones included. A wipe loses the pool.
 - **Thils's Vault:** survivors only. The fallen were expelled before the party reached it.
 - **Relic weighting:** each relic carries the boon tags that fit its Build, and offers are weighted like boon offers: a class primary tag ×3, a secondary ×2, a tag the player holds ×2.
@@ -1689,7 +1690,8 @@ Everything rolled for a room is DM-only until revealed, and the DM gets a reveal
 - **Recovering:** a Recover control lists the cost presets for the track (Slot recovery costs, Martial recovery costs) and only deducts points. Players update their own sheets; the app doesn't check whether the character has the slot or resource, or its maximum. Players spend their own points from their device; the DM can spend for them.
 - **Payoff spends:** Leyline Surge and Momentum each have a Spend 1 button that deducts 1 point from their own track's pool. Once per turn is a table rule; the app doesn't track turns. A Level 3 holder also gets a +1 refund button for each creature the boosted attack kills, usable by the player or the DM.
 - **Boon counters:** the DM keeps named counters per player, such as banked echoes or Reaper chain jumps, and players see their own. The numbers stay at the table until the bible fixes them.
-- **Healing Font:** owners are counted at run start, like the Forge. The post-boss room shows the Font's effect and the temp HP each player gains: +5 per owner beyond the first.
+- **Healing Font:** owners are counted at run start, like the Forge. Each living player heals to full Hit Points. The post-boss room shows the Font's effect and the temp HP each player gains: +5 per owner beyond the first. Clicking the Font's card flips it to show how much to heal.
+- **Forge card:** clicking the Forge's card in the post-boss room flips it to show the Forge options: a player sees their own characters', the DM sees every living player's and can use the Forge for them.
 - **Run history:** players see the runs their own characters were in; the DM sees every run.
 ### Hidden Sight hints
 

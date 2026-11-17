@@ -167,7 +167,7 @@ describe('finishing rooms with loot', () => {
     expect(results[0].loot.at(-1)).toMatchObject({ kind: 'relic', relicState: 'dormant', source: 'vault' })
   })
 
-  it('records relicsTradedIn when a relic owner trades in, and banks a flat 100 Basalts when they pass', async () => {
+  it('records relicsTradedIn when a relic owner trades in, and banks a flat 40 Basalts when they pass', async () => {
     const { finishRoom } = await import('./progress')
     const { chooseRelic, passVault } = await import('./vault')
     const ownedRelic = (ref: string) => ({
@@ -202,7 +202,7 @@ describe('finishing rooms with loot', () => {
     expect(traderRes.loot.at(-1)).toMatchObject({ kind: 'relic', ref: traderPick, relicState: 'woken' })
     expect('relicsTradedIn' in passerRes).toBe(false)
     expect(passerRes.loot.some((i) => i.kind === 'relic')).toBe(false)
-    expect(passerRes.quantumBasaltsGained - traderRes.quantumBasaltsGained).toBe(100)
+    expect(passerRes.quantumBasaltsGained - traderRes.quantumBasaltsGained).toBe(40)
     expect('relicsTradedIn' in freshRes).toBe(false)
   })
 
