@@ -614,6 +614,7 @@ describe('Thils\'s Vault and loot requests', () => {
   it('a player can set and clear their own loot requests, and everyone invited can read them', async () => {
     const ref = doc(as(PLAYER), 'runs', 'live', 'requests', OWNED)
     await assertSucceeds(setDoc(ref, { uids: ['L1', 'L4'], updatedAt: now() }))
+    await assertSucceeds(setDoc(ref, { uids: ['L1'], done: true, updatedAt: now() }))
     await assertSucceeds(setDoc(ref, { uids: [], updatedAt: now() }))
     await assertSucceeds(getDoc(doc(as(DM), 'runs', 'live', 'requests', OWNED)))
     await assertSucceeds(deleteDoc(ref))
@@ -651,8 +652,10 @@ describe('Thils\'s Vault and loot requests', () => {
     const ref = doc(as(PLAYER), 'runs', 'live', 'requests', OWNED)
     await assertFails(setDoc(ref, { uids: ['L1'], assignedTo: OWNED, updatedAt: now() }))
     await assertFails(setDoc(ref, { uids: 'L1', updatedAt: now() }))
+    await assertFails(setDoc(ref, { uids: ['L1'], done: 'yes', updatedAt: now() }))
     await assertFails(setDoc(ref, { uids: ['L1'], updatedAt: new Date(0) }))
     await assertFails(setDoc(doc(as(PLAYER), 'runs', 'live', 'requests', OTHERS), { uids: ['L1'], updatedAt: now() }))
+    await assertFails(setDoc(doc(as(PLAYER), 'runs', 'live', 'requests', OTHERS), { uids: ['L1'], done: true, updatedAt: now() }))
     await assertFails(setDoc(doc(as(PLAYER), 'runs', 'over', 'requests', OWNED), { uids: ['L1'], updatedAt: now() }))
     await assertFails(getDoc(doc(as(STRANGER), 'runs', 'live', 'requests', OWNED)))
   })
