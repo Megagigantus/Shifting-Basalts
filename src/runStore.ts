@@ -211,6 +211,9 @@ export interface ChoiceDoc {
   presetId?: string
   /** Recovery payoff spend or Level 3 refund: the payoff boon id. */
   boonId?: string
+  /** Shrine to Thils offering: the trinket given up and the floor roll rerolled. */
+  trinketUid?: string
+  targetUid?: string
   /** The offer this choice was made against (null for hidden-offer choices). */
   draftKey: string | null
   /** Set by the DM's app when the choice couldn't be applied. */
@@ -233,6 +236,10 @@ export async function submitChoice(runId: string, characterId: string, choice: D
   }
   if (choice.action === 'payoffSpend' || choice.action === 'payoffRefund') data.boonId = choice.boonId
   if (choice.action === 'reprieveReflect') data.slotIndex = choice.slotIndex
+  if (choice.action === 'shrineOffering') {
+    data.trinketUid = choice.trinketUid
+    data.targetUid = choice.targetUid
+  }
   if (choice.action === 'forge') {
     data.forgeKind = choice.forge.kind
     if (choice.forge.kind === 'combine') data.combinationId = choice.forge.combinationId
@@ -277,6 +284,8 @@ function choiceFromDoc(c: ChoiceDoc): DraftChoice {
       return { action: 'payoffRefund', boonId: c.boonId ?? '' }
     case 'reprieveReflect':
       return { action: 'reprieveReflect', slotIndex: c.slotIndex ?? -1 }
+    case 'shrineOffering':
+      return { action: 'shrineOffering', trinketUid: c.trinketUid ?? '', targetUid: c.targetUid ?? '' }
     case 'forge':
       return {
         action: 'forge',

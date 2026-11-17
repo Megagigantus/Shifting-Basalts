@@ -612,6 +612,28 @@ describe('Thils\'s Vault and loot requests', () => {
     await assertFails(setDoc(choiceRef(OTHERS), { action: 'relicPass', draftKey: null, createdAt: now() }))
   })
 
+  it('a player can send a Shrine to Thils offering for their own character, and not for another', async () => {
+    const choiceRef = (id: string) => doc(as(PLAYER), 'runs', 'live', 'choices', id)
+    await assertSucceeds(
+      setDoc(choiceRef(OWNED), {
+        action: 'shrineOffering',
+        trinketUid: 'L1',
+        targetUid: 'L2',
+        draftKey: null,
+        createdAt: now(),
+      }),
+    )
+    await assertFails(
+      setDoc(choiceRef(OTHERS), {
+        action: 'shrineOffering',
+        trinketUid: 'L1',
+        targetUid: 'L2',
+        draftKey: null,
+        createdAt: now(),
+      }),
+    )
+  })
+
   it('a player can set and clear their own loot requests, and everyone invited can read them', async () => {
     const ref = doc(as(PLAYER), 'runs', 'live', 'requests', OWNED)
     await assertSucceeds(setDoc(ref, { uids: ['L1', 'L4'], updatedAt: now() }))

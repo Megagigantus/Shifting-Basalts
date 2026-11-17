@@ -267,9 +267,31 @@ export function rerollableItems(state: RunState): LootItem[] {
   return (state.run.loot?.items ?? []).filter((i) => i.floor === state.run.floor && REROLLABLE.includes(i.source))
 }
 
+/** Terrain id for a Shrine to Thils in RoomView.terrain. */
+export const SHRINE_TERRAIN = 'shrine-to-thils'
+
+/** True when the current room has a visible Shrine to Thils. */
+export function shrineHereThils(state: RunState): boolean {
+  return state.run.roomView?.terrain.includes(SHRINE_TERRAIN) ?? false
+}
+
 /** This room's Shrine to Thils already took its one offering. */
 export function shrineUsedHere(state: RunState): boolean {
   return state.run.loot?.shrinesUsed?.includes(`${state.run.floor}-${state.run.room}`) ?? false
+}
+
+/** First reason a Shrine to Thils offering can't happen right now, or null if it can. */
+export function shrineBlocker(state: RunState): string | null {
+  if (!shrineHereThils(state)) return "There's no Shrine to Thils in this room."
+  if (state.run.status !== 'active') return "The run isn't active."
+  if (shrineUsedHere(state)) return 'This shrine has already taken an offering.'
+  const trinkets = (state.run.loot?.items ?? []).filter((i) => i.kind === 'trinket')
+  if (trinkets.length === 0) return "Offer a trinket: the party's loot has none."
+  const rerollable = rerollableItems(state)
+  if (!trinkets.some((t) => rerollable.some((r) => r.uid !== t.uid))) {
+    return 'Nothing from this floor to reroll yet.'
+  }
+  return null
 }
 
 /**
@@ -277,7 +299,8 @@ export function shrineUsedHere(state: RunState): boolean {
  * a new item of the same kind. Each shrine room takes one offering.
  */
 export function shrineOffering(state: RunState, trinketUid: string, targetUid: string, random: Random): RunState {
-  if (shrineUsedHere(state)) throw new Error('This shrine has already taken an offering.')
+  const blocker = shrineBlocker(state)
+  if (blocker) throw new Error(blocker)
   const loot = state.run.loot
   const trinket = loot?.items.find((i) => i.uid === trinketUid)
   if (!trinket || trinket.kind !== 'trinket') throw new Error('Offer a trinket from the party\'s loot.')

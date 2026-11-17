@@ -42,6 +42,7 @@ const ACTION_LABELS: Record<ChoiceDoc['action'], string> = {
   reprieveRest: 'your Reprieve choice (Rest)',
   reprieveReflect: 'your Reprieve choice (Reflect)',
   reprieveBasalts: 'your Reprieve choice (catch-up Basalts)',
+  shrineOffering: 'your shrine offering',
 }
 
 export function PlayerDraft({ state, player, sent, readOnly = false, dmChoosing = false, bare = false }: Props) {
