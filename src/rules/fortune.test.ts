@@ -5,9 +5,10 @@ import {
   fortuneDiceLeft,
   fortuneDicePerRun,
   setFortuneDice,
-  useFortuneDie,
+  spendFortuneDie,
 } from './fortune'
 import { markDead, newRunState } from './runFlow'
+import { applyChoice } from './draftChoice'
 
 const makeChar = (id: string, trackDevotions: Record<string, number> = {}): Character => ({
   ...emptyProfile(),
@@ -45,34 +46,34 @@ describe('Fortune Dice pools', () => {
     expect(fortuneDiceLeft({})).toBe(0)
   })
 
-  it('useFortuneDie lowers the player count by 1 and leaves other players unchanged', () => {
+  it('spendFortuneDie lowers the player count by 1 and leaves other players unchanged', () => {
     const kael = makeChar('Kael', { [FORTUNE_TRACK]: 45 })
     const wren = makeChar('Wren', { [FORTUNE_TRACK]: 15 })
     let state = newRunState('r', 'X', [kael, wren], [])
 
-    state = useFortuneDie(state, 'Kael')
+    state = spendFortuneDie(state, 'Kael')
     expect(fortuneDiceLeft(state.players[0])).toBe(1)
     expect(fortuneDiceLeft(state.players[1])).toBe(1)
 
-    state = useFortuneDie(state, 'Kael')
+    state = spendFortuneDie(state, 'Kael')
     expect(fortuneDiceLeft(state.players[0])).toBe(0)
     expect(fortuneDiceLeft(state.players[1])).toBe(1)
   })
 
-  it('useFortuneDie throws at 0, for a fallen player, and when the run is not active', () => {
+  it('spendFortuneDie throws at 0, for a fallen player, and when the run is not active', () => {
     const kael = makeChar('Kael', { [FORTUNE_TRACK]: 15 })
     const wren = makeChar('Wren', {})
     let state = newRunState('r', 'X', [kael, wren], [])
 
-    expect(() => useFortuneDie(state, 'Wren')).toThrow('Wren has no Fortune Dice left.')
+    expect(() => spendFortuneDie(state, 'Wren')).toThrow('Wren has no Fortune Dice left.')
 
     state = markDead(state, 'Kael', () => 1)
-    expect(() => useFortuneDie(state, 'Kael')).toThrow('Kael has fallen.')
+    expect(() => spendFortuneDie(state, 'Kael')).toThrow('Kael has fallen.')
 
     // Fallen Wren wipes the run.
     state = markDead(state, 'Wren', () => 1)
     expect(state.run.status).toBe('wiped')
-    expect(() => useFortuneDie(state, 'Kael')).toThrow('This run has ended.')
+    expect(() => spendFortuneDie(state, 'Kael')).toThrow('This run has ended.')
   })
 
   it('setFortuneDice sets the count (including for fallen players) and rejects invalid values', () => {
@@ -100,5 +101,10 @@ describe('Fortune Dice pools', () => {
 
     state = markDead(state, 'Wren', () => 1)
     expect(() => setFortuneDice(state, 'Kael', 1)).toThrow('This run has ended.')
+  })
+  it('applyChoice routes fortuneUse', () => {
+    const state = newRunState('r', 'X', [makeChar('Kael', { [FORTUNE_TRACK]: 15 })], [])
+    const next = applyChoice(state, 'Kael', { action: 'fortuneUse' }, () => 0.5)
+    expect(fortuneDiceLeft(next.players[0])).toBe(0)
   })
 })

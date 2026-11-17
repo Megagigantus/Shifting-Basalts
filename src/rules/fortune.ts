@@ -25,7 +25,7 @@ export function fortuneDiceLeft(p: Pick<RunPlayer, 'fortuneDice'>): number {
 }
 
 /** Spend 1 Fortune Die (e.g. for a reroll or a failed Gleam Dealer's Gamble). */
-export function useFortuneDie(state: RunState, characterId: string): RunState {
+export function spendFortuneDie(state: RunState, characterId: string): RunState {
   if (state.run.status !== 'active') throw new Error('This run has ended.')
   return {
     ...state,
