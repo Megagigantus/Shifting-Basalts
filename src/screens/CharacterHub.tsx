@@ -7,7 +7,7 @@ import { Landmark, Library, LogOut, Minus, Plus, Store } from 'lucide-react'
 import { changeFullClears } from '../characterStore'
 import { buildOf, CASTER_TYPES, type Character } from '../model/character'
 import { buildSummary } from '../rules/build'
-import { echoCounts } from '../rules/echoes'
+import { echoCounts, visibleEchoCounts } from '../rules/echoes'
 import { proficiencyBonus } from '../rules/proficiency'
 import { effectAtRank, rankProgress, STAT_TRACKS } from '../rules/statTracks'
 import { hasFullClear, UPGRADES } from '../rules/upgrades'
@@ -70,7 +70,7 @@ export function CharacterHub({ character: c, mode, actions }: Props) {
   const portraitUrl = c.portrait ? artUrl('portraits', c.portrait) : null
   const effects = trackEffects(c)
   const owned = upgradesOwned(c)
-  const { overall } = echoCounts(c)
+  const { overall } = mode === 'dm' ? echoCounts(c) : visibleEchoCounts(c)
   const canEdit = mode !== 'preview'
   const canCorrect = mode === 'dm'
   // The Shrine and Markets are closed while the character is in a run.

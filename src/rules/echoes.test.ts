@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { emptyDungeonLayer, emptyProfile, type Character } from '../model/character'
 import { BOONS, COMBINATIONS, EVOLUTIONS, HIDDEN_BOONS, emptySlots, replaceBoon, takeBoon, type Slot } from './boons'
-import { echoCounts, echoesOf, emptyEchoes, mergeEchoes, recordEchoes, type Echoes } from './echoes'
+import { echoCounts, echoPool, echoesOf, emptyEchoes, hasFullCollection, mergeEchoes, recordEchoes, visibleEchoCounts, type Echoes } from './echoes'
 import { changeSlots, newRunState, setHiddenBoon } from './runFlow'
 
 const char = (id: string): Character => ({
@@ -102,5 +102,52 @@ describe('echoCounts', () => {
     expect(counts.evolutions.seen).toBe(1)
     expect(counts.overall.seen).toBe(3)
     expect(counts.overall.total).toBe(counts.boons.total + counts.evolutions.total + counts.combinations.total + counts.hidden.total)
+  })
+})
+
+describe('visibleEchoCounts', () => {
+  it('hides unfound hidden boons when none are seen', () => {
+    const trueCounts = echoCounts({ classId: 'fighter' })
+    const counts = visibleEchoCounts({ classId: 'fighter' })
+    expect(counts.hidden).toEqual({ seen: 0, total: 0 })
+    expect(counts.overall.total).toBe(trueCounts.boons.total + trueCounts.evolutions.total + trueCounts.combinations.total)
+  })
+
+  it('counts found hidden boons as 1 of 1 and grows overall total by 1', () => {
+    const trueCounts = echoCounts({ classId: 'fighter' })
+    const pool = echoPool({ classId: 'fighter' })
+    const counts = visibleEchoCounts({
+      classId: 'fighter',
+      echoes: { ...emptyEchoes(), hidden: [pool.hidden[0]] },
+    })
+    expect(counts.hidden).toEqual({ seen: 1, total: 1 })
+    expect(counts.overall.seen).toBe(1)
+    expect(counts.overall.total).toBe(trueCounts.boons.total + trueCounts.evolutions.total + trueCounts.combinations.total + 1)
+  })
+
+  it('ignores a seen hidden id outside the character pool', () => {
+    const trueCounts = echoCounts({ classId: 'fighter' })
+    const otherClassHidden = HIDDEN_BOONS.find((h) => h.kind === 'class' && h.classId !== 'fighter')
+    expect(otherClassHidden).toBeDefined()
+    const counts = visibleEchoCounts({
+      classId: 'fighter',
+      echoes: { ...emptyEchoes(), hidden: [otherClassHidden!.id] },
+    })
+    expect(counts.hidden).toEqual({ seen: 0, total: 0 })
+    expect(counts.overall.seen).toBe(0)
+    expect(counts.overall.total).toBe(trueCounts.boons.total + trueCounts.evolutions.total + trueCounts.combinations.total)
+  })
+})
+
+describe('hasFullCollection', () => {
+  it('is false when empty or missing a hidden boon, and true when the whole pool is seen', () => {
+    expect(hasFullCollection({ classId: 'fighter' })).toBe(false)
+
+    const pool = echoPool({ classId: 'fighter' })
+    expect(pool.hidden.length).toBeGreaterThan(0)
+    const almostAll: Echoes = { ...pool, hidden: pool.hidden.slice(1) }
+    expect(hasFullCollection({ classId: 'fighter', echoes: almostAll })).toBe(false)
+
+    expect(hasFullCollection({ classId: 'fighter', echoes: pool })).toBe(true)
   })
 })
