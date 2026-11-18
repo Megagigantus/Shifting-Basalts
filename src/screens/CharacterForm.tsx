@@ -11,6 +11,7 @@ import { MIN_ENTRY_LEVEL } from '../rules/proficiency'
 import { buildError, cleanBuild, totalLevel, type BuildFields } from '../rules/build'
 import { BuildEditor } from './BuildEditor'
 import classTags from '../data/class-tags.json'
+import { tagInfo } from '../tagInfo'
 import { BOONS } from '../rules/boons'
 import { FIELD, FIELD_LABEL, PRIMARY_BUTTON, QUIET_BUTTON } from '../ui/styles'
 import { cx } from '../ui/tone'
@@ -122,7 +123,7 @@ export function CharacterForm({ initial, onSave, onCancel }: Props) {
             const fromClass = Boolean(classTags.classes.find((c) => c.classId === profile.classId)?.primary.includes(tag))
             const on = fromClass || profile.favoredTags.includes(tag)
             return (
-              <label key={tag} className={chip(on, fromClass)} title={fromClass ? "Already one of the class's primary tags" : undefined}>
+              <label key={tag} className={chip(on, fromClass)} title={[tagInfo(tag), fromClass ? "Already one of the class's primary tags." : ''].filter(Boolean).join(' ')}>
                 <input
                   type="checkbox"
                   className="sr-only"

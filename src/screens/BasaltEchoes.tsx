@@ -6,6 +6,7 @@ import type { Character } from '../model/character'
 import { boon, combination, evolution, hiddenBoon } from '../rules/boons'
 import { echoCounts, echoPool, visibleEchoCounts, type EchoGroup } from '../rules/echoes'
 import { Pill } from '../ui/Pill'
+import { tagInfo } from '../tagInfo'
 import { StatStrip } from '../ui/StatStrip'
 import { SMALL_BUTTON } from '../ui/styles'
 import { cx } from '../ui/tone'
@@ -184,9 +185,15 @@ function BoonDetails({ id }: { id: string }) {
       <strong className="text-sm font-bold text-stone-100">{b.name}</strong>
       {(tags.length > 0 || kindLabel) && (
         <div className="flex flex-wrap gap-1.5">
-          {kindLabel && <Pill tone="emerald">{kindLabel}</Pill>}
+          {kindLabel && (
+            <Pill tone="emerald" title={tagInfo(kindLabel)} className="cursor-help">
+              {kindLabel}
+            </Pill>
+          )}
           {tags.map((tag) => (
-            <Pill key={tag}>{tag}</Pill>
+            <Pill key={tag} title={tagInfo(tag)} className="cursor-help">
+              {tag}
+            </Pill>
           ))}
         </div>
       )}

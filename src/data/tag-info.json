@@ -1,0 +1,20 @@
+{
+  "_source": "Plain-language summaries of each boon tag, shown as hover tooltips wherever a tag appears. Not rules: written from the boons in docs/design-bible.md. Edit freely.",
+  "tags": {
+    "Core": "Steady, simple boons any character can draft, like speed, initiative or resistances. They don't evolve or combine, and don't count for Resonance.",
+    "Echo": "Hits that repeat. Echo boons bounce part of your damage onto the same target again or onto nearby enemies.",
+    "Reaper": "Rewards finishing enemies off. Kills and hits on Bloodied creatures fuel teleports, bonus damage and stored souls.",
+    "Spell": "For spellcasters. Boosts leveled spells and cantrips, concentration, and what happens when a creature fails a save against your spell.",
+    "Crit": "Built around critical hits: wider crit ranges, rerolls and trade-offs that change how often and how hard you crit.",
+    "Stance": "Plant your feet. Stance boons trade movement for defense or power by anchoring in place or squaring off against groups.",
+    "Volley": "Ranged attackers. Ricochets, multi-target shots, ignoring cover and elemental arrows.",
+    "Shadow": "Stealth and tricks. Hiding, teleporting, striking first, and handling room tricks and traps.",
+    "Rally": "Support your allies with temp HP, bonus dice, damage boosts and battle standards.",
+    "Guard": "Tanking and healing. Reduce damage, punish attackers, and make your heals stronger.",
+    "Bond": "For characters with a summon, familiar or companion. Share damage, swap places and fight as a pair.",
+    "Flurry": "Many small hits. Flurry boons grow stronger with each extra hit you land in a turn.",
+    "Blood": "Power from pain. Stronger while Bloodied, or spend your own HP for extra damage.",
+    "Hunt": "Big-game hunting. Mark, study and punish bosses and Large or larger creatures.",
+    "Payoff": "Reads from a stat track, so it grows as that track ranks up. Only offered once you have a rank in its track. Doesn't evolve, combine or count for Resonance."
+  }
+}

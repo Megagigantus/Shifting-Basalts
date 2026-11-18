@@ -7,6 +7,7 @@ import type { RunPlayer } from '../model/run'
 import { hiddenBoon, slotName, slotRulesText, slotTags, type SlotContent } from '../rules/boons'
 import { BoonIcon } from '../ui/BoonIcon'
 import { Pill } from '../ui/Pill'
+import { tagInfo } from '../tagInfo'
 import { cx } from '../ui/tone'
 
 /** One filled boon slot: name, level or kind, tags, Suppressed, rules text, and any buttons. */
@@ -32,7 +33,9 @@ export function SlotCard({ slot, children }: { slot: SlotContent; children?: Rea
           {slot.kind === 'evolution' && <Pill tone="violet">Evolution</Pill>}
           {slot.kind === 'combination' && <Pill tone="sky">Combination</Pill>}
           {slotTags(slot).map((t) => (
-            <Pill key={t}>{t}</Pill>
+            <Pill key={t} title={tagInfo(t)} className="cursor-help">
+              {t}
+            </Pill>
           ))}
           {slot.suppressed && <Pill tone="rose">Suppressed</Pill>}
         </div>
