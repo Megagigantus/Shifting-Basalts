@@ -8,7 +8,7 @@ You (Claude) are the **orchestrator and quality gate** for this project. Gemini,
 |---|---|---|
 | Orchestrator (this session) | Claude Opus 5.5, medium effort | Planning, specs, routing, diff review, independent verification |
 | Default worker | `gemini-4-hydrogen-high` | Everyday feature implementation, frontend components, API wiring, unit tests |
-| Escalation worker | `gemini-4-argon-medium` | Long-horizon multi-file refactors, tricky debugging, anything Hydrogen got stuck on |
+| Escalation worker | `gemini-4-neon-medium` | Long-horizon multi-file refactors, tricky debugging, anything Hydrogen got stuck on |
 | Fallback worker | `sonnet-implementer` subagent (Claude Sonnet 5.5, high effort) | Implementation when Gemini fails, is unavailable, or Argon also gets stuck |
 | Final gate | Claude Opus 5.5, medium effort | Full testing and design bible check before any feature is called complete |
 
@@ -45,7 +45,7 @@ Pick the starting worker by task type:
    SPEC
    )"
    ```
-   - `<MODEL>` is `gemini-4-hydrogen-high` or `gemini-4-argon-medium`.
+   - `<MODEL>` is `gemini-4-hydrogen-high` or `gemini-4-neon-medium`.
    - `--add-dir "$(pwd)"` binds agy to this repo. Without it, agy may work in its own scratch folder.
    - `--mode accept-edits` lets the worker edit files without prompting. Edits are safe to allow because every call starts from a checkpoint commit and you review the diff afterward.
    - `--sandbox` restricts the worker's terminal access. The worker edits files only. Claude runs all commands (tests, installs, git) itself.
