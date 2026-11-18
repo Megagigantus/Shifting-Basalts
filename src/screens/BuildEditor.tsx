@@ -4,6 +4,7 @@
 // The class's own training shows as fixed chips; players tick only extras.
 import type { ReactNode } from 'react'
 import { BOONS } from '../rules/boons'
+import { tagInfo } from '../tagInfo'
 import {
   ARMOR_TYPES,
   CLASSES,
@@ -206,6 +207,7 @@ export function BuildEditor({ value: b, onChange, disabled }: Props) {
                 return (
                   <Chip
                     key={tag}
+                    title={tagInfo(tag)}
                     on={on}
                     disabled={full || b.homebrewTags[other].includes(tag)}
                     onToggle={() => set('homebrewTags', { ...b.homebrewTags, [band]: toggle(b.homebrewTags[band], tag) })}

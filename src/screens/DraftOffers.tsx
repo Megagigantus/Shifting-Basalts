@@ -12,6 +12,7 @@ import { Ban, EyeOff, RefreshCw, Sparkles } from 'lucide-react'
 import { BoonIcon } from '../ui/BoonIcon'
 import { ConfirmButton } from '../ui/ConfirmButton'
 import { Pill } from '../ui/Pill'
+import { tagInfo } from '../tagInfo'
 import { FIELD, PRIMARY_BUTTON, QUIET_BUTTON } from '../ui/styles'
 import { cx, toneClasses, type Tone } from '../ui/tone'
 
@@ -79,7 +80,7 @@ export function DraftOffers({ player, passValue, rerollsLeft, busy, onChoose, wh
                     <div className="flex min-w-0 flex-1 flex-col gap-1.5">
                       <div className="flex flex-wrap items-center gap-1.5">
                         <Pill tone={tone}>{text.label}</Pill>
-                        {text.tag && <Pill>{text.tag}</Pill>}
+                        {text.tag && <Pill title={tagInfo(text.tag)} className="cursor-help">{text.tag}</Pill>}
                       </div>
                       <strong className="text-sm text-stone-50">{text.heading}</strong>
                     </div>
