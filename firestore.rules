@@ -221,18 +221,10 @@ service cloud.firestore {
         && (tag == null || tag in boonTags());
     }
 
-    // A player saves their character's build (Character setup) between runs:
-    // classes and levels, subclasses, orders, extra training, mastery picks and
-    // homebrew tags. Level must be the total of both classes. The DM reviews
-    // builds at run setup.
-    function isBuildEdit() {
-      let d = request.resource.data;
+    // Shared build field checks for both character creation and build edits.
+    function validBuild(d) {
       let second = d.get('secondClassId', '');
-      return changedFields().hasOnly(['classId', 'subclass', 'classLevel', 'secondClassId', 'secondClassLevel', 'secondSubclass',
-          'classOrders', 'extraWeapons', 'extraArmor', 'masteries', 'homebrewTags', 'level', 'updatedAt'])
-        && d.updatedAt == request.time
-        && notInRun()
-        && d.classId is string && d.classId.size() <= 40
+      return d.classId is string && d.classId.size() <= 40
         && d.get('subclass', '') is string && d.get('subclass', '').size() <= 60
         && second is string && second.size() <= 40
         && d.get('secondSubclass', '') is string && d.get('secondSubclass', '').size() <= 60
@@ -247,6 +239,19 @@ service cloud.firestore {
         && d.get('homebrewTags', {}) is map;
     }
 
+    // A player saves their character's build (Character setup) between runs:
+    // classes and levels, subclasses, orders, extra training, mastery picks and
+    // homebrew tags. Level must be the total of both classes. The DM reviews
+    // builds at run setup.
+    function isBuildEdit() {
+      let d = request.resource.data;
+      return changedFields().hasOnly(['classId', 'subclass', 'classLevel', 'secondClassId', 'secondClassLevel', 'secondSubclass',
+          'classOrders', 'extraWeapons', 'extraArmor', 'masteries', 'homebrewTags', 'level', 'updatedAt'])
+        && d.updatedAt == request.time
+        && notInRun()
+        && validBuild(d);
+    }
+
     // A player picks their character's portrait and summon art, any time:
     // short file names (lowercase letters, digits and dashes) or "" for none.
     function isLookEdit() {
@@ -258,16 +263,67 @@ service cloud.firestore {
         && request.resource.data.get('summonArt', '').matches('[a-z0-9-]{0,40}');
     }
 
-    // Saved characters. The DM can change anything; the owning player can
-    // only spend their own Devotions and Quantum Basalts, edit their Banish
-    // list and Attunement tag between runs, and pick their portrait and
-    // summon art, as checked above.
+    // An invited player creates a new character for themselves, starting with
+    // a valid profile, empty favoredTags, and an empty dungeon layer.
+    function isNewOwnCharacter() {
+      let d = request.resource.data;
+      return isInvited()
+        && d.keys().hasOnly([
+          'name', 'playerEmail', 'classId', 'subclass', 'level', 'classLevel',
+          'secondClassId', 'secondClassLevel', 'secondSubclass', 'classOrders',
+          'extraWeapons', 'extraArmor', 'masteries', 'homebrewTags', 'casterType',
+          'hasSummon', 'attackStyle', 'favoredTags', 'portrait', 'summonArt',
+          'bankedQuantumBasalts', 'bankedDevotions', 'trackDevotions', 'deepestFloor',
+          'fullClears', 'lockoutDays', 'upgrades', 'banished', 'banishHistory',
+          'attuneTag', 'activeRunId', 'loot', 'echoes',
+          'createdAt', 'updatedAt'
+        ])
+        && d.keys().hasAll([
+          'bankedQuantumBasalts', 'bankedDevotions', 'trackDevotions', 'deepestFloor',
+          'fullClears', 'lockoutDays', 'upgrades', 'banished', 'banishHistory',
+          'attuneTag', 'activeRunId', 'loot', 'echoes',
+          'name', 'playerEmail', 'classId', 'level', 'classLevel', 'createdAt', 'updatedAt'
+        ])
+        && d.playerEmail == myEmail()
+        && d.createdAt == request.time
+        && d.updatedAt == request.time
+        && d.bankedQuantumBasalts == 0
+        && d.bankedDevotions == 0
+        && d.trackDevotions == {}
+        && d.deepestFloor == 0
+        && d.fullClears == 0
+        && d.lockoutDays == 0
+        && d.upgrades == {}
+        && d.banished == []
+        && d.banishHistory == []
+        && d.attuneTag == null
+        && d.activeRunId == null
+        && d.loot == []
+        && d.echoes == {'boons': [], 'evolutions': [], 'combinations': [], 'hidden': []}
+        && d.name is string && d.name.size() >= 1 && d.name.size() <= 60
+        && validBuild(d)
+        && d.casterType in ['none', 'half', 'full', 'pact']
+        && d.attackStyle in ['melee', 'ranged', 'spells']
+        && d.hasSummon is bool
+        && d.favoredTags == []
+        && d.get('portrait', '') is string
+        && d.get('portrait', '').matches('[a-z0-9-]{0,40}')
+        && d.get('summonArt', '') is string
+        && d.get('summonArt', '').matches('[a-z0-9-]{0,40}');
+    }
+
+    // Saved characters. The DM can change or delete anything; an invited player
+    // can create their own character with an empty dungeon layer, and the owning
+    // player can only spend their own Devotions and Quantum Basalts, edit their
+    // Banish list, Attunement tag and build between runs, and pick their
+    // portrait and summon art, as checked above.
     match /characters/{characterId} {
       allow read: if isInvited();
-      allow create, delete: if isDM();
+      allow create: if isDM() || isNewOwnCharacter();
       allow update: if isDM()
         || (ownsCharacter()
           && (isDevotionSpend() || isUpgradePurchase() || isBanishEdit() || isAttunementEdit() || isLookEdit() || isBuildEdit()));
+      allow delete: if isDM();
     }
 
     // A player's Pressure wishes for their character's next run. Everyone

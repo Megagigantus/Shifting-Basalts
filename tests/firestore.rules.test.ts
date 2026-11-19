@@ -740,3 +740,107 @@ describe('Thils\'s Vault and loot requests', () => {
     await assertFails(getDoc(doc(as(STRANGER), 'runs', 'live', 'pledges', OWNED)))
   })
 })
+
+describe('player creating a character', () => {
+  const newCharacter = (extra: Record<string, unknown> = {}) => ({
+    name: 'New Hero',
+    playerEmail: PLAYER,
+    classId: 'fighter',
+    subclass: '',
+    level: 5,
+    classLevel: 5,
+    secondClassId: '',
+    secondClassLevel: 0,
+    secondSubclass: '',
+    classOrders: {},
+    extraWeapons: [],
+    extraArmor: [],
+    masteries: [],
+    homebrewTags: { primary: [], secondary: [] },
+    casterType: 'none',
+    hasSummon: false,
+    attackStyle: 'melee',
+    favoredTags: [],
+    portrait: '',
+    summonArt: '',
+    bankedQuantumBasalts: 0,
+    bankedDevotions: 0,
+    trackDevotions: {},
+    deepestFloor: 0,
+    fullClears: 0,
+    lockoutDays: 0,
+    upgrades: {},
+    banished: [],
+    banishHistory: [],
+    attuneTag: null,
+    activeRunId: null,
+    loot: [],
+    echoes: { boons: [], evolutions: [], combinations: [], hidden: [] },
+    createdAt: now(),
+    updatedAt: now(),
+    ...extra,
+  })
+
+  it('a player can create a valid character for themselves', async () => {
+    await assertSucceeds(setDoc(doc(as(PLAYER), 'characters', 'new-hero'), newCharacter()))
+  })
+
+  it('a player cannot create one assigned to someone else or unassigned', async () => {
+    await assertFails(setDoc(doc(as(PLAYER), 'characters', 'new-hero'), newCharacter({ playerEmail: OTHER_PLAYER })))
+    await assertFails(setDoc(doc(as(PLAYER), 'characters', 'new-hero'), newCharacter({ playerEmail: '' })))
+  })
+
+  it('a player cannot start with any dungeon progress or rewards', async () => {
+    const ref = doc(as(PLAYER), 'characters', 'new-hero')
+    await assertFails(setDoc(ref, newCharacter({ bankedQuantumBasalts: 10 })))
+    await assertFails(setDoc(ref, newCharacter({ bankedDevotions: 5 })))
+    await assertFails(setDoc(ref, newCharacter({ trackDevotions: { 'max-hp': 1 } })))
+    await assertFails(setDoc(ref, newCharacter({ upgrades: { reroll: 1 } })))
+    await assertFails(setDoc(ref, newCharacter({ loot: [{ uid: 'L1' }] })))
+    await assertFails(setDoc(ref, newCharacter({ echoes: { boons: ['hardy'], evolutions: [], combinations: [], hidden: [] } })))
+    await assertFails(setDoc(ref, newCharacter({ fullClears: 1 })))
+    await assertFails(setDoc(ref, newCharacter({ deepestFloor: 1 })))
+    await assertFails(setDoc(ref, newCharacter({ lockoutDays: 1 })))
+    await assertFails(setDoc(ref, newCharacter({ activeRunId: 'r1' })))
+  })
+
+  it('a player cannot add an unknown extra field or set favoredTags', async () => {
+    const ref = doc(as(PLAYER), 'characters', 'new-hero')
+    await assertFails(setDoc(ref, newCharacter({ extraField: 'nope' })))
+    await assertFails(setDoc(ref, newCharacter({ favoredTags: ['Guard'] })))
+  })
+
+  it('a player cannot create with a mismatched level or a level over 20', async () => {
+    const ref = doc(as(PLAYER), 'characters', 'new-hero')
+    await assertFails(setDoc(ref, newCharacter({ level: 10, classLevel: 5 })))
+    await assertFails(
+      setDoc(ref, newCharacter({ secondClassId: 'wizard', classLevel: 5, secondClassLevel: 2, level: 8 })),
+    )
+    await assertFails(setDoc(ref, newCharacter({ level: 21, classLevel: 21 })))
+  })
+
+  it('a player can create a valid multiclass character', async () => {
+    await assertSucceeds(
+      setDoc(doc(as(PLAYER), 'characters', 'multi'), newCharacter({ secondClassId: 'wizard', classLevel: 5, secondClassLevel: 3, level: 8 })),
+    )
+  })
+
+  it('a player cannot create with a blank name or an unknown caster type', async () => {
+    const ref = doc(as(PLAYER), 'characters', 'new-hero')
+    await assertFails(setDoc(ref, newCharacter({ name: '' })))
+    await assertFails(setDoc(ref, newCharacter({ casterType: 'triple' })))
+  })
+
+  it('a player cannot delete their own character', async () => {
+    await seedCharacters()
+    await assertFails(deleteDoc(doc(as(PLAYER), 'characters', OWNED)))
+  })
+
+  it('the DM can still create any character', async () => {
+    await assertSucceeds(setDoc(doc(as(DM), 'characters', 'dm-hero'), { name: 'DM Hero', playerEmail: '' }))
+  })
+
+  it('an uninvited stranger cannot create a character', async () => {
+    await assertFails(setDoc(doc(as(STRANGER), 'characters', 'stranger-hero'), newCharacter({ playerEmail: STRANGER })))
+  })
+})
