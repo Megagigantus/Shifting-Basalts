@@ -2,8 +2,9 @@
 // latest saved values. Each runs as a Firestore transaction: it re-reads the
 // character, checks the rule, then writes, so double-clicks can't overspend.
 import { totalLevel, type BuildFields } from './rules/build'
-import { arrayRemove, arrayUnion, doc, FieldPath, runTransaction, serverTimestamp, updateDoc } from 'firebase/firestore'
+import { addDoc, arrayRemove, arrayUnion, collection, doc, FieldPath, runTransaction, serverTimestamp, updateDoc } from 'firebase/firestore'
 import { db } from './firebase'
+import { emptyDungeonLayer, type CharacterProfile } from './model/character'
 import type { EchoGroup } from './rules/echoes'
 import { investmentCap } from './rules/statTracks'
 import { nextRankCost, ownedRankCost, upgradeById } from './rules/upgrades'
@@ -138,4 +139,16 @@ export async function setEchoSeen(characterId: string, group: EchoGroup, id: str
     ['echoes.' + group]: seen ? arrayUnion(id) : arrayRemove(id),
     updatedAt: serverTimestamp(),
   })
+}
+
+/** Create a new character with an empty dungeon layer and return its document id. */
+export async function createCharacter(profile: CharacterProfile): Promise<string> {
+  if (!db) throw new Error('Firebase is not set up.')
+  const ref = await addDoc(collection(db, 'characters'), {
+    ...profile,
+    ...emptyDungeonLayer(),
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  })
+  return ref.id
 }

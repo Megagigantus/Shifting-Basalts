@@ -22,11 +22,12 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 interface Props {
   initial: CharacterProfile
+  mode?: 'dm' | 'player'
   onSave: (profile: CharacterProfile) => Promise<void>
   onCancel: () => void
 }
 
-export function CharacterForm({ initial, onSave, onCancel }: Props) {
+export function CharacterForm({ initial, mode = 'dm', onSave, onCancel }: Props) {
   const [profile, setProfile] = useState<CharacterProfile>(initial)
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
@@ -46,7 +47,8 @@ export function CharacterForm({ initial, onSave, onCancel }: Props) {
       ...build,
       level: totalLevel(build),
       name: profile.name.trim(),
-      playerEmail: profile.playerEmail.trim().toLowerCase(),
+      playerEmail: mode === 'player' ? initial.playerEmail : profile.playerEmail.trim().toLowerCase(),
+      favoredTags: mode === 'player' ? [] : profile.favoredTags,
     }
     if (!cleaned.name) return setError('Give the character a name.')
     const problem = buildError(build, MIN_ENTRY_LEVEL)
@@ -98,50 +100,54 @@ export function CharacterForm({ initial, onSave, onCancel }: Props) {
             ))}
           </select>
         </label>
-        <label className={FIELD_LABEL}>
-          <span>
-            Player's email <span className="font-normal text-stone-500">(optional)</span>
-          </span>
-          <input
-            type="email"
-            value={profile.playerEmail}
-            onChange={(e) => set('playerEmail', e.target.value)}
-            placeholder="player@gmail.com"
-            className={`${FIELD} w-full`}
-          />
-        </label>
+        {mode === 'dm' && (
+          <label className={FIELD_LABEL}>
+            <span>
+              Player's email <span className="font-normal text-stone-500">(optional)</span>
+            </span>
+            <input
+              type="email"
+              value={profile.playerEmail}
+              onChange={(e) => set('playerEmail', e.target.value)}
+              placeholder="player@gmail.com"
+              className={`${FIELD} w-full`}
+            />
+          </label>
+        )}
       </div>
 
       <BuildEditor value={profile} onChange={(b: BuildFields) => setProfile((p) => ({ ...p, ...b }))} />
 
-      <fieldset className="m-0 flex flex-col gap-1.5 border-0 p-0">
-        <legend className="mb-1.5 p-0 text-xs font-semibold text-stone-300">
-          Extra favored tags <span className="font-normal text-stone-500">(optional, for subclasses: weighted like the class's primary tags)</span>
-        </legend>
-        <div className="flex flex-wrap gap-1.5">
-          {FAVORABLE_TAGS.map((tag) => {
-            const fromClass = Boolean(classTags.classes.find((c) => c.classId === profile.classId)?.primary.includes(tag))
-            const on = fromClass || profile.favoredTags.includes(tag)
-            return (
-              <label key={tag} className={chip(on, fromClass)} title={[tagInfo(tag), fromClass ? "Already one of the class's primary tags." : ''].filter(Boolean).join(' ')}>
-                <input
-                  type="checkbox"
-                  className="sr-only"
-                  checked={on}
-                  disabled={fromClass}
-                  onChange={() =>
-                    set(
-                      'favoredTags',
-                      profile.favoredTags.includes(tag) ? profile.favoredTags.filter((t) => t !== tag) : [...profile.favoredTags, tag],
-                    )
-                  }
-                />
-                {tag}
-              </label>
-            )
-          })}
-        </div>
-      </fieldset>
+      {mode === 'dm' && (
+        <fieldset className="m-0 flex flex-col gap-1.5 border-0 p-0">
+          <legend className="mb-1.5 p-0 text-xs font-semibold text-stone-300">
+            Extra favored tags <span className="font-normal text-stone-500">(optional, for subclasses: weighted like the class's primary tags)</span>
+          </legend>
+          <div className="flex flex-wrap gap-1.5">
+            {FAVORABLE_TAGS.map((tag) => {
+              const fromClass = Boolean(classTags.classes.find((c) => c.classId === profile.classId)?.primary.includes(tag))
+              const on = fromClass || profile.favoredTags.includes(tag)
+              return (
+                <label key={tag} className={chip(on, fromClass)} title={[tagInfo(tag), fromClass ? "Already one of the class's primary tags." : ''].filter(Boolean).join(' ')}>
+                  <input
+                    type="checkbox"
+                    className="sr-only"
+                    checked={on}
+                    disabled={fromClass}
+                    onChange={() =>
+                      set(
+                        'favoredTags',
+                        profile.favoredTags.includes(tag) ? profile.favoredTags.filter((t) => t !== tag) : [...profile.favoredTags, tag],
+                      )
+                    }
+                  />
+                  {tag}
+                </label>
+              )
+            })}
+          </div>
+        </fieldset>
+      )}
 
       <label className="inline-flex cursor-pointer items-center gap-2 text-xs text-stone-200">
         <input type="checkbox" checked={profile.hasSummon} onChange={(e) => set('hasSummon', e.target.checked)} />

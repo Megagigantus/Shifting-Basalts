@@ -2,10 +2,11 @@
 // "characters" collection and stay in sync live. A list on the left, the
 // chosen character's hub (or the form) on the right.
 import { useState } from 'react'
-import { addDoc, collection, deleteDoc, doc, serverTimestamp, updateDoc } from 'firebase/firestore'
+import { deleteDoc, doc, serverTimestamp, updateDoc } from 'firebase/firestore'
 import { LockOpen, Pencil, Trash, UserPlus } from 'lucide-react'
+import { createCharacter } from '../characterStore'
 import { db } from '../firebase'
-import { emptyDungeonLayer, emptyProfile, profileOf, type CharacterProfile } from '../model/character'
+import { emptyProfile, profileOf, type CharacterProfile } from '../model/character'
 import { useCharacters } from '../useCharacters'
 import { CharacterForm } from './CharacterForm'
 import { CharacterHub } from './CharacterHub'
@@ -23,15 +24,9 @@ export function Characters() {
   const current = characters?.find((c) => c.id === selected) ?? characters?.[0] ?? null
 
   async function create(profile: CharacterProfile) {
-    if (!db) return
-    const ref = await addDoc(collection(db, 'characters'), {
-      ...profile,
-      ...emptyDungeonLayer(),
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-    })
+    const id = await createCharacter(profile)
     setEditing(null)
-    setSelected(ref.id)
+    setSelected(id)
   }
 
   async function update(id: string, profile: CharacterProfile) {
