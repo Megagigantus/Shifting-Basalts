@@ -1,7 +1,21 @@
 import { describe, expect, it } from 'vitest'
 import { emptyDungeonLayer, emptyProfile, type Character } from '../model/character'
 import { BOONS, COMBINATIONS, EVOLUTIONS, HIDDEN_BOONS, emptySlots, replaceBoon, takeBoon, type Slot } from './boons'
-import { echoCounts, echoPool, echoesOf, emptyEchoes, hasFullCollection, mergeEchoes, recordEchoes, visibleEchoCounts, type Echoes } from './echoes'
+import {
+  collectionOf,
+  echoCounts,
+  echoPool,
+  echoesOf,
+  emptyEchoes,
+  hasFullCollection,
+  mergeEchoes,
+  playerCollection,
+  recordEchoes,
+  visibleEchoCounts,
+  withPlayerCollections,
+  type EchoCollection,
+  type Echoes,
+} from './echoes'
 import { changeSlots, newRunState, setHiddenBoon } from './runFlow'
 
 const char = (id: string): Character => ({
@@ -103,6 +117,16 @@ describe('echoCounts', () => {
     expect(counts.overall.seen).toBe(3)
     expect(counts.overall.total).toBe(counts.boons.total + counts.evolutions.total + counts.combinations.total + counts.hidden.total)
   })
+
+  it('unions class ids across two characters of a player when counting hidden boons', () => {
+    const c1 = { playerEmail: 'alice@example.com', classId: 'fighter' }
+    const c2 = { playerEmail: 'alice@example.com', classId: 'wizard', secondClassId: 'cleric' }
+    const collection = playerCollection(c1, [c1, c2])
+    const expectedHidden = HIDDEN_BOONS.filter(
+      (h) => h.kind === 'gift' || h.classId === 'fighter' || h.classId === 'wizard' || h.classId === 'cleric',
+    ).length
+    expect(echoCounts({ ...c1, collection }).hidden.total).toBe(expectedHidden)
+  })
 })
 
 describe('visibleEchoCounts', () => {
@@ -137,6 +161,25 @@ describe('visibleEchoCounts', () => {
     expect(counts.overall.seen).toBe(0)
     expect(counts.overall.total).toBe(trueCounts.boons.total + trueCounts.evolutions.total + trueCounts.combinations.total)
   })
+
+  it('keeps hidden total equal to hidden seen on a player collection', () => {
+    const pool = echoPool({ classId: 'fighter', secondClassId: 'wizard' })
+    const c1 = {
+      playerEmail: 'alice@example.com',
+      classId: 'fighter',
+      echoes: { ...emptyEchoes(), boons: [BOONS[0].id] },
+    }
+    const c2 = {
+      playerEmail: 'alice@example.com',
+      classId: 'wizard',
+      echoes: { ...emptyEchoes(), hidden: [pool.hidden[0]] },
+    }
+    const [withCol1] = withPlayerCollections([c1, c2])
+    const counts = visibleEchoCounts(withCol1)
+    expect(counts.hidden).toEqual({ seen: 1, total: 1 })
+    expect(counts.overall.seen).toBe(2)
+    expect(counts.overall.total).toBe(counts.boons.total + counts.evolutions.total + counts.combinations.total + 1)
+  })
 })
 
 describe('hasFullCollection', () => {
@@ -149,5 +192,167 @@ describe('hasFullCollection', () => {
     expect(hasFullCollection({ classId: 'fighter', echoes: almostAll })).toBe(false)
 
     expect(hasFullCollection({ classId: 'fighter', echoes: pool })).toBe(true)
+  })
+
+  it('is true for a player whose two characters together hold the union pool, while each alone is false', () => {
+    const unionPool = echoPool({ classId: 'fighter', secondClassId: 'wizard' })
+    const c1 = {
+      playerEmail: 'alice@example.com',
+      classId: 'fighter',
+      echoes: {
+        boons: unionPool.boons,
+        evolutions: [],
+        combinations: [],
+        hidden: unionPool.hidden.slice(0, 1),
+      },
+    }
+    const c2 = {
+      playerEmail: 'alice@example.com',
+      classId: 'wizard',
+      echoes: {
+        boons: [],
+        evolutions: unionPool.evolutions,
+        combinations: unionPool.combinations,
+        hidden: unionPool.hidden.slice(1),
+      },
+    }
+
+    expect(hasFullCollection(c1)).toBe(false)
+    expect(hasFullCollection(c2)).toBe(false)
+
+    const [withCol1, withCol2] = withPlayerCollections([c1, c2])
+    expect(hasFullCollection(withCol1)).toBe(true)
+    expect(hasFullCollection(withCol2)).toBe(true)
+  })
+})
+
+describe('collectionOf', () => {
+  it('falls back to the single character when no collection is attached, and returns collection when present', () => {
+    const single = {
+      classId: 'fighter',
+      secondClassId: '',
+      echoes: { ...emptyEchoes(), boons: [BOONS[0].id, BOONS[0].id] },
+    }
+    expect(collectionOf(single)).toEqual({
+      classIds: ['fighter'],
+      echoes: { ...emptyEchoes(), boons: [BOONS[0].id] },
+    })
+    expect(collectionOf({ classId: 'fighter', secondClassId: 'fighter' }).classIds).toEqual(['fighter'])
+
+    const collection: EchoCollection = {
+      classIds: ['fighter', 'wizard'],
+      echoes: { ...emptyEchoes(), boons: [BOONS[1].id] },
+    }
+    expect(collectionOf({ ...single, collection })).toBe(collection)
+  })
+})
+
+describe('playerCollection', () => {
+  it('merges echoes from two characters of the same player and ignores other players and unassigned characters', () => {
+    const alice1 = {
+      playerEmail: 'alice@example.com',
+      classId: 'fighter',
+      echoes: { ...emptyEchoes(), boons: [BOONS[0].id] },
+    }
+    const alice2 = {
+      playerEmail: 'alice@example.com',
+      classId: 'wizard',
+      secondClassId: 'cleric',
+      echoes: { ...emptyEchoes(), boons: [BOONS[0].id, BOONS[1].id], evolutions: [EVOLUTIONS[0].id] },
+    }
+    const bob = {
+      playerEmail: 'bob@example.com',
+      classId: 'rogue',
+      echoes: { ...emptyEchoes(), boons: [BOONS[2].id], combinations: [COMBINATIONS[0].id] },
+    }
+    const unassigned = {
+      playerEmail: '',
+      classId: 'paladin',
+      echoes: { ...emptyEchoes(), boons: [BOONS[3].id] },
+    }
+    const everyone = [alice1, alice2, bob, unassigned]
+
+    expect(playerCollection(alice1, everyone)).toEqual({
+      classIds: ['fighter', 'wizard', 'cleric'],
+      echoes: {
+        boons: [BOONS[0].id, BOONS[1].id],
+        evolutions: [EVOLUTIONS[0].id],
+        combinations: [],
+        hidden: [],
+      },
+    })
+    expect(playerCollection(alice1, [alice2, bob, unassigned])).toEqual({
+      classIds: ['wizard', 'cleric', 'fighter'],
+      echoes: {
+        boons: [BOONS[0].id, BOONS[1].id],
+        evolutions: [EVOLUTIONS[0].id],
+        combinations: [],
+        hidden: [],
+      },
+    })
+  })
+
+  it('returns only the character own echoes and classes when unassigned', () => {
+    const solo = {
+      playerEmail: '',
+      classId: 'fighter',
+      secondClassId: 'rogue',
+      echoes: { ...emptyEchoes(), boons: [BOONS[0].id] },
+    }
+    const otherUnassigned = {
+      playerEmail: '',
+      classId: 'wizard',
+      echoes: { ...emptyEchoes(), boons: [BOONS[1].id] },
+    }
+    const assigned = {
+      playerEmail: 'alice@example.com',
+      classId: 'cleric',
+      echoes: { ...emptyEchoes(), boons: [BOONS[2].id] },
+    }
+
+    expect(playerCollection(solo, [solo, otherUnassigned, assigned])).toEqual({
+      classIds: ['fighter', 'rogue'],
+      echoes: { ...emptyEchoes(), boons: [BOONS[0].id] },
+    })
+    expect(playerCollection({ classId: 'wizard', echoes: { ...emptyEchoes(), boons: [BOONS[1].id] } }, [otherUnassigned])).toEqual({
+      classIds: ['wizard'],
+      echoes: { ...emptyEchoes(), boons: [BOONS[1].id] },
+    })
+  })
+})
+
+describe('withPlayerCollections', () => {
+  it('does not mutate its input and gives both characters of one player the same collection', () => {
+    const c1 = {
+      playerEmail: 'alice@example.com',
+      classId: 'fighter',
+      echoes: { ...emptyEchoes(), boons: [BOONS[0].id] },
+    }
+    const c2 = {
+      playerEmail: 'alice@example.com',
+      classId: 'wizard',
+      echoes: { ...emptyEchoes(), boons: [BOONS[1].id] },
+    }
+    const c3 = {
+      playerEmail: 'bob@example.com',
+      classId: 'rogue',
+      echoes: { ...emptyEchoes(), boons: [BOONS[2].id] },
+    }
+    const result = withPlayerCollections([c1, c2, c3])
+
+    expect(result).toHaveLength(3)
+    expect(result[0]).not.toBe(c1)
+    expect(result[1]).not.toBe(c2)
+    expect('collection' in c1).toBe(false)
+    expect('collection' in c2).toBe(false)
+    expect('collection' in c3).toBe(false)
+
+    expect(result[0].collection).toEqual(result[1].collection)
+    expect(result[0].collection.classIds).toEqual(['fighter', 'wizard'])
+    expect(result[0].collection.echoes.boons).toEqual([BOONS[0].id, BOONS[1].id])
+    expect(result[2].collection).toEqual({
+      classIds: ['rogue'],
+      echoes: { ...emptyEchoes(), boons: [BOONS[2].id] },
+    })
   })
 })

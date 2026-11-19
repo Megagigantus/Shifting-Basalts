@@ -117,3 +117,36 @@ export function rollLockoutDays(
   const rolls = Array.from({ length: floorReached }, () => roll(rules.lockoutDieSides))
   return { days: rolls.reduce((a, b) => a + b, 0), rolls }
 }
+
+/**
+ * Toggle an entrant in the picked party. Adding a character whose player
+ * already has another picked character swaps out that earlier pick, keeping
+ * the remaining ids in order with the new id last.
+ */
+export function toggleEntrant(
+  picked: string[],
+  id: string,
+  characters: { id: string; playerEmail?: string }[],
+): string[] {
+  if (picked.includes(id)) return picked.filter((i) => i !== id)
+  const email = characters.find((c) => c.id === id)?.playerEmail
+  const remaining = email
+    ? picked.filter((i) => characters.find((c) => c.id === i)?.playerEmail !== email)
+    : picked
+  return [...remaining, id]
+}
+
+/**
+ * Non-empty player emails that appear on more than one character in the party,
+ * each returned once.
+ */
+export function sharedPlayers(party: { playerEmail?: string }[]): string[] {
+  const seen = new Set<string>()
+  const dupes = new Set<string>()
+  for (const member of party) {
+    if (!member.playerEmail) continue
+    if (seen.has(member.playerEmail)) dupes.add(member.playerEmail)
+    seen.add(member.playerEmail)
+  }
+  return [...dupes]
+}

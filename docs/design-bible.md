@@ -1050,7 +1050,7 @@ Quantum Basalts are a rare resource awarded to each player on extraction. They a
 
 These only appear in the Basalt Markets once a character has survived a full clear: beaten the floor 5 legendary boss and extracted alive. A character with a full clear wears a golden glow around their portrait and battle map token. The glow grows stronger with each full clear up to 5. From the 6th to the 10th full clear, each one adds a diamond to the top of the portrait (up to 5 diamonds). Battle map tokens show the glow but not the diamonds.
 
-**Full collection *(proposed)*:** a character who has held every entry in Basalt Echoes (every boon, Evolution, Combination and every hidden boon they can receive) wears a green glow on top of any golden glow, with an open book at the bottom center of the portrait ring. Battle map tokens show the green glow but not the book. The Echoes log keeps hidden boons out of sight until the first one is received, and its hidden and overall totals count only hidden boons already found, so the full count is never spoiled.
+**Full collection *(proposed)*:** Basalt Echoes are tracked per player, not per character: a player's collection is everything any of their characters has held. A player who has held every entry (every boon, Evolution, Combination, and every hidden boon they can receive: Thils's gifts plus the class hidden boons of every class any of their characters has) wears a green glow on all of their characters, on top of any golden glow, with an open book at the bottom center of the portrait ring. Battle map tokens show the green glow but not the book. The Echoes log keeps hidden boons out of sight until the first one is received, and its hidden and overall totals count only hidden boons already found, so the full count is never spoiled.
 
 | Upgrade | Ranks | Cost per rank | Effect | Origin |
 | --- | --- | --- | --- | --- |
@@ -1456,6 +1456,7 @@ The DM hosts the run; players join on their own devices with a lighter view.
 - **Why those fields:** they set boon offer eligibility, class hidden boon triggers, and every PB-based boon number.
 - **Modifiers, not totals:** the app shows what the dungeon adds, like +10 max HP or +20 ft speed, and players apply it to their own sheets. It never tries to track their full stats.
 - **The dungeon layer:** boon slots, boon levels, evolutions and combinations; the hidden boon and any suppressed boons; stat track ranks and banked Devotions; upgrades and ranks; Quantum Basalts (banked, earned this run and passed); loot assigned to them; lockout timer; deepest floor reached; and run history.
+- **Several characters per player:** a player can create and own several characters, but brings only one into a run. Each character keeps its own dungeon layer (Devotions, upgrades, Quantum Basalts, loot, lockout). Basalt Echoes are the exception: they belong to the player and count across all their characters (see Full collection). A locked-out character stays sealed, but its player can bring a different character. Players create their own characters with an empty dungeon layer; only the DM deletes characters.
 
 ### Character setup *(proposed)*
 

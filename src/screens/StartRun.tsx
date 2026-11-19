@@ -16,6 +16,8 @@ import {
   partyLevel,
   pressureBonusPercent,
   PRESSURES,
+  sharedPlayers,
+  toggleEntrant,
   togglePressure,
 } from '../rules/run'
 import { makeJoinCode, newRunState } from '../rules/runFlow'
@@ -49,12 +51,13 @@ export function StartRun({ characters }: Props) {
   const wanted = wishTally(usePressureWishes(), party)
 
   function toggleCharacter(id: string) {
-    setPicked((ids) => (ids.includes(id) ? ids.filter((i) => i !== id) : [...ids, id]))
+    setPicked((ids) => toggleEntrant(ids, id, characters))
   }
 
   async function start() {
     setError(null)
     if (party.length === 0) return setError('Pick at least one character.')
+    if (sharedPlayers(party).length > 0) return setError('Each player can bring only one character.')
     setStarting(true)
     try {
       const owners = party.filter((c) => (c.upgrades['starting-boon'] ?? 0) > 0).map((c) => c.id)
@@ -99,6 +102,10 @@ export function StartRun({ characters }: Props) {
         {characters.map((c) => {
           const locked = c.lockoutDays > 0
           const chosen = picked.includes(c.id)
+          const swapsOut =
+            !chosen && !locked && c.playerEmail
+              ? party.find((p) => p.playerEmail === c.playerEmail)
+              : undefined
           return (
             <button
               key={c.id}
@@ -125,6 +132,7 @@ export function StartRun({ characters }: Props) {
                   {buildSummary({ ...c, ...buildOf(c) })} · {c.bankedQuantumBasalts} QB
                 </span>
                 {locked && <span className="block text-[0.6875rem] font-semibold text-rose-300">Locked out {c.lockoutDays} days</span>}
+                {swapsOut && <span className="block text-[0.6875rem] text-amber-300/80">Swaps out {swapsOut.name}</span>}
               </span>
             </button>
           )

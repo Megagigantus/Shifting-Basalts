@@ -1,6 +1,6 @@
 // A saved character: the lean profile from the design bible's
 // "App requirements > Characters" section, plus the permanent dungeon layer.
-import { emptyEchoes, type Echoes } from '../rules/echoes'
+import { emptyEchoes, type EchoCollection, type Echoes } from '../rules/echoes'
 import type { LootItem } from '../rules/loot'
 
 export type CasterType = 'none' | 'half' | 'full' | 'pact'
@@ -83,6 +83,8 @@ export type OwnedLoot = LootItem & { runId: string }
 
 export interface Character extends CharacterProfile, DungeonLayer {
   id: string
+  /** Derived when characters load (the player's Basalt Echoes across all their characters); never saved to Firestore. */
+  collection?: EchoCollection
 }
 
 export const CASTER_TYPES: { id: CasterType; label: string }[] = [

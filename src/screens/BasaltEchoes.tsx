@@ -1,10 +1,11 @@
-// Basalt Echoes: every boon, Evolution, Combination and hidden boon this character has held.
+// Basalt Echoes: every boon, Evolution, Combination and hidden boon this player has held, across all their characters.
 import { useState } from 'react'
 import { Lock } from 'lucide-react'
 import { setEchoSeen } from '../characterStore'
 import type { Character } from '../model/character'
 import { boon, combination, evolution, hiddenBoon } from '../rules/boons'
-import { echoCounts, echoPool, visibleEchoCounts, type EchoGroup } from '../rules/echoes'
+import { collectionOf, echoCounts, echoPool, visibleEchoCounts, type EchoGroup } from '../rules/echoes'
+import { useCharacters } from '../useCharacters'
 import { Pill } from '../ui/Pill'
 import { tagInfo } from '../tagInfo'
 import { StatStrip } from '../ui/StatStrip'
@@ -21,7 +22,7 @@ const GROUPS: { id: EchoGroup; label: string }[] = [
 const SEEN_CARD = 'flex flex-col gap-2 rounded-lg border border-emerald-500/35 bg-stone-950/70 p-3'
 const UNSEEN_CARD = 'flex min-h-24 flex-col gap-2 rounded-lg border border-stone-800 bg-stone-950/50 p-3 opacity-60'
 
-/** Collection of every echo a character has held across runs, with locked placeholders for the rest. */
+/** Collection of every echo the character's player has held across runs and characters, with locked placeholders for the rest. */
 export function BasaltEchoes({ character, canMark = false }: { character: Character; canMark?: boolean }) {
   const [group, setGroup] = useState<EchoGroup>('boons')
   const [busy, setBusy] = useState(false)
@@ -30,7 +31,12 @@ export function BasaltEchoes({ character, canMark = false }: { character: Charac
   const showHidden = canMark || counts.hidden.seen > 0
   const activeGroup: EchoGroup = group === 'hidden' && !showHidden ? 'boons' : group
   const pool = echoPool(character)
-  const seenIds = new Set(character.echoes?.[activeGroup] ?? [])
+  // Echoes are per player: seen entries come from the player's whole collection.
+  const seenIds = new Set(collectionOf(character).echoes[activeGroup])
+  const { characters } = useCharacters()
+  const playerCharacterIds = character.playerEmail
+    ? (characters ?? []).filter((c) => c.playerEmail === character.playerEmail).map((c) => c.id)
+    : []
   const ids = pool[activeGroup]
   const orderedIds =
     !canMark && activeGroup === 'hidden'
@@ -41,7 +47,7 @@ export function BasaltEchoes({ character, canMark = false }: { character: Charac
     setError(null)
     setBusy(true)
     try {
-      await setEchoSeen(character.id, activeGroup, id, seen)
+      await setEchoSeen(character.id, playerCharacterIds, activeGroup, id, seen)
     } catch {
       setError('Could not save. Please try again.')
     } finally {

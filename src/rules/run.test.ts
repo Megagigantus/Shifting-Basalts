@@ -9,6 +9,8 @@ import {
   passQuantumBasalts,
   pressureBonusPercent,
   rollLockoutDays,
+  sharedPlayers,
+  toggleEntrant,
   togglePressure,
   withPressureBonus,
 } from './run'
@@ -119,5 +121,64 @@ describe('death lockout', () => {
       expect(days).toBeGreaterThanOrEqual(2)
       expect(days).toBeLessThanOrEqual(8)
     }
+  })
+})
+
+describe('toggleEntrant', () => {
+  const roster = [
+    { id: 'a1', playerEmail: 'alice@example.com' },
+    { id: 'a2', playerEmail: 'alice@example.com' },
+    { id: 'b1', playerEmail: 'bob@example.com' },
+    { id: 'u1', playerEmail: '' },
+    { id: 'u2', playerEmail: '' },
+    { id: 'u3' },
+  ]
+
+  it('adds an unpicked character and removes a picked one', () => {
+    let picked = toggleEntrant([], 'a1', roster)
+    expect(picked).toEqual(['a1'])
+    picked = toggleEntrant(picked, 'b1', roster)
+    expect(picked).toEqual(['a1', 'b1'])
+    picked = toggleEntrant(picked, 'a1', roster)
+    expect(picked).toEqual(['b1'])
+  })
+
+  it('swaps out a same-player character while keeping order of remaining picks', () => {
+    const picked = toggleEntrant(['a1', 'b1'], 'a2', roster)
+    expect(picked).toEqual(['b1', 'a2'])
+  })
+
+  it('does not swap unassigned characters or other players characters', () => {
+    let picked = toggleEntrant(['a1', 'b1', 'u1'], 'u2', roster)
+    expect(picked).toEqual(['a1', 'b1', 'u1', 'u2'])
+    picked = toggleEntrant(picked, 'u3', roster)
+    expect(picked).toEqual(['a1', 'b1', 'u1', 'u2', 'u3'])
+  })
+})
+
+describe('sharedPlayers', () => {
+  it('returns duplicated non-empty player emails once', () => {
+    expect(
+      sharedPlayers([
+        { playerEmail: 'alice@example.com' },
+        { playerEmail: 'bob@example.com' },
+        { playerEmail: 'alice@example.com' },
+        { playerEmail: 'alice@example.com' },
+        { playerEmail: 'bob@example.com' },
+      ]),
+    ).toEqual(['alice@example.com', 'bob@example.com'])
+  })
+
+  it('ignores empty emails and single entries', () => {
+    expect(
+      sharedPlayers([
+        { playerEmail: '' },
+        { playerEmail: '' },
+        {},
+        {},
+        { playerEmail: 'alice@example.com' },
+        { playerEmail: 'bob@example.com' },
+      ]),
+    ).toEqual([])
   })
 })

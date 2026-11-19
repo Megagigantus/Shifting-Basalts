@@ -1,7 +1,7 @@
 // Portrait honors: golden glow tiers, full-clear diamonds, and Basalt Echoes
 // full-collection badge. Thresholds come from src/data/portrait-honors.json.
 import data from '../data/portrait-honors.json'
-import { hasFullCollection, type Echoes } from './echoes'
+import { hasFullCollection, type EchoCollection, type Echoes } from './echoes'
 
 export interface PortraitHonors {
   fullClears: number
@@ -18,7 +18,7 @@ export const NO_HONORS: PortraitHonors = {
 }
 
 export function portraitHonors(
-  c: { fullClears?: number; classId?: string; secondClassId?: string; echoes?: Echoes } | null | undefined,
+  c: { fullClears?: number; classId?: string; secondClassId?: string; echoes?: Echoes; collection?: EchoCollection } | null | undefined,
 ): PortraitHonors {
   if (!c) return NO_HONORS
   const raw = c.fullClears
@@ -26,7 +26,7 @@ export function portraitHonors(
   const glowTier = Math.min(n, data.maxGlowTier)
   const diamonds = Math.max(0, Math.min(n - data.diamondsStartAfterClears, data.maxDiamonds))
   const fullCollection = c.classId
-    ? hasFullCollection({ classId: c.classId, secondClassId: c.secondClassId, echoes: c.echoes })
+    ? hasFullCollection({ classId: c.classId, secondClassId: c.secondClassId, echoes: c.echoes, collection: c.collection })
     : false
   return { fullClears: n, glowTier, diamonds, fullCollection }
 }
