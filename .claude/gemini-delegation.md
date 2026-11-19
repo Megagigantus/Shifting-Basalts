@@ -9,11 +9,11 @@ You (Claude) are the **orchestrator and quality gate** for this project. Gemini,
 | Orchestrator (this session) | Claude Opus 5.5, medium effort | Planning, specs, routing, diff review, independent verification |
 | Default worker | `gemini-4-hydrogen-high` | Everyday feature implementation, frontend components, API wiring, unit tests |
 | Escalation worker | `gemini-4-neon-medium` | Long-horizon multi-file refactors, tricky debugging, anything Hydrogen got stuck on |
-| Fallback worker | `sonnet-implementer` subagent (Claude Sonnet 5.5, high effort) | Implementation when Gemini fails, is unavailable, or Argon also gets stuck |
+| Fallback worker | `sonnet-implementer` subagent (Claude Sonnet 5.5, high effort) | Implementation when Gemini fails, is unavailable, or neon also gets stuck |
 | Final gate | Claude Opus 5.5, medium effort | Full testing and design bible check before any feature is called complete |
 
 Pick the starting worker by task type:
-- Start with **Argon** if the task touches 5+ files, restructures existing modules, or is a bug whose cause is unknown.
+- Start with **neon** if the task touches 5+ files, restructures existing modules, or is a bug whose cause is unknown.
 - Start with **Hydrogen** for everything else.
 
 ## What Claude Owns
@@ -31,7 +31,7 @@ Pick the starting worker by task type:
 
 ## Workflow
 
-1. **Plan.** Break the feature into small, independently testable tasks. Share the plan with the user before starting if the feature is larger than 3 tasks. Label each task Hydrogen or Argon.
+1. **Plan.** Break the feature into small, independently testable tasks. Share the plan with the user before starting if the feature is larger than 3 tasks. Label each task Hydrogen or neon.
 2. **Branch.** Make sure you are on a feature branch, never main. Create one if needed, following the Git rules in CLAUDE.md.
 3. **Checkpoint.** Before each delegation, commit on the feature branch so the work can be rolled back:
    ```bash
@@ -50,7 +50,7 @@ Pick the starting worker by task type:
    - `--mode accept-edits` lets the worker edit files without prompting. Edits are safe to allow because every call starts from a checkpoint commit and you review the diff afterward.
    - `--sandbox` restricts the worker's terminal access. The worker edits files only. Claude runs all commands (tests, installs, git) itself.
    - Never use `--dangerously-skip-permissions`.
-   - `timeout 900` stops a stuck run after 15 minutes. Use `timeout 1800` for Argon refactors. If a run times out with no edits, the worker may have stalled waiting for a permission it cannot get in headless mode. Treat it as a failure, not a reason to loosen permissions.
+   - `timeout 900` stops a stuck run after 15 minutes. Use `timeout 1800` for neon refactors. If a run times out with no edits, the worker may have stalled waiting for a permission it cannot get in headless mode. Treat it as a failure, not a reason to loosen permissions.
 6. **Review.** Follow the Review section below. Never skip it.
 7. **Decide.**
    - **Pass:** commit with a clear message and move to the next task.
@@ -107,8 +107,8 @@ The Final Gate checks the feature as a whole, not task by task. It must run on C
 
 Count failures per task. A failure is a review that ends in Fixable or Wrong direction.
 
-1. **Hydrogen fails twice** on the same task: reset to the checkpoint and send the task to **Argon** with a spec that notes what Hydrogen got wrong.
-2. **Argon fails twice** on the same task: reset to the checkpoint and send the task to the **`sonnet-implementer`** subagent with the same spec plus notes on what both Gemini models got wrong.
+1. **Hydrogen fails twice** on the same task: reset to the checkpoint and send the task to **neon** with a spec that notes what Hydrogen got wrong.
+2. **neon fails twice** on the same task: reset to the checkpoint and send the task to the **`sonnet-implementer`** subagent with the same spec plus notes on what both Gemini models got wrong.
 3. **Sonnet fails twice**: stop and ask the user how to proceed. Do not write the implementation yourself unless the user says to.
 
 ## Gemini Unavailable Fallback
