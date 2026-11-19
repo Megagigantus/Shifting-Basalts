@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { collection, onSnapshot } from 'firebase/firestore'
 import { db } from './firebase'
 import { emptyDungeonLayer, emptyProfile, type Character } from './model/character'
+import { withPlayerCollections } from './rules/echoes'
 
 export function useCharacters(): { characters: Character[] | null; error: string | null } {
   const [characters, setCharacters] = useState<Character[] | null>(null)
@@ -18,7 +19,8 @@ export function useCharacters(): { characters: Character[] | null; error: string
           (d) => ({ ...emptyProfile(), ...emptyDungeonLayer(), ...d.data(), id: d.id }) as Character,
         )
         list.sort((a, b) => a.name.localeCompare(b.name))
-        setCharacters(list)
+        // Basalt Echoes are per player: attach each player's collection across all their characters.
+        setCharacters(withPlayerCollections(list))
       },
       () => setError('Could not load characters.'),
     )

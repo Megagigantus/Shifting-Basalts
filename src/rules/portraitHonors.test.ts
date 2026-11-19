@@ -1,6 +1,6 @@
 // Tests for portrait honors: glow tiers, full-clear diamonds, full-collection flag, and CSS classes.
 import { describe, expect, it } from 'vitest'
-import { echoPool, type Echoes } from './echoes'
+import { echoPool, emptyEchoes, withPlayerCollections, type Echoes } from './echoes'
 import { honorClasses, NO_HONORS, portraitHonors } from './portraitHonors'
 
 describe('portraitHonors', () => {
@@ -48,6 +48,16 @@ describe('portraitHonors', () => {
     const multiPool = echoPool({ classId: 'fighter', secondClassId: 'wizard' })
     expect(portraitHonors({ classId: 'fighter', secondClassId: 'wizard', echoes: pool }).fullCollection).toBe(false)
     expect(portraitHonors({ classId: 'fighter', secondClassId: 'wizard', echoes: multiPool }).fullCollection).toBe(true)
+  })
+
+  it('uses the player-wide collection: every character of a player who completed it glows green', () => {
+    const [fighter, wizard] = withPlayerCollections([
+      { playerEmail: 'p@example.com', classId: 'fighter', echoes: { ...emptyEchoes(), boons: [] } },
+      { playerEmail: 'p@example.com', classId: 'wizard', echoes: echoPool({ classId: 'fighter', secondClassId: 'wizard' }) },
+    ])
+    expect(portraitHonors({ classId: 'fighter', echoes: fighter.echoes }).fullCollection).toBe(false)
+    expect(portraitHonors(fighter).fullCollection).toBe(true)
+    expect(portraitHonors(wizard).fullCollection).toBe(true)
   })
 })
 

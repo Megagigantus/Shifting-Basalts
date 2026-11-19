@@ -2,7 +2,7 @@
 // latest saved values. Each runs as a Firestore transaction: it re-reads the
 // character, checks the rule, then writes, so double-clicks can't overspend.
 import { totalLevel, type BuildFields } from './rules/build'
-import { addDoc, arrayRemove, arrayUnion, collection, doc, FieldPath, runTransaction, serverTimestamp, updateDoc } from 'firebase/firestore'
+import { addDoc, arrayRemove, arrayUnion, collection, doc, FieldPath, runTransaction, serverTimestamp, updateDoc, writeBatch } from 'firebase/firestore'
 import { db } from './firebase'
 import { emptyDungeonLayer, type CharacterProfile } from './model/character'
 import type { EchoGroup } from './rules/echoes'
@@ -132,13 +132,22 @@ export async function saveBuild(characterId: string, build: BuildFields): Promis
   await updateDoc(doc(db, 'characters', characterId), { ...build, level: totalLevel(build), updatedAt: serverTimestamp() })
 }
 
-/** DM correction: mark or unmark an entry in a character's Basalt Echoes collection. */
-export async function setEchoSeen(characterId: string, group: EchoGroup, id: string, seen: boolean): Promise<void> {
+/**
+ * DM correction to a player's Basalt Echoes collection. Marking records the
+ * entry on the character being viewed; unmarking clears it from every one of
+ * the player's characters, since the collection is their union.
+ */
+export async function setEchoSeen(characterId: string, playerCharacterIds: string[], group: EchoGroup, id: string, seen: boolean): Promise<void> {
   if (!db) throw new Error('Firebase is not set up.')
-  await updateDoc(doc(db, 'characters', characterId), {
-    ['echoes.' + group]: seen ? arrayUnion(id) : arrayRemove(id),
-    updatedAt: serverTimestamp(),
-  })
+  const batch = writeBatch(db)
+  const ids = seen ? [characterId] : [...new Set([characterId, ...playerCharacterIds])]
+  for (const cid of ids) {
+    batch.update(doc(db, 'characters', cid), {
+      ['echoes.' + group]: seen ? arrayUnion(id) : arrayRemove(id),
+      updatedAt: serverTimestamp(),
+    })
+  }
+  await batch.commit()
 }
 
 /** Create a new character with an empty dungeon layer and return its document id. */
