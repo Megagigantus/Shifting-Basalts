@@ -78,6 +78,8 @@ export interface ThemePlayback {
 export interface MomentTheme {
   id: string
   label: string
+  /** Color of the face-down card pattern. */
+  cardBackColor: string
   tiers: RevealTier[]
   tierRules: TierRule[]
   defaultTier: string
@@ -120,6 +122,10 @@ export function checkTheme(theme: MomentTheme): string[] {
   const problems: string[] = []
   const tierIds = new Set<string>()
   const accentIds = new Set<string>()
+
+  if (!HEX_COLOR.test(theme.cardBackColor)) {
+    problems.push(`cardBackColor "${theme.cardBackColor}" is not a hex color`)
+  }
 
   for (const tier of theme.tiers) {
     if (tierIds.has(tier.id)) {

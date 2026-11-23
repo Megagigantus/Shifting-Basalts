@@ -1,6 +1,7 @@
 {
   "id": "basalts",
   "label": "Shifting Basalts",
+  "cardBackColor": "#cbd5e1",
   "tiers": [
     {
       "id": "new",

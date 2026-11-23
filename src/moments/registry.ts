@@ -1,45 +1,13 @@
-import type { ComponentType } from 'react'
-import type { Moment, MomentViewer, NewMoment } from './types'
+// One list of moment modules: type -> module. To add a moment type, write
+// one module and add one entry below; nothing else changes.
+import { defineMoment, type MomentModule } from './moduleTypes'
+import { boonRevealModule } from './boonReveal'
 
-/** Props passed to each moment module's full-screen Player component. */
-export interface MomentPlayerProps<P> {
-  moment: Moment<P>
-  viewer: MomentViewer
-  skipped: boolean
-  reducedMotion: boolean
-  onDone: () => void
-}
-
-/** Character roster context provided to DM test sample builders. */
-export interface SampleContext {
-  characterIds: string[]
-  names: Record<string, string>
-}
-
-/** Sample moment factory exposed by a module for DM testing. */
-export interface MomentSample<P> {
-  label: string
-  build: (ctx: SampleContext) => NewMoment<P>
-}
-
-/** Self-contained definition of one synchronized cinematic moment type. */
-export interface MomentModule<P = Record<string, unknown>> {
-  type: string
-  label: string
-  Player: ComponentType<MomentPlayerProps<P>>
-  estimateMs: (moment: Moment<P>) => number
-  describe: (moment: Moment<P>, names: Record<string, string>) => string
-  preload?: (moment: Moment<P>, viewer: MomentViewer) => { sounds: string[]; images: string[] }
-  samples: MomentSample<P>[]
-}
-
-/** Register a strongly-typed moment module in the untyped registry without `any`. */
-export function defineMoment<P>(module: MomentModule<P>): MomentModule {
-  return module as unknown as MomentModule
-}
+export { defineMoment }
+export type { MomentModule, MomentPlayerProps, MomentSample, SampleContext } from './moduleTypes'
 
 // Add one entry per moment type.
-const MODULES: MomentModule[] = []
+const MODULES: MomentModule[] = [boonRevealModule]
 
 const BY_TYPE = new Map<string, MomentModule>()
 for (const mod of MODULES) {
