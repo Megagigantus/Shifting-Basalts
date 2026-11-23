@@ -16,6 +16,7 @@ import { TableViewer } from './screens/TableViewer'
 import { AppHeader } from './screens/AppHeader'
 import { DM_TABS, type DmTab } from './screens/dmTabs'
 import { Backdrop } from './screens/Backdrop'
+import { MomentIndicator } from './moments/MomentIndicator'
 import { Modal } from './ui/Modal'
 import { cx } from './ui/tone'
 import { artUrl } from './art'
@@ -120,6 +121,13 @@ function SignedIn({ email, role }: { email: string; role: 'dm' | 'player' }) {
             : undefined
         }
       />
+
+      {isDm && state && state.run.status === 'active' && (
+        <MomentIndicator
+          runId={state.run.id}
+          names={Object.fromEntries(state.players.map((p) => [p.characterId, p.name]))}
+        />
+      )}
 
       {/* The old panels keep their own styles until each step redesigns them. */}
       <main className={cx('mx-auto px-4 pb-16', wide ? 'max-w-7xl' : 'max-w-5xl')}>
