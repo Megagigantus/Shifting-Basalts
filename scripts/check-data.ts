@@ -54,6 +54,8 @@ for (const [file, items] of [
     seen.set(item.id, file)
     if (!item.name) fail(`${file}: "${item.id}" has no name`)
     if (!STATUSES.includes(item.status)) fail(`${file}: "${item.id}" has unknown status "${item.status}"`)
+    const source = (item as { source?: string }).source
+    if (source !== undefined && source !== 'thils') fail(`${file}: "${item.id}" has unknown source "${source}"`)
   }
 }
 
