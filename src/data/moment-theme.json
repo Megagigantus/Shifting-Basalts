@@ -201,7 +201,8 @@
     "flipMs": 450,
     "settleMs": 400,
     "claimMs": 500,
-    "fadeOutMs": 500
+    "fadeOutMs": 500,
+    "spotlightHoldMs": 1600
   },
   "playback": {
     "maxMomentAgeMs": 8000,

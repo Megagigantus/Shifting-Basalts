@@ -64,6 +64,8 @@ export interface ThemeTimings {
   settleMs: number
   claimMs: number
   fadeOutMs: number
+  /** Table display: how long each spotlighted card stays up after it flips. */
+  spotlightHoldMs: number
 }
 
 /** Playback and responsive scaling thresholds. */
