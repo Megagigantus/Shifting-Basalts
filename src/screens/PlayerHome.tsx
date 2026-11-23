@@ -14,6 +14,8 @@ import { Roster } from './Roster'
 import { RunHistory } from './RunHistory'
 import { RunEntryVideo } from './RunEntryVideo'
 import { PressureWishes } from './PressureWishes'
+import { MomentLayer } from '../moments/MomentLayer'
+import { SoundPrompt } from '../moments/SoundControls'
 import { Panel } from '../ui/Panel'
 import { PRIMARY_BUTTON } from '../ui/styles'
 
@@ -44,6 +46,8 @@ export function PlayerHome({ email, readOnly = false }: Props) {
     <>
       {/* The tunnel video plays for players only, never in the DM's preview. */}
       {myRun && !readOnly && <RunEntryVideo runId={myRun.run.id} />}
+      {myRun && !readOnly && <MomentLayer runId={myRun.run.id} viewer={{ kind: 'player', characterIds: myIds }} />}
+      {myRun && !readOnly && <SoundPrompt />}
       {myRun && <PlayerRun state={myRun} myCharacterIds={myIds} readOnly={readOnly} />}
 
       <div className="mt-6 flex flex-col gap-4">

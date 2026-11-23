@@ -6,6 +6,7 @@ import { db } from '../firebase'
 import { downloadBackup } from '../backup'
 import { cx } from '../ui/tone'
 import { artUrl } from '../art'
+import { SoundSettingsButton } from '../moments/SoundControls'
 import { DM_TABS, type DmTab } from './dmTabs'
 
 const TAB_ICONS: Record<DmTab, ReactNode> = {
@@ -114,6 +115,7 @@ export function AppHeader({ email, role, testMode, dm, onSignOut }: Props) {
           )}
 
           {email && <span className="hidden text-[0.6875rem] text-stone-400 xl:inline">{email}</span>}
+          <SoundSettingsButton />
           {onSignOut && (
             <button type="button" onClick={onSignOut} className={cx(SMALL_BUTTON, QUIET)}>
               <LogOut size={13} /> Sign out

@@ -38,7 +38,7 @@ export function SoundPrompt() {
   return (
     <div
       role="status"
-      className="fixed inset-x-4 bottom-4 z-50 mx-auto flex w-fit max-w-full flex-wrap items-center justify-center gap-2 rounded-xl border border-stone-700 bg-stone-900/95 px-3 py-2 text-stone-100 shadow-2xl shadow-black/60 backdrop-blur"
+      className="fixed inset-x-4 bottom-4 z-[70] mx-auto flex w-fit max-w-full flex-wrap items-center justify-center gap-2 rounded-xl border border-stone-700 bg-stone-900/95 px-3 py-2 text-stone-100 shadow-2xl shadow-black/60 backdrop-blur"
     >
       <button type="button" onClick={unlockAudio} className={PRIMARY_BUTTON}>
         <Volume2 size={16} aria-hidden="true" />
