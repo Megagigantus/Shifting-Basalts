@@ -2,7 +2,9 @@ import { useCallback, useEffect, useReducer } from 'react'
 import {
   collection,
   doc,
+  getDocs,
   limit,
+  writeBatch,
   onSnapshot,
   orderBy,
   query,
@@ -72,6 +74,21 @@ export async function setMomentStatus(
 ): Promise<void> {
   if (!db) throw new Error('Firebase is not set up.')
   await updateDoc(doc(db, 'runs', runId, 'moments', momentId), { status })
+}
+
+/**
+ * Delete every moment of a run (when it is cancelled or ends). Moments are
+ * presentation only, so losing them never changes game state.
+ */
+export async function deleteRunMoments(runId: string): Promise<void> {
+  if (!db) throw new Error('Firebase is not set up.')
+  const snapshot = await getDocs(collection(db, 'runs', runId, 'moments'))
+  // A batch holds at most 500 writes.
+  for (let i = 0; i < snapshot.docs.length; i += 400) {
+    const batch = writeBatch(db)
+    for (const d of snapshot.docs.slice(i, i + 400)) batch.delete(d.ref)
+    await batch.commit()
+  }
 }
 
 function toMoment(id: string, data: DocumentData): Moment {

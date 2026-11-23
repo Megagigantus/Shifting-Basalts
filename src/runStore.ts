@@ -32,6 +32,7 @@ import { applyChoice, draftKey, isDraftChoice, type DraftChoice } from './rules/
 import type { ExitVote, ExitVoteDoc } from './rules/votes'
 import { reclaim, type Pledge } from './rules/shrine'
 import { wakeRelic } from './rules/vault'
+import { deleteRunMoments } from './moments/momentStore'
 
 /**
  * Live view of the run currently in progress, if any. Only the DM's screen
@@ -197,6 +198,8 @@ export async function saveRunState(
   }
 
   await batch.commit()
+  // The run is over: its moments (reveal animations) are no longer needed.
+  if (justEnded) await deleteRunMoments(id).catch(() => {})
   return results
 }
 
@@ -379,6 +382,7 @@ export async function applyChoiceDoc(state: RunState, characterId: string, choic
  */
 export async function cancelRun(state: RunState): Promise<void> {
   if (!db) throw new Error('Firebase is not set up.')
+  await deleteRunMoments(state.run.id)
   const batch = writeBatch(db)
   for (const player of state.players) {
     batch.delete(doc(db, 'runs', state.run.id, 'players', player.characterId))
