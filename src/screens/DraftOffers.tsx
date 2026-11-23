@@ -15,6 +15,10 @@ import { Pill } from '../ui/Pill'
 import { tagInfo } from '../tagInfo'
 import { FIELD, PRIMARY_BUTTON, QUIET_BUTTON } from '../ui/styles'
 import { cx, toneClasses, type Tone } from '../ui/tone'
+import { cardFromHidden, cardFromOffer, type RevealCard } from '../moments/revealTier'
+import { TierGlow } from '../moments/boonReveal/TierGlow'
+import { claimStyle, useClaim } from '../moments/boonReveal/claim'
+import { usePrefersReducedMotion } from '../moments/device'
 
 interface Props {
   player: RunPlayer
@@ -34,6 +38,8 @@ export function DraftOffers({ player, passValue, rerollsLeft, busy, onChoose, wh
   const hasEmpty = slots.some((s) => s === null)
   const [replaceSlot, setReplaceSlot] = useState<Record<number, number>>({})
   const [dropBoon, setDropBoon] = useState<Record<number, string>>({})
+  const { claimed, claim } = useClaim(busy)
+  const reducedMotion = usePrefersReducedMotion()
   const draft = player.draft
   const hidden = player.hiddenOffer
 
@@ -71,8 +77,15 @@ export function DraftOffers({ player, passValue, rerollsLeft, busy, onChoose, wh
               const pickingDrop = dropBoon[i] !== undefined
               const selectedDrop = banished.includes(dropBoon[i]) ? dropBoon[i] : (banished[0] ?? '')
               const boonName = offerName(offer)
+              const cardKey = `offer-${i}`
+              const reveal = safeReveal(() => cardFromOffer(offer, slots))
               return (
-                <div key={i} className={cx('flex flex-col gap-2 rounded-xl border bg-stone-950/70 p-3', toneClasses[tone].border)}>
+                <div
+                  key={i}
+                  className={cx('relative isolate flex flex-col gap-2 rounded-xl border bg-stone-950/70 p-3', toneClasses[tone].border)}
+                  style={claimStyle(cardClaimState(claimed, cardKey, 'offer-'), reducedMotion)}
+                >
+                  {reveal && <TierGlow tier={reveal.tier} accent={reveal.accent} claimed={claimed === cardKey} />}
                   <div className="flex items-start gap-3">
                     <div className="shrink-0 p-1">
                       <BoonIcon art={offerArtRef(offer)} name={boonName} size="lg" />
@@ -104,13 +117,24 @@ export function DraftOffers({ player, passValue, rerollsLeft, busy, onChoose, wh
                         type="button"
                         disabled={busy}
                         className={PRIMARY_BUTTON}
-                        onClick={() => onChoose({ action: 'take', index: i, replaceSlot: target })}
+                        onClick={() => {
+                          claim(cardKey)
+                          onChoose({ action: 'take', index: i, replaceSlot: target })
+                        }}
                       >
                         Take
                       </button>
                     </div>
                   ) : (
-                    <button type="button" disabled={busy} className={cx(PRIMARY_BUTTON, 'self-start')} onClick={() => onChoose({ action: 'take', index: i })}>
+                    <button
+                      type="button"
+                      disabled={busy}
+                      className={cx(PRIMARY_BUTTON, 'self-start')}
+                      onClick={() => {
+                        claim(cardKey)
+                        onChoose({ action: 'take', index: i })
+                      }}
+                    >
                       Take
                     </button>
                   )}
@@ -230,8 +254,15 @@ export function DraftOffers({ player, passValue, rerollsLeft, busy, onChoose, wh
           <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
             {[...(hidden.classBoon ? [hidden.classBoon] : []), ...hidden.gifts].map((id) => {
               const text = describeHidden(id)
+              const cardKey = `hidden-${id}`
+              const reveal = safeReveal(() => cardFromHidden(id, null))
               return (
-                <div key={id} className="flex flex-col gap-2 rounded-xl border border-violet-500/30 bg-stone-950/70 p-3">
+                <div
+                  key={id}
+                  className="relative isolate flex flex-col gap-2 rounded-xl border border-violet-500/30 bg-stone-950/70 p-3"
+                  style={claimStyle(cardClaimState(claimed, cardKey, 'hidden-'), reducedMotion)}
+                >
+                  {reveal && <TierGlow tier={reveal.tier} accent={reveal.accent} claimed={claimed === cardKey} />}
                   <div className="flex items-start gap-3">
                     <div className="shrink-0 p-1">
                       <BoonIcon art={{ kind: 'hidden', id }} name={text.heading} size="lg" />
@@ -248,7 +279,10 @@ export function DraftOffers({ player, passValue, rerollsLeft, busy, onChoose, wh
                     type="button"
                     disabled={busy}
                     className={cx('inline-flex cursor-pointer items-center justify-center self-start rounded-lg border-0 px-4 py-2 text-sm font-bold disabled:opacity-60', toneClasses.violet.button)}
-                    onClick={() => onChoose({ action: 'hidden', hiddenBoonId: id })}
+                    onClick={() => {
+                      claim(cardKey)
+                      onChoose({ action: 'hidden', hiddenBoonId: id })
+                    }}
                   >
                     Take
                   </button>
@@ -277,4 +311,21 @@ function offerTone(label: string): Tone {
   if (label.includes('Evolution')) return 'violet'
   if (label.includes('Combination')) return 'sky'
   return 'stone'
+}
+
+function safeReveal(build: () => RevealCard): RevealCard | null {
+  try {
+    return build()
+  } catch {
+    return null
+  }
+}
+
+function cardClaimState(
+  claimed: string | null,
+  key: string,
+  groupPrefix: string,
+): 'claimed' | 'released' | 'idle' {
+  if (claimed === null || !claimed.startsWith(groupPrefix)) return 'idle'
+  return claimed === key ? 'claimed' : 'released'
 }
