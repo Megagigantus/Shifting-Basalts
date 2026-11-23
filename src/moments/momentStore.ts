@@ -35,7 +35,7 @@ export function newMomentRef(runId: string): DocumentReference {
 }
 
 /** Build the Firestore payload written for a newly created moment. */
-export function momentData(input: NewMoment, createdBy: string) {
+export function momentData<P>(input: NewMoment<P>, createdBy: string) {
   return {
     type: input.type,
     payload: input.payload,
@@ -47,7 +47,7 @@ export function momentData(input: NewMoment, createdBy: string) {
 }
 
 /** Add a new moment write to an existing Firestore batch and return its id. */
-export function addMomentToBatch(batch: WriteBatch, runId: string, input: NewMoment): string {
+export function addMomentToBatch<P>(batch: WriteBatch, runId: string, input: NewMoment<P>): string {
   if (!db) throw new Error('Firebase is not set up.')
   const uid = auth?.currentUser?.uid
   if (!uid) throw new Error('Sign in first.')
@@ -57,7 +57,7 @@ export function addMomentToBatch(batch: WriteBatch, runId: string, input: NewMom
 }
 
 /** Write a new moment document to Firestore and return its id. */
-export async function createMoment(runId: string, input: NewMoment): Promise<string> {
+export async function createMoment<P>(runId: string, input: NewMoment<P>): Promise<string> {
   if (!db) throw new Error('Firebase is not set up.')
   const uid = auth?.currentUser?.uid
   if (!uid) throw new Error('Sign in first.')

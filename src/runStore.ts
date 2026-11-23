@@ -32,7 +32,8 @@ import { applyChoice, draftKey, isDraftChoice, type DraftChoice } from './rules/
 import type { ExitVote, ExitVoteDoc } from './rules/votes'
 import { reclaim, type Pledge } from './rules/shrine'
 import { wakeRelic } from './rules/vault'
-import { deleteRunMoments } from './moments/momentStore'
+import { addMomentToBatch, deleteRunMoments } from './moments/momentStore'
+import { revealsFromChange } from './moments/boonReveal/triggers'
 
 /**
  * Live view of the run currently in progress, if any. Only the DM's screen
@@ -195,6 +196,14 @@ export async function saveRunState(
       results,
       endedAt: serverTimestamp(),
     })
+  }
+
+  if (previous !== null) {
+    try {
+      for (const m of revealsFromChange(previous, next)) addMomentToBatch(batch, id, m)
+    } catch {
+      // Moments are presentation only: never block saving game state.
+    }
   }
 
   await batch.commit()
@@ -370,6 +379,11 @@ export async function applyChoiceDoc(state: RunState, characterId: string, choic
     batch.set(doc(db, 'runs', id), { ...runData, updatedAt: serverTimestamp() }, { merge: true })
   }
   batch.delete(choiceRef)
+  try {
+    for (const m of revealsFromChange(state, next)) addMomentToBatch(batch, state.run.id, m)
+  } catch {
+    // Moments are presentation only: never block applying the player's choice.
+  }
   await batch.commit()
 }
 
