@@ -272,7 +272,7 @@ function WakeRelicSection({ active, characters, showOwner, disabled, error, onWa
                 <span className="text-xs font-semibold text-fuchsia-300">{relicOf(item.ref).name}</span>
                 {showOwner && <span className="text-xs text-stone-200">{character.name}</span>}
                 <Pill tone="purple" mono>
-                  {character.bankedQuantumBasalts} QB banked
+                  {character.bankedQuantumBasalts} Quantum Basalts banked
                 </Pill>
               </div>
               {blocker !== null ? (
@@ -284,7 +284,7 @@ function WakeRelicSection({ active, characters, showOwner, disabled, error, onWa
                   onClick={() => onWake(item.ref, character.id)}
                   className={cx(SMALL_BUTTON, 'border-amber-500/40 bg-amber-500/20 text-amber-200')}
                 >
-                  Wake ({WAKE_COST} QB)
+                  Wake ({WAKE_COST} Quantum Basalts)
                 </button>
               )}
             </div>

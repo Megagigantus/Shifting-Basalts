@@ -235,7 +235,7 @@ export function CharacterHub({ character: c, mode, actions }: Props) {
             icon={<Store size={16} />}
             title="The Basalt Markets"
             text="Buy permanent upgrades with Quantum Basalts."
-            badge={`${c.bankedQuantumBasalts} QB`}
+            badge={`${c.bankedQuantumBasalts} Quantum Basalts`}
             onVisit={() => setVisiting('markets')}
           />
           <LocationBanner
@@ -243,7 +243,7 @@ export function CharacterHub({ character: c, mode, actions }: Props) {
             tone="emerald"
             icon={<Library size={16} />}
             title="Basalt Echoes"
-            text="Every boon, Evolution and Combination you've held, and the echoes still waiting."
+            text="Every boon, Evolution and Fusion you've held, and the echoes still waiting."
             badge={`${overall.seen} of ${overall.total} seen`}
             className="md:col-span-2"
             onVisit={() => setVisiting('echoes')}

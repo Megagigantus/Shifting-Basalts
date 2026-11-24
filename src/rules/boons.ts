@@ -93,7 +93,7 @@ export function takeBoon(slots: Slot[], boonId: string): Slot[] {
   const heldAt = slots.findIndex((s) => s?.kind === 'boon' && s.boonId === boonId)
   if (heldAt >= 0) return levelUp(slots, heldAt)
   if (slots.some((s) => s && boonsIn(s).includes(boonId))) {
-    throw new Error(`${picked.name} is already part of an Evolution or Combination this player holds.`)
+    throw new Error(`${picked.name} is already part of an Evolution or Fusion this player holds.`)
   }
   const empty = slots.findIndex((s) => s === null)
   if (empty < 0) throw new Error('No empty slot. Replace a boon instead.')
@@ -150,7 +150,7 @@ export function availableCombinations(slots: Slot[]): { combination: Combination
 /** Fuse two Level 3 boons: the result takes the first boon's slot and the second slot opens up. */
 export function combine(slots: Slot[], combinationId: string): Slot[] {
   const option = availableCombinations(slots).find((o) => o.combination.id === combinationId)
-  if (!option) throw new Error('Both boons must be held at Level 3 to combine.')
+  if (!option) throw new Error('Both boons must be held at Level 3 to fuse.')
   const [first, second] = option.slots
   return slots.map((s, i) =>
     i === first ? { kind: 'combination', combinationId } : i === second ? null : s,

@@ -85,7 +85,7 @@ describe('cardText', () => {
     )
     expect(cardText(fusedCard)).toEqual({
       name: 'Super Normal',
-      label: 'Combination',
+      label: 'Fusion',
       detail: 'Critical Delight + Crits Are for Suckers',
     })
 

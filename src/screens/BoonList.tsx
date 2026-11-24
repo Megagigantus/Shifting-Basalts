@@ -31,7 +31,7 @@ export function SlotCard({ slot, children }: { slot: SlotContent; children?: Rea
             </Pill>
           )}
           {slot.kind === 'evolution' && <Pill tone="violet">Evolution</Pill>}
-          {slot.kind === 'combination' && <Pill tone="sky">Combination</Pill>}
+          {slot.kind === 'combination' && <Pill tone="sky">Fusion</Pill>}
           {slotTags(slot).map((t) => (
             <Pill key={t} title={tagInfo(t)} className="cursor-help">
               {t}

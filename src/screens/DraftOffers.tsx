@@ -308,7 +308,7 @@ function offerName(offer: Offer): string {
 function offerTone(label: string): Tone {
   if (label.startsWith('Level')) return 'amber'
   if (label.includes('Evolution')) return 'violet'
-  if (label.includes('Combination')) return 'sky'
+  if (label.includes('Fusion')) return 'sky'
   return 'stone'
 }
 

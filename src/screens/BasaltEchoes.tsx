@@ -1,4 +1,4 @@
-// Basalt Echoes: every boon, Evolution, Combination and hidden boon this player has held, across all their characters.
+// Basalt Echoes: every boon, Evolution, Fusion and hidden boon this player has held, across all their characters.
 import { useState } from 'react'
 import { Lock } from 'lucide-react'
 import { setEchoSeen } from '../characterStore'
@@ -15,7 +15,7 @@ import { cx } from '../ui/tone'
 const GROUPS: { id: EchoGroup; label: string }[] = [
   { id: 'boons', label: 'Boons' },
   { id: 'evolutions', label: 'Evolutions' },
-  { id: 'combinations', label: 'Combinations' },
+  { id: 'combinations', label: 'Fusions' },
   { id: 'hidden', label: 'Hidden' },
 ]
 
@@ -62,7 +62,7 @@ export function BasaltEchoes({ character, canMark = false }: { character: Charac
           { label: 'Overall', value: `${counts.overall.seen} of ${counts.overall.total}`, tone: 'emerald' },
           { label: 'Boons', value: `${counts.boons.seen} of ${counts.boons.total}` },
           { label: 'Evolutions', value: `${counts.evolutions.seen} of ${counts.evolutions.total}` },
-          { label: 'Combinations', value: `${counts.combinations.seen} of ${counts.combinations.total}` },
+          { label: 'Fusions', value: `${counts.combinations.seen} of ${counts.combinations.total}` },
           ...(showHidden ? [{ label: 'Hidden', value: `${counts.hidden.seen} of ${counts.hidden.total}` }] : []),
         ]}
       />
@@ -94,8 +94,8 @@ export function BasaltEchoes({ character, canMark = false }: { character: Charac
       {counts.overall.seen === 0 && (
         <p className="m-0 text-xs text-stone-400">
           {canMark
-            ? 'No echoes yet. Every boon, Evolution, Combination and hidden boon you hold in a run is recorded here.'
-            : 'No echoes yet. Every boon, Evolution and Combination you hold in a run is recorded here.'}
+            ? 'No echoes yet. Every boon, Evolution, Fusion and hidden boon you hold in a run is recorded here.'
+            : 'No echoes yet. Every boon, Evolution and Fusion you hold in a run is recorded here.'}
         </p>
       )}
 
@@ -232,7 +232,7 @@ function CombinationDetails({ id }: { id: string }) {
     <>
       <strong className="text-sm font-bold text-stone-100">{c.name}</strong>
       <p className="m-0 text-xs text-emerald-300/90">
-        Combines {boon(c.boons[0]).name} + {boon(c.boons[1]).name}
+        Fuses {boon(c.boons[0]).name} + {boon(c.boons[1]).name}
       </p>
       <p className="m-0 text-[0.6875rem] text-stone-300">{c.effect}</p>
     </>

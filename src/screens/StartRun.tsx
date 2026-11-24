@@ -129,7 +129,7 @@ export function StartRun({ characters }: Props) {
                   <span className="shrink-0 font-mono text-[0.6875rem] font-bold text-amber-300">Lv {c.level}</span>
                 </span>
                 <span className="block truncate text-[0.6875rem] text-stone-400">
-                  {buildSummary({ ...c, ...buildOf(c) })} · {c.bankedQuantumBasalts} QB
+                  {buildSummary({ ...c, ...buildOf(c) })} · {c.bankedQuantumBasalts} Quantum Basalts
                 </span>
                 {locked && <span className="block text-[0.6875rem] font-semibold text-rose-300">Locked out {c.lockoutDays} days</span>}
                 {swapsOut && <span className="block text-[0.6875rem] text-amber-300/80">Swaps out {swapsOut.name}</span>}

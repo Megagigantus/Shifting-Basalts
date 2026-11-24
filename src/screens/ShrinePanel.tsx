@@ -47,7 +47,7 @@ export function ShrinePanel({ state, forDm = false, mine = [], readOnly = false 
         <HeartHandshake size={14} className="text-amber-300" />
         <strong className="mr-auto text-sm text-amber-100">The Reclamation Shrine</strong>
         <Pill tone="amber" mono>
-          {cost} QB per ally
+          {cost} Quantum Basalts per ally
         </Pill>
       </div>
       <p className="m-0 text-[0.6875rem] text-stone-300">
@@ -88,10 +88,10 @@ export function ShrinePanel({ state, forDm = false, mine = [], readOnly = false 
               <ConfirmButton
                 tone="amber"
                 disabled={busy || total < cost}
-                confirmLabel={`Yes, reclaim ${ally.name} for ${cost} QB`}
+                confirmLabel={`Yes, reclaim ${ally.name} for ${cost} Quantum Basalts`}
                 onConfirm={() => attempt(() => reclaimAlly(state, ally.characterId, pledges), 'Could not reclaim. Check your connection.')}
               >
-                {total >= cost ? `Reclaim ${ally.name}` : `Waiting on ${cost - total} QB of pledges`}
+                {total >= cost ? `Reclaim ${ally.name}` : `Waiting on ${cost - total} Quantum Basalts of pledges`}
               </ConfirmButton>
             )}
           </div>
@@ -126,7 +126,7 @@ function PledgeRow({
   return (
     <div className="flex flex-wrap items-center gap-1.5 text-[0.6875rem] text-stone-300">
       <span className="mr-1">
-        {player.name} ({max} run QB){pledgedHere > 0 && `: pledged ${pledgedHere}`}
+        {player.name} ({max} run Quantum Basalts){pledgedHere > 0 && `: pledged ${pledgedHere}`}
       </span>
       <input
         type="number"
