@@ -614,6 +614,7 @@
       "Once per room, as a reaction, redirect a room trick that targets you onto an enemy within 30 ft."
     ],
     "evolvesTo": "thilss-maze",
+    "source": "thils",
     "status": "locked"
   },
   {

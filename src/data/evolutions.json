@@ -200,6 +200,7 @@
     "name": "Thils's Maze",
     "from": "thilss-favor",
     "effect": "Once per room, set your own trick: a 10 ft square where entering enemies must make a Dex save against your DC or take 4 × PB damage and be Restrained.",
+    "source": "thils",
     "status": "locked"
   },
   {

@@ -12,6 +12,7 @@ import relicData from '../data/relics.json'
 import { BOSSES } from '../rules/bosses'
 import { crLabel } from '../rules/encounters'
 import { baseName } from '../rules/gear'
+import { TestMomentsPanel } from '../moments/TestMomentsPanel'
 import { Panel, SectionLabel } from '../ui/Panel'
 import { Pill } from '../ui/Pill'
 import { SMALL_BUTTON, WELL } from '../ui/styles'
@@ -64,6 +65,7 @@ export function TableViewer() {
       {table === 'items' && <Items />}
       {table === 'trophies' && <Trophies />}
       {table === 'relics' && <Relics />}
+      <TestMomentsPanel />
     </Panel>
   )
 }

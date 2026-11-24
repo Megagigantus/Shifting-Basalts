@@ -1875,3 +1875,26 @@
     }
   }
 }
+
+/* Draft offer card reveal-tier glow pulse (src/moments/boonReveal/TierGlow.tsx). */
+@layer components {
+  .tier-glow-pulse {
+    animation: tier-glow-pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes tier-glow-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.75;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tier-glow-pulse {
+      animation: none;
+    }
+  }
+}

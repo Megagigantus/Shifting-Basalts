@@ -1,0 +1,213 @@
+{
+  "id": "basalts",
+  "label": "Shifting Basalts",
+  "cardBackColor": "#cbd5e1",
+  "tiers": [
+    {
+      "id": "new",
+      "label": "New",
+      "color": "#cbd5e1",
+      "glowIntensity": 0.3,
+      "particlePreset": "softMotes",
+      "soundKey": "flipNew",
+      "hesitationMs": 150,
+      "shake": false,
+      "spotlight": false
+    },
+    {
+      "id": "deepened",
+      "label": "Deepened",
+      "color": "#2dd4bf",
+      "glowIntensity": 0.5,
+      "particlePreset": "risingMotes",
+      "soundKey": "flipDeepened",
+      "hesitationMs": 350,
+      "shake": false,
+      "spotlight": false
+    },
+    {
+      "id": "hidden",
+      "label": "Hidden",
+      "color": "#818cf8",
+      "glowIntensity": 0.8,
+      "particlePreset": "veilMotes",
+      "soundKey": "flipHidden",
+      "hesitationMs": 800,
+      "shake": false,
+      "spotlight": true
+    },
+    {
+      "id": "fused",
+      "label": "Fused",
+      "color": "#60a5fa",
+      "glowIntensity": 0.7,
+      "particlePreset": "convergingMotes",
+      "soundKey": "flipFused",
+      "hesitationMs": 600,
+      "shake": false,
+      "spotlight": true
+    },
+    {
+      "id": "evolved",
+      "label": "Evolved",
+      "color": "#a855f7",
+      "glowIntensity": 1,
+      "particlePreset": "afterimageBurst",
+      "soundKey": "flipEvolved",
+      "hesitationMs": 1200,
+      "shake": true,
+      "spotlight": true
+    }
+  ],
+  "tierRules": [
+    {
+      "tier": "hidden",
+      "when": {
+        "offerType": ["hidden"]
+      }
+    },
+    {
+      "tier": "evolved",
+      "when": {
+        "offerType": ["evolution"]
+      }
+    },
+    {
+      "tier": "fused",
+      "when": {
+        "offerType": ["combination"]
+      }
+    },
+    {
+      "tier": "deepened",
+      "when": {
+        "offerType": ["levelUp"]
+      }
+    },
+    {
+      "tier": "new",
+      "when": {}
+    }
+  ],
+  "defaultTier": "new",
+  "accents": [
+    {
+      "id": "thils",
+      "label": "Thils",
+      "color": "#c4b5fd",
+      "overlay": "sigil",
+      "particlePreset": "mazeMotes",
+      "soundKey": "accentThils"
+    }
+  ],
+  "accentRules": [
+    {
+      "accent": "thils",
+      "when": {
+        "source": ["thils"]
+      }
+    }
+  ],
+  "particlePresets": {
+    "softMotes": {
+      "count": 14,
+      "spread": 45,
+      "startVelocity": 12,
+      "gravity": 0.15,
+      "drift": 0.2,
+      "decay": 0.94,
+      "ticks": 120,
+      "scalar": 0.5,
+      "shapes": ["circle"],
+      "colors": ["#f8fafc", "#e2e8f0", "#cbd5e1"]
+    },
+    "risingMotes": {
+      "count": 24,
+      "spread": 60,
+      "startVelocity": 18,
+      "gravity": 0.1,
+      "drift": 0.1,
+      "decay": 0.93,
+      "ticks": 150,
+      "scalar": 0.6,
+      "shapes": ["circle"],
+      "colors": ["#99f6e4", "#5eead4", "#2dd4bf", "#f8fafc"]
+    },
+    "veilMotes": {
+      "count": 36,
+      "spread": 75,
+      "startVelocity": 20,
+      "gravity": 0.08,
+      "drift": 0.35,
+      "decay": 0.94,
+      "ticks": 180,
+      "scalar": 0.65,
+      "shapes": ["circle"],
+      "colors": ["#c7d2fe", "#a5b4fc", "#818cf8", "#e0e7ff"]
+    },
+    "convergingMotes": {
+      "count": 32,
+      "spread": 70,
+      "startVelocity": 22,
+      "gravity": 0.12,
+      "drift": 0.25,
+      "decay": 0.93,
+      "ticks": 160,
+      "scalar": 0.65,
+      "shapes": ["circle"],
+      "colors": ["#bfdbfe", "#93c5fd", "#60a5fa", "#cbd5e1"]
+    },
+    "afterimageBurst": {
+      "count": 56,
+      "spread": 100,
+      "startVelocity": 28,
+      "gravity": 0.18,
+      "drift": 0.15,
+      "decay": 0.92,
+      "ticks": 200,
+      "scalar": 0.75,
+      "shapes": ["circle"],
+      "colors": ["#e9d5ff", "#d8b4fe", "#c084fc", "#a855f7", "#f8fafc"]
+    },
+    "mazeMotes": {
+      "count": 20,
+      "spread": 55,
+      "startVelocity": 15,
+      "gravity": 0.05,
+      "drift": 0.3,
+      "decay": 0.95,
+      "ticks": 170,
+      "scalar": 0.55,
+      "shapes": ["circle"],
+      "colors": ["#ede9fe", "#ddd6fe", "#c4b5fd", "#a78bfa"]
+    }
+  },
+  "sounds": {
+    "flipNew": "/sounds/moments/flip-new.mp3",
+    "flipDeepened": "/sounds/moments/flip-deepened.mp3",
+    "flipHidden": "/sounds/moments/flip-hidden.mp3",
+    "flipFused": "/sounds/moments/flip-fused.mp3",
+    "flipEvolved": "/sounds/moments/flip-evolved.mp3",
+    "accentThils": "/sounds/moments/accent-thils.mp3",
+    "deal": "/sounds/moments/deal.mp3",
+    "dim": "/sounds/moments/dim.mp3",
+    "claimed": "/sounds/moments/claimed.mp3",
+    "conditionMet": "/sounds/moments/condition-met.mp3"
+  },
+  "timings": {
+    "backdropFadeMs": 300,
+    "dealStaggerMs": 120,
+    "dealMs": 350,
+    "flipMs": 450,
+    "settleMs": 400,
+    "claimMs": 500,
+    "fadeOutMs": 500,
+    "spotlightHoldMs": 1600
+  },
+  "playback": {
+    "maxMomentAgeMs": 8000,
+    "preloadTimeoutMs": 1500,
+    "smallScreenMaxWidth": 640,
+    "smallScreenParticleScale": 0.5
+  }
+}

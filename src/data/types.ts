@@ -5,6 +5,9 @@
 /** "locked" = settled in the bible. "proposed" = current plan, may change. */
 export type Status = 'locked' | 'proposed'
 
+/** Where a boon comes from, for presentation only (reveal accents). Missing means the dungeon pool. */
+export type BoonSource = 'thils'
+
 export type Tag =
   | 'Core'
   | 'Echo'
@@ -60,6 +63,8 @@ export interface Boon {
    * (Spell boons always need spells; Bond boons always need a summon).
    */
   requires?: ('spells' | 'summon')[]
+  /** Presentation only: drives reveal accents (moment-theme.json). */
+  source?: BoonSource
   status: Status
 }
 
@@ -69,6 +74,8 @@ export interface Evolution {
   /** Boon id this evolves from. */
   from: string
   effect: string
+  /** Presentation only: drives reveal accents (moment-theme.json). */
+  source?: BoonSource
   status: Status
 }
 
@@ -86,6 +93,8 @@ export interface HiddenBoon {
   /** Class hidden boons only: what earns it. */
   condition?: string
   effect: string
+  /** Presentation only: drives reveal accents (moment-theme.json). */
+  source?: BoonSource
   status: Status
 }
 

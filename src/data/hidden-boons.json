@@ -112,6 +112,7 @@
     "name": "Lost and Found",
     "kind": "gift",
     "effect": "Once per run, recover one consumable you used up this run.",
+    "source": "thils",
     "status": "proposed"
   },
   {
@@ -119,6 +120,7 @@
     "name": "Thils's Wink",
     "kind": "gift",
     "effect": "Once per room, reroll a d20 test made against a room trick.",
+    "source": "thils",
     "status": "proposed"
   },
   {
@@ -126,6 +128,7 @@
     "name": "Pilgrim's Due",
     "kind": "gift",
     "effect": "Gain 1 extra Devotion when you extract.",
+    "source": "thils",
     "status": "proposed"
   },
   {
@@ -133,6 +136,7 @@
     "name": "Keeper of Ways",
     "kind": "gift",
     "effect": "You always see a room's true exit.",
+    "source": "thils",
     "status": "proposed"
   },
   {
@@ -140,6 +144,7 @@
     "name": "Collector's Eye",
     "kind": "gift",
     "effect": "Your share of run loot increases by 10%.",
+    "source": "thils",
     "status": "proposed"
   },
   {
@@ -147,6 +152,7 @@
     "name": "Trapwise",
     "kind": "gift",
     "effect": "Room tricks you trigger deal half damage to you.",
+    "source": "thils",
     "status": "proposed"
   },
   {
@@ -154,6 +160,7 @@
     "name": "Maze Runner",
     "kind": "gift",
     "effect": "+10 ft speed in rooms with more than one exit.",
+    "source": "thils",
     "status": "proposed"
   },
   {
@@ -161,6 +168,7 @@
     "name": "Offering Accepted",
     "kind": "gift",
     "effect": "Once per floor, when you drop to 0 HP, drop to 1 instead.",
+    "source": "thils",
     "status": "proposed"
   }
 ]

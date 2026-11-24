@@ -2,7 +2,7 @@
 // Runs against a local Firestore emulator with a fake "demo-" project,
 // so it never touches the real database. Run with: npm run test:rules
 import { readFileSync } from 'node:fs'
-import { afterAll, beforeAll, beforeEach, describe, it } from 'vitest'
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import {
   assertFails,
   assertSucceeds,
@@ -10,17 +10,24 @@ import {
   type RulesTestEnvironment,
 } from '@firebase/rules-unit-testing'
 import {
+  collection,
   deleteDoc,
   FieldPath,
   runTransaction,
   doc,
   getDoc,
+  limit,
+  onSnapshot,
+  orderBy,
+  query,
   serverTimestamp,
   setDoc,
   setLogLevel,
   updateDoc,
   type DocumentData,
 } from 'firebase/firestore'
+import { arrivalsFromChanges, EMPTY_QUEUE, inAudience, reduceQueue, type QueueState } from '../src/moments/queue'
+import type { Moment } from '../src/moments/types'
 
 const DM = 'dm@example.com'
 const PLAYER = 'player@example.com'
@@ -842,5 +849,102 @@ describe('player creating a character', () => {
 
   it('an uninvited stranger cannot create a character', async () => {
     await assertFails(setDoc(doc(as(STRANGER), 'characters', 'stranger-hero'), newCharacter({ playerEmail: STRANGER })))
+  })
+})
+
+describe('moments', () => {
+  const moment = (createdBy: string, extra: DocumentData = {}) => ({
+    type: 'boonReveal',
+    payload: { offers: {} },
+    audience: { players: 'all', table: true },
+    createdAt: now(),
+    createdBy,
+    status: 'playing',
+    ...extra,
+  })
+
+  beforeEach(async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), 'runs', 'r1', 'moments', 'm1'), { ...moment(`uid-${DM}`), createdAt: new Date() })
+    })
+  })
+
+  it('only the DM can create one, as playing, signed with their own id', async () => {
+    await assertSucceeds(setDoc(doc(as(DM), 'runs', 'r1', 'moments', 'm2'), moment(`uid-${DM}`)))
+    await assertFails(setDoc(doc(as(PLAYER), 'runs', 'r1', 'moments', 'm3'), moment(`uid-${PLAYER}`)))
+    await assertFails(setDoc(doc(as(DM), 'runs', 'r1', 'moments', 'm4'), moment('someone-else')))
+    await assertFails(setDoc(doc(as(DM), 'runs', 'r1', 'moments', 'm5'), moment(`uid-${DM}`, { status: 'done' })))
+    await assertFails(setDoc(doc(as(DM), 'runs', 'r1', 'moments', 'm6'), moment(`uid-${DM}`, { extra: 1 })))
+  })
+
+  it('invited players can read moments; strangers cannot', async () => {
+    await assertSucceeds(getDoc(doc(as(PLAYER), 'runs', 'r1', 'moments', 'm1')))
+    await assertFails(getDoc(doc(as(STRANGER), 'runs', 'r1', 'moments', 'm1')))
+  })
+
+  it('the DM can skip, finish or delete one; players cannot, and nothing but status changes', async () => {
+    await assertFails(updateDoc(doc(as(PLAYER), 'runs', 'r1', 'moments', 'm1'), { status: 'skipped' }))
+    await assertFails(deleteDoc(doc(as(PLAYER), 'runs', 'r1', 'moments', 'm1')))
+    await assertFails(updateDoc(doc(as(DM), 'runs', 'r1', 'moments', 'm1'), { payload: { offers: { x: 1 } } }))
+    await assertFails(updateDoc(doc(as(DM), 'runs', 'r1', 'moments', 'm1'), { status: 'paused' }))
+    await assertSucceeds(updateDoc(doc(as(DM), 'runs', 'r1', 'moments', 'm1'), { status: 'skipped' }))
+    await assertSucceeds(updateDoc(doc(as(DM), 'runs', 'r1', 'moments', 'm1'), { status: 'done' }))
+    await assertSucceeds(deleteDoc(doc(as(DM), 'runs', 'r1', 'moments', 'm1')))
+  })
+})
+
+// The moment listener's query and the play queue together (mirrors
+// useMomentQueue): moments already there when a screen starts listening never
+// play, a new one does, one for someone else is ignored, a second one queues,
+// and a skip reaches the screen.
+describe('moment listener', () => {
+  const newMoment = (players: 'all' | string[] = 'all') => ({
+    type: 'boonReveal',
+    payload: {},
+    audience: { players, table: false },
+    createdAt: now(),
+    createdBy: `uid-${DM}`,
+    status: 'playing',
+  })
+  const until = async (check: () => boolean) => {
+    for (let i = 0; i < 100 && !check(); i++) await new Promise((r) => setTimeout(r, 50))
+    expect(check()).toBe(true)
+  }
+
+  it('ignores old moments, plays new ones in order, and hears skips', async () => {
+    const dm = as(DM)
+    await setDoc(doc(dm, 'runs', 'r1', 'moments', 'old'), newMoment())
+
+    let state: QueueState = EMPTY_QUEUE
+    let first = true
+    const viewer = { kind: 'player' as const, characterIds: ['c1'] }
+    const q = query(collection(as(PLAYER), 'runs', 'r1', 'moments'), orderBy('createdAt', 'desc'), limit(20))
+    const stop = onSnapshot(q, (snap) => {
+      const changes = snap.docChanges().map((c) => {
+        const data = c.doc.data({ serverTimestamps: 'estimate' })
+        const moment = { id: c.doc.id, ...data, createdAtMs: data.createdAt?.toMillis() ?? null } as unknown as Moment
+        return { type: c.type, moment }
+      })
+      for (const action of arrivalsFromChanges(changes, first, Date.now())) {
+        if (action.type === 'arrive' && !inAudience(action.moment, viewer)) continue
+        state = reduceQueue(state, action)
+      }
+      first = false
+    })
+    await until(() => !first)
+    expect(state.current).toBeNull()
+
+    await setDoc(doc(dm, 'runs', 'r1', 'moments', 'a'), newMoment())
+    await until(() => state.current?.moment.id === 'a')
+    await setDoc(doc(dm, 'runs', 'r1', 'moments', 'other'), newMoment(['c9']))
+    await setDoc(doc(dm, 'runs', 'r1', 'moments', 'b'), newMoment())
+    await until(() => state.waiting.length === 1)
+    expect(state.waiting[0].id).toBe('b')
+
+    await updateDoc(doc(dm, 'runs', 'r1', 'moments', 'a'), { status: 'skipped' })
+    await until(() => state.current?.skipped === true)
+    state = reduceQueue(state, { type: 'finish', id: 'a' })
+    expect(state.current?.moment.id).toBe('b')
+    stop()
   })
 })

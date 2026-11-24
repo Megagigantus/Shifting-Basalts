@@ -438,6 +438,26 @@ service cloud.firestore {
         allow write: if isDM();
       }
 
+      // Moments: cinematic reveals the DM triggers and every screen plays
+      // (presentation only; game state lives elsewhere). Everyone invited can
+      // read them; only the DM creates one, as "playing", and afterwards may
+      // change only its status (skip or done) or delete it.
+      match /moments/{momentId} {
+        allow read: if isInvited();
+        allow create: if isDM()
+          && request.resource.data.keys().hasOnly(['type', 'payload', 'audience', 'createdAt', 'createdBy', 'status'])
+          && request.resource.data.type is string && request.resource.data.type.size() <= 40
+          && request.resource.data.payload is map
+          && request.resource.data.audience is map
+          && request.resource.data.createdAt == request.time
+          && request.resource.data.createdBy == request.auth.uid
+          && request.resource.data.status == 'playing';
+        allow update: if isDM()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
+          && request.resource.data.status in ['playing', 'skipped', 'done'];
+        allow delete: if isDM();
+      }
+
       // Hidden information: enemy stats, hidden condition, unsprung tricks.
       // DM only, always.
       match /dmOnly/{docId} {
