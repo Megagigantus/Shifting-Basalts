@@ -1903,25 +1903,31 @@
 @layer components {
   .linger-arc {
     animation: linger-arc-flicker 1.6s steps(1, end) infinite;
-    opacity: 0;
+    opacity: 0.15;
   }
 
   @keyframes linger-arc-flicker {
     0% {
-      opacity: 0;
+      opacity: 0.15;
     }
-    8% {
+    5% {
       opacity: 1;
     }
-    11% {
-      opacity: 0.2;
+    8% {
+      opacity: 0.35;
     }
-    13% {
+    11% {
+      opacity: 1;
+    }
+    16% {
+      opacity: 0.5;
+    }
+    20% {
       opacity: 0.9;
     }
-    16%,
+    26%,
     100% {
-      opacity: 0;
+      opacity: 0.15;
     }
   }
 
