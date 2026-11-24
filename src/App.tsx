@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { lazy, Suspense, useEffect, useState, type ReactNode } from 'react'
 import { signOut } from 'firebase/auth'
 import { auth, firebaseConfigured, usingEmulators } from './firebase'
 import { useAccess } from './useAccess'
@@ -6,21 +6,26 @@ import { useActiveRun } from './runStore'
 import { SignIn } from './screens/SignIn'
 import { VerifyEmail } from './screens/VerifyEmail'
 import { NotInvited } from './screens/NotInvited'
-import { InviteList } from './screens/InviteList'
-import { Characters } from './screens/Characters'
-import { RunPanel } from './screens/RunPanel'
-import { PlayerHome } from './screens/PlayerHome'
-import { PlayerPreview } from './screens/PlayerPreview'
-import { RunHistory } from './screens/RunHistory'
-import { TableViewer } from './screens/TableViewer'
-import { TableDisplay } from './screens/TableDisplay'
 import { AppHeader } from './screens/AppHeader'
 import { DM_TABS, type DmTab } from './screens/dmTabs'
 import { Backdrop } from './screens/Backdrop'
-import { MomentIndicator } from './moments/MomentIndicator'
 import { Modal } from './ui/Modal'
 import { cx } from './ui/tone'
 import { artUrl } from './art'
+
+// The big screens load only when first shown, so the sign-in page and a
+// player's phone don't download DM tools (or the animation code) up front.
+const InviteList = lazy(() => import('./screens/InviteList').then((m) => ({ default: m.InviteList })))
+const Characters = lazy(() => import('./screens/Characters').then((m) => ({ default: m.Characters })))
+const RunPanel = lazy(() => import('./screens/RunPanel').then((m) => ({ default: m.RunPanel })))
+const PlayerHome = lazy(() => import('./screens/PlayerHome').then((m) => ({ default: m.PlayerHome })))
+const PlayerPreview = lazy(() => import('./screens/PlayerPreview').then((m) => ({ default: m.PlayerPreview })))
+const RunHistory = lazy(() => import('./screens/RunHistory').then((m) => ({ default: m.RunHistory })))
+const TableViewer = lazy(() => import('./screens/TableViewer').then((m) => ({ default: m.TableViewer })))
+const TableDisplay = lazy(() => import('./screens/TableDisplay').then((m) => ({ default: m.TableDisplay })))
+const MomentIndicator = lazy(() => import('./moments/MomentIndicator').then((m) => ({ default: m.MomentIndicator })))
+
+const loadingLine = <p className="py-8 text-center text-sm text-stone-400">Loading…</p>
 
 const LOGO_BANNER = artUrl('logo', 'logo-banner')
 
@@ -110,7 +115,9 @@ function SignedIn({ email, role }: { email: string; role: 'dm' | 'player' }) {
     return (
       <>
         <Backdrop inRun={state !== null} />
-        <TableDisplay state={state} onExit={() => setTableView(false)} />
+        <Suspense fallback={loadingLine}>
+          <TableDisplay state={state} onExit={() => setTableView(false)} />
+        </Suspense>
       </>
     )
   }
@@ -141,29 +148,35 @@ function SignedIn({ email, role }: { email: string; role: 'dm' | 'player' }) {
       />
 
       {isDm && state && state.run.status === 'active' && (
-        <MomentIndicator
-          runId={state.run.id}
-          names={Object.fromEntries(state.players.map((p) => [p.characterId, p.name]))}
-        />
+        <Suspense fallback={null}>
+          <MomentIndicator
+            runId={state.run.id}
+            names={Object.fromEntries(state.players.map((p) => [p.characterId, p.name]))}
+          />
+        </Suspense>
       )}
 
       {/* The old panels keep their own styles until each step redesigns them. */}
       <main className={cx('mx-auto px-4 pb-16', wide ? 'max-w-7xl' : 'max-w-5xl')}>
-        {!isDm && <PlayerHome email={email} />}
-        {isDm && playerView && <PlayerPreview />}
-        {isDm && !playerView && (
-          <>
-            {tab === 'run' && <RunPanel />}
-            {tab === 'characters' && <Characters />}
-            {tab === 'history' && <RunHistory canDelete />}
-            {tab === 'tables' && <TableViewer />}
-          </>
-        )}
+        <Suspense fallback={loadingLine}>
+          {!isDm && <PlayerHome email={email} />}
+          {isDm && playerView && <PlayerPreview />}
+          {isDm && !playerView && (
+            <>
+              {tab === 'run' && <RunPanel />}
+              {tab === 'characters' && <Characters />}
+              {tab === 'history' && <RunHistory canDelete />}
+              {tab === 'tables' && <TableViewer />}
+            </>
+          )}
+        </Suspense>
       </main>
 
       {isDm && invitesOpen && (
         <Modal title="Invites" onClose={() => setInvitesOpen(false)}>
-          <InviteList myEmail={email} />
+          <Suspense fallback={loadingLine}>
+            <InviteList myEmail={email} />
+          </Suspense>
         </Modal>
       )}
     </>
