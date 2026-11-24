@@ -11,6 +11,8 @@ export interface RevealTier {
   hesitationMs: number
   shake: boolean
   spotlight: boolean
+  /** Optional effect that stays on a revealed card and its draft offer card ("atom" or "electric"). */
+  lingerEffect?: string
 }
 
 /** Conditions a tier or accent rule matches against. Empty matches everything. */
