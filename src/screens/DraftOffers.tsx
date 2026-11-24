@@ -40,6 +40,8 @@ export function DraftOffers({ player, passValue, rerollsLeft, busy, onChoose, wh
   const [dropBoon, setDropBoon] = useState<Record<number, string>>({})
   const { claimed, claim } = useClaim(busy)
   const reducedMotion = usePrefersReducedMotion()
+  // Buttons wait while a claimed pick plays its flourish, as well as while it is sent.
+  const blocked = busy || claimed !== null
   const draft = player.draft
   const hidden = player.hiddenOffer
 
@@ -115,11 +117,10 @@ export function DraftOffers({ player, passValue, rerollsLeft, busy, onChoose, wh
                       </select>
                       <button
                         type="button"
-                        disabled={busy}
+                        disabled={blocked}
                         className={PRIMARY_BUTTON}
                         onClick={() => {
-                          claim(cardKey)
-                          onChoose({ action: 'take', index: i, replaceSlot: target })
+                          claim(cardKey, () => onChoose({ action: 'take', index: i, replaceSlot: target }))
                         }}
                       >
                         Take
@@ -128,11 +129,10 @@ export function DraftOffers({ player, passValue, rerollsLeft, busy, onChoose, wh
                   ) : (
                     <button
                       type="button"
-                      disabled={busy}
+                      disabled={blocked}
                       className={cx(PRIMARY_BUTTON, 'self-start')}
                       onClick={() => {
-                        claim(cardKey)
-                        onChoose({ action: 'take', index: i })
+                        claim(cardKey, () => onChoose({ action: 'take', index: i }))
                       }}
                     >
                       Take
@@ -143,7 +143,7 @@ export function DraftOffers({ player, passValue, rerollsLeft, busy, onChoose, wh
                       <div className="flex flex-wrap items-center gap-1.5">
                         <ConfirmButton
                           tone="rose"
-                          disabled={busy}
+                          disabled={blocked}
                           confirmLabel={`Yes, banish ${boonName}`}
                           onConfirm={() => onChoose({ action: 'banish', index: i })}
                         >
@@ -154,7 +154,7 @@ export function DraftOffers({ player, passValue, rerollsLeft, busy, onChoose, wh
                       <div className="flex flex-wrap items-center gap-1.5">
                         <select
                           value={selectedDrop}
-                          disabled={busy}
+                          disabled={blocked}
                           onChange={(e) => setDropBoon({ ...dropBoon, [i]: e.target.value })}
                           aria-label="Boon to drop from your Banish list"
                           className={cx(FIELD, 'min-w-0 flex-1 py-1.5 text-xs')}
@@ -167,7 +167,7 @@ export function DraftOffers({ player, passValue, rerollsLeft, busy, onChoose, wh
                         </select>
                         <button
                           type="button"
-                          disabled={busy || !selectedDrop}
+                          disabled={blocked || !selectedDrop}
                           onClick={() => {
                             setDropBoon((prev) => {
                               const next = { ...prev }
@@ -182,7 +182,7 @@ export function DraftOffers({ player, passValue, rerollsLeft, busy, onChoose, wh
                         </button>
                         <button
                           type="button"
-                          disabled={busy}
+                          disabled={blocked}
                           onClick={() =>
                             setDropBoon((prev) => {
                               const next = { ...prev }
@@ -198,7 +198,7 @@ export function DraftOffers({ player, passValue, rerollsLeft, busy, onChoose, wh
                     ) : (
                       <button
                         type="button"
-                        disabled={busy}
+                        disabled={blocked}
                         onClick={() => setDropBoon({ ...dropBoon, [i]: banished[0] ?? '' })}
                         className={cx(BANISH_BUTTON, 'self-start', toneClasses.stone.button)}
                       >
@@ -211,11 +211,11 @@ export function DraftOffers({ player, passValue, rerollsLeft, busy, onChoose, wh
             })}
           </div>
           <div className="flex flex-wrap gap-2">
-            <button type="button" disabled={busy} className={QUIET_BUTTON} onClick={() => onChoose({ action: 'pass' })}>
+            <button type="button" disabled={blocked} className={QUIET_BUTTON} onClick={() => onChoose({ action: 'pass' })}>
               {passLabel}
             </button>
             {rerollsLeft > 0 && (
-              <button type="button" disabled={busy} className={QUIET_BUTTON} onClick={() => onChoose({ action: 'reroll' })}>
+              <button type="button" disabled={blocked} className={QUIET_BUTTON} onClick={() => onChoose({ action: 'reroll' })}>
                 <RefreshCw size={13} /> Reroll offer ({rerollsLeft} left this floor)
               </button>
             )}
@@ -277,11 +277,10 @@ export function DraftOffers({ player, passValue, rerollsLeft, busy, onChoose, wh
                   <p className="m-0 flex-1 text-xs text-stone-300">{text.text}</p>
                   <button
                     type="button"
-                    disabled={busy}
+                    disabled={blocked}
                     className={cx('inline-flex cursor-pointer items-center justify-center self-start rounded-lg border-0 px-4 py-2 text-sm font-bold disabled:opacity-60', toneClasses.violet.button)}
                     onClick={() => {
-                      claim(cardKey)
-                      onChoose({ action: 'hidden', hiddenBoonId: id })
+                      claim(cardKey, () => onChoose({ action: 'hidden', hiddenBoonId: id }))
                     }}
                   >
                     Take
@@ -290,7 +289,7 @@ export function DraftOffers({ player, passValue, rerollsLeft, busy, onChoose, wh
               )
             })}
           </div>
-          <button type="button" disabled={busy} className={cx(QUIET_BUTTON, 'self-start')} onClick={() => onChoose({ action: 'passHidden' })}>
+          <button type="button" disabled={blocked} className={cx(QUIET_BUTTON, 'self-start')} onClick={() => onChoose({ action: 'passHidden' })}>
             {passLabel}
           </button>
         </div>

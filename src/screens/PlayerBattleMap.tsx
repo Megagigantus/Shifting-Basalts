@@ -17,9 +17,11 @@ interface Props {
   /** The characters this viewer owns in the run. */
   myIds: string[]
   readOnly: boolean
+  /** The help line under the map (off on the shared table display). */
+  showNote?: boolean
 }
 
-export function PlayerBattleMap({ state, myIds, readOnly }: Props) {
+export function PlayerBattleMap({ state, myIds, readOnly, showNote = true }: Props) {
   const { run } = state
   const view = run.roomView
   const tokens = useTokens(run.id)
@@ -76,13 +78,15 @@ export function PlayerBattleMap({ state, myIds, readOnly }: Props) {
           moveToken(run.id, owner, spotAfterMove(pieces, key, x, y), roomKey).catch((e) => console.error('Could not move your token', e))
         }}
       />
-      <p className="m-0 text-[0.6875rem] text-stone-500">
-        {readOnly
-          ? 'Preview: tokens can\'t be moved here.'
-          : myIds.length
-            ? 'Drag your tokens (gold outline) and summons, or select one and use the arrow keys.'
-            : 'The party\'s battle map.'}
-      </p>
+      {showNote && (
+        <p className="m-0 text-[0.6875rem] text-stone-500">
+          {readOnly
+            ? 'Preview: tokens can\'t be moved here.'
+            : myIds.length
+              ? 'Drag your tokens (gold outline) and summons, or select one and use the arrow keys.'
+              : 'The party\'s battle map.'}
+        </p>
+      )}
     </Panel>
   )
 }
