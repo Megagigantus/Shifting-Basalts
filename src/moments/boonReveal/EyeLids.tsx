@@ -10,9 +10,11 @@ export interface EyeRefs {
 /** Closed stone eyelids, glowing slit, and expanding iris ring overlaid on a hidden boon card. */
 export function EyeLids({
   color,
+  roundedClass = 'rounded-xl',
   setRef,
 }: {
   color: string
+  roundedClass?: string
   setRef: (key: keyof EyeRefs, el: Element | null) => void
 }) {
   const uid = useId()
@@ -22,7 +24,7 @@ export function EyeLids({
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 overflow-hidden rounded-xl"
+      className={`pointer-events-none absolute inset-0 overflow-hidden ${roundedClass}`}
     >
       <svg
         ref={(el) => setRef('lidTop', el)}

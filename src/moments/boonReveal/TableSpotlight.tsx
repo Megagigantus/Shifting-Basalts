@@ -7,6 +7,8 @@ import { playSound, stopAllSounds } from '../audio'
 import type { MomentPlayerProps } from '../moduleTypes'
 import { accentById, THEME, tierById, type RevealTier } from '../theme'
 import { CardBackPattern, HoodedSilhouette, MazeSigil } from './BoonRevealPlayer'
+import { EyeLids, type EyeRefs } from './EyeLids'
+import { addEyeOpen, resetEye } from './eyeOpen'
 import { type BoonRevealPayload, cardText, spotlightCards } from './payload'
 
 interface SpotlightRefs {
@@ -24,6 +26,7 @@ interface SpotlightRefs {
   sourceRight: HTMLDivElement | null
   newLevel: HTMLSpanElement | null
   condition: HTMLParagraphElement | null
+  eye: EyeRefs
 }
 
 function firePreset(
@@ -143,6 +146,7 @@ export function TableSpotlight({
         sourceRight: null,
         newLevel: null,
         condition: null,
+        eye: { lidTop: null, lidBottom: null, slit: null, iris: null },
       }
     }
     return spotlightRefs.current[index]!
@@ -308,6 +312,9 @@ export function TableSpotlight({
         if (refs.condition) {
           gsap.set(refs.condition, { opacity: 0 })
         }
+        if (activeSpotlights[i]!.card.cardKind === 'hidden') {
+          resetEye(refs.eye, reducedMotion)
+        }
       }
 
       // 3. Spotlight each significant card one at a time.
@@ -434,7 +441,16 @@ export function TableSpotlight({
           flipStart,
         )
 
-        if (reducedMotion) {
+        if (card.cardKind === 'hidden') {
+          if (refs?.back) tl.set(refs.back, { opacity: 0 }, flipStart)
+          if (refs?.front) tl.set(refs.front, { opacity: 1 }, flipStart)
+          addEyeOpen(tl, refs?.eye, {
+            hesitationStart: cursor,
+            openStart: flipStart,
+            openSec: flipSec + Math.min(holdSec, 0.6),
+            reducedMotion,
+          })
+        } else if (reducedMotion) {
           if (refs?.back) {
             tl.to(refs.back, { opacity: 0, duration: flipSec, ease: 'none' }, flipStart)
           }
@@ -820,6 +836,22 @@ export function TableSpotlight({
                         </div>
                       </div>
                     </div>
+
+                    {/* Eye lids overlay for hidden boon reveal */}
+                    {isHidden && (
+                      <EyeLids
+                        color={tier.color}
+                        roundedClass="rounded-2xl"
+                        setRef={(key, el) => {
+                          const eye = ensureSpotlightRef(index).eye
+                          if (key === 'lidTop' || key === 'lidBottom') {
+                            eye[key] = el as SVGSVGElement | null
+                          } else {
+                            eye[key] = el as HTMLDivElement | null
+                          }
+                        }}
+                      />
+                    )}
 
                     {/* Fused source icons converging into the card */}
                     {sourceIds && (
