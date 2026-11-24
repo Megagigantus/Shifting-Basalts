@@ -94,7 +94,7 @@ export function EvolveFx({
           border: `3px solid ${color}`,
           boxShadow: `0 0 24px 4px ${color}`,
         }}
-        className="pointer-events-none absolute left-1/2 top-1/2 aspect-square w-full -translate-x-1/2 -translate-y-1/2 rounded-full"
+        className="pointer-events-none absolute inset-x-0 top-[12.5%] aspect-square w-full rounded-full"
       />
     </>
   )
