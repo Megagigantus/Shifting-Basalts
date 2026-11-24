@@ -10,7 +10,7 @@ function label(action: ForgeAction, player: RunPlayer): string {
   const slots = player.slots ?? []
   if (action.kind === 'combine') {
     const c = combination(action.combinationId)
-    return `Combine ${c.boons.map((id) => boon(id).name).join(' + ')} into ${c.name}`
+    return `Fuse ${c.boons.map((id) => boon(id).name).join(' + ')} into ${c.name}`
   }
   const slot = slots[action.slotIndex]
   if (!slot) return 'Empty slot'

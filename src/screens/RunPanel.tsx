@@ -68,7 +68,7 @@ function RunSummary({ results, state, onDone }: { results: RunResult[]; state: R
             </div>
             <div className="flex flex-wrap gap-1.5">
               <Pill tone="purple" mono>
-                +{r.quantumBasaltsGained} QB
+                +{r.quantumBasaltsGained} Quantum Basalts
               </Pill>
               <Pill tone="indigo" mono>
                 +{r.devotions} Devotions

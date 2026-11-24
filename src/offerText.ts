@@ -27,8 +27,8 @@ export function describeOffer(offer: Offer, slots: Slot[]): OfferText {
   if (offer.kind === 'combination') {
     const combo = combination(offer.combinationId)
     return {
-      label: 'Wildcard: Combination',
-      heading: `Combine ${combo.boons.map((id) => boon(id).name).join(' + ')} into ${combo.name}`,
+      label: 'Wildcard: Fusion',
+      heading: `Fuse ${combo.boons.map((id) => boon(id).name).join(' + ')} into ${combo.name}`,
       text: `${combo.effect} (Frees up a slot.)`,
       needsSlot: false,
     }

@@ -92,7 +92,7 @@ function HistoryDetails({ entry: e, onDelete }: { entry: RunHistoryEntry; onDele
             <div className="flex flex-wrap items-center gap-1.5">
               <strong className="mr-auto text-xs text-stone-100">{r.name}</strong>
               <Pill tone="purple" mono>
-                +{r.quantumBasaltsGained} QB
+                +{r.quantumBasaltsGained} Quantum Basalts
               </Pill>
               <Pill tone="indigo" mono>
                 +{r.devotions} Dev

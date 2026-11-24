@@ -80,16 +80,16 @@ export function UpgradeShop({ character, canCorrect = true, canSpend = true }: P
                   <ConfirmButton
                     tone="amber"
                     disabled={!canSpend || busy || cost > banked}
-                    confirmLabel={`Yes, buy rank ${owned + 1} for ${cost} QB`}
+                    confirmLabel={`Yes, buy rank ${owned + 1} for ${cost} Quantum Basalts`}
                     onConfirm={() => change(u.id, 'buy')}
                   >
-                    Buy rank {owned + 1} ({cost} QB)
+                    Buy rank {owned + 1} ({cost} Quantum Basalts)
                   </ConfirmButton>
                 )}
                 {canCorrect && owned > 0 && (
                   <ConfirmButton
                     disabled={busy}
-                    confirmLabel={`Yes, refund ${ownedRankCost(u.id, owned)} QB`}
+                    confirmLabel={`Yes, refund ${ownedRankCost(u.id, owned)} Quantum Basalts`}
                     onConfirm={() => change(u.id, 'refund')}
                   >
                     Refund

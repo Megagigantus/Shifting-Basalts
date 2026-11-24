@@ -255,7 +255,7 @@ export function PostBossScene({
     cards.push({
       id: 'forge',
       title: 'The Forge',
-      text: uses > 0 ? `${uses} use${uses === 1 ? '' : 's'} left: level up a boon, or evolve or combine Level 3 boons.` : 'Cooled for this floor.',
+      text: uses > 0 ? `${uses} use${uses === 1 ? '' : 's'} left: level up a boon, or evolve or fuse Level 3 boons.` : 'Cooled for this floor.',
       faded: uses === 0,
       back: uses > 0 ? forgeBack : undefined,
     })

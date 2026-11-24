@@ -40,7 +40,7 @@ export function Roster({ characters, selectedId, onSelect, title = 'Strider rost
                     <Dices size={11} aria-hidden /> {fortuneDicePerRun(c.trackDevotions)}
                   </span>
                 )}
-                <span className="text-purple-300">{c.bankedQuantumBasalts} QB</span>
+                <span className="text-purple-300">{c.bankedQuantumBasalts} Quantum Basalts</span>
               </span>
             </span>
             <span className="truncate text-[0.6875rem] text-stone-400">

@@ -122,10 +122,10 @@ export function PlayerBoons({ player, character, busy, act }: Props) {
               key={c.id}
               tone="emerald"
               disabled={busy}
-              confirmLabel={`Yes, combine (final, frees a slot)`}
+              confirmLabel={`Yes, fuse (final, frees a slot)`}
               onConfirm={() => onSlots((s) => combine(s, c.id))}
             >
-              Combine {c.boons.map((b) => boon(b).name).join(' + ')} into {c.name}
+              Fuse {c.boons.map((b) => boon(b).name).join(' + ')} into {c.name}
             </ConfirmButton>
           ))}
         </div>

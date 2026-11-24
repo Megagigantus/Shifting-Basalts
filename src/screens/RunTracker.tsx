@@ -427,10 +427,10 @@ function PlayerCard({ player: p, character, sent, open, floor, canTrigger, busy,
 
       <div className="flex flex-wrap items-center gap-1.5">
         <Pill tone="purple" mono title="Boss Quantum Basalts, before Pressure bonuses. Lost on death.">
-          {p.alive ? `Run QB ${p.quantumBasaltsEarned}` : `Run QB ${p.quantumBasaltsEarned} (forfeit)`}
+          {p.alive ? `Run Quantum Basalts ${p.quantumBasaltsEarned}` : `Run Quantum Basalts ${p.quantumBasaltsEarned} (forfeit)`}
         </Pill>
         <Pill tone="emerald" mono title="Quantum Basalts from passing. Kept even on death.">
-          Safe QB {p.quantumBasaltsPassed}
+          Safe Quantum Basalts {p.quantumBasaltsPassed}
         </Pill>
         <Pill tone="indigo" mono title="Devotions earned this run">
           {p.devotions} Devotions
