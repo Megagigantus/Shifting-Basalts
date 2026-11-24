@@ -9,6 +9,9 @@ import { accentById, THEME, tierById, type RevealTier } from '../theme'
 import { CardBackPattern, HoodedSilhouette, MazeSigil } from './BoonRevealPlayer'
 import { EyeLids, type EyeRefs } from './EyeLids'
 import { addEyeOpen, resetEye } from './eyeOpen'
+import { EvolveFx, type EvolveRefs } from './EvolveFx'
+import { addEvolveBurst, addEvolveCharge, resetEvolveFx } from './evolveTimeline'
+import { AtomOrbit } from './LingerEffects'
 import { MazeGlow } from './MazeGlow'
 import { addMazeTrace, resetMaze } from './mazeTrace'
 import { type BoonRevealPayload, cardText, spotlightCards } from './payload'
@@ -21,6 +24,7 @@ interface SpotlightRefs {
   front: HTMLDivElement | null
   veil: HTMLDivElement | null
   glow: HTMLDivElement | null
+  atom: SVGSVGElement | null
   maze: SVGSVGElement | null
   rays: HTMLDivElement | null
   silhouette: HTMLDivElement | null
@@ -30,6 +34,7 @@ interface SpotlightRefs {
   newLevel: HTMLSpanElement | null
   condition: HTMLParagraphElement | null
   eye: EyeRefs
+  evolve: EvolveRefs
 }
 
 function firePreset(
@@ -142,6 +147,7 @@ export function TableSpotlight({
         front: null,
         veil: null,
         glow: null,
+        atom: null,
         maze: null,
         rays: null,
         silhouette: null,
@@ -151,6 +157,7 @@ export function TableSpotlight({
         newLevel: null,
         condition: null,
         eye: { lidTop: null, lidBottom: null, slit: null, iris: null },
+        evolve: { cracks: null, flash: null, shock: null },
       }
     }
     return spotlightRefs.current[index]!
@@ -300,7 +307,8 @@ export function TableSpotlight({
         if (refs.back) gsap.set(refs.back, { opacity: 1 })
         if (refs.front) gsap.set(refs.front, { opacity: 0 })
         if (refs.veil) gsap.set(refs.veil, { opacity: 0.45 })
-        if (refs.glow) gsap.set(refs.glow, { opacity: 0 })
+        if (refs.glow) gsap.set(refs.glow, { opacity: 0, scale: 1 })
+        if (refs.atom) gsap.set(refs.atom, { opacity: 0 })
         resetMaze(refs.maze)
         if (refs.rays) gsap.set(refs.rays, { opacity: 0, scale: 0.8, rotation: 0 })
         if (refs.silhouette) gsap.set(refs.silhouette, { opacity: 0, scale: 0.9, x: 8, y: -8 })
@@ -319,6 +327,9 @@ export function TableSpotlight({
         }
         if (activeSpotlights[i]!.card.cardKind === 'hidden') {
           resetEye(refs.eye, reducedMotion)
+        }
+        if (activeSpotlights[i]!.card.tier === 'evolved') {
+          resetEvolveFx(refs.evolve)
         }
       }
 
@@ -375,29 +386,49 @@ export function TableSpotlight({
           )
         }
 
-        // Evolved hesitation tremble (skipped in reduced motion).
-        if (!reducedMotion && card.tier === 'evolved' && refs?.flipper && hesSec > 0.08) {
+        // Evolved charge-up: ramping tremble, swelling glow, and energy cracks.
+        if (card.tier === 'evolved') {
           const trembleStart = cursor + Math.min(0.12, hesSec * 0.15)
-          const stepSec = 0.05
-          const steps = Math.max(2, Math.floor((flipStart - trembleStart - 0.04) / stepSec))
-          for (let s = 0; s < steps; s++) {
-            const dir = s % 2 === 0 ? 1 : -1
+          const chargeDur = flipStart - trembleStart
+          if (!reducedMotion && refs?.flipper && hesSec > 0.08) {
+            const stepSec = 0.05
+            const steps = Math.max(2, Math.floor((chargeDur - 0.04) / stepSec))
+            for (let s = 0; s < steps; s++) {
+              const dir = s % 2 === 0 ? 1 : -1
+              const progress = steps > 1 ? s / (steps - 1) : 1
+              const ampX = 1 + progress * 4
+              const ampRot = 0.4 + progress * 1.6
+              tl.to(
+                refs.flipper,
+                {
+                  x: dir * ampX,
+                  rotation: dir * ampRot,
+                  duration: stepSec,
+                  ease: 'none',
+                },
+                trembleStart + s * stepSec,
+              )
+            }
             tl.to(
               refs.flipper,
-              {
-                x: dir * 3,
-                rotation: dir * 1.1,
-                duration: stepSec,
-                ease: 'none',
-              },
-              trembleStart + s * stepSec,
+              { x: 0, rotation: 0, duration: 0.04, ease: 'power1.out' },
+              flipStart - 0.04,
             )
           }
-          tl.to(
-            refs.flipper,
-            { x: 0, rotation: 0, duration: 0.04, ease: 'power1.out' },
-            flipStart - 0.04,
-          )
+          if (refs?.glow && chargeDur > 0) {
+            tl.to(
+              refs.glow,
+              reducedMotion
+                ? { opacity: 0.55, duration: chargeDur, ease: 'none' }
+                : { opacity: 0.55, scale: 1.12, duration: chargeDur, ease: 'power2.in' },
+              trembleStart,
+            )
+          }
+          addEvolveCharge(tl, refs?.evolve, {
+            start: trembleStart,
+            end: flipStart,
+            reducedMotion,
+          })
         }
 
         // Fused source boons converge over the card before the flip.
@@ -516,13 +547,25 @@ export function TableSpotlight({
           }
 
           if (tier.shake) {
-            const offsets = [
-              { x: -5, y: 3 },
-              { x: 5, y: -3 },
-              { x: -3, y: 2 },
-              { x: 2, y: -1 },
-              { x: 0, y: 0 },
-            ]
+            const offsets =
+              card.tier === 'evolved'
+                ? [
+                    { x: -8, y: 4 },
+                    { x: 8, y: -6 },
+                    { x: -6, y: 3 },
+                    { x: 5, y: -3 },
+                    { x: -3, y: 2 },
+                    { x: 2, y: -1 },
+                    { x: -1, y: 1 },
+                    { x: 0, y: 0 },
+                  ]
+                : [
+                    { x: -5, y: 3 },
+                    { x: 5, y: -3 },
+                    { x: -3, y: 2 },
+                    { x: 2, y: -1 },
+                    { x: 0, y: 0 },
+                  ]
             offsets.forEach((offset, stepIdx) => {
               tl.to(
                 stageEl,
@@ -541,11 +584,29 @@ export function TableSpotlight({
           }
         }
 
+        if (card.tier === 'evolved') {
+          addEvolveBurst(tl, refs?.evolve, { at: flipStart, reducedMotion })
+        }
+
         if (refs?.glow) {
           tl.to(
             refs.glow,
-            { opacity: tier.glowIntensity, duration: flipSec, ease: 'power1.out' },
+            {
+              opacity: tier.glowIntensity,
+              ...(card.tier === 'evolved' && !reducedMotion ? { scale: 1 } : {}),
+              duration: flipSec,
+              ease: 'power1.out',
+            },
             flipStart,
+          )
+        }
+        if (refs?.atom && tier.lingerEffect === 'atom') {
+          const atomAt =
+            reducedMotion || card.cardKind === 'hidden' ? flipStart : flipStart + flipSec * 0.45
+          tl.to(
+            refs.atom,
+            { opacity: 1, duration: 0.6, ease: reducedMotion ? 'none' : 'power1.out' },
+            atomAt,
           )
         }
         if (refs?.sigil && accent && accent.overlay === 'sigil') {
@@ -722,6 +783,18 @@ export function TableSpotlight({
                       className="pointer-events-none absolute -inset-6 rounded-3xl"
                     />
 
+                    {/* Lingering atomic orbit layer behind the card */}
+                    {tier.lingerEffect === 'atom' && (
+                      <AtomOrbit
+                        color={tier.color}
+                        still={reducedMotion}
+                        className="pointer-events-none absolute -inset-24"
+                        svgRef={(el) => {
+                          ensureSpotlightRef(index).atom = el
+                        }}
+                      />
+                    )}
+
                     {/* Accent maze glow layer */}
                     {accent?.glowPattern === 'maze' && (
                       <MazeGlow
@@ -790,6 +863,22 @@ export function TableSpotlight({
                           />
                         )}
                       </div>
+
+                      {/* Evolved cracks, white flash, and shockwave */}
+                      {isEvolved && (
+                        <EvolveFx
+                          color={tier.color}
+                          roundedClass="rounded-2xl"
+                          setRef={(key, el) => {
+                            const evolve = ensureSpotlightRef(index).evolve
+                            if (key === 'cracks') {
+                              evolve.cracks = el as SVGSVGElement | null
+                            } else {
+                              evolve[key] = el as HTMLDivElement | null
+                            }
+                          }}
+                        />
+                      )}
 
                       {/* Face-up card front */}
                       <div
