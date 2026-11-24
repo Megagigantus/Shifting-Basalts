@@ -85,42 +85,42 @@ A full run has 20 drafts (one per room on floors 1 to 4, boss rooms included) an
 | Floor 1 | 5 | 3 boons, two at Level 2 | 5 boons at Level 1 |
 | Floor 2 | 10 | All 3 at Level 3, 1 spare pick | 5 boons at Level 2 |
 | Floor 3 | 15 | 6 spare picks | All 5 at Level 3 |
-| Floor 4 | 20 | 11 spare picks | 5 spare picks for combining and refilling |
+| Floor 4 | 20 | 11 spare picks | 5 spare picks for fusing and refilling |
 
 - **Spare picks:** a 3-slot player maxes out on floor 2, so Pass converts spare picks into Quantum Basalts that extract even on death. Early players then earn the currency that buys more slots.
 - **Reprieve:** replaces a room, so taking one costs a draft.
 
 ## Boon system rules
 
-Each player starts with 3 boon slots and can buy up to 5 with Quantum Basalts. Every boon climbs Level 1 to 3, then either evolves in its slot or combines with a partner boon to free a slot.
+Each player starts with 3 boon slots and can buy up to 5 with Quantum Basalts. Every boon climbs Level 1 to 3, then either evolves in its slot or fuses with a partner boon to free a slot.
 
 ### Drafting
 
 - **Personal offer:** after each room, each player sees their own 4 boons, weighted toward their class and the tags they hold (see Offer weighting under Build clarifications), and picks one. Two players can still end up with the same boon.
-- **Hidden boon:** a 5th offer unlocks for every player when the room's secret condition was met, or for one player when they meet their class trigger. Hidden boons sit in their own extra slot and never level, evolve or combine; they're flavor for really playing your character. A player who earns a second hidden boon can replace the one they hold, or pass for the normal Pass bonus.
-- **Offer mix** *(proposed)***:** 1 offer is a boon you already hold, so leveling stays within reach, 2 are random, and 1 is a wildcard (an Evolution or Combination if anyone qualifies).
+- **Hidden boon:** a 5th offer unlocks for every player when the room's secret condition was met, or for one player when they meet their class trigger. Hidden boons sit in their own extra slot and never level, evolve or fuse; they're flavor for really playing your character. A player who earns a second hidden boon can replace the one they hold, or pass for the normal Pass bonus.
+- **Offer mix** *(proposed)***:** 1 offer is a boon you already hold, so leveling stays within reach, 2 are random, and 1 is a wildcard (an Evolution or Fusion if anyone qualifies).
 
 ### Draft choices
 
 - **Replace:** drop a held boon entirely to take the new one.
 - **Pass:** skip any draft, even with open slots, to earn 1 Quantum Basalt, times the entry-level multiplier. Passed Basalts are guaranteed to extract with the player, even if they die.
 
-### Evolve or combine
+### Evolve or fuse
 
 - **Evolve:** a Level 3 boon becomes its Evolution and stays in its slot. This is the game-changing, high-ceiling path.
-- **Combine:** two specific Level 3 boons fuse into one, opening a slot for a new boon. The new boon starts at Level 1, so the build gains variety but carries a weak boon into harder floors.
-- **Combinations are final** *(proposed)***:** they can't evolve further, which keeps Evolution's ceiling higher.
-- **Gating** *(proposed)***:** Evolutions and Combinations happen at a Forge room or through the wildcard offer.
-- **Full slots first:** the wildcard never offers an Evolution or Combination while a player has an empty boon slot. After a Combination frees a slot, that slot must be filled before the next wildcard Evolution or Combination. This stops a player from leveling one boon three rooms in a row and evolving it on room 4.
+- **Fuse:** two specific Level 3 boons fuse into one, opening a slot for a new boon. The new boon starts at Level 1, so the build gains variety but carries a weak boon into harder floors.
+- **Fusions are final** *(proposed)***:** they can't evolve further, which keeps Evolution's ceiling higher.
+- **Gating** *(proposed)***:** Evolutions and Fusions happen at a Forge room or through the wildcard offer.
+- **Full slots first:** the wildcard never offers an Evolution or Fusion while a player has an empty boon slot. After a Fusion frees a slot, that slot must be filled before the next wildcard Evolution or Fusion. This stops a player from leveling one boon three rooms in a row and evolving it on room 4.
 
 ### Stat tracks
 
 - **Earned every room:** each room clear grants each player a Devotion to put toward a stat track they choose, separate from the boon draft. Devotions are named for the locals' reverence for the Basalts and their god. A few Devotions complete a rank *(proposed)*.
 - **Permanent and dungeon-only:** tracks persist run after run, even after death, but only work inside the Shifting Basalts.
-- **No slots:** tracks never use boon slots, never evolve and never combine.
+- **No slots:** tracks never use boon slots, never evolve and never fuse.
 - **Safe stats only:** tracks grow numbers 5e lets scale freely. Ability scores, skills, attack bonus, AC and save DCs are off limits to protect bounded accuracy.
 - **Tier caps** *(proposed)***:** maximum ranks rise with the 2024 tiers of play, so higher-level runs have new ceilings to reach.
-- **Payoff boons:** a tag in the regular boon pool. A payoff boon reads from a stat track, such as A Healthy Dose of Pain reading from Max HP, so drafting one shows players why their tracks matter. Payoff boons don't evolve or combine, because they already grow with their track. A payoff only appears in your offers once you have at least 1 rank in its track. Exception: Gleam Dealer's Gamble needs rank 5 in Fortune Dice, the first rank that grants a die.
+- **Payoff boons:** a tag in the regular boon pool. A payoff boon reads from a stat track, such as A Healthy Dose of Pain reading from Max HP, so drafting one shows players why their tracks matter. Payoff boons don't evolve or fuse, because they already grow with their track. A payoff only appears in your offers once you have at least 1 rank in its track. Exception: Gleam Dealer's Gamble needs rank 5 in Fortune Dice, the first rank that grants a die.
 
 ### Hidden boon conditions (examples)
 
@@ -195,14 +195,14 @@ Fifteen draft boons are in the main table: ten from Brian and five proposed. Fou
 
 | Boon | Tag | Level 1 | Level 2 | Level 3 | Next step | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| Travert's Echoes | Echo | A physical attack hit echoes 25% of its damage in a 10 ft ring or a 10 ft directional rectangle. | Echoes twice. | Echoes 3 times. If an echo kills an enemy, bank an echo to release whenever you want. | Evolves into Chain of Echoes; combines with Elemain's Flight of Fancy | Locked |
+| Travert's Echoes | Echo | A physical attack hit echoes 25% of its damage in a 10 ft ring or a 10 ft directional rectangle. | Echoes twice. | Echoes 3 times. If an echo kills an enemy, bank an echo to release whenever you want. | Evolves into Chain of Echoes; fuses with Elemain's Flight of Fancy | Locked |
 | Reaper's Sprint | Reaper | On a kill, teleport up to 30 ft to a space behind another enemy. Your next hit has advantage and crits. | As Level 1, and killing the second enemy lets you jump to a third. | Adds another jump. Full of the Reaper's energy, you unleash a guaranteed hit for triple crit damage. | Evolves into Nothing Personal | Locked |
 | Spellslinger's Delight | Spell | When a leveled spell hits, cast a cantrip for free. | A second known cantrip is also cast for free. | The second cantrip is cast at 3 targets for free. | Evolves into And You Get a Spell! | Locked |
-| Critical Delight | Crit | Crit range 17 to 20, but non-crits deal 75% damage. | Crit range 15 to 20. | Crit range 10 to 20. Crits deal double, non-crits fall to 10%, and each crit adds another multiplier until you fail to crit or your turn ends. | Combines with Crits Are for Suckers or Elemain's Flight of Fancy | Locked |
-| Crits Are for Suckers | Crit | You can't crit, but damage increases by 25%. | Damage +35%. | Damage +50%. | Combines with Critical Delight | Locked |
-| A Fine Steel's Glint | Stance | As a bonus action, sheathe your weapon and anchor in place. You can't attack, but you have resistance to bludgeoning, piercing and slashing damage, and each turn you hold the stance adds one weapon damage die to your strike (up to PB). | You have resistance to all damage, and your strike carries you 10 ft forward from your spot. | You instantly teleport to the target enemy and hit, guaranteed. | Evolves into Samurai's Wake; combines with Stand Off | Locked |
-| Stand Off | Stance | When you approach a group of 2 or more enemies, enter stand off. When one attacks you, roll a challenge against it, up to a number of times per round equal to this boon's level. Win and the attack misses and you roll a counterattack; lose and you exit stand off and the attack resolves normally. | You can shrug off one hit and stay in stand off. | When you counter, you deflect the attack onto a nearby enemy. | Combines with A Fine Steel's Glint | Locked |
-| Elemain's Flight of Fancy | Volley | A fired or thrown projectile ricochets once for 50% damage. | 2 ricochets. | 3 ricochets. Each ricochet rolls a d20 and crits only on a 20. | Evolves into Elemain's Retribution; combines with Critical Delight or Travert's Echoes | Locked |
+| Critical Delight | Crit | Crit range 17 to 20, but non-crits deal 75% damage. | Crit range 15 to 20. | Crit range 10 to 20. Crits deal double, non-crits fall to 10%, and each crit adds another multiplier until you fail to crit or your turn ends. | Fuses with Crits Are for Suckers or Elemain's Flight of Fancy | Locked |
+| Crits Are for Suckers | Crit | You can't crit, but damage increases by 25%. | Damage +35%. | Damage +50%. | Fuses with Critical Delight | Locked |
+| A Fine Steel's Glint | Stance | As a bonus action, sheathe your weapon and anchor in place. You can't attack, but you have resistance to bludgeoning, piercing and slashing damage, and each turn you hold the stance adds one weapon damage die to your strike (up to PB). | You have resistance to all damage, and your strike carries you 10 ft forward from your spot. | You instantly teleport to the target enemy and hit, guaranteed. | Evolves into Samurai's Wake; fuses with Stand Off | Locked |
+| Stand Off | Stance | When you approach a group of 2 or more enemies, enter stand off. When one attacks you, roll a challenge against it, up to a number of times per round equal to this boon's level. Win and the attack misses and you roll a counterattack; lose and you exit stand off and the attack resolves normally. | You can shrug off one hit and stay in stand off. | When you counter, you deflect the attack onto a nearby enemy. | Fuses with A Fine Steel's Glint | Locked |
+| Elemain's Flight of Fancy | Volley | A fired or thrown projectile ricochets once for 50% damage. | 2 ricochets. | 3 ricochets. Each ricochet rolls a d20 and crits only on a 20. | Evolves into Elemain's Retribution; fuses with Critical Delight or Travert's Echoes | Locked |
 | Overhealing | Guard | Healing beyond max HP becomes temp HP. | Overhealed targets gain resistance. | The healer gains temp HP equal to half the amount overhealed. | Evolves into Overflowing Cup | Locked |
 | Hardened Hide | Guard | Reduce damage taken by PB. | Attackers who hit you take PB damage. | Enemies within 10 ft have disadvantage attacking anyone but you. | Evolves into Titan's Hide | Locked |
 | Cleansing Nova | Guard | Your heals end one condition on the target. | Heals pulse 10 ft, granting allies PB temp HP. | Enemies in the pulse take radiant damage equal to half the healing. | Evolves into Hex Unwoven | Locked |
@@ -297,7 +297,7 @@ Ten Core boons any character can draft, built from Brian's list, plus sixteen bo
 | Elemental Quiver | Volley | Once per turn, a ranged hit deals +PB fire, cold or lightning damage, your choice. | Cold also slows the target by 10 ft, lightning stops its reactions, and fire burns for PB at the start of its turn. | You can apply two elements to one hit. | Evolves into Prismatic Barrage | Locked |
 | Battle Standard | Rally | Once per room, as a bonus action, plant a standard. Allies within 10 ft add +PB to one damage roll per turn until it's knocked over (AC 15, 5 × PB HP). | Allies near the standard have advantage on saves against being Frightened, and the radius becomes 15 ft. | Allies near the standard regain PB HP at the start of their turns. | Evolves into Immortal Banner | Locked |
 
-- **Core tag:** every character can draft Core boons. Like payoffs, they don't evolve or combine, so they're steady slot fillers rather than build-defining picks.
+- **Core tag:** every character can draft Core boons. Like payoffs, they don't evolve or fuse, so they're steady slot fillers rather than build-defining picks.
 - **Honed:** boons can touch ability scores because they reset every run; stat tracks still can't. Level 3 lets one score reach 22 for the run.
 - **Quick Cantrip:** the 2024 bonus-action spell rule only blocks spells cast with slots, so Level 3 allows two cantrips a turn. That's very strong for Warlocks with Eldritch Blast.
 - **Unshackled:** 5e has no "immobilized" condition, so it covers Grappled, Restrained and speed reductions.
@@ -341,7 +341,7 @@ Three boons for casters, healers and anyone fighting the dungeon itself, each an
 
 ### Thils's hidden gifts *(proposed)*
 
-The hidden boons unlocked by room conditions. Like class hidden boons, they sit in the hidden slot and never level, evolve or combine. They come straight from Thils, god of mazes, traps and lost things.
+The hidden boons unlocked by room conditions. Like class hidden boons, they sit in the hidden slot and never level, evolve or fuse. They come straight from Thils, god of mazes, traps and lost things.
 
 | Gift | Effect |
 | --- | --- |
@@ -456,23 +456,23 @@ Each keeps its boon's Level 3 effect and adds a capstone that changes how the ch
 * **Samurai's Wake:** set the lightning damage and decide whether the return hit is also guaranteed.
 * **A Healthy Dose of Pain:** Level 1 now adds the HP your Max HP track grants, once per turn, so it grows with the track instead of adding full HP (around +90 a hit at level 10) to every attack.
 
-## Combinations
+## Fusions
 
-A Combination fuses two specific Level 3 boons into one slot, trading the Evolution path for an open slot. Super Normal is the first designed pair.
+A Fusion merges two specific Level 3 boons into one slot, trading the Evolution path for an open slot. Super Normal is the first designed pair.
 
-| Combination | Boons | Effect | Status |
+| Fusion | Boons | Effect | Status |
 | --- | --- | --- | --- |
 | Super Normal | Critical Delight + Crits Are for Suckers | You lose Critical Delight's non-crit penalty and never critically fail an attack roll: a natural 1 still misses if it doesn't meet AC, but triggers no fumble effects. Your crit range is 18 to 20, non-crits deal +50% damage, and crits deal triple damage plus PB d20. | Locked |
 | Still Water | A Fine Steel's Glint + Stand Off | Entering either stance activates both, and you can still counter while in stance. In stance, you take half damage from all sources and can make up to 3 Stand Off counters per round. Each successful counter deflects the attack onto a nearby enemy and adds 1 turn of stored damage (up to PB) to your guaranteed teleporting strike. | Locked |
 | Elemain's Fancy Criticals | Elemain's Flight of Fancy + Critical Delight | Your ricochets use your Critical Delight crit range (10 to 20) instead of only a natural 20, and each ricochet crit builds and benefits from Critical Delight's multiplier. | Locked |
 | Shooting Gallery | Elemain's Flight of Fancy + Travert's Echoes | Each ricochet triggers a Level 3 Travert's Echo (three pulses for 25% of the ricochet's damage in a 10 ft ring around each target hit), and any kill from a ricochet or its echoes banks an echo. | Locked |
 
-- **Eligibility** *(proposed)***:** only listed pairs can combine, and both boons must be at Level 3. The app flags a player as eligible when they hold both.
+- **Eligibility** *(proposed)***:** only listed pairs can fuse, and both boons must be at Level 3. The app flags a player as eligible when they hold both.
 - **Super Normal d20s** *(proposed)***:** PB d20s on a crit, so the bonus scales from level 5 to 20.
 
-### More combinations
+### More fusions
 
-| Combination | Boons | Effect | Status |
+| Fusion | Boons | Effect | Status |
 | --- | --- | --- | --- |
 | Dragnet | Corrow's Lure + Elemental Residue | Pulled creatures trigger every puddle they're dragged through. | Locked |
 | Rush Hour | The Express + Travert's Echoes | Your echoes gain The Express's hit bonus. | Locked |
@@ -482,9 +482,9 @@ A Combination fuses two specific Level 3 boons into one slot, trading the Evolut
 | Contract Kill | Zolic's Nine Eyes + First Strike | Your first hit on a boss each room grants 3 Eyes. | Locked |
 | Ghost Reaper | Fading Veil + Reaper's Sprint | Every Reaper's Sprint teleport leaves you hidden. | Locked |
 
-### Batch 3 combinations
+### Batch 3 fusions
 
-| Combination | Boons | Effect | Status |
+| Fusion | Boons | Effect | Status |
 | --- | --- | --- | --- |
 | Seismic Waltz | Resounding Blow + Echoing Step | Moving 20 ft detonates any pending Resounding Blows on enemies within 30 ft for 50% damage instead of 40%, and each detonation triggers Echoing Step's 10 ft splash. | Locked |
 | The Ferryman's Toll | Last Rites + Harvest | Your execution threshold rises by PB HP for every Soul you hold (up to 10 × PB HP), and executing a creature grants 2 Souls instead of 1. | Locked |
@@ -501,7 +501,7 @@ A Combination fuses two specific Level 3 boons into one slot, trading the Evolut
 
 Pressures are optional challenges that raise the payout of loot and Quantum Basalts. The name is locked; the list and bonus values below are proposed.
 
-| Pressure | Effect | Loot and QB bonus |
+| Pressure | Effect | Loot and Quantum Basalts bonus |
 | --- | --- | --- |
 | Closing Ring | The room's outer ring becomes hazardous terrain, growing inward every 3 rounds. | +15% |
 | Brittle Ground | Critical hits against players crack the floor beneath them. | +10% |
@@ -523,7 +523,7 @@ Parties start with the Pressures that make rooms harder, and unlock the ones tha
 - **Extra Pressures, rank 1:** unlocks Restless Stone and Heavy Crown.
 - **Extra Pressures, rank 2:** unlocks the harsher versions below. Each one replaces its base version rather than stacking with it.
 
-| Harsher version | Change | Loot and QB bonus |
+| Harsher version | Change | Loot and Quantum Basalts bonus |
 | --- | --- | --- |
 | Closing Ring II | The ring grows every 2 rounds instead of 3. | +25% |
 | Brittle Ground II | The crack also knocks the player prone. | +20% |
@@ -1050,7 +1050,7 @@ Quantum Basalts are a rare resource awarded to each player on extraction. They a
 
 These only appear in the Basalt Markets once a character has survived a full clear: beaten the floor 5 legendary boss and extracted alive. A character with a full clear wears a golden glow around their portrait and battle map token. The glow grows stronger with each full clear up to 5. From the 6th to the 10th full clear, each one adds a diamond to the top of the portrait (up to 5 diamonds). Battle map tokens show the glow but not the diamonds.
 
-**Full collection *(proposed)*:** Basalt Echoes are tracked per player, not per character: a player's collection is everything any of their characters has held. A player who has held every entry (every boon, Evolution, Combination, and every hidden boon they can receive: Thils's gifts plus the class hidden boons of every class any of their characters has) wears a green glow on all of their characters, on top of any golden glow, with an open book at the bottom center of the portrait ring. Battle map tokens show the green glow but not the book. The Echoes log keeps hidden boons out of sight until the first one is received, and its hidden and overall totals count only hidden boons already found, so the full count is never spoiled.
+**Full collection *(proposed)*:** Basalt Echoes are tracked per player, not per character: a player's collection is everything any of their characters has held. A player who has held every entry (every boon, Evolution, Fusion, and every hidden boon they can receive: Thils's gifts plus the class hidden boons of every class any of their characters has) wears a green glow on all of their characters, on top of any golden glow, with an open book at the bottom center of the portrait ring. Battle map tokens show the green glow but not the book. The Echoes log keeps hidden boons out of sight until the first one is received, and its hidden and overall totals count only hidden boons already found, so the full count is never spoiled.
 
 | Upgrade | Ranks | Cost per rank | Effect | Origin |
 | --- | --- | --- | --- | --- |
@@ -1082,7 +1082,7 @@ Combat rooms drive the boon draft, and post-boss rooms are where Quantum Basalt 
 | Combat | A fight, then the shared boon draft and any hidden boon. | Most rooms on every floor |
 | Elite *(proposed)* | A harder fight: next floor's families or one creature +2 CR, plus one extra room trick. It pays an extra Devotion per player and an extra loot roll, and its offer always includes the wildcard. | 1 in 4 non-boss rooms, at most 2 per floor, never the first room of floor 1 |
 | Boss | Closes the floor with shift actions, then extract or descend. | End of every floor |
-| Forge | Level up a held boon, or evolve or combine eligible Level 3 boons. One use per owner in the party, then it cools. | Post-boss, once unlocked |
+| Forge | Level up a held boon, or evolve or fuse eligible Level 3 boons. One use per owner in the party, then it cools. | Post-boss, once unlocked |
 | Healing Font | Restores the party between floors. Each owner beyond the first adds temp HP for everyone (proposed: +5 each). | Post-boss, once unlocked |
 | Reprieve | A safe room. Each player chooses Rest (a Short Rest's benefits, including Hit Point Dice and short-rest features, without the hour) or Reflect (level up one boon; a player with no boon that can level up takes catch-up Quantum Basalts instead, see Build clarification 6). | Mid-floor, by chance, once bought. It replaces a combat room, and the party can decline it and fight that room instead. |
 | Post-boss room | Holds purchased upgrades like the Forge and Healing Font, then the choice to descend or extract. | After each boss on floors 1 to 4 |
@@ -1440,7 +1440,7 @@ The app replaces the character sheet: characters are saved in it, and the DM loa
 - **Main stage:** the current room fills most of the screen. It's generated from this Bible and the Campaign Lorebook: room type, layout and terrain, encounter, room tricks and hidden condition, plus the boss and its Shift Action on boss rooms.
 - **Run tracker:** a smaller panel for floor and room progress, active Pressures, and the descend-or-extract choice at post-boss rooms.
 - **Descend or extract vote:** after each boss on floors 1 to 4, every living player votes Descend or Extract on their device, by tapping the Descend or Extract card, and can change their vote. The DM's screen shows the tally and who hasn't voted; the DM still makes the final call.
-- **Player sidebar:** one card per player that opens into their boon slots, levels, evolutions, combinations, hidden boon and suppressed boons; stat track ranks and Devotions; and their upgrade path, where they can buy upgrades with Quantum Basalts.
+- **Player sidebar:** one card per player that opens into their boon slots, levels, evolutions, fusions, hidden boon and suppressed boons; stat track ranks and Devotions; and their upgrade path, where they can buy upgrades with Quantum Basalts.
 - **Group rewards:** run loot, Quantum Basalts earned and passed Basalts, tracked for the whole party.
 
 ### DM view and player view
@@ -1455,7 +1455,7 @@ The DM hosts the run; players join on their own devices with a lighter view.
 - **Lean profile, not a full sheet:** characters level up through story between runs, so a saved full sheet would go stale. The app keeps only what it needs to run the dungeon, and each player confirms it at run setup: name, class and subclass (plus a second class and subclass for a multiclass), level (total level sets PB), caster type (none, half, full or Pact Magic), whether they have a summon or companion, their main attack style (melee, ranged or spells), and their weapon and armor training and Weapon Mastery picks (see Character setup).
 - **Why those fields:** they set boon offer eligibility, class hidden boon triggers, and every PB-based boon number.
 - **Modifiers, not totals:** the app shows what the dungeon adds, like +10 max HP or +20 ft speed, and players apply it to their own sheets. It never tries to track their full stats.
-- **The dungeon layer:** boon slots, boon levels, evolutions and combinations; the hidden boon and any suppressed boons; stat track ranks and banked Devotions; upgrades and ranks; Quantum Basalts (banked, earned this run and passed); loot assigned to them; lockout timer; deepest floor reached; and run history.
+- **The dungeon layer:** boon slots, boon levels, evolutions and fusions; the hidden boon and any suppressed boons; stat track ranks and banked Devotions; upgrades and ranks; Quantum Basalts (banked, earned this run and passed); loot assigned to them; lockout timer; deepest floor reached; and run history.
 - **Several characters per player:** a player can create and own several characters, but brings only one into a run. Each character keeps its own dungeon layer (Devotions, upgrades, Quantum Basalts, loot, lockout). Basalt Echoes are the exception: they belong to the player and count across all their characters (see Full collection). A locked-out character stays sealed, but its player can bring a different character. Players create their own characters with an empty dungeon layer; only the DM deletes characters.
 
 ### Character setup *(proposed)*
@@ -1512,7 +1512,7 @@ What a second class adds. Simple weapons always come from the primary class.
 - Load the party, enter its level and size, and choose Pressures. Party level, party size and floor set encounter levels, boss stats, room trick DCs and the loot tier.
 - **Pressure votes:** before a run, each player marks the Pressures they'd like on their device, from the ones the party can pick. The DM's lobby shows how many players want each one; the DM still chooses.
 - Track floor, room, loot collected, and loot kept if the party extracted now.
-- Track each player's boon slots (3 base, up to 5 with upgrades, plus a hidden boon slot), boon levels, and Evolutions or Combinations.
+- Track each player's boon slots (3 base, up to 5 with upgrades, plus a hidden boon slot), boon levels, and Evolutions or Fusions.
 - Track boon counters such as banked echoes and Reaper chain jumps, plus each player's recovery points for each recovery track (Spell slot recovery and Martial resource recovery). The app tracks only the points, never spell slots or class resources; players keep those on their own sheets.
 - Award each player a Devotion on every room clear, record deaths and start lockout timers automatically. Track each player's passed Basalts separately, since they survive death. Also track boons temporarily suppressed by bosses and room tricks, like the Inverted Reliquary and Memory Drain.
 
@@ -1520,12 +1520,12 @@ What a second class adds. Simple weapons always come from the primary class.
 
 - Show each player their own offer of 4, plus the hidden boon when its condition was met.
 - Let each player pick, replace or pass, and level boons at the Forge.
-- Flag players eligible to evolve or combine at a Forge.
+- Flag players eligible to evolve or fuse at a Forge.
 - Apply rerolls and Banish from each player's upgrades.
 
 ### Data
 
-- The boon catalogue, Combinations, Pressures and upgrades from this doc become the app's editable data, so new boons can be added without code changes *(proposed)*.
+- The boon catalogue, Fusions, Pressures and upgrades from this doc become the app's editable data, so new boons can be added without code changes *(proposed)*.
 
 ## Build clarifications
 
@@ -1534,10 +1534,10 @@ Rules the app follows where the rest of the Bible implies an answer without spel
 1. **Leveling:** drafting a boon you already hold raises it 1 level, up to Level 3, and so does the Forge. The held-boon offer draws from boons below Level 3 and, while the player has empty slots, from those empty slots too (see Offer weighting); once every slot is full and every boon is maxed, that slot becomes the wildcard.
 2. **Upgrade scope:** party-wide, with each extra owner adding more: Forge (+1 use per owner), Healing Font (+temp HP per extra owner), Extra Pressures (+5% rewards per owner) and Reprieve (every owner rolls). Party-wide at the highest rank only: Deep Pockets. Personal: Extra Boon Slot, Reroll, Banish, Starting Boon, Attunement, Hidden Sight, Quick Return and Extra Loot (its owner's Basalts only).
 3. **Party level:** the average of the party's levels, rounded down. It sets boss CR, room trick DCs, the entry multiplier (one per party) and loot rarity. Encounter XP budgets add up from each player's own level, and PB-based boon numbers use each player's own PB.
-4. **Payoff and Core boons:** they level through drafts and the Forge like other boons, but never evolve or combine.
-5. **Tags:** an Evolution keeps its source boon's tag, and a Combination carries both source tags, for Resonance and offer weighting.
-6. **Reprieve:** it replaces one of a floor's 4 rooms, so that floor has 3 combat rooms, the Reprieve and the boss. It grants no Devotion and no draft. Every living player chooses Rest or Reflect before the party moves on. Rest is applied at the table; the app only records it. Reflect levels up one plain boon below Level 3. **Catch-up Basalts:** a player with no boon that can level up (none held, or all at Level 3, Evolutions or Combinations) instead takes 1 Quantum Basalt times the entry-level multiplier, the same as a Pass, counted as passed so it extracts even on death.
-7. **The boon pool:** 70 boons across the main table and Batches 1 to 4. Kept separately: 49 Evolutions, 21 Combinations, 12 class hidden boons and 8 of Thils's hidden gifts.
+4. **Payoff and Core boons:** they level through drafts and the Forge like other boons, but never evolve or fuse.
+5. **Tags:** an Evolution keeps its source boon's tag, and a Fusion carries both source tags, for Resonance and offer weighting.
+6. **Reprieve:** it replaces one of a floor's 4 rooms, so that floor has 3 combat rooms, the Reprieve and the boss. It grants no Devotion and no draft. Every living player chooses Rest or Reflect before the party moves on. Rest is applied at the table; the app only records it. Reflect levels up one plain boon below Level 3. **Catch-up Basalts:** a player with no boon that can level up (none held, or all at Level 3, Evolutions or Fusions) instead takes 1 Quantum Basalt times the entry-level multiplier, the same as a Pass, counted as passed so it extracts even on death.
+7. **The boon pool:** 70 boons across the main table and Batches 1 to 4. Kept separately: 49 Evolutions, 21 Fusions, 12 class hidden boons and 8 of Thils's hidden gifts.
 8. **Death:** if even one player survives to extract, the party's loot pool stays whole and is shared as usual. Only a wipe loses it. A fallen character still forfeits the Quantum Basalts they earned that run, except passed ones.
 
 ### Offer weighting
@@ -1548,7 +1548,7 @@ Every draft is built in three steps.
 2. **Build the 4 offers.**
    - **Slot 1, held boon:** one draw among your boons below Level 3 and your empty boon slots. A held boon offers that boon (to level it); an empty slot offers a new weighted roll. Example: 1 boon at Level 1 with 2 empty slots levels it 1 time in 3 and offers a new boon 2 times in 3. With every slot full, it always offers a held boon below Level 3. If you hold no plain boons, it's a weighted roll; if every slot is full and every boon is maxed, it becomes a wildcard.
    - **Slots 2 and 3, weighted rolls:** drawn using the weights below.
-   - **Slot 4, wildcard:** an Evolution or Combination you qualify for, or else one eligible boon at even odds. Evolutions and Combinations only appear once every boon slot is filled.
+   - **Slot 4, wildcard:** an Evolution or Fusion you qualify for, or else one eligible boon at even odds. Evolutions and Fusions only appear once every boon slot is filled.
    - **Variety cap:** no more than 2 boons from the same tag in one draft.
    - **Narrow Seam:** drops a weighted slot first; Narrow Seam II drops the wildcard next.
 3. **Weight the rolls.** Every eligible boon starts at 1, and these multiply: a primary tag for the character's class ×3, a secondary tag ×2, and a tag the player already holds ×2. Core boons stay at 1.
@@ -1585,7 +1585,7 @@ Every draft is built in three steps.
 ### Banish
 
 - **Permanent list:** each owner keeps a standing list of up to 1, 2 or 3 boons (by rank) that never appear in their offers, run after run.
-- **Banish from the draft:** a boon gets on the list only by banishing it from a draft offer. Any new boon card can be banished (not a held boon's level-up card, an Evolution or a Combination). The banished card is replaced by a fresh roll for the same offer slot, with the list applied. If the list is full, the player picks a listed boon to drop, which can appear again right away.
+- **Banish from the draft:** a boon gets on the list only by banishing it from a draft offer. Any new boon card can be banished (not a held boon's level-up card, an Evolution or a Fusion). The banished card is replaced by a fresh roll for the same offer slot, with the list applied. If the list is full, the player picks a listed boon to drop, which can appear again right away.
 - **Banish history:** every boon a character has ever banished from a draft is remembered. Between runs, players can swap their list among boons in that history, never mid-run, and never to a boon they haven't banished from a draft.
 - **Everywhere a boon is rolled:** the list applies to weighted rolls, the wildcard's random pick and the Starting Boon roll.
 
@@ -1598,7 +1598,7 @@ Every draft is built in three steps.
 
 ### Draft defaults *(proposed)*
 
-- **Wildcard:** always the player's own Evolution or Combination, picked at random if several qualify.
+- **Wildcard:** always the player's own Evolution or Fusion, picked at random if several qualify.
 - **Elite rooms:** never drop the wildcard, even under Narrow Seam II.
 - **Pacing:** the next room can't be cleared until every living player has made their draft choice, and the DM can choose for any player.
 
