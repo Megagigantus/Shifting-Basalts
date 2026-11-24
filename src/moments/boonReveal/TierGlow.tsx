@@ -1,4 +1,5 @@
 import { THEME, accentById, tierById } from '../theme'
+import { MazeGlow } from './MazeGlow'
 
 /** Subtle persistent reveal-tier glow, border ring, and optional accent sigil for a draft card. */
 export function TierGlow({
@@ -34,6 +35,24 @@ export function TierGlow({
           }}
         />
       </div>
+      {accentInfo?.glowPattern === 'maze' && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-xl"
+          style={{
+            opacity: claimed
+              ? (accentInfo.glowPatternOpacity ?? 0.5)
+              : (accentInfo.glowPatternOpacity ?? 0.5) * 0.5,
+            transition: `opacity ${claimMs}ms ease`,
+          }}
+        >
+          <MazeGlow
+            color={accentInfo.color}
+            svgRef={() => {}}
+            className="pointer-events-none absolute inset-0 h-full w-full"
+          />
+        </div>
+      )}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 rounded-xl"

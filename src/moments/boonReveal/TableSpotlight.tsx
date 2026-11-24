@@ -9,6 +9,8 @@ import { accentById, THEME, tierById, type RevealTier } from '../theme'
 import { CardBackPattern, HoodedSilhouette, MazeSigil } from './BoonRevealPlayer'
 import { EyeLids, type EyeRefs } from './EyeLids'
 import { addEyeOpen, resetEye } from './eyeOpen'
+import { MazeGlow } from './MazeGlow'
+import { addMazeTrace, resetMaze } from './mazeTrace'
 import { type BoonRevealPayload, cardText, spotlightCards } from './payload'
 
 interface SpotlightRefs {
@@ -19,6 +21,7 @@ interface SpotlightRefs {
   front: HTMLDivElement | null
   veil: HTMLDivElement | null
   glow: HTMLDivElement | null
+  maze: SVGSVGElement | null
   rays: HTMLDivElement | null
   silhouette: HTMLDivElement | null
   sigil: SVGSVGElement | null
@@ -139,6 +142,7 @@ export function TableSpotlight({
         front: null,
         veil: null,
         glow: null,
+        maze: null,
         rays: null,
         silhouette: null,
         sigil: null,
@@ -297,6 +301,7 @@ export function TableSpotlight({
         if (refs.front) gsap.set(refs.front, { opacity: 0 })
         if (refs.veil) gsap.set(refs.veil, { opacity: 0.45 })
         if (refs.glow) gsap.set(refs.glow, { opacity: 0 })
+        resetMaze(refs.maze)
         if (refs.rays) gsap.set(refs.rays, { opacity: 0, scale: 0.8, rotation: 0 })
         if (refs.silhouette) gsap.set(refs.silhouette, { opacity: 0, scale: 0.9, x: 8, y: -8 })
         if (refs.sigil) gsap.set(refs.sigil, { opacity: 0 })
@@ -550,6 +555,14 @@ export function TableSpotlight({
             flipStart + flipSec * 0.2,
           )
         }
+        if (accent?.glowPattern === 'maze') {
+          addMazeTrace(tl, refs?.maze ?? null, {
+            start: flipStart,
+            traceSec: flipSec + Math.min(holdSec, 0.6),
+            restOpacity: accent.glowPatternOpacity ?? 0.5,
+            reducedMotion,
+          })
+        }
         if (refs?.condition && card.cardKind === 'hidden') {
           tl.to(
             refs.condition,
@@ -708,6 +721,17 @@ export function TableSpotlight({
                       }}
                       className="pointer-events-none absolute -inset-6 rounded-3xl"
                     />
+
+                    {/* Accent maze glow layer */}
+                    {accent?.glowPattern === 'maze' && (
+                      <MazeGlow
+                        color={accent.color}
+                        className="pointer-events-none absolute -inset-10"
+                        svgRef={(el) => {
+                          ensureSpotlightRef(index).maze = el
+                        }}
+                      />
+                    )}
 
                     {/* Evolved light rays layer */}
                     {isEvolved && !reducedMotion && (
