@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { emptySlots } from '../../rules/boons'
 import { cardFromHidden, cardFromOffer, type RevealCard } from '../revealTier'
-import { THEME, type MomentTheme } from '../theme'
+import { THEME, tierById, type MomentTheme } from '../theme'
 import {
   type BoonRevealPayload,
   cardsForViewer,
@@ -12,6 +12,9 @@ import {
   revealEstimateMs,
   sampleRevealAllTiers,
   sampleRevealThils,
+  spotlightCards,
+  tableAssets,
+  tableDurationMs,
 } from './payload'
 
 function findUndefinedPaths(value: unknown, path = 'root'): string[] {
@@ -256,5 +259,162 @@ describe('sample reveal builders', () => {
       expect(validTierIds.has(card.tier)).toBe(true)
       expect(card.accent).toBe('thils')
     }
+  })
+})
+
+describe('spotlightCards', () => {
+  it('returns only hidden, fused, and evolved cards in ascending tierRank order with names on the all-tiers sample', () => {
+    const sample = sampleRevealAllTiers({
+      characterIds: ['c1', 'c2'],
+      names: { c1: 'Aeliana', c2: 'Bram' },
+    })
+
+    const spotlights = spotlightCards(sample.payload)
+    expect(spotlights.map((s) => `${s.characterId}:${s.name}:${s.card.tier}`)).toEqual([
+      'c1:Aeliana:hidden',
+      'c2:Bram:hidden',
+      'c1:Aeliana:fused',
+      'c2:Bram:fused',
+      'c1:Aeliana:evolved',
+      'c2:Bram:evolved',
+    ])
+  })
+
+  it('respects theme spotlight flags and falls back to "A player" when a name is missing', () => {
+    const newCard = cardFromOffer({ kind: 'boon', boonId: 'hardy', source: 'weighted' }, emptySlots(3))
+    const evolvedCard = cardFromOffer(
+      { kind: 'evolution', evolutionId: 'ball-of-yarn', slotIndex: 0, source: 'wildcard' },
+      emptySlots(3),
+    )
+    const payload = makePayload({ c1: [newCard, evolvedCard] })
+
+    const newSpotlightTheme: MomentTheme = structuredClone(THEME)
+    tierById('new', newSpotlightTheme).spotlight = true
+    expect(spotlightCards(payload, newSpotlightTheme)).toEqual([
+      { characterId: 'c1', name: 'A player', card: newCard },
+      { characterId: 'c1', name: 'A player', card: evolvedCard },
+    ])
+
+    const noneSpotlightTheme: MomentTheme = structuredClone(THEME)
+    for (const tier of noneSpotlightTheme.tiers) {
+      tier.spotlight = false
+    }
+    expect(spotlightCards(payload, noneSpotlightTheme)).toEqual([])
+  })
+
+  it('returns an empty list when partyWide is true', () => {
+    const hiddenCard = cardFromHidden('unbroken', 'Hit with every attack you made in a room.')
+    const payload: BoonRevealPayload = {
+      kind: 'hidden',
+      offers: { c1: [hiddenCard], c2: [hiddenCard] },
+      names: { c1: 'Aeliana', c2: 'Bram' },
+      conditionText: 'Hit with every attack you made in a room.',
+      partyWide: true,
+    }
+
+    expect(spotlightCards(payload)).toEqual([])
+  })
+})
+
+describe('tableDurationMs and table revealEstimateMs', () => {
+  const newCard = cardFromOffer({ kind: 'boon', boonId: 'hardy', source: 'weighted' }, emptySlots(3))
+  const fusedCard = cardFromOffer(
+    { kind: 'combination', combinationId: 'super-normal', source: 'wildcard' },
+    emptySlots(3),
+  )
+  const evolvedCard = cardFromOffer(
+    { kind: 'evolution', evolutionId: 'ball-of-yarn', slotIndex: 0, source: 'wildcard' },
+    emptySlots(3),
+  )
+  const hiddenCard = cardFromHidden('unbroken', 'Hit with every attack you made in a room.')
+
+  it('computes partyWide duration, spotlight sum duration, and 0 when nothing is shown', () => {
+    const { backdropFadeMs, flipMs, spotlightHoldMs, fadeOutMs } = THEME.timings
+
+    const nothingPayload = makePayload({ c1: [newCard] })
+    expect(tableDurationMs(nothingPayload)).toBe(0)
+    expect(tableDurationMs(makePayload({}))).toBe(0)
+
+    const spotlightPayload = makePayload({ c1: [newCard, evolvedCard], c2: [fusedCard] })
+    const expectedSpotlightMs =
+      backdropFadeMs +
+      (tierById('fused').hesitationMs + flipMs + spotlightHoldMs) +
+      (tierById('evolved').hesitationMs + flipMs + spotlightHoldMs) +
+      fadeOutMs
+    expect(tableDurationMs(spotlightPayload)).toBe(expectedSpotlightMs)
+
+    const partyPayload: BoonRevealPayload = {
+      kind: 'hidden',
+      offers: { c1: [hiddenCard], c2: [hiddenCard] },
+      names: { c1: 'Aeliana', c2: 'Bram' },
+      conditionText: 'Hit with every attack you made in a room.',
+      partyWide: true,
+    }
+    const expectedPartyMs =
+      backdropFadeMs + tierById('hidden').hesitationMs + flipMs + spotlightHoldMs + fadeOutMs
+    expect(tableDurationMs(partyPayload)).toBe(expectedPartyMs)
+
+    const emptyOffersPartyPayload: BoonRevealPayload = {
+      ...partyPayload,
+      offers: {},
+    }
+    expect(tableDurationMs(emptyOffersPartyPayload)).toBe(expectedPartyMs)
+
+    const noHiddenTierTheme: MomentTheme = structuredClone(THEME)
+    noHiddenTierTheme.tiers = noHiddenTierTheme.tiers.filter((t) => t.id !== 'hidden')
+    expect(tableDurationMs(emptyOffersPartyPayload, noHiddenTierTheme)).toBe(
+      backdropFadeMs + flipMs + spotlightHoldMs + fadeOutMs,
+    )
+  })
+
+  it('revealEstimateMs is at least tableDurationMs when 4 characters each hold an evolved card', () => {
+    const payload = makePayload(
+      {
+        c1: [evolvedCard],
+        c2: [evolvedCard],
+        c3: [evolvedCard],
+        c4: [evolvedCard],
+      },
+      { c1: 'Aeliana', c2: 'Bram', c3: 'Corvus', c4: 'Dara' },
+    )
+
+    const tableMs = tableDurationMs(payload)
+    expect(revealEstimateMs(payload)).toBeGreaterThanOrEqual(tableMs)
+    expect(revealEstimateMs(payload)).toBe(tableMs)
+  })
+})
+
+describe('tableAssets', () => {
+  it('includes conditionMet only for partyWide and deduplicates sounds and images', () => {
+    const newCard = cardFromOffer({ kind: 'boon', boonId: 'hardy', source: 'weighted' }, emptySlots(3))
+    const fusedCard = cardFromOffer(
+      { kind: 'combination', combinationId: 'super-normal', source: 'wildcard' },
+      emptySlots(3),
+    )
+    const thilsHiddenCard = cardFromHidden('thilss-wink', 'An enemy was killed by terrain.')
+
+    expect(tableAssets(makePayload({ c1: [newCard] }))).toEqual({ sounds: [], images: [] })
+
+    const spotlightPayload = makePayload({
+      c1: [fusedCard, thilsHiddenCard],
+      c2: [fusedCard, thilsHiddenCard],
+    })
+    const spotlightAssets = tableAssets(spotlightPayload)
+    expect(new Set(spotlightAssets.sounds).size).toBe(spotlightAssets.sounds.length)
+    expect(new Set(spotlightAssets.images).size).toBe(spotlightAssets.images.length)
+    expect(spotlightAssets.sounds).toEqual(['dim', 'flipHidden', 'accentThils', 'flipFused'])
+    expect(spotlightAssets.sounds).not.toContain('conditionMet')
+
+    const partyPayload: BoonRevealPayload = {
+      kind: 'hidden',
+      offers: { c1: [thilsHiddenCard], c2: [thilsHiddenCard] },
+      names: { c1: 'Aeliana', c2: 'Bram' },
+      conditionText: 'An enemy was killed by terrain.',
+      partyWide: true,
+    }
+    const partyAssets = tableAssets(partyPayload)
+    expect(new Set(partyAssets.sounds).size).toBe(partyAssets.sounds.length)
+    expect(partyAssets.sounds).toEqual(['dim', 'conditionMet'])
+    expect(partyAssets.images).toEqual([])
   })
 })

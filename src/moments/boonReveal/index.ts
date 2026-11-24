@@ -5,6 +5,7 @@ import {
   describeReveal,
   revealAssets,
   revealEstimateMs,
+  tableAssets,
   sampleRevealAllTiers,
   sampleRevealThils,
 } from './payload'
@@ -19,7 +20,9 @@ export const boonRevealModule = defineMoment<BoonRevealPayload>({
   preload: (m, viewer) =>
     viewer.kind === 'player'
       ? revealAssets(m.payload, viewer.characterIds)
-      : { sounds: [], images: [] },
+      : viewer.kind === 'table'
+        ? tableAssets(m.payload)
+        : { sounds: [], images: [] },
   samples: [
     { label: 'Boon reveal: every tier', build: sampleRevealAllTiers },
     { label: 'Boon reveal: Thils accent', build: sampleRevealThils },

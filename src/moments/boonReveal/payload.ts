@@ -2,7 +2,7 @@ import { boonArt } from '../../boonLootArt'
 import { boon, combination, emptySlots, evolution, hiddenBoon, type Slot } from '../../rules/boons'
 import type { SampleContext } from '../moduleTypes'
 import { cardFromHidden, cardFromOffer, revealOrder, type RevealCard } from '../revealTier'
-import { accentById, THEME, tierById, type MomentTheme } from '../theme'
+import { accentById, THEME, tierById, tierRank, type MomentTheme } from '../theme'
 import type { NewMoment } from '../types'
 
 /** Trigger context for a synchronized boon reveal moment. */
@@ -22,6 +22,42 @@ export interface CardText {
   name: string
   label: string
   detail: string | null
+}
+
+/** Single significant card spotlighted on the shared table display. */
+export interface Spotlight {
+  characterId: string
+  name: string
+  card: RevealCard
+}
+
+/** Cards to spotlight one at a time on the table display, sorted least-to-most significant. */
+export function spotlightCards(
+  payload: BoonRevealPayload,
+  theme: MomentTheme = THEME,
+): Spotlight[] {
+  if (payload.partyWide) return []
+
+  const items: Array<Spotlight & { rank: number; order: number }> = []
+  let order = 0
+  for (const [characterId, cards] of Object.entries(payload.offers)) {
+    const name = payload.names[characterId] || 'A player'
+    for (const card of cards) {
+      const tier = tierById(card.tier, theme)
+      if (!tier.spotlight) continue
+      items.push({
+        characterId,
+        name,
+        card,
+        rank: tierRank(card.tier, theme),
+        order: order++,
+      })
+    }
+  }
+
+  return items
+    .sort((a, b) => a.rank - b.rank || a.order - b.order)
+    .map(({ characterId, name, card }) => ({ characterId, name, card }))
 }
 
 /** Return the first character hand from `characterIds` that has at least one card, or null. */
@@ -104,18 +140,68 @@ export function revealDurationMs(
   )
 }
 
-/** Longest reveal duration across all character hands in the payload. */
+/** Total table-display animation duration in milliseconds for a boon reveal payload. */
+export function tableDurationMs(
+  payload: BoonRevealPayload,
+  theme: MomentTheme = THEME,
+): number {
+  const { backdropFadeMs, flipMs, spotlightHoldMs, fadeOutMs } = theme.timings
+  if (payload.partyWide) {
+    let firstCard: RevealCard | undefined
+    for (const cards of Object.values(payload.offers)) {
+      if (cards.length > 0) {
+        firstCard = cards[0]
+        break
+      }
+    }
+    const tier =
+      (firstCard ? theme.tiers.find((t) => t.id === firstCard.tier) : undefined) ??
+      theme.tiers.find((t) => t.id === 'hidden')
+    const hesitationMs = tier ? tier.hesitationMs : 0
+    return backdropFadeMs + hesitationMs + flipMs + spotlightHoldMs + fadeOutMs
+  }
+
+  const spotlights = spotlightCards(payload, theme)
+  if (spotlights.length === 0) return 0
+
+  let spotlightMs = 0
+  for (const { card } of spotlights) {
+    spotlightMs += tierById(card.tier, theme).hesitationMs + flipMs + spotlightHoldMs
+  }
+  return backdropFadeMs + spotlightMs + fadeOutMs
+}
+
+/** Longest reveal duration across all character hands and the table display. */
 export function revealEstimateMs(payload: BoonRevealPayload): number {
   const hands = Object.values(payload.offers)
-  if (hands.length === 0) {
-    return revealDurationMs([])
-  }
-  let longest = 0
+  let longest = hands.length === 0 ? revealDurationMs([]) : 0
   for (const cards of hands) {
     const duration = revealDurationMs(cards)
     if (duration > longest) longest = duration
   }
-  return longest
+  return Math.max(longest, tableDurationMs(payload))
+}
+
+function collectCardAssets(
+  card: RevealCard,
+  sounds: Set<string>,
+  images: Set<string>,
+): void {
+  sounds.add(tierById(card.tier).soundKey)
+  if (card.accent) {
+    sounds.add(accentById(card.accent).soundKey)
+  }
+  for (const url of boonArt({ kind: card.cardKind, id: card.id })) {
+    images.add(url)
+  }
+  if (card.cardKind === 'combination') {
+    const sourceIds = card.sources ?? combination(card.id).boons
+    for (const sourceId of sourceIds) {
+      for (const url of boonArt({ kind: 'boon', id: sourceId })) {
+        images.add(url)
+      }
+    }
+  }
 }
 
 /** Unique sound keys and image URLs required to play the reveal for the given viewer characters. */
@@ -132,21 +218,37 @@ export function revealAssets(
   const images = new Set<string>()
 
   for (const card of hand.cards) {
-    sounds.add(tierById(card.tier).soundKey)
-    if (card.accent) {
-      sounds.add(accentById(card.accent).soundKey)
+    collectCardAssets(card, sounds, images)
+  }
+
+  return {
+    sounds: [...sounds],
+    images: [...images],
+  }
+}
+
+/** Unique sound keys and image URLs required to play the reveal on the shared table display. */
+export function tableAssets(
+  payload: BoonRevealPayload,
+): { sounds: string[]; images: string[] } {
+  const spotlights = spotlightCards(payload)
+  if (!payload.partyWide && spotlights.length === 0) {
+    return { sounds: [], images: [] }
+  }
+
+  const sounds = new Set<string>(['dim'])
+  const images = new Set<string>()
+
+  if (payload.partyWide) {
+    sounds.add('conditionMet')
+    return {
+      sounds: [...sounds],
+      images: [],
     }
-    for (const url of boonArt({ kind: card.cardKind, id: card.id })) {
-      images.add(url)
-    }
-    if (card.cardKind === 'combination') {
-      const sourceIds = card.sources ?? combination(card.id).boons
-      for (const sourceId of sourceIds) {
-        for (const url of boonArt({ kind: 'boon', id: sourceId })) {
-          images.add(url)
-        }
-      }
-    }
+  }
+
+  for (const { card } of spotlights) {
+    collectCardAssets(card, sounds, images)
   }
 
   return {

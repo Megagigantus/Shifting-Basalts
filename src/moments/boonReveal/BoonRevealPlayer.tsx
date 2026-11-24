@@ -8,6 +8,7 @@ import type { MomentPlayerProps } from '../moduleTypes'
 import { revealOrder, type RevealCard } from '../revealTier'
 import { accentById, THEME, tierById } from '../theme'
 import { type BoonRevealPayload, cardsForViewer, cardText } from './payload'
+import { TableSpotlight } from './TableSpotlight'
 
 interface CardRefs {
   slot: HTMLDivElement | null
@@ -63,7 +64,7 @@ function firePreset(
   })
 }
 
-function HoodedSilhouette({ color }: { color: string }) {
+export function HoodedSilhouette({ color }: { color: string }) {
   return (
     <svg
       viewBox="0 0 120 150"
@@ -79,7 +80,7 @@ function HoodedSilhouette({ color }: { color: string }) {
   )
 }
 
-function MazeSigil({
+export function MazeSigil({
   color,
   svgRef,
 }: {
@@ -126,7 +127,7 @@ function MazeSigil({
   )
 }
 
-function CardBackPattern() {
+export function CardBackPattern() {
   return (
     <svg
       viewBox="0 0 120 160"
@@ -175,8 +176,15 @@ function CardBackPattern() {
   )
 }
 
-/** Full-screen phone animation that deals and flips a player's boon reveal cards by tier. */
-export function BoonRevealPlayer({
+/** Full-screen boon reveal player routing table viewers to TableSpotlight and players to the phone reveal. */
+export function BoonRevealPlayer(props: MomentPlayerProps<BoonRevealPayload>) {
+  if (props.viewer.kind === 'table') {
+    return <TableSpotlight {...props} />
+  }
+  return <PhoneBoonReveal {...props} />
+}
+
+function PhoneBoonReveal({
   moment,
   viewer,
   skipped,
