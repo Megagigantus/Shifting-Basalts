@@ -31,6 +31,10 @@ export interface RevealAccent {
   label: string
   color: string
   overlay: string
+  /** Optional animated pattern traced into the reveal glow ("maze"). */
+  glowPattern?: string
+  /** Opacity the glow pattern settles to after tracing (0 to 1). */
+  glowPatternOpacity?: number
   particlePreset: string
   soundKey: string
 }
