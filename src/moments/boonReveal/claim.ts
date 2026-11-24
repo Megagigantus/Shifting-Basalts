@@ -4,10 +4,15 @@ import { useCallback, useEffect, useRef, useState, type CSSProperties } from 're
 import { playSound } from '../audio'
 import { THEME } from '../theme'
 
-/** Track which card was claimed and clear it if an in-flight choice is cancelled or fails. */
-export function useClaim(busy: boolean): { claimed: string | null; claim: (key: string) => void } {
+/**
+ * Track which card was claimed and clear it if an in-flight choice is cancelled or fails.
+ * `claim(key, send)` plays the flourish first and only then sends the pick (after
+ * THEME.timings.claimMs), so the flourish is never cut short by a fast reply.
+ */
+export function useClaim(busy: boolean): { claimed: string | null; claim: (key: string, send: () => void) => void } {
   const [claimed, setClaimed] = useState<string | null>(null)
   const prevBusy = useRef(busy)
+  const sending = useRef(false)
 
   useEffect(() => {
     if (prevBusy.current && !busy) {
@@ -16,9 +21,16 @@ export function useClaim(busy: boolean): { claimed: string | null; claim: (key: 
     prevBusy.current = busy
   }, [busy])
 
-  const claim = useCallback((key: string) => {
+  const claim = useCallback((key: string, send: () => void) => {
+    // A second tap while the first pick is on its way does nothing.
+    if (sending.current) return
+    sending.current = true
     setClaimed(key)
     playSound('claimed')
+    setTimeout(() => {
+      sending.current = false
+      send()
+    }, THEME.timings.claimMs)
   }, [])
 
   return { claimed, claim }

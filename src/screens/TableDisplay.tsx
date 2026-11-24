@@ -100,7 +100,7 @@ export function TableDisplay({ state, onExit }: { state: RunState | null; onExit
 
       <main className="flex flex-1 flex-col gap-4">
         {isActive && safe.run.roomView ? (
-          <PlayerRoom state={safe} me={null} readOnly myCharacterIds={[]} />
+          <PlayerRoom state={safe} me={null} readOnly myCharacterIds={[]} tableView />
         ) : (
           <div className="flex flex-1 items-center justify-center">
             <p className="m-0 rounded-2xl border border-stone-800 bg-stone-900/75 px-6 py-4 text-sm text-stone-300 backdrop-blur">

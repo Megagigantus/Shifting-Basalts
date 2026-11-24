@@ -45,9 +45,11 @@ interface Props {
   readOnly?: boolean
   /** Every character the viewer owns in this run (they can move all of their tokens). */
   myCharacterIds?: string[]
+  /** The shared table display: hides the battle map's help line. */
+  tableView?: boolean
 }
 
-export function PlayerRoom({ state, me, readOnly = false, myCharacterIds }: Props) {
+export function PlayerRoom({ state, me, readOnly = false, myCharacterIds, tableView = false }: Props) {
   const { run } = state
   const view = run.roomView
   const hints = usePrivateHints(readOnly ? null : run.id, me?.characterId ?? null)
@@ -74,7 +76,7 @@ export function PlayerRoom({ state, me, readOnly = false, myCharacterIds }: Prop
 
   return (
     <>
-      <PlayerBattleMap state={state} myIds={myCharacterIds ?? (me ? [me.characterId] : [])} readOnly={readOnly} />
+      <PlayerBattleMap state={state} myIds={myCharacterIds ?? (me ? [me.characterId] : [])} readOnly={readOnly} showNote={!tableView} />
       {view.bossId && !readOnly && <PhaseReveal runId={run.id} bossId={view.bossId} bloodied={Boolean(view.bossBloodied)} />}
 
       <Panel
