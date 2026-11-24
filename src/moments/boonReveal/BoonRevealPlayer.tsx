@@ -7,6 +7,8 @@ import { playSound, stopAllSounds } from '../audio'
 import type { MomentPlayerProps } from '../moduleTypes'
 import { revealOrder, type RevealCard } from '../revealTier'
 import { accentById, THEME, tierById } from '../theme'
+import { EyeLids, type EyeRefs } from './EyeLids'
+import { addEyeOpen, resetEye } from './eyeOpen'
 import { type BoonRevealPayload, cardsForViewer, cardText } from './payload'
 import { TableSpotlight } from './TableSpotlight'
 
@@ -24,6 +26,7 @@ interface CardRefs {
   sourceRight: HTMLDivElement | null
   newLevel: HTMLSpanElement | null
   condition: HTMLParagraphElement | null
+  eye: EyeRefs
 }
 
 function headingFor(payload: BoonRevealPayload): string {
@@ -244,6 +247,7 @@ function PhoneBoonReveal({
         sourceRight: null,
         newLevel: null,
         condition: null,
+        eye: { lidTop: null, lidBottom: null, slit: null, iris: null },
       }
     }
     return cardRefs.current[index]!
@@ -342,6 +346,9 @@ function PhoneBoonReveal({
         }
         if (refs.condition) {
           gsap.set(refs.condition, { opacity: 0 })
+        }
+        if (activeCards[i]!.cardKind === 'hidden') {
+          resetEye(refs.eye, reducedMotion)
         }
       }
 
@@ -466,7 +473,16 @@ function PhoneBoonReveal({
           flipStart,
         )
 
-        if (reducedMotion) {
+        if (card.cardKind === 'hidden') {
+          if (refs?.back) tl.set(refs.back, { opacity: 0 }, flipStart)
+          if (refs?.front) tl.set(refs.front, { opacity: 1 }, flipStart)
+          addEyeOpen(tl, refs?.eye, {
+            hesitationStart: cursor,
+            openStart: flipStart,
+            openSec: flipSec + settleSec,
+            reducedMotion,
+          })
+        } else if (reducedMotion) {
           if (refs?.back) {
             tl.to(refs.back, { opacity: 0, duration: flipSec, ease: 'none' }, flipStart)
           }
@@ -779,6 +795,21 @@ function PhoneBoonReveal({
                     </div>
                   </div>
                 </div>
+
+                {/* Eye lids overlay for hidden boon reveal */}
+                {isHidden && (
+                  <EyeLids
+                    color={tier.color}
+                    setRef={(key, el) => {
+                      const eye = ensureCardRef(index).eye
+                      if (key === 'lidTop' || key === 'lidBottom') {
+                        eye[key] = el as SVGSVGElement | null
+                      } else {
+                        eye[key] = el as HTMLDivElement | null
+                      }
+                    }}
+                  />
+                )}
 
                 {/* Fused source icons converging into the card */}
                 {sourceIds && (
