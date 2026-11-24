@@ -1898,3 +1898,61 @@
     }
   }
 }
+
+/* Lingering Evolution atom and Fusion electricity (src/moments/boonReveal/LingerEffects.tsx). */
+@layer components {
+  .linger-arc {
+    animation: linger-arc-flicker 1.6s steps(1, end) infinite;
+    opacity: 0.15;
+  }
+
+  @keyframes linger-arc-flicker {
+    0% {
+      opacity: 0.15;
+    }
+    5% {
+      opacity: 1;
+    }
+    8% {
+      opacity: 0.35;
+    }
+    11% {
+      opacity: 1;
+    }
+    16% {
+      opacity: 0.5;
+    }
+    20% {
+      opacity: 0.9;
+    }
+    26%,
+    100% {
+      opacity: 0.15;
+    }
+  }
+
+  .linger-atom-core {
+    animation: linger-atom-pulse 2.8s ease-in-out infinite;
+  }
+
+  @keyframes linger-atom-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.55;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .linger-arc,
+    .linger-atom-core {
+      animation: none;
+    }
+
+    .linger-arc {
+      opacity: 0.45;
+    }
+  }
+}

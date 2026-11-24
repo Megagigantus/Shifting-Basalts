@@ -1,4 +1,6 @@
+import { usePrefersReducedMotion } from '../device'
 import { THEME, accentById, tierById } from '../theme'
+import { AtomOrbit, ElectricArcs } from './LingerEffects'
 import { MazeGlow } from './MazeGlow'
 
 /** Subtle persistent reveal-tier glow, border ring, and optional accent sigil for a draft card. */
@@ -13,6 +15,7 @@ export function TierGlow({
 }) {
   const tierInfo = tierById(tier)
   const accentInfo = accent ? accentById(accent) : null
+  const reducedMotion = usePrefersReducedMotion()
   const { claimMs } = THEME.timings
   const glowOpacity = claimed
     ? Math.min(1, tierInfo.glowIntensity * 0.9)
@@ -53,6 +56,28 @@ export function TierGlow({
           />
         </div>
       )}
+      {tierInfo.lingerEffect === 'atom' && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-xl"
+          style={{
+            opacity: claimed ? 0.9 : 0.45,
+            transition: `opacity ${claimMs}ms ease`,
+          }}
+        >
+          <div
+            className="pointer-events-none absolute"
+            style={{ left: -11, top: -30, width: 150, height: 188 }}
+          >
+            <AtomOrbit
+              color={tierInfo.color}
+              still={reducedMotion}
+              svgRef={() => {}}
+              className="pointer-events-none absolute inset-0 h-full w-full"
+            />
+          </div>
+        </div>
+      )}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 rounded-xl"
@@ -62,6 +87,23 @@ export function TierGlow({
           transition: `opacity ${claimMs}ms ease`,
         }}
       />
+      {tierInfo.lingerEffect === 'electric' && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 rounded-xl"
+          style={{
+            opacity: claimed ? 1 : 0.5,
+            transition: `opacity ${claimMs}ms ease`,
+          }}
+        >
+          <ElectricArcs
+            color={tierInfo.color}
+            still={reducedMotion}
+            svgRef={() => {}}
+            className="pointer-events-none absolute -inset-1"
+          />
+        </div>
+      )}
       {accentInfo && (
         <svg
           aria-hidden="true"
