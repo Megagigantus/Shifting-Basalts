@@ -1,7 +1,7 @@
 // The sticky bar at the top of every signed-in screen: title, the DM's tabs
 // and tools, who is signed in, and Sign out.
 import { useEffect, useState, type ReactNode } from 'react'
-import { BookOpen, Download, Eye, FlaskConical, ClockArrowLeft, Link2, LogOut, Shield, Swords, User, Users } from 'lucide-react'
+import { BookOpen, Download, Eye, FlaskConical, ClockArrowLeft, Link2, LogOut, Monitor, Shield, Swords, User, Users } from 'lucide-react'
 import { db } from '../firebase'
 import { downloadBackup } from '../backup'
 import { cx } from '../ui/tone'
@@ -28,6 +28,8 @@ interface DmControls {
   /** True while the DM is looking at the player view. */
   playerView: boolean
   onPlayerView: (on: boolean) => void
+  /** Opens the shared table display mode. */
+  onTableView: () => void
   onInvites: () => void
 }
 
@@ -98,6 +100,14 @@ export function AppHeader({ email, role, testMode, dm, onSignOut }: Props) {
                   className={cx(SMALL_BUTTON, 'border-transparent bg-transparent', dm.playerView ? 'bg-sky-500/20 text-sky-200 border-sky-500/40' : 'text-stone-400 hover:text-stone-200')}
                 >
                   <Eye size={13} /> Player view
+                </button>
+                <button
+                  type="button"
+                  onClick={dm.onTableView}
+                  title="Open the shared table screen: room, party and spotlight reveals only"
+                  className={cx(SMALL_BUTTON, 'border-transparent bg-transparent text-stone-400 hover:text-stone-200')}
+                >
+                  <Monitor size={13} /> Table display
                 </button>
               </div>
               <button type="button" onClick={dm.onInvites} className={cx(SMALL_BUTTON, 'border-amber-500/30 bg-amber-500/10 text-amber-200 hover:bg-amber-500/20')}>

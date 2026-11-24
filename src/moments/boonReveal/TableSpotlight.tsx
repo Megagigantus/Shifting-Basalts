@@ -612,7 +612,8 @@ export function TableSpotlight({
                 ref={partyGlowRef}
                 aria-hidden="true"
                 style={{
-                  background: `radial-gradient(circle, ${partyTier.color} 0%, transparent 72%)`,
+                  // Fade to nothing at the box edges, so the glow has no visible rectangle.
+                  background: `radial-gradient(ellipse closest-side, ${partyTier.color} 0%, transparent 100%)`,
                 }}
                 className="pointer-events-none absolute -inset-12 rounded-full"
               />
@@ -658,8 +659,13 @@ export function TableSpotlight({
                     <h2 className="m-0 text-3xl font-semibold tracking-wide text-stone-100 sm:text-4xl">
                       {spotlight.name}
                     </h2>
+                    {/* The tier stays hidden until the card flips, so it doesn't spoil the reveal. */}
                     <p
-                      style={{ color: tier.color }}
+                      style={{
+                        color: tier.color,
+                        opacity: isRevealed ? 1 : 0,
+                        transition: `opacity ${THEME.timings.flipMs}ms ease`,
+                      }}
                       className="mt-1.5 mb-0 text-sm font-semibold uppercase tracking-widest sm:text-base"
                     >
                       {tier.label}

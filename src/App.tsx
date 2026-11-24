@@ -13,6 +13,7 @@ import { PlayerHome } from './screens/PlayerHome'
 import { PlayerPreview } from './screens/PlayerPreview'
 import { RunHistory } from './screens/RunHistory'
 import { TableViewer } from './screens/TableViewer'
+import { TableDisplay } from './screens/TableDisplay'
 import { AppHeader } from './screens/AppHeader'
 import { DM_TABS, type DmTab } from './screens/dmTabs'
 import { Backdrop } from './screens/Backdrop'
@@ -89,6 +90,7 @@ function SignedIn({ email, role }: { email: string; role: 'dm' | 'player' }) {
   const { state } = useActiveRun()
   const [tab, setTab] = useState<DmTab>(savedTab)
   const [playerView, setPlayerView] = useState(false)
+  const [tableView, setTableView] = useState(false)
   const [invitesOpen, setInvitesOpen] = useState(false)
 
   const isDm = role === 'dm'
@@ -104,6 +106,15 @@ function SignedIn({ email, role }: { email: string; role: 'dm' | 'player' }) {
     return () => root.classList.remove('player-ui')
   }, [isDm])
 
+  if (isDm && tableView) {
+    return (
+      <>
+        <Backdrop inRun={state !== null} />
+        <TableDisplay state={state} onExit={() => setTableView(false)} />
+      </>
+    )
+  }
+
   // Wide screens: the Run tab (main column + party sidebar), Characters (roster + hub) and the player screens.
   const wide = isDm ? playerView || tab === 'run' || tab === 'characters' : true
 
@@ -117,7 +128,14 @@ function SignedIn({ email, role }: { email: string; role: 'dm' | 'player' }) {
         onSignOut={signOutNow}
         dm={
           isDm
-            ? { tab, onTab: chooseTab, playerView, onPlayerView: setPlayerView, onInvites: () => setInvitesOpen(true) }
+            ? {
+                tab,
+                onTab: chooseTab,
+                playerView,
+                onPlayerView: setPlayerView,
+                onTableView: () => setTableView(true),
+                onInvites: () => setInvitesOpen(true),
+              }
             : undefined
         }
       />
