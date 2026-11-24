@@ -1,6 +1,7 @@
 // The "claimed" flourish on draft cards: which card was taken, and the
 // inline style each card gets (chosen brightens, others fade like afterimages).
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
+import { playSound } from '../audio'
 import { THEME } from '../theme'
 
 /** Track which card was claimed and clear it if an in-flight choice is cancelled or fails. */
@@ -17,6 +18,7 @@ export function useClaim(busy: boolean): { claimed: string | null; claim: (key: 
 
   const claim = useCallback((key: string) => {
     setClaimed(key)
+    playSound('claimed')
   }, [])
 
   return { claimed, claim }
