@@ -85,7 +85,7 @@ describe('cardText', () => {
     )
     expect(cardText(fusedCard)).toEqual({
       name: 'Super Normal',
-      label: 'Fused',
+      label: 'Combination',
       detail: 'Critical Delight + Crits Are for Suckers',
     })
 
@@ -95,7 +95,7 @@ describe('cardText', () => {
     )
     expect(cardText(evolvedCard)).toEqual({
       name: 'Ball of Yarn',
-      label: 'Evolved',
+      label: 'Evolution',
       detail: "from Ulma's Thread",
     })
 
@@ -217,7 +217,7 @@ describe('describeReveal', () => {
         },
         { wiz: 'Test Wizard' },
       ),
-    ).toBe('Forge: Evolved for Test Wizard')
+    ).toBe('Forge: Evolution for Test Wizard')
   })
 })
 

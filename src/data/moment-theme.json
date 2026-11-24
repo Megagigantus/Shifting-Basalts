@@ -38,7 +38,7 @@
     },
     {
       "id": "fused",
-      "label": "Fused",
+      "label": "Combination",
       "color": "#60a5fa",
       "glowIntensity": 0.7,
       "particlePreset": "convergingMotes",
@@ -49,7 +49,7 @@
     },
     {
       "id": "evolved",
-      "label": "Evolved",
+      "label": "Evolution",
       "color": "#a855f7",
       "glowIntensity": 1,
       "particlePreset": "afterimageBurst",
