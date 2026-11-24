@@ -7,6 +7,10 @@ import { playSound, stopAllSounds } from '../audio'
 import type { MomentPlayerProps } from '../moduleTypes'
 import { accentById, THEME, tierById, type RevealTier } from '../theme'
 import { CardBackPattern, HoodedSilhouette, MazeSigil } from './BoonRevealPlayer'
+import { EyeLids, type EyeRefs } from './EyeLids'
+import { addEyeOpen, resetEye } from './eyeOpen'
+import { MazeGlow } from './MazeGlow'
+import { addMazeTrace, resetMaze } from './mazeTrace'
 import { type BoonRevealPayload, cardText, spotlightCards } from './payload'
 
 interface SpotlightRefs {
@@ -17,6 +21,7 @@ interface SpotlightRefs {
   front: HTMLDivElement | null
   veil: HTMLDivElement | null
   glow: HTMLDivElement | null
+  maze: SVGSVGElement | null
   rays: HTMLDivElement | null
   silhouette: HTMLDivElement | null
   sigil: SVGSVGElement | null
@@ -24,6 +29,7 @@ interface SpotlightRefs {
   sourceRight: HTMLDivElement | null
   newLevel: HTMLSpanElement | null
   condition: HTMLParagraphElement | null
+  eye: EyeRefs
 }
 
 function firePreset(
@@ -136,6 +142,7 @@ export function TableSpotlight({
         front: null,
         veil: null,
         glow: null,
+        maze: null,
         rays: null,
         silhouette: null,
         sigil: null,
@@ -143,6 +150,7 @@ export function TableSpotlight({
         sourceRight: null,
         newLevel: null,
         condition: null,
+        eye: { lidTop: null, lidBottom: null, slit: null, iris: null },
       }
     }
     return spotlightRefs.current[index]!
@@ -293,6 +301,7 @@ export function TableSpotlight({
         if (refs.front) gsap.set(refs.front, { opacity: 0 })
         if (refs.veil) gsap.set(refs.veil, { opacity: 0.45 })
         if (refs.glow) gsap.set(refs.glow, { opacity: 0 })
+        resetMaze(refs.maze)
         if (refs.rays) gsap.set(refs.rays, { opacity: 0, scale: 0.8, rotation: 0 })
         if (refs.silhouette) gsap.set(refs.silhouette, { opacity: 0, scale: 0.9, x: 8, y: -8 })
         if (refs.sigil) gsap.set(refs.sigil, { opacity: 0 })
@@ -307,6 +316,9 @@ export function TableSpotlight({
         }
         if (refs.condition) {
           gsap.set(refs.condition, { opacity: 0 })
+        }
+        if (activeSpotlights[i]!.card.cardKind === 'hidden') {
+          resetEye(refs.eye, reducedMotion)
         }
       }
 
@@ -434,7 +446,16 @@ export function TableSpotlight({
           flipStart,
         )
 
-        if (reducedMotion) {
+        if (card.cardKind === 'hidden') {
+          if (refs?.back) tl.set(refs.back, { opacity: 0 }, flipStart)
+          if (refs?.front) tl.set(refs.front, { opacity: 1 }, flipStart)
+          addEyeOpen(tl, refs?.eye, {
+            hesitationStart: cursor,
+            openStart: flipStart,
+            openSec: flipSec + Math.min(holdSec, 0.6),
+            reducedMotion,
+          })
+        } else if (reducedMotion) {
           if (refs?.back) {
             tl.to(refs.back, { opacity: 0, duration: flipSec, ease: 'none' }, flipStart)
           }
@@ -533,6 +554,14 @@ export function TableSpotlight({
             { opacity: 0.35, duration: flipSec * 0.8, ease: 'power1.out' },
             flipStart + flipSec * 0.2,
           )
+        }
+        if (accent?.glowPattern === 'maze') {
+          addMazeTrace(tl, refs?.maze ?? null, {
+            start: flipStart,
+            traceSec: flipSec + Math.min(holdSec, 0.6),
+            restOpacity: accent.glowPatternOpacity ?? 0.5,
+            reducedMotion,
+          })
         }
         if (refs?.condition && card.cardKind === 'hidden') {
           tl.to(
@@ -693,6 +722,17 @@ export function TableSpotlight({
                       className="pointer-events-none absolute -inset-6 rounded-3xl"
                     />
 
+                    {/* Accent maze glow layer */}
+                    {accent?.glowPattern === 'maze' && (
+                      <MazeGlow
+                        color={accent.color}
+                        className="pointer-events-none absolute -inset-10"
+                        svgRef={(el) => {
+                          ensureSpotlightRef(index).maze = el
+                        }}
+                      />
+                    )}
+
                     {/* Evolved light rays layer */}
                     {isEvolved && !reducedMotion && (
                       <div
@@ -820,6 +860,22 @@ export function TableSpotlight({
                         </div>
                       </div>
                     </div>
+
+                    {/* Eye lids overlay for hidden boon reveal */}
+                    {isHidden && (
+                      <EyeLids
+                        color={tier.color}
+                        roundedClass="rounded-2xl"
+                        setRef={(key, el) => {
+                          const eye = ensureSpotlightRef(index).eye
+                          if (key === 'lidTop' || key === 'lidBottom') {
+                            eye[key] = el as SVGSVGElement | null
+                          } else {
+                            eye[key] = el as HTMLDivElement | null
+                          }
+                        }}
+                      />
+                    )}
 
                     {/* Fused source icons converging into the card */}
                     {sourceIds && (

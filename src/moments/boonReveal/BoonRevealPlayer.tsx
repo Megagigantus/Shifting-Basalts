@@ -7,6 +7,10 @@ import { playSound, stopAllSounds } from '../audio'
 import type { MomentPlayerProps } from '../moduleTypes'
 import { revealOrder, type RevealCard } from '../revealTier'
 import { accentById, THEME, tierById } from '../theme'
+import { EyeLids, type EyeRefs } from './EyeLids'
+import { addEyeOpen, resetEye } from './eyeOpen'
+import { MazeGlow } from './MazeGlow'
+import { addMazeTrace, resetMaze } from './mazeTrace'
 import { type BoonRevealPayload, cardsForViewer, cardText } from './payload'
 import { TableSpotlight } from './TableSpotlight'
 
@@ -17,6 +21,7 @@ interface CardRefs {
   front: HTMLDivElement | null
   veil: HTMLDivElement | null
   glow: HTMLDivElement | null
+  maze: SVGSVGElement | null
   rays: HTMLDivElement | null
   silhouette: HTMLDivElement | null
   sigil: SVGSVGElement | null
@@ -24,6 +29,7 @@ interface CardRefs {
   sourceRight: HTMLDivElement | null
   newLevel: HTMLSpanElement | null
   condition: HTMLParagraphElement | null
+  eye: EyeRefs
 }
 
 function headingFor(payload: BoonRevealPayload): string {
@@ -237,6 +243,7 @@ function PhoneBoonReveal({
         front: null,
         veil: null,
         glow: null,
+        maze: null,
         rays: null,
         silhouette: null,
         sigil: null,
@@ -244,6 +251,7 @@ function PhoneBoonReveal({
         sourceRight: null,
         newLevel: null,
         condition: null,
+        eye: { lidTop: null, lidBottom: null, slit: null, iris: null },
       }
     }
     return cardRefs.current[index]!
@@ -328,6 +336,7 @@ function PhoneBoonReveal({
         if (refs.front) gsap.set(refs.front, { opacity: 0 })
         if (refs.veil) gsap.set(refs.veil, { opacity: 0.45 })
         if (refs.glow) gsap.set(refs.glow, { opacity: 0 })
+        resetMaze(refs.maze)
         if (refs.rays) gsap.set(refs.rays, { opacity: 0, scale: 0.8, rotation: 0 })
         if (refs.silhouette) gsap.set(refs.silhouette, { opacity: 0, scale: 0.9, x: 6, y: -6 })
         if (refs.sigil) gsap.set(refs.sigil, { opacity: 0 })
@@ -342,6 +351,9 @@ function PhoneBoonReveal({
         }
         if (refs.condition) {
           gsap.set(refs.condition, { opacity: 0 })
+        }
+        if (activeCards[i]!.cardKind === 'hidden') {
+          resetEye(refs.eye, reducedMotion)
         }
       }
 
@@ -466,7 +478,16 @@ function PhoneBoonReveal({
           flipStart,
         )
 
-        if (reducedMotion) {
+        if (card.cardKind === 'hidden') {
+          if (refs?.back) tl.set(refs.back, { opacity: 0 }, flipStart)
+          if (refs?.front) tl.set(refs.front, { opacity: 1 }, flipStart)
+          addEyeOpen(tl, refs?.eye, {
+            hesitationStart: cursor,
+            openStart: flipStart,
+            openSec: flipSec + settleSec,
+            reducedMotion,
+          })
+        } else if (reducedMotion) {
           if (refs?.back) {
             tl.to(refs.back, { opacity: 0, duration: flipSec, ease: 'none' }, flipStart)
           }
@@ -562,6 +583,14 @@ function PhoneBoonReveal({
             flipStart + flipSec * 0.2,
           )
         }
+        if (accent?.glowPattern === 'maze') {
+          addMazeTrace(tl, refs?.maze ?? null, {
+            start: flipStart,
+            traceSec: flipSec + settleSec,
+            restOpacity: accent.glowPatternOpacity ?? 0.5,
+            reducedMotion,
+          })
+        }
         if (refs?.condition && card.cardKind === 'hidden' && card.conditionText) {
           tl.to(
             refs.condition,
@@ -655,6 +684,16 @@ function PhoneBoonReveal({
                   }}
                   className="pointer-events-none absolute -inset-4 rounded-2xl"
                 />
+
+                {/* Accent maze glow layer */}
+                {accent?.glowPattern === 'maze' && (
+                  <MazeGlow
+                    color={accent.color}
+                    svgRef={(el) => {
+                      ensureCardRef(index).maze = el
+                    }}
+                  />
+                )}
 
                 {/* Evolved light rays layer */}
                 {isEvolved && !reducedMotion && (
@@ -779,6 +818,21 @@ function PhoneBoonReveal({
                     </div>
                   </div>
                 </div>
+
+                {/* Eye lids overlay for hidden boon reveal */}
+                {isHidden && (
+                  <EyeLids
+                    color={tier.color}
+                    setRef={(key, el) => {
+                      const eye = ensureCardRef(index).eye
+                      if (key === 'lidTop' || key === 'lidBottom') {
+                        eye[key] = el as SVGSVGElement | null
+                      } else {
+                        eye[key] = el as HTMLDivElement | null
+                      }
+                    }}
+                  />
+                )}
 
                 {/* Fused source icons converging into the card */}
                 {sourceIds && (

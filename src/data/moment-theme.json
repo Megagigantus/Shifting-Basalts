@@ -96,6 +96,8 @@
       "label": "Thils",
       "color": "#c4b5fd",
       "overlay": "sigil",
+      "glowPattern": "maze",
+      "glowPatternOpacity": 0.5,
       "particlePreset": "mazeMotes",
       "soundKey": "accentThils"
     }
