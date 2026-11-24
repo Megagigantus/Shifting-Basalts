@@ -9,6 +9,9 @@ import { revealOrder, type RevealCard } from '../revealTier'
 import { accentById, THEME, tierById } from '../theme'
 import { EyeLids, type EyeRefs } from './EyeLids'
 import { addEyeOpen, resetEye } from './eyeOpen'
+import { EvolveFx, type EvolveRefs } from './EvolveFx'
+import { addEvolveBurst, addEvolveCharge, resetEvolveFx } from './evolveTimeline'
+import { AtomOrbit } from './LingerEffects'
 import { MazeGlow } from './MazeGlow'
 import { addMazeTrace, resetMaze } from './mazeTrace'
 import { type BoonRevealPayload, cardsForViewer, cardText } from './payload'
@@ -21,6 +24,7 @@ interface CardRefs {
   front: HTMLDivElement | null
   veil: HTMLDivElement | null
   glow: HTMLDivElement | null
+  atom: SVGSVGElement | null
   maze: SVGSVGElement | null
   rays: HTMLDivElement | null
   silhouette: HTMLDivElement | null
@@ -30,6 +34,7 @@ interface CardRefs {
   newLevel: HTMLSpanElement | null
   condition: HTMLParagraphElement | null
   eye: EyeRefs
+  evolve: EvolveRefs
 }
 
 function headingFor(payload: BoonRevealPayload): string {
@@ -243,6 +248,7 @@ function PhoneBoonReveal({
         front: null,
         veil: null,
         glow: null,
+        atom: null,
         maze: null,
         rays: null,
         silhouette: null,
@@ -252,6 +258,7 @@ function PhoneBoonReveal({
         newLevel: null,
         condition: null,
         eye: { lidTop: null, lidBottom: null, slit: null, iris: null },
+        evolve: { cracks: null, flash: null, shock: null },
       }
     }
     return cardRefs.current[index]!
@@ -335,7 +342,8 @@ function PhoneBoonReveal({
         if (refs.back) gsap.set(refs.back, { opacity: 1 })
         if (refs.front) gsap.set(refs.front, { opacity: 0 })
         if (refs.veil) gsap.set(refs.veil, { opacity: 0.45 })
-        if (refs.glow) gsap.set(refs.glow, { opacity: 0 })
+        if (refs.glow) gsap.set(refs.glow, { opacity: 0, scale: 1 })
+        if (refs.atom) gsap.set(refs.atom, { opacity: 0 })
         resetMaze(refs.maze)
         if (refs.rays) gsap.set(refs.rays, { opacity: 0, scale: 0.8, rotation: 0 })
         if (refs.silhouette) gsap.set(refs.silhouette, { opacity: 0, scale: 0.9, x: 6, y: -6 })
@@ -354,6 +362,9 @@ function PhoneBoonReveal({
         }
         if (activeCards[i]!.cardKind === 'hidden') {
           resetEye(refs.eye, reducedMotion)
+        }
+        if (activeCards[i]!.tier === 'evolved') {
+          resetEvolveFx(refs.evolve)
         }
       }
 
@@ -409,28 +420,47 @@ function PhoneBoonReveal({
         const hesSec = tier.hesitationMs / 1000
         const flipStart = cursor + hesSec
 
-        // Evolved hesitation tremble (skipped in reduced motion).
-        if (!reducedMotion && card.tier === 'evolved' && refs?.flipper && hesSec > 0.08) {
-          const stepSec = 0.05
-          const steps = Math.max(2, Math.floor((hesSec - 0.04) / stepSec))
-          for (let s = 0; s < steps; s++) {
-            const dir = s % 2 === 0 ? 1 : -1
+        // Evolved charge-up: ramping tremble, swelling glow, and energy cracks.
+        if (card.tier === 'evolved') {
+          if (!reducedMotion && refs?.flipper && hesSec > 0.08) {
+            const stepSec = 0.05
+            const steps = Math.max(2, Math.floor((hesSec - 0.04) / stepSec))
+            for (let s = 0; s < steps; s++) {
+              const dir = s % 2 === 0 ? 1 : -1
+              const progress = steps > 1 ? s / (steps - 1) : 1
+              const ampX = 1 + progress * 4
+              const ampRot = 0.4 + progress * 1.6
+              tl.to(
+                refs.flipper,
+                {
+                  x: dir * ampX,
+                  rotation: dir * ampRot,
+                  duration: stepSec,
+                  ease: 'none',
+                },
+                cursor + s * stepSec,
+              )
+            }
             tl.to(
               refs.flipper,
-              {
-                x: dir * 2.5,
-                rotation: dir * 1.1,
-                duration: stepSec,
-                ease: 'none',
-              },
-              cursor + s * stepSec,
+              { x: 0, rotation: 0, duration: 0.04, ease: 'power1.out' },
+              flipStart - 0.04,
             )
           }
-          tl.to(
-            refs.flipper,
-            { x: 0, rotation: 0, duration: 0.04, ease: 'power1.out' },
-            flipStart - 0.04,
-          )
+          if (refs?.glow && hesSec > 0) {
+            tl.to(
+              refs.glow,
+              reducedMotion
+                ? { opacity: 0.55, duration: hesSec, ease: 'none' }
+                : { opacity: 0.55, scale: 1.12, duration: hesSec, ease: 'power2.in' },
+              cursor,
+            )
+          }
+          addEvolveCharge(tl, refs?.evolve, {
+            start: cursor,
+            end: flipStart,
+            reducedMotion,
+          })
         }
 
         // Fused source boons appear over the card before the flip.
@@ -544,13 +574,25 @@ function PhoneBoonReveal({
           }
 
           if (tier.shake) {
-            const offsets = [
-              { x: -4, y: 2 },
-              { x: 4, y: -3 },
-              { x: -3, y: 1 },
-              { x: 2, y: -1 },
-              { x: 0, y: 0 },
-            ]
+            const offsets =
+              card.tier === 'evolved'
+                ? [
+                    { x: -8, y: 4 },
+                    { x: 8, y: -6 },
+                    { x: -6, y: 3 },
+                    { x: 5, y: -3 },
+                    { x: -3, y: 2 },
+                    { x: 2, y: -1 },
+                    { x: -1, y: 1 },
+                    { x: 0, y: 0 },
+                  ]
+                : [
+                    { x: -4, y: 2 },
+                    { x: 4, y: -3 },
+                    { x: -3, y: 1 },
+                    { x: 2, y: -1 },
+                    { x: 0, y: 0 },
+                  ]
             offsets.forEach((offset, stepIdx) => {
               tl.to(
                 stageEl,
@@ -569,11 +611,29 @@ function PhoneBoonReveal({
           }
         }
 
+        if (card.tier === 'evolved') {
+          addEvolveBurst(tl, refs?.evolve, { at: flipStart, reducedMotion })
+        }
+
         if (refs?.glow) {
           tl.to(
             refs.glow,
-            { opacity: tier.glowIntensity, duration: flipSec, ease: 'power1.out' },
+            {
+              opacity: tier.glowIntensity,
+              ...(card.tier === 'evolved' && !reducedMotion ? { scale: 1 } : {}),
+              duration: flipSec,
+              ease: 'power1.out',
+            },
             flipStart,
+          )
+        }
+        if (refs?.atom && tier.lingerEffect === 'atom') {
+          const atomAt =
+            reducedMotion || card.cardKind === 'hidden' ? flipStart : flipStart + flipSec * 0.45
+          tl.to(
+            refs.atom,
+            { opacity: 1, duration: 0.6, ease: reducedMotion ? 'none' : 'power1.out' },
+            atomAt,
           )
         }
         if (refs?.sigil && accent) {
@@ -685,6 +745,17 @@ function PhoneBoonReveal({
                   className="pointer-events-none absolute -inset-4 rounded-2xl"
                 />
 
+                {/* Lingering atomic orbit layer behind the card */}
+                {tier.lingerEffect === 'atom' && (
+                  <AtomOrbit
+                    color={tier.color}
+                    still={reducedMotion}
+                    svgRef={(el) => {
+                      ensureCardRef(index).atom = el
+                    }}
+                  />
+                )}
+
                 {/* Accent maze glow layer */}
                 {accent?.glowPattern === 'maze' && (
                   <MazeGlow
@@ -752,6 +823,21 @@ function PhoneBoonReveal({
                       />
                     )}
                   </div>
+
+                  {/* Evolved cracks, white flash, and shockwave */}
+                  {isEvolved && (
+                    <EvolveFx
+                      color={tier.color}
+                      setRef={(key, el) => {
+                        const evolve = ensureCardRef(index).evolve
+                        if (key === 'cracks') {
+                          evolve.cracks = el as SVGSVGElement | null
+                        } else {
+                          evolve[key] = el as HTMLDivElement | null
+                        }
+                      }}
+                    />
+                  )}
 
                   {/* Face-up card front */}
                   <div
