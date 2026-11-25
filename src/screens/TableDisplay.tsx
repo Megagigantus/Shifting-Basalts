@@ -5,6 +5,7 @@ import { ArrowLeft, Maximize2, Minimize2 } from 'lucide-react'
 import type { RunState } from '../model/run'
 import { MomentLayer } from '../moments/MomentLayer'
 import { SoundPrompt, SoundSettingsButton } from '../moments/SoundControls'
+import { LoreRevealLayer } from './LoreRevealOverlay'
 import { SMALL_BUTTON } from '../ui/styles'
 import { cx } from '../ui/tone'
 import { PlayerRoom } from './PlayerRoom'
@@ -52,6 +53,7 @@ export function TableDisplay({ state, onExit }: { state: RunState | null; onExit
   return (
     <div className="mx-auto flex min-h-screen max-w-7xl flex-col gap-6 px-4 py-4 text-stone-100 sm:px-8 sm:py-6">
       {isActive && <MomentLayer runId={safe.run.id} viewer={{ kind: 'table' }} />}
+      {isActive && <LoreRevealLayer runId={safe.run.id} characterIds={['_table']} />}
       {isActive && <SoundPrompt />}
 
       <header className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-stone-800/90 bg-stone-900/85 px-4 py-2.5 backdrop-blur">
