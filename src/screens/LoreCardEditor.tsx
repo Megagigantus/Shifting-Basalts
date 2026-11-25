@@ -2,7 +2,9 @@
 import { useState, type FormEvent } from 'react'
 import { loreImageUrl } from '../lore/loreArt'
 import { saveCard } from '../lore/loreStore'
+import { queueReplay } from '../lore/revealStore'
 import type { LoreCard, LoreGroup, LoreRepeat, LoreSource, LoreTier } from '../lore/types'
+import { useActiveRun } from '../runStore'
 import { Modal } from '../ui/Modal'
 import { Pill } from '../ui/Pill'
 import { FIELD, FIELD_LABEL, PRIMARY_BUTTON, QUIET_BUTTON } from '../ui/styles'
@@ -36,6 +38,7 @@ const SOURCE_OPTIONS: { value: LoreSource; label: string }[] = [
 /** Modal form to create or edit a lore card, validating through saveCard. */
 export function LoreCardEditor({ card, groups, seen, onClose }: Props) {
   const isNew = card === null
+  const { state: activeRun } = useActiveRun()
   const [id, setId] = useState(card?.id ?? '')
   const [title, setTitle] = useState(card?.title ?? '')
   const [group, setGroup] = useState(card?.group ?? groups[0]?.id ?? '')
@@ -51,6 +54,7 @@ export function LoreCardEditor({ card, groups, seen, onClose }: Props) {
   const [imagePrompt, setImagePrompt] = useState(card?.imagePrompt ?? '')
   const [imageUrl, setImageUrl] = useState(card?.imageUrl ?? '')
   const [saving, setSaving] = useState(false)
+  const [revealing, setRevealing] = useState(false)
   const [errors, setErrors] = useState<string[]>([])
 
   const trimmedId = isNew ? id.trim() : card.id
@@ -63,7 +67,7 @@ export function LoreCardEditor({ card, groups, seen, onClose }: Props) {
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
-    if (saving) return
+    if (saving || revealing) return
 
     const nextCard: LoreCard = {
       id: trimmedId,
@@ -99,6 +103,20 @@ export function LoreCardEditor({ card, groups, seen, onClose }: Props) {
       setErrors([err instanceof Error && err.message ? err.message : 'Could not save the card.'])
     } finally {
       setSaving(false)
+    }
+  }
+
+  async function handleRevealNow() {
+    if (!card || !activeRun || saving || revealing) return
+    setRevealing(true)
+    setErrors([])
+    try {
+      await queueReplay(activeRun.run.id, card.id)
+      onClose()
+    } catch (err) {
+      setErrors([err instanceof Error && err.message ? err.message : 'Could not queue the card for reveal.'])
+    } finally {
+      setRevealing(false)
     }
   }
 
@@ -289,11 +307,24 @@ export function LoreCardEditor({ card, groups, seen, onClose }: Props) {
           </div>
         )}
 
-        <div className="flex flex-wrap justify-end gap-2 border-t border-stone-800 pt-3">
-          <button type="button" onClick={onClose} className={QUIET_BUTTON}>
+        <div className="flex flex-wrap items-center justify-end gap-2 border-t border-stone-800 pt-3">
+          {!isNew && !activeRun && (
+            <span className="mr-auto text-xs text-stone-400">Start a run to reveal cards.</span>
+          )}
+          <button type="button" onClick={onClose} disabled={saving || revealing} className={QUIET_BUTTON}>
             Cancel
           </button>
-          <button type="submit" disabled={saving} className={PRIMARY_BUTTON}>
+          {!isNew && (
+            <button
+              type="button"
+              disabled={!activeRun || saving || revealing}
+              onClick={handleRevealNow}
+              className={QUIET_BUTTON}
+            >
+              {revealing ? 'Queuing…' : 'Reveal now'}
+            </button>
+          )}
+          <button type="submit" disabled={saving || revealing} className={PRIMARY_BUTTON}>
             {saving ? 'Saving…' : 'Save'}
           </button>
         </div>

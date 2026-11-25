@@ -23,6 +23,7 @@ const PlayerPreview = lazy(() => import('./screens/PlayerPreview').then((m) => (
 const RunHistory = lazy(() => import('./screens/RunHistory').then((m) => ({ default: m.RunHistory })))
 const TableViewer = lazy(() => import('./screens/TableViewer').then((m) => ({ default: m.TableViewer })))
 const LoreDeck = lazy(() => import('./screens/LoreDeck').then((m) => ({ default: m.LoreDeck })))
+const LoreDrawer = lazy(() => import('./screens/LoreDrawer').then((m) => ({ default: m.LoreDrawer })))
 const TableDisplay = lazy(() => import('./screens/TableDisplay').then((m) => ({ default: m.TableDisplay })))
 const MomentIndicator = lazy(() => import('./moments/MomentIndicator').then((m) => ({ default: m.MomentIndicator })))
 
@@ -173,6 +174,12 @@ function SignedIn({ email, role }: { email: string; role: 'dm' | 'player' }) {
           )}
         </Suspense>
       </main>
+
+      {isDm && !playerView && (
+        <Suspense fallback={null}>
+          <LoreDrawer state={state} />
+        </Suspense>
+      )}
 
       {isDm && invitesOpen && (
         <Modal title="Invites" onClose={() => setInvitesOpen(false)}>
