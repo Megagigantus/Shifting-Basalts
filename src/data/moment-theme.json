@@ -46,7 +46,7 @@
       "hesitationMs": 1200,
       "shake": false,
       "spotlight": true,
-      "lingerEffect": "electric"
+      "lingerEffect": "atom"
     },
     {
       "id": "evolved",
@@ -58,7 +58,7 @@
       "hesitationMs": 1200,
       "shake": true,
       "spotlight": true,
-      "lingerEffect": "atom"
+      "lingerEffect": "electric"
     }
   ],
   "tierRules": [
