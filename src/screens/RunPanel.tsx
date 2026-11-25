@@ -2,6 +2,7 @@
 // that just ended, or the lobby to start a new one.
 import { useState } from 'react'
 import { Flag, Skull, Trophy } from 'lucide-react'
+import type { Character } from '../model/character'
 import type { RunResult, RunState } from '../model/run'
 import { useActiveRun } from '../runStore'
 import { useCharacters } from '../useCharacters'
@@ -9,6 +10,7 @@ import { LootNames } from '../ui/LootNames'
 import { Panel } from '../ui/Panel'
 import { Pill } from '../ui/Pill'
 import { PRIMARY_BUTTON } from '../ui/styles'
+import { DispatchPanel } from './DispatchPanel'
 import { RunTracker } from './RunTracker'
 import { StartRun } from './StartRun'
 
@@ -30,14 +32,24 @@ export function RunPanel() {
         />
       )}
 
-      {!state && ended && <RunSummary {...ended} onDone={() => setEnded(null)} />}
+      {!state && ended && <RunSummary {...ended} characters={characters ?? []} onDone={() => setEnded(null)} />}
 
       {!state && !ended && !loading && characters && <StartRun characters={characters} />}
     </div>
   )
 }
 
-function RunSummary({ results, state, onDone }: { results: RunResult[]; state: RunState; onDone: () => void }) {
+function RunSummary({
+  results,
+  state,
+  characters,
+  onDone,
+}: {
+  results: RunResult[]
+  state: RunState
+  characters: Character[]
+  onDone: () => void
+}) {
   const { run } = state
   const wiped = run.status === 'wiped'
   const headline = wiped
@@ -88,6 +100,7 @@ function RunSummary({ results, state, onDone }: { results: RunResult[]; state: R
         </p>
       )}
       <p className="m-0 text-[0.6875rem] text-stone-500">These have been added to each character's saved record.</p>
+      <DispatchPanel state={state} characters={characters} runEnded />
     </Panel>
   )
 }
