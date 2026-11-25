@@ -261,11 +261,12 @@ describe('nextQueueItem and waitingCount', () => {
     expect(waitingCount(items)).toBe(2)
   })
 
-  it('orders waiting items by manual first, then order ascending, then createdAtMs ascending', () => {
+  it('orders eligible waiting items by manual, immediate, ready, then order, then createdAtMs', () => {
     const autoBestOrder = makeQueueItem({
       id: 'auto-0',
       status: 'waiting',
       manual: false,
+      ready: true,
       order: 0,
       createdAtMs: 10,
     })
@@ -307,8 +308,36 @@ describe('nextQueueItem and waitingCount', () => {
     expect(nextQueueItem(remaining)?.id).toBe('manual-1-late')
     expect(waitingCount(remaining)).toBe(2)
 
-    const afterManual = [autoBestOrder, makeQueueItem({ id: 'auto-2', order: 2, createdAtMs: 5 })]
+    const afterManual = [autoBestOrder, makeQueueItem({ id: 'auto-2', ready: true, order: 2, createdAtMs: 5 })]
     expect(nextQueueItem(afterManual)?.id).toBe('auto-0')
     expect(waitingCount(afterManual)).toBe(1)
+  })
+
+  it('never returns a waiting item that is not ready, manual, or immediate', () => {
+    const unready1 = makeQueueItem({ id: 'u-1', status: 'waiting', manual: false, order: 0, createdAtMs: 10 })
+    const unready2 = makeQueueItem({
+      id: 'u-2',
+      status: 'waiting',
+      manual: false,
+      ready: false,
+      immediate: false,
+      order: 1,
+      createdAtMs: 20,
+    })
+
+    expect(nextQueueItem([unready1, unready2])).toBeNull()
+    expect(waitingCount([unready1, unready2])).toBe(2)
+  })
+
+  it('prefers manual over immediate and immediate over ready', () => {
+    const readyFirst = makeQueueItem({ id: 'ready-0', ready: true, order: 0, createdAtMs: 10 })
+    const immediateItem = makeQueueItem({ id: 'imm-5', immediate: true, order: 5, createdAtMs: 100 })
+    const manualItem = makeQueueItem({ id: 'man-9', manual: true, order: 9, createdAtMs: 200 })
+
+    expect(nextQueueItem([readyFirst, immediateItem])?.id).toBe('imm-5')
+    expect(waitingCount([readyFirst, immediateItem])).toBe(1)
+
+    expect(nextQueueItem([readyFirst, immediateItem, manualItem])?.id).toBe('man-9')
+    expect(waitingCount([readyFirst, immediateItem, manualItem])).toBe(2)
   })
 })

@@ -18,6 +18,8 @@ export interface LoreQueueItem {
   cardId: string
   status: 'waiting' | 'live' | 'done' | 'skipped' | 'dismissed'
   manual: boolean
+  ready?: boolean
+  immediate?: boolean
   order: number
   createdAtMs: number
   revealId?: string
@@ -129,21 +131,32 @@ export function buildNote(
   return note
 }
 
+function isEligibleWaiting(item: LoreQueueItem): boolean {
+  return item.status === 'waiting' && (item.manual || Boolean(item.immediate) || Boolean(item.ready))
+}
+
 function compareWaiting(a: LoreQueueItem, b: LoreQueueItem): number {
   if (a.manual !== b.manual) return a.manual ? -1 : 1
+  const aImmediate = Boolean(a.immediate)
+  const bImmediate = Boolean(b.immediate)
+  if (aImmediate !== bImmediate) return aImmediate ? -1 : 1
+  const aReady = Boolean(a.ready)
+  const bReady = Boolean(b.ready)
+  if (aReady !== bReady) return aReady ? -1 : 1
   if (a.order !== b.order) return a.order - b.order
   return a.createdAtMs - b.createdAtMs
 }
 
 /**
  * Return the current queue item: the `'live'` item if any, otherwise the highest-priority
- * `'waiting'` item (manual first, then `order` ascending, then `createdAtMs` ascending).
+ * eligible `'waiting'` item (`manual`, `immediate`, or `ready`; ordered manual first, then
+ * immediate, then ready, then `order` ascending, then `createdAtMs` ascending).
  */
 export function nextQueueItem(items: LoreQueueItem[]): LoreQueueItem | null {
   const live = items.find((item) => item.status === 'live')
   if (live) return live
 
-  const waiting = items.filter((item) => item.status === 'waiting')
+  const waiting = items.filter(isEligibleWaiting)
   if (waiting.length === 0) return null
 
   waiting.sort(compareWaiting)
