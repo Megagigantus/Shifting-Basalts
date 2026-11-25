@@ -34,6 +34,7 @@ import { reclaim, type Pledge } from './rules/shrine'
 import { wakeRelic } from './rules/vault'
 import { addMomentToBatch, deleteRunMoments } from './moments/momentStore'
 import { revealsFromChange } from './moments/boonReveal/triggers'
+import { runLoreAfterSave } from './lore/loreEngine'
 
 /**
  * Live view of the run currently in progress, if any. Only the DM's screen
@@ -207,6 +208,7 @@ export async function saveRunState(
   }
 
   await batch.commit()
+  runLoreAfterSave(previous, next)
   // The run is over: its moments (reveal animations) are no longer needed.
   if (justEnded) await deleteRunMoments(id).catch(() => {})
   return results

@@ -38,7 +38,7 @@ function toTimestampMs(value: unknown): number | null {
   return null
 }
 
-function toQueueItem(id: string, data: Record<string, unknown>): LoreQueueItem {
+export function toQueueItem(id: string, data: Record<string, unknown>): LoreQueueItem {
   const status: LoreQueueItem['status'] =
     data.status === 'waiting' ||
     data.status === 'live' ||
@@ -57,6 +57,8 @@ function toQueueItem(id: string, data: Record<string, unknown>): LoreQueueItem {
     createdAtMs: toTimestampMs(data.createdAtMs) ?? toTimestampMs(data.createdAt) ?? 0,
   }
 
+  if (data.ready === true) item.ready = true
+  if (data.immediate === true) item.immediate = true
   if (typeof data.revealId === 'string') item.revealId = data.revealId
   if (data.stage === 'image' || data.stage === 'text' || data.stage === 'more') {
     item.stage = data.stage
