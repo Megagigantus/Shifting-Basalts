@@ -387,6 +387,8 @@ export async function applyChoiceDoc(state: RunState, characterId: string, choic
     // Moments are presentation only: never block applying the player's choice.
   }
   await batch.commit()
+  // A player's own choice (a draft pick, a hidden boon) can trigger lore too.
+  runLoreAfterSave(state, next)
 }
 
 /**
