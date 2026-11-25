@@ -2,11 +2,11 @@
 import gsap from 'gsap'
 import type { EvolveRefs } from './EvolveFx'
 
-/** Reset Evolution effects to their pre-charge state before the timeline plays. */
+/** Reset Evolution effects before the timeline plays: all hidden, so a face-down card gives nothing away. */
 export function resetEvolveFx(refs: EvolveRefs | undefined): void {
   if (!refs) return
   if (refs.cracks) {
-    gsap.set(refs.cracks, { opacity: 1 })
+    gsap.set(refs.cracks, { opacity: 0 })
     const paths = refs.cracks.querySelectorAll('path')
     if (paths.length > 0) {
       gsap.set(paths, { strokeDasharray: 1, strokeDashoffset: 1 })
@@ -39,6 +39,8 @@ export function addEvolveCharge(
   const duration = end - drawStart
   if (duration <= 0) return
 
+  // Cracks show only once this card's charge-up starts drawing them.
+  tl.set(refs.cracks, { opacity: 1 }, drawStart)
   tl.to(
     paths,
     { strokeDashoffset: 0, duration, ease: 'power2.in' },
