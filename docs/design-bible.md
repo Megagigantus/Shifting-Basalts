@@ -1,6 +1,6 @@
 # The Shifting Basalts: Design Bible
 
-Updated Nov 9, 2026 · @Brian Mahy
+Nov 18, 2026 · @Brian Mahy
 
 ## Overview
 
@@ -85,42 +85,42 @@ A full run has 20 drafts (one per room on floors 1 to 4, boss rooms included) an
 | Floor 1 | 5 | 3 boons, two at Level 2 | 5 boons at Level 1 |
 | Floor 2 | 10 | All 3 at Level 3, 1 spare pick | 5 boons at Level 2 |
 | Floor 3 | 15 | 6 spare picks | All 5 at Level 3 |
-| Floor 4 | 20 | 11 spare picks | 5 spare picks for fusing and refilling |
+| Floor 4 | 20 | 11 spare picks | 5 spare picks for combining and refilling |
 
 - **Spare picks:** a 3-slot player maxes out on floor 2, so Pass converts spare picks into Quantum Basalts that extract even on death. Early players then earn the currency that buys more slots.
 - **Reprieve:** replaces a room, so taking one costs a draft.
 
 ## Boon system rules
 
-Each player starts with 3 boon slots and can buy up to 5 with Quantum Basalts. Every boon climbs Level 1 to 3, then either evolves in its slot or fuses with a partner boon to free a slot.
+Each player starts with 3 boon slots and can buy up to 5 with Quantum Basalts. Every boon climbs Level 1 to 3, then either evolves in its slot or combines with a partner boon to free a slot.
 
 ### Drafting
 
 - **Personal offer:** after each room, each player sees their own 4 boons, weighted toward their class and the tags they hold (see Offer weighting under Build clarifications), and picks one. Two players can still end up with the same boon.
-- **Hidden boon:** a 5th offer unlocks for every player when the room's secret condition was met, or for one player when they meet their class trigger. Hidden boons sit in their own extra slot and never level, evolve or fuse; they're flavor for really playing your character. A player who earns a second hidden boon can replace the one they hold, or pass for the normal Pass bonus.
-- **Offer mix** *(proposed)***:** 1 offer is a boon you already hold, so leveling stays within reach, 2 are random, and 1 is a wildcard (an Evolution or Fusion if anyone qualifies).
+- **Hidden boon:** a 5th offer unlocks for every player when the room's secret condition was met, or for one player when they meet their class trigger. Hidden boons sit in their own extra slot and never level, evolve or combine; they're flavor for really playing your character. A player who earns a second hidden boon can replace the one they hold, or pass for the normal Pass bonus.
+- **Offer mix** *(proposed)***:** 1 offer is a boon you already hold, so leveling stays within reach, 2 are random, and 1 is a wildcard (an Evolution or Combination if anyone qualifies).
 
 ### Draft choices
 
 - **Replace:** drop a held boon entirely to take the new one.
 - **Pass:** skip any draft, even with open slots, to earn 1 Quantum Basalt, times the entry-level multiplier. Passed Basalts are guaranteed to extract with the player, even if they die.
 
-### Evolve or fuse
+### Evolve or combine
 
 - **Evolve:** a Level 3 boon becomes its Evolution and stays in its slot. This is the game-changing, high-ceiling path.
-- **Fuse:** two specific Level 3 boons fuse into one, opening a slot for a new boon. The new boon starts at Level 1, so the build gains variety but carries a weak boon into harder floors.
-- **Fusions are final** *(proposed)***:** they can't evolve further, which keeps Evolution's ceiling higher.
-- **Gating** *(proposed)***:** Evolutions and Fusions happen at a Forge room or through the wildcard offer.
-- **Full slots first:** the wildcard never offers an Evolution or Fusion while a player has an empty boon slot. After a Fusion frees a slot, that slot must be filled before the next wildcard Evolution or Fusion. This stops a player from leveling one boon three rooms in a row and evolving it on room 4.
+- **Combine:** two specific Level 3 boons fuse into one, opening a slot for a new boon. The new boon starts at Level 1, so the build gains variety but carries a weak boon into harder floors.
+- **Combinations are final** *(proposed)***:** they can't evolve further, which keeps Evolution's ceiling higher.
+- **Gating** *(proposed)***:** Evolutions and Combinations happen at a Forge room or through the wildcard offer.
+- **Full slots first:** the wildcard never offers an Evolution or Combination while a player has an empty boon slot. After a Combination frees a slot, that slot must be filled before the next wildcard Evolution or Combination. This stops a player from leveling one boon three rooms in a row and evolving it on room 4.
 
 ### Stat tracks
 
 - **Earned every room:** each room clear grants each player a Devotion to put toward a stat track they choose, separate from the boon draft. Devotions are named for the locals' reverence for the Basalts and their god. A few Devotions complete a rank *(proposed)*.
 - **Permanent and dungeon-only:** tracks persist run after run, even after death, but only work inside the Shifting Basalts.
-- **No slots:** tracks never use boon slots, never evolve and never fuse.
+- **No slots:** tracks never use boon slots, never evolve and never combine.
 - **Safe stats only:** tracks grow numbers 5e lets scale freely. Ability scores, skills, attack bonus, AC and save DCs are off limits to protect bounded accuracy.
 - **Tier caps** *(proposed)***:** maximum ranks rise with the 2024 tiers of play, so higher-level runs have new ceilings to reach.
-- **Payoff boons:** a tag in the regular boon pool. A payoff boon reads from a stat track, such as A Healthy Dose of Pain reading from Max HP, so drafting one shows players why their tracks matter. Payoff boons don't evolve or fuse, because they already grow with their track. A payoff only appears in your offers once you have at least 1 rank in its track. Exception: Gleam Dealer's Gamble needs rank 5 in Fortune Dice, the first rank that grants a die.
+- **Payoff boons:** a tag in the regular boon pool. A payoff boon reads from a stat track, such as A Healthy Dose of Pain reading from Max HP, so drafting one shows players why their tracks matter. Payoff boons don't evolve or combine, because they already grow with their track. A payoff only appears in your offers once you have at least 1 rank in its track. Exception: Gleam Dealer's Gamble needs rank 5 in Fortune Dice, the first rank that grants a die.
 
 ### Hidden boon conditions (examples)
 
@@ -187,6 +187,26 @@ When 2 or more players hold at least one boon with the same tag, each of them ga
 | Blood | While any Blood-tagged player is Bloodied, all Blood-tagged players gain +PB to weapon and unarmed damage rolls. |
 | Hunt | When a Hunt-tagged player marks, studies or hits a boss or a Large or larger creature, the next Hunt-tagged player to attack it this round has advantage. |
 
+### Reveal tiers (proposed)
+
+Boons have no fixed rarity. Every boon should be a valid pick, so a "common" label would only tell players some boons are worse. Instead, the app gives each offered card a reveal tier based on what the offer is, which sets how its reveal looks and sounds. It adds no tracking, no tagging and no balance changes.
+
+| Tier | When it applies | How it reveals |
+| --- | --- | --- |
+| Hidden | A hidden boon: a class trigger or a gift from a met room condition | Veiled card that names the condition that was met |
+| Evolved | An Evolution, from the wildcard or a Forge room | Longest pause, trembling card, light rays, a ghostly silhouette of the past strider |
+| Fused | A Combination | The two source boons slide together into one card |
+| Deepened | A held boon leveling to 2 or 3 | Its own color and a visible level tick |
+| New | Any fresh Level 1 boon, payoff boons included | Clean, quick flip |
+
+The first matching row wins. Cards flip in rising tier order, so the biggest one lands last.
+
+Thils accent: Thils's Favor, Thils's Maze and Thils's hidden gifts get an extra overlay on top of their tier, marking them as the god's own gifts.
+
+Table spotlight: offers are personal, so the full reveal plays on each player's device. The table display only celebrates Hidden, Evolved and Fused cards, naming the player, plus one party-wide reveal when a room condition unlocks hidden offers for everyone.
+
+Look: boons are echoes of striders, so reveals use afterimages, light motes and silhouettes rather than lava or embers.
+
 ## Boon catalogue
 
 Fifteen draft boons are in the main table: ten from Brian and five proposed. Four more batches follow it, bringing the pool to 70. Payoff boons sit in the same pool and read from the stat tracks listed after this table. Status tracks what still needs work before the boon goes into the app.
@@ -195,14 +215,14 @@ Fifteen draft boons are in the main table: ten from Brian and five proposed. Fou
 
 | Boon | Tag | Level 1 | Level 2 | Level 3 | Next step | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| Travert's Echoes | Echo | A physical attack hit echoes 25% of its damage in a 10 ft ring or a 10 ft directional rectangle. | Echoes twice. | Echoes 3 times. If an echo kills an enemy, bank an echo to release whenever you want. | Evolves into Chain of Echoes; fuses with Elemain's Flight of Fancy | Locked |
+| Travert's Echoes | Echo | A physical attack hit echoes 25% of its damage in a 10 ft ring or a 10 ft directional rectangle. | Echoes twice. | Echoes 3 times. If an echo kills an enemy, bank an echo to release whenever you want. | Evolves into Chain of Echoes; combines with Elemain's Flight of Fancy | Locked |
 | Reaper's Sprint | Reaper | On a kill, teleport up to 30 ft to a space behind another enemy. Your next hit has advantage and crits. | As Level 1, and killing the second enemy lets you jump to a third. | Adds another jump. Full of the Reaper's energy, you unleash a guaranteed hit for triple crit damage. | Evolves into Nothing Personal | Locked |
 | Spellslinger's Delight | Spell | When a leveled spell hits, cast a cantrip for free. | A second known cantrip is also cast for free. | The second cantrip is cast at 3 targets for free. | Evolves into And You Get a Spell! | Locked |
-| Critical Delight | Crit | Crit range 17 to 20, but non-crits deal 75% damage. | Crit range 15 to 20. | Crit range 10 to 20. Crits deal double, non-crits fall to 10%, and each crit adds another multiplier until you fail to crit or your turn ends. | Fuses with Crits Are for Suckers or Elemain's Flight of Fancy | Locked |
-| Crits Are for Suckers | Crit | You can't crit, but damage increases by 25%. | Damage +35%. | Damage +50%. | Fuses with Critical Delight | Locked |
-| A Fine Steel's Glint | Stance | As a bonus action, sheathe your weapon and anchor in place. You can't attack, but you have resistance to bludgeoning, piercing and slashing damage, and each turn you hold the stance adds one weapon damage die to your strike (up to PB). | You have resistance to all damage, and your strike carries you 10 ft forward from your spot. | You instantly teleport to the target enemy and hit, guaranteed. | Evolves into Samurai's Wake; fuses with Stand Off | Locked |
-| Stand Off | Stance | When you approach a group of 2 or more enemies, enter stand off. When one attacks you, roll a challenge against it, up to a number of times per round equal to this boon's level. Win and the attack misses and you roll a counterattack; lose and you exit stand off and the attack resolves normally. | You can shrug off one hit and stay in stand off. | When you counter, you deflect the attack onto a nearby enemy. | Fuses with A Fine Steel's Glint | Locked |
-| Elemain's Flight of Fancy | Volley | A fired or thrown projectile ricochets once for 50% damage. | 2 ricochets. | 3 ricochets. Each ricochet rolls a d20 and crits only on a 20. | Evolves into Elemain's Retribution; fuses with Critical Delight or Travert's Echoes | Locked |
+| Critical Delight | Crit | Crit range 17 to 20, but non-crits deal 75% damage. | Crit range 15 to 20. | Crit range 10 to 20. Crits deal double, non-crits fall to 10%, and each crit adds another multiplier until you fail to crit or your turn ends. | Combines with Crits Are for Suckers or Elemain's Flight of Fancy | Locked |
+| Crits Are for Suckers | Crit | You can't crit, but damage increases by 25%. | Damage +35%. | Damage +50%. | Combines with Critical Delight | Locked |
+| A Fine Steel's Glint | Stance | As a bonus action, sheathe your weapon and anchor in place. You can't attack, but you have resistance to bludgeoning, piercing and slashing damage, and each turn you hold the stance adds one weapon damage die to your strike (up to PB). | You have resistance to all damage, and your strike carries you 10 ft forward from your spot. | You instantly teleport to the target enemy and hit, guaranteed. | Evolves into Samurai's Wake; combines with Stand Off | Locked |
+| Stand Off | Stance | When you approach a group of 2 or more enemies, enter stand off. When one attacks you, roll a challenge against it, up to a number of times per round equal to this boon's level. Win and the attack misses and you roll a counterattack; lose and you exit stand off and the attack resolves normally. | You can shrug off one hit and stay in stand off. | When you counter, you deflect the attack onto a nearby enemy. | Combines with A Fine Steel's Glint | Locked |
+| Elemain's Flight of Fancy | Volley | A fired or thrown projectile ricochets once for 50% damage. | 2 ricochets. | 3 ricochets. Each ricochet rolls a d20 and crits only on a 20. | Evolves into Elemain's Retribution; combines with Critical Delight or Travert's Echoes | Locked |
 | Overhealing | Guard | Healing beyond max HP becomes temp HP. | Overhealed targets gain resistance. | The healer gains temp HP equal to half the amount overhealed. | Evolves into Overflowing Cup | Locked |
 | Hardened Hide | Guard | Reduce damage taken by PB. | Attackers who hit you take PB damage. | Enemies within 10 ft have disadvantage attacking anyone but you. | Evolves into Titan's Hide | Locked |
 | Cleansing Nova | Guard | Your heals end one condition on the target. | Heals pulse 10 ft, granting allies PB temp HP. | Enemies in the pulse take radiant damage equal to half the healing. | Evolves into Hex Unwoven | Locked |
@@ -297,7 +317,7 @@ Ten Core boons any character can draft, built from Brian's list, plus sixteen bo
 | Elemental Quiver | Volley | Once per turn, a ranged hit deals +PB fire, cold or lightning damage, your choice. | Cold also slows the target by 10 ft, lightning stops its reactions, and fire burns for PB at the start of its turn. | You can apply two elements to one hit. | Evolves into Prismatic Barrage | Locked |
 | Battle Standard | Rally | Once per room, as a bonus action, plant a standard. Allies within 10 ft add +PB to one damage roll per turn until it's knocked over (AC 15, 5 × PB HP). | Allies near the standard have advantage on saves against being Frightened, and the radius becomes 15 ft. | Allies near the standard regain PB HP at the start of their turns. | Evolves into Immortal Banner | Locked |
 
-- **Core tag:** every character can draft Core boons. Like payoffs, they don't evolve or fuse, so they're steady slot fillers rather than build-defining picks.
+- **Core tag:** every character can draft Core boons. Like payoffs, they don't evolve or combine, so they're steady slot fillers rather than build-defining picks.
 - **Honed:** boons can touch ability scores because they reset every run; stat tracks still can't. Level 3 lets one score reach 22 for the run.
 - **Quick Cantrip:** the 2024 bonus-action spell rule only blocks spells cast with slots, so Level 3 allows two cantrips a turn. That's very strong for Warlocks with Eldritch Blast.
 - **Unshackled:** 5e has no "immobilized" condition, so it covers Grappled, Restrained and speed reductions.
@@ -341,7 +361,7 @@ Three boons for casters, healers and anyone fighting the dungeon itself, each an
 
 ### Thils's hidden gifts *(proposed)*
 
-The hidden boons unlocked by room conditions. Like class hidden boons, they sit in the hidden slot and never level, evolve or fuse. They come straight from Thils, god of mazes, traps and lost things.
+The hidden boons unlocked by room conditions. Like class hidden boons, they sit in the hidden slot and never level, evolve or combine. They come straight from Thils, god of mazes, traps and lost things.
 
 | Gift | Effect |
 | --- | --- |
@@ -456,23 +476,23 @@ Each keeps its boon's Level 3 effect and adds a capstone that changes how the ch
 * **Samurai's Wake:** set the lightning damage and decide whether the return hit is also guaranteed.
 * **A Healthy Dose of Pain:** Level 1 now adds the HP your Max HP track grants, once per turn, so it grows with the track instead of adding full HP (around +90 a hit at level 10) to every attack.
 
-## Fusions
+## Combinations
 
-A Fusion merges two specific Level 3 boons into one slot, trading the Evolution path for an open slot. Super Normal is the first designed pair.
+A Combination fuses two specific Level 3 boons into one slot, trading the Evolution path for an open slot. Super Normal is the first designed pair.
 
-| Fusion | Boons | Effect | Status |
+| Combination | Boons | Effect | Status |
 | --- | --- | --- | --- |
 | Super Normal | Critical Delight + Crits Are for Suckers | You lose Critical Delight's non-crit penalty and never critically fail an attack roll: a natural 1 still misses if it doesn't meet AC, but triggers no fumble effects. Your crit range is 18 to 20, non-crits deal +50% damage, and crits deal triple damage plus PB d20. | Locked |
 | Still Water | A Fine Steel's Glint + Stand Off | Entering either stance activates both, and you can still counter while in stance. In stance, you take half damage from all sources and can make up to 3 Stand Off counters per round. Each successful counter deflects the attack onto a nearby enemy and adds 1 turn of stored damage (up to PB) to your guaranteed teleporting strike. | Locked |
 | Elemain's Fancy Criticals | Elemain's Flight of Fancy + Critical Delight | Your ricochets use your Critical Delight crit range (10 to 20) instead of only a natural 20, and each ricochet crit builds and benefits from Critical Delight's multiplier. | Locked |
 | Shooting Gallery | Elemain's Flight of Fancy + Travert's Echoes | Each ricochet triggers a Level 3 Travert's Echo (three pulses for 25% of the ricochet's damage in a 10 ft ring around each target hit), and any kill from a ricochet or its echoes banks an echo. | Locked |
 
-- **Eligibility** *(proposed)***:** only listed pairs can fuse, and both boons must be at Level 3. The app flags a player as eligible when they hold both.
+- **Eligibility** *(proposed)***:** only listed pairs can combine, and both boons must be at Level 3. The app flags a player as eligible when they hold both.
 - **Super Normal d20s** *(proposed)***:** PB d20s on a crit, so the bonus scales from level 5 to 20.
 
-### More fusions
+### More combinations
 
-| Fusion | Boons | Effect | Status |
+| Combination | Boons | Effect | Status |
 | --- | --- | --- | --- |
 | Dragnet | Corrow's Lure + Elemental Residue | Pulled creatures trigger every puddle they're dragged through. | Locked |
 | Rush Hour | The Express + Travert's Echoes | Your echoes gain The Express's hit bonus. | Locked |
@@ -482,9 +502,9 @@ A Fusion merges two specific Level 3 boons into one slot, trading the Evolution 
 | Contract Kill | Zolic's Nine Eyes + First Strike | Your first hit on a boss each room grants 3 Eyes. | Locked |
 | Ghost Reaper | Fading Veil + Reaper's Sprint | Every Reaper's Sprint teleport leaves you hidden. | Locked |
 
-### Batch 3 fusions
+### Batch 3 combinations
 
-| Fusion | Boons | Effect | Status |
+| Combination | Boons | Effect | Status |
 | --- | --- | --- | --- |
 | Seismic Waltz | Resounding Blow + Echoing Step | Moving 20 ft detonates any pending Resounding Blows on enemies within 30 ft for 50% damage instead of 40%, and each detonation triggers Echoing Step's 10 ft splash. | Locked |
 | The Ferryman's Toll | Last Rites + Harvest | Your execution threshold rises by PB HP for every Soul you hold (up to 10 × PB HP), and executing a creature grants 2 Souls instead of 1. | Locked |
@@ -501,7 +521,7 @@ A Fusion merges two specific Level 3 boons into one slot, trading the Evolution 
 
 Pressures are optional challenges that raise the payout of loot and Quantum Basalts. The name is locked; the list and bonus values below are proposed.
 
-| Pressure | Effect | Loot and Quantum Basalts bonus |
+| Pressure | Effect | Loot and QB bonus |
 | --- | --- | --- |
 | Closing Ring | The room's outer ring becomes hazardous terrain, growing inward every 3 rounds. | +15% |
 | Brittle Ground | Critical hits against players crack the floor beneath them. | +10% |
@@ -523,7 +543,7 @@ Parties start with the Pressures that make rooms harder, and unlock the ones tha
 - **Extra Pressures, rank 1:** unlocks Restless Stone and Heavy Crown.
 - **Extra Pressures, rank 2:** unlocks the harsher versions below. Each one replaces its base version rather than stacking with it.
 
-| Harsher version | Change | Loot and Quantum Basalts bonus |
+| Harsher version | Change | Loot and QB bonus |
 | --- | --- | --- |
 | Closing Ring II | The ring grows every 2 rounds instead of 3. | +25% |
 | Brittle Ground II | The crack also knocks the player prone. | +20% |
@@ -1050,7 +1070,7 @@ Quantum Basalts are a rare resource awarded to each player on extraction. They a
 
 These only appear in the Basalt Markets once a character has survived a full clear: beaten the floor 5 legendary boss and extracted alive. A character with a full clear wears a golden glow around their portrait and battle map token. The glow grows stronger with each full clear up to 5. From the 6th to the 10th full clear, each one adds a diamond to the top of the portrait (up to 5 diamonds). Battle map tokens show the glow but not the diamonds.
 
-**Full collection *(proposed)*:** Basalt Echoes are tracked per player, not per character: a player's collection is everything any of their characters has held. A player who has held every entry (every boon, Evolution, Fusion, and every hidden boon they can receive: Thils's gifts plus the class hidden boons of every class any of their characters has) wears a green glow on all of their characters, on top of any golden glow, with an open book at the bottom center of the portrait ring. Battle map tokens show the green glow but not the book. The Echoes log keeps hidden boons out of sight until the first one is received, and its hidden and overall totals count only hidden boons already found, so the full count is never spoiled.
+**Full collection *(proposed)*:** Basalt Echoes are tracked per player, not per character: a player's collection is everything any of their characters has held. A player who has held every entry (every boon, Evolution, Combination, and every hidden boon they can receive: Thils's gifts plus the class hidden boons of every class any of their characters has) wears a green glow on all of their characters, on top of any golden glow, with an open book at the bottom center of the portrait ring. Battle map tokens show the green glow but not the book. The Echoes log keeps hidden boons out of sight until the first one is received, and its hidden and overall totals count only hidden boons already found, so the full count is never spoiled.
 
 | Upgrade | Ranks | Cost per rank | Effect | Origin |
 | --- | --- | --- | --- | --- |
@@ -1082,7 +1102,7 @@ Combat rooms drive the boon draft, and post-boss rooms are where Quantum Basalt 
 | Combat | A fight, then the shared boon draft and any hidden boon. | Most rooms on every floor |
 | Elite *(proposed)* | A harder fight: next floor's families or one creature +2 CR, plus one extra room trick. It pays an extra Devotion per player and an extra loot roll, and its offer always includes the wildcard. | 1 in 4 non-boss rooms, at most 2 per floor, never the first room of floor 1 |
 | Boss | Closes the floor with shift actions, then extract or descend. | End of every floor |
-| Forge | Level up a held boon, or evolve or fuse eligible Level 3 boons. One use per owner in the party, then it cools. | Post-boss, once unlocked |
+| Forge | Level up a held boon, or evolve or combine eligible Level 3 boons. One use per owner in the party, then it cools. | Post-boss, once unlocked |
 | Healing Font | Restores the party between floors. Each owner beyond the first adds temp HP for everyone (proposed: +5 each). | Post-boss, once unlocked |
 | Reprieve | A safe room. Each player chooses Rest (a Short Rest's benefits, including Hit Point Dice and short-rest features, without the hour) or Reflect (level up one boon; a player with no boon that can level up takes catch-up Quantum Basalts instead, see Build clarification 6). | Mid-floor, by chance, once bought. It replaces a combat room, and the party can decline it and fight that room instead. |
 | Post-boss room | Holds purchased upgrades like the Forge and Healing Font, then the choice to descend or extract. | After each boss on floors 1 to 4 |
@@ -1230,6 +1250,50 @@ AC and HP adjust the benchmark; attack percentages are shares of benchmark DPR. 
 
 **Worked example:** a party of 4 at level 10 on floor 3 meets General Vane at CR 12. He has AC 19, 292 HP, +8 to hit and DC 17, and each of his three Halberd strikes deals about 23 damage (3d10 + 7).
 
+### Boss abilities and saves *(proposed)*
+
+Boss ability scores scale with target CR, like the rest of their stats. Each boss ranks its six abilities as Primary, Strong, Average or Weak, and the ability band in Boss stat scaling turns the rank into a modifier. A save is that modifier, plus Boss PB if the boss is proficient. The ability score shown in the app is 10 + 2 × the modifier.
+
+Proficient saves by floor: 2 on floors 1 and 2, 3 on floors 3 and 4, and 4 on floor 5.
+
+| Boss | Primary | Strong | Average | Weak | Proficient saves |
+| --- | --- | --- | --- | --- | --- |
+| The Tessellated Warden | Str | Con | Wis | Dex, Int, Cha | Str, Con |
+| Choir of the Hollow Column | Con | Wis, Cha | Int | Str, Dex | Con, Wis |
+| Gilded Excavation Herd (golem) | Str | Con | Int, Wis | Dex, Cha | Str, Con |
+| Gilded Excavation Herd (hounds) | None | Str, Dex, Wis | Con | Int, Cha | None |
+| Kaelen (Kaelen and Vyr) | Str | Con | Dex, Int, Wis, Cha | None | Str, Con |
+| Vyr (Kaelen and Vyr) | Int | Dex, Wis | Con, Cha | Str | Dex, Int |
+| Senior Tracker Halvard Quill | Dex | Con, Wis | Str, Int, Cha | None | Dex, Wis |
+| The Lattice Spinner | Dex | Str, Wis | Con | Int, Cha | Dex, Wis |
+| The Stride Core | Con | Int, Cha | Wis | Str, Dex | Con, Int, Cha |
+| General Vane of the Tenth Stride | Str | Con, Cha | Dex, Int, Wis | None | Str, Con, Wis |
+| The Glass Hydra | Con | Str | Dex, Wis | Int, Cha | Str, Con, Wis |
+| The Blind Architect | Int | Wis, Cha | Dex, Con | Str | Int, Wis, Cha |
+| The Chorus of Unseen Angles | Cha | Dex, Wis | Int, Con | Str | Dex, Wis, Cha |
+| The Inverted Reliquary | Cha | Con, Wis | Dex, Int | Str | Con, Wis, Cha |
+| Ophaniel of the Inverted Bloom | Cha | Con, Wis | Str, Dex, Int | None | Str, Con, Wis, Cha |
+| The Sun-Eater's Husk | Str | Con, Wis | Cha | Dex, Int | Str, Con, Wis, Cha |
+| The Gatewright | Int | Str, Con | Dex, Wis, Cha | None | Str, Con, Int, Wis |
+
+- **Kaelen and Vyr:** use the active form's abilities and saves.
+- **Example:** General Vane at CR 12 (Boss PB +4) has Str +6, Con +4, Cha +4, Dex +1, Int +1 and Wis +1, so his saves are Str +10, Con +8, Wis +5, Cha +4, Dex +1 and Int +1.
+
+### Legendary actions for floors 1 and 2 *(proposed)*
+
+Floor 1 and 2 bosses have no Legendary Actions by default (see Boss stat scaling for each floor's counts), but Heavy Crown, the extra-Legendary-Action Pressure and parties of 6 or more can give them some. When they do, they use these. Each costs 1 unless noted, and the boss regains spent uses at the start of its turn.
+
+| Boss | Legendary Actions |
+| --- | --- |
+| The Tessellated Warden | Slam: one Columnar Slam. Raise Pillar: a 5 ft pillar rises in an empty space within 30 ft. Pull (costs 2): Magnetic Pull, even if it hasn't recharged. |
+| Choir of the Hollow Column | Resonate: every surviving cluster's Hymn Aura pulses again. Swell: one creature within 30 ft makes a Con save or is pushed 10 ft. |
+| Gilded Excavation Herd | Bite: one hound makes a Bite. Lumber: the golem moves half its speed. Retether (costs 2): move an existing tether to a different pillar. |
+| Kaelen and Vyr | Strike: one Cleave (Kaelen) or Ricochet Bolt (Vyr). Blink: the active form teleports 15 ft. Swap (costs 2): swap forms now. |
+| Senior Tracker Halvard Quill | Longshot: one Longshot. Slip: move half his speed without provoking. Spring (costs 2): an armed Snare Shard triggers now. |
+| The Lattice Spinner | Bite: one Bite. Skitter: move half its speed along walls or ceiling. Reel (costs 2): one creature touching a Transit Cable is teleported 15 ft toward the Spinner. |
+
+- **Legendary Resistances:** need no menu. Each use turns a failed save into a success.
+
 ### Damage dice
 
 Each attack's die sets its feel; the template's percentage sets its average. Build every attack the same way:
@@ -1346,6 +1410,51 @@ Room encounters draw from six families tied to the lore. The generator picks a f
 | Hollow Seraph | Inverted Paradise | Elite | 10 | Deva |
 | Fallen Planetar | Inverted Paradise | Elite | 16 | Planetar |
 
+### Creature stats *(proposed)*
+
+Base stats from the 2024 Monster Manual for each creature's reskin, at its roster CR. The app uses these for HP, AC and saving throws; the creature's own stat block still covers its attacks and traits.
+
+| Creature | AC | HP | HP mult | Str | Dex | Con | Int | Wis | Cha | Proficient saves |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Hexling | 18 | 33 | ×0.42 | 14 (+2) | 11 (+0) | 13 (+1) | 1 (−5) | 3 (−4) | 1 (−5) | None |
+| Column Sentinel | 15 | 67 | ×0.72 | 15 (+2) | 11 (+0) | 16 (+3) | 6 (−2) | 11 (+0) | 7 (−2) | None |
+| Basalt Hound | 15 | 58 | ×0.54 | 17 (+3) | 12 (+1) | 14 (+2) | 6 (−2) | 13 (+1) | 6 (−2) | None |
+| Maze Warden | 17 | 142 | ×0.85 | 18 (+4) | 8 (−1) | 18 (+4) | 7 (−2) | 10 (+0) | 3 (−4) | None |
+| Monolith Keeper | 18 | 220 | ×1.03 | 22 (+6) | 9 (−1) | 20 (+5) | 3 (−4) | 11 (+0) | 1 (−5) | None |
+| Labyrinth Colossus | 20 | 252 | ×0.83 | 24 (+7) | 9 (−1) | 20 (+5) | 3 (−4) | 11 (+0) | 1 (−5) | None |
+| Lost-Thing Mimic | 12 | 58 | ×0.62 | 17 (+3) | 12 (+1) | 15 (+2) | 5 (−3) | 13 (+1) | 8 (−1) | None |
+| Corner Bull | 14 | 85 | ×0.79 | 18 (+4) | 11 (+0) | 16 (+3) | 6 (−2) | 16 (+3) | 9 (−1) | None |
+| Snarecrawler | 14 | 45 | ×0.42 | 15 (+2) | 16 (+3) | 12 (+1) | 6 (−2) | 10 (+0) | 6 (−2) | None |
+| Wrong-Turn Stalker | 14 | 97 | ×0.63 | 16 (+3) | 19 (+4) | 14 (+2) | 10 (+0) | 15 (+2) | 11 (+0) | None |
+| Doorcloak | 14 | 91 | ×0.50 | 17 (+3) | 15 (+2) | 12 (+1) | 13 (+1) | 14 (+2) | 7 (−2) | None |
+| The Overlooked | 12 | 22 | ×0.28 | 1 (−5) | 14 (+2) | 11 (+0) | 10 (+0) | 10 (+0) | 11 (+0) | None |
+| Hollow Pilgrim | 13 | 36 | ×0.39 | 16 (+3) | 17 (+3) | 10 (+0) | 11 (+0) | 10 (+0) | 8 (−1) | Wis +2 |
+| Forgotten One | 15 | 45 | ×0.48 | 14 (+2) | 16 (+3) | 16 (+3) | 13 (+1) | 10 (+0) | 8 (−1) | None |
+| Mourning Wanderer | 12 | 54 | ×0.44 | 1 (−5) | 14 (+2) | 10 (+0) | 12 (+1) | 11 (+0) | 17 (+3) | Wis +2 |
+| Lost Regent | 13 | 67 | ×0.49 | 6 (−2) | 16 (+3) | 16 (+3) | 12 (+1) | 14 (+2) | 15 (+2) | None |
+| Echo Scout | 13 | 16 | ×0.27 | 11 (+0) | 14 (+2) | 12 (+1) | 11 (+0) | 13 (+1) | 11 (+0) | None |
+| Echo Duelist | 18 | 52 | ×0.48 | 16 (+3) | 11 (+0) | 14 (+2) | 11 (+0) | 11 (+0) | 15 (+2) | Con +4, Wis +2 |
+| Echo Gladiator | 16 | 112 | ×0.81 | 18 (+4) | 15 (+2) | 16 (+3) | 10 (+0) | 12 (+1) | 15 (+2) | Str +7, Dex +5, Con +6, Wis +4 |
+| Echo Arcanist | 15 | 81 | ×0.53 | 9 (−1) | 14 (+2) | 11 (+0) | 17 (+3) | 12 (+1) | 11 (+0) | Int +6, Wis +4 |
+| Echo Assassin | 16 | 97 | ×0.53 | 11 (+0) | 18 (+4) | 14 (+2) | 16 (+3) | 11 (+0) | 10 (+0) | Dex +7, Int +6 |
+| Echo Archmage | 17 | 170 | ×0.70 | 10 (+0) | 14 (+2) | 12 (+1) | 20 (+5) | 15 (+2) | 16 (+3) | Int +9, Wis +6 |
+| Stride Wisp | 19 | 27 | ×0.29 | 1 (−5) | 28 (+9) | 10 (+0) | 13 (+1) | 14 (+2) | 11 (+0) | None |
+| Blinkstalker | 13 | 76 | ×0.70 | 18 (+4) | 15 (+2) | 16 (+3) | 6 (−2) | 12 (+1) | 8 (−1) | None |
+| Rift Elemental | 15 | 90 | ×0.65 | 14 (+2) | 20 (+5) | 14 (+2) | 6 (−2) | 10 (+0) | 6 (−2) | None |
+| Gate-Glass Golem | 14 | 123 | ×0.62 | 20 (+5) | 9 (−1) | 18 (+4) | 3 (−4) | 8 (−1) | 1 (−5) | None |
+| Cable Wyrm | 17 | 168 | ×0.74 | 23 (+6) | 16 (+3) | 18 (+4) | 7 (−2) | 14 (+2) | 12 (+1) | None |
+| Wilting Dryad | 16 | 22 | ×0.28 | 10 (+0) | 12 (+1) | 11 (+0) | 14 (+2) | 15 (+2) | 18 (+4) | None |
+| Bloomrot Mound | 15 | 110 | ×0.80 | 18 (+4) | 8 (−1) | 16 (+3) | 5 (−3) | 10 (+0) | 5 (−3) | None |
+| Inverted Unicorn | 12 | 97 | ×0.70 | 18 (+4) | 14 (+2) | 15 (+2) | 11 (+0) | 17 (+3) | 16 (+3) | None |
+| Inverted Treant | 16 | 138 | ×0.70 | 23 (+6) | 8 (−1) | 21 (+5) | 12 (+1) | 16 (+3) | 12 (+1) | None |
+| Hollow Seraph | 17 | 229 | ×1.08 | 18 (+4) | 18 (+4) | 18 (+4) | 17 (+3) | 20 (+5) | 20 (+5) | Wis +9, Cha +9 |
+| Fallen Planetar | 19 | 262 | ×0.86 | 24 (+7) | 20 (+5) | 24 (+7) | 19 (+4) | 22 (+6) | 25 (+7) | Str +12, Con +12, Wis +11, Cha +12 |
+
+- **Saving throws:** a creature's save is its ability modifier, or the listed bonus where it's proficient.
+- **HP when pushed:** HP = the benchmark HP at the new CR × the creature's HP mult, rounded. At its base CR this returns the Monster Manual number, so a minion pushed up stays a minion. The Echo Scout's CR 1/2 benchmark is 60 HP.
+- **Saves when pushed:** add the difference between the new CR's proficiency bonus and the base CR's to all six saves. Ability scores, AC and attacks don't change; the benchmark attack bonus and DPR cover offense.
+- **Party size:** room creatures never take the boss party-size HP multiplier, since the XP budget already scales with the party.
+
 ### How the generator builds an encounter
 
 - **Family weights by floor:** floor 1 is Wardstones and Mazework evenly. Floor 2 adds Echoes and the Lost. Floor 3 leans Gate-Born and Echoes, and floor 4 leans Inverted Paradise and Gate-Born.
@@ -1431,6 +1540,162 @@ Each room gets two details from its floor's table, so repeat layouts still feel 
 | 5 | The room is an exact copy of one from a previous run, down to the scuff marks. |
 | 6 | A local's prayer to Thils is carved fresh into the floor, still dusty. |
 
+## Lore moments *(proposed)*
+
+Lore reaches the table as short cards the app surfaces at set moments, so the DM reads lore instead of memorizing it. Each card fires at a natural pause, and its image fills the players' screens while the DM reads.
+
+### When lore fires
+
+| Trigger | What it covers | How often |
+| --- | --- | --- |
+| First entry ever | The locals, Thils and the Shift | Once per campaign |
+| First arrival on floors 2 to 5 | What changes as the party goes deeper | Once per floor |
+| A named boon drafted for the first time | The strider whose echo it is | Once per boon |
+| Thils's Favor, a hidden gift or a shrine, first time | Thils himself | Once each |
+| A boss room opens for the first time | Who or what the boss was | Once per boss, before initiative |
+| Post-boss room | Caretaker-9 dispatches (below) | Every post-boss room |
+| Loot reveals, oddities, the first Quantum Basalt | Lost things and who lost them | Once per card |
+| First character death | Expulsion and lockout | Once per campaign |
+| Party first picks 2 or more Pressures | Thils waking | Once per campaign |
+
+- **One card per room at most:** the app holds any others for the next pause.
+- **Never mid-combat:** cards wait for the room clear, the draft or the post-boss room. Boss cards are the exception and fire as the room opens.
+- **Skip freely:** a skipped card stays unseen and comes back the next time its trigger fires.
+- **Already covered:** relic lore, room flavor and oddity text already ship as written and don't need cards. A card only adds to them.
+
+### Depth tiers
+
+Every card carries a tier, so a run can never leak the fractured-gate truth early.
+
+| Tier | What it holds | When it can come out |
+| --- | --- | --- |
+| Open | What the locals, the Archive and Lodge broadcasts say openly: Thils, Devotions, the pilgrims, the Shift | Any time |
+| Guarded | Named striders, the lost expedition, Lodge contracts and feuds | When its card fires, or when the party asks Caretaker-9; the DM can hold it for Archive clearance |
+| Deep | The fractured stride gate and the paradise beyond it | As hints that are never explained, at most one Deep card per run |
+| Unseen | Sonder | Never on a card and never in the app. DM only, DC 35, as Campaign context says |
+
+- **Deck limit:** the DM sets the deepest tier the deck may draw from (Open, Guarded or Deep). That one setting is all the app tracks; Archive clearance itself stays at the table, like Lodge ranks.
+
+### Caretaker-9 dispatches
+
+The party's Stride Anchor delivers most Guarded lore, and the anchor's built-in delay gives the DM time to look the answer up.
+
+- **Ask:** in each post-boss room, the party sends one question back to the Archive. The DM logs it in the app with a line of text.
+- **Answer:** it arrives in the next post-boss room, or with the run summary if the party extracts. The DM answers with a dispatch card from the deck or writes one between floors.
+- **Clearance:** a question above the team's Archive clearance comes back refused, in his voice. Clearance gets felt without any new rules.
+- **Voice:** Caretaker-9 leads with the statement type and emotion, then the line ("dry, faintly smug - ..."). The anchor's name and voice are a setting, so another group can bring its own anchor.
+
+### Lore cards and the player reveal
+
+A card holds everything the DM needs at that moment, and players only ever receive the parts the DM reveals.
+
+| Field | What it holds | Who sees it |
+| --- | --- | --- |
+| Title | A short name | DM; players once revealed |
+| Trigger | What fires it and how often | DM |
+| Tier | Open, Guarded or Deep | DM |
+| Read aloud | Two or three sentences, with optional fill-ins like {item} | DM; players after Show text |
+| If they push | One follow-up line or dispatch | DM; players only if the DM reveals it |
+| DM truth | One line that is never read aloud | DM only, never sent |
+| Image | The scene shown on players' screens | Players once revealed |
+| Source | Archive In Between canon, or an entry from Loremaster Mega Gigantus | DM |
+| Seen | Marked once revealed or dismissed, so it won't fire again unless repeatable | DM |
+
+**The reveal, step by step:**
+
+1. **Card ready:** when a trigger fires, a lore prompt slides into the DM view with the whole card. Nothing reaches players yet.
+2. **Reveal:** the DM taps Reveal. Every player's screen dims and the card's image fills it, with a slow zoom and the title. No text yet, so the table looks up and listens.
+3. **Read:** the DM reads aloud. Show text fades the read-aloud in under the image for anyone who wants to reread it, and Show more adds the If they push line.
+4. **Close:** the DM taps Done. The card files itself in each player's Archive Notes, a list of every revealed card they can reopen any time.
+
+- **Targeted reveals:** the DM can reveal to chosen players only, like the one who drafted the boon or passed a check. Only they see it, and it's theirs to share.
+- **Images:** generated locally in ComfyUI as wide 16:9 scenes, unlike map art, which stays top-down, and boss art, which stays front-facing. Until a card has its own art, it shows its group's default image.
+- **Content safety:** an addition to Content safety under Build clarifications. Cards live in the DM's private database, never in the app bundle or the repo, and players receive only the title, image, read-aloud and any revealed If they push line, at the moment of reveal. DM truths are never sent, and no card names Thilsavrass or Sonder.
+
+### App decisions *(proposed)*
+
+- **Card images:** ship with the app like the rest of its art, one file per card and a default per group. A player who digs through the app's files can find them, and the DM accepts that.
+- **Who receives a reveal:** the player, through the character they brought to the run. Revealed cards are collected per account, like Basalt Echoes.
+- **The Library:** the hub's library becomes each account's lore collection, with unrevealed cards shown as "???" and every revealed card reopenable there (Archive Notes). Boon tracking moves to its own hub location, the **Hall of Echoes**.
+- **Full lore collection:** a player who has been shown every card in the deck (DM-written dispatch answers aside) wears a glowing blue laurel on their portrait. Cards added later count, so the laurel can lapse until they catch up.
+- **Table display:** shows lore reveals in the same stages as players' screens, never the DM truth.
+- **Deck limit:** starts at Deep. The DM confirms every reveal, and the one-Deep-card-per-run limit still applies.
+- **Banned terms:** the check covers every field except Read aloud.
+
+### Starter deck
+
+33 cards in seven groups, written from the Lorebook, the Pale Lodge broadcasts and this Bible. Canon means Archive In Between source lore; Loremaster means an entry from Loremaster Mega Gigantus. Lines marked (proposed) are new connections to confirm. Image prompts for each card live in the seed file for the app.
+
+**Arrivals and firsts.** Fire the first time a party reaches a place or milestone.
+
+| Card | When | Read aloud | If they push | DM truth | Tier | Source |
+| --- | --- | --- | --- | --- | --- | --- |
+| Welcome, pilgrim | First entry ever | Locals in undyed robes line the stair down, pressing dried flowers into your hands. "Every visitor teaches him something," one says. "Go on. He is eager to learn you." | The locals revere Thils, true god of mazes, traps and lost things, and welcome tourists because every visitor adds to his knowledge and skills. | True, and literal: Thils learns every visitor. It's why named boons are echoes of past striders. | Open | Loremaster |
+| Mind the Shift | First entry ever, after Welcome | A brass placard, half swallowed by fresh stone, reads "Floor One: Mind the Shift." Behind you, the stair you came down is already a different shape. | The Basalts rebuild every time someone leaves, so no two runs share a floor. | It rebuilds only while no one is perceiving it. Never explain why. | Open | Loremaster |
+| The expedition floor | First arrival on floor 2 | The offerings stop here. In their place, a dented Archive survey beacon blinks a code no one has answered in a very long time. | Caretaker-9 can match the beacon to an early Archive expedition into the Basalts, logged as lost with all hands. | Kaelen and Vyr's expedition. Their last log predates the gate inverting. | Guarded | Loremaster |
+| The gate floor | First arrival on floor 3 | Some of these columns aren't stone. They're riveted struts, and under the dust one is engraved with a schematic every strider knows on sight: a stride gate. | Caretaker-9, uncertain, faintly uneasy - "The Archive has no record of a gate there. That is not the same as there not being one." | The Basalts is a fractured stride gate, built two-way to a paradise universe, then exploded and inverted. | Deep | Loremaster |
+| The inverted floor | First arrival on floor 4 | Golden light falls upward from below. The air smells of rain and honey, and somewhere far off, birdsong plays backward until it ends in silence. | Nothing the Archive can name. Anyone who has been somewhere truly peaceful feels homesick for a place they've never seen. | The paradise universe beyond the gate is bleeding through, inside out. | Deep | Loremaster |
+| Quarantine | First arrival on floor 5 | An automated Archive alert cuts across your comms, no delay for once: "Hazard class revised. Quarantine." Then silence, and Caretaker-9's voice, late as ever: "Alarmed, uncharacteristically sincere - I have never seen that rating on a place people go on purpose." | The Archive rates the floors Yellow, Red, Red, Black, and this one Quarantine. | Floor 5 sits on the gate's ruptured core. | Deep | Loremaster |
+
+**Strider echoes.** Fire the first time anyone drafts a named boon. Each named boon is the absorbed technique of a past visitor.
+
+| Card | When | Read aloud | If they push | DM truth | Tier | Source |
+| --- | --- | --- | --- | --- | --- | --- |
+| Ulma's Thread | First draft of Ulma's Thread | As you take it, a red thread pulls taut from your wrist, running back the way you came. A hoarse, furious voice mutters, "Three times, you smug stone. Three times." Then it's gone. | Ulma Unar, "Ball of Yarn," is the only Pale Lodge member ever to escape the god's maze with her target relic, and she did it three times. She now recruits anyone willing to help kill its god. | Thils absorbed her technique anyway. A hook for turning the party against Thils later. | Guarded | Both |
+| Travert's Echoes | First draft of Travert's Echoes | Your strike lands, and half a second later a note rings out of the stone and strikes again. Somewhere, a man laughs like he just won a bet. | Travert struck every blow twice, once with the fist and once with the note that rang after it. Last logged going into the Basalts. | Thils kept his technique. His tuning gauntlet waits in Thils's Vault. | Guarded | Loremaster |
+| Elemain's shots | First draft of any Elemain boon | Your shot misses, and keeps going. It turns a corner on its own and finds something. A woman's voice, bored: "Told you. Never twice." | Elemain claimed she never missed twice because her shots never stopped looking for a target. | Her ricochet ring is in Thils's Vault, still warm. | Guarded | Loremaster |
+| Lenn's Descent | First draft of Lenn's Descent | A plumb line unspools from nowhere and drops past your feet into a crack in the floor. It keeps falling far longer than the floor is thick. | Lenn dropped a plumb line into every pit and shaft of the place to learn how far down things go. | One day the cord came back up without her. The Basalts go deeper than five floors. | Guarded | Loremaster |
+| Corrow's Lure | First draft of Corrow's Lure | Something tugs at the edge of your mind, gentle as a hook through cloth. Someone did this here before, patiently, many times, to pull lost people out of dead ends. | Corrow spent years fishing lost striders out of the maze's dead ends. | Thils collects lost things. Eventually he reeled in the fisher. | Guarded | Loremaster |
+| Ostra's Coin | First draft of Ostra's Coin | A coin spins on the floor in front of you, though no one dropped it. A face on one side, a skull on the other, and it never quite lands. | It echoes the Token of Whim, a two-sided coin that can raise the dead or slay the living. The Pale Lodge once paid it out to whoever freed Whim from their suffering. | (proposed) Ostra was the hunter who claimed that contract and carried the Token into the Basalts. | Guarded | Both |
+| Pog's Path | First time Pog's Path is earned | For a moment the room is lines on paper, drawn fast and still wet. Then the ink runs and the room is just a room again. | Pog, Wanderer of the Underways, is a senior Pale Lodge Tracker who recovers lost items across hostile terrain. He swore this place could be mapped if you drew fast enough. | His unfinished map is in Thils's Vault. Awoken, it can find the way out of a god's own labyrinth. | Guarded | Both |
+| Zolic's Nine Eyes | First draft of Zolic's Nine Eyes | Something behind your eyes grinds into focus, like a lens being turned. You count without meaning to: one eye open. Eight to go. | Zolic is a senior Pale Lodge Hunter who takes god-killing and titan-killing contracts. Each of his lenses was ground from the eye of something larger than a world. | The ninth eye was meant for one more hunt. (proposed) That hunt was Thils, which ties Zolic to Ulma. | Guarded | Both |
+| Thalisane's Weave | First draft of Thalisane's Weave or Weaver's Mending | A thread of shimmering light ties you to an ally, and for a moment you feel their heartbeat beside your own. Someone wove lifelines here so no one would fall alone. | Thalisane, wielder of the Shimmer Staff, leads the Pale Lodge's Weavers: search and rescue, life weaving, hex removal and emergency extraction. | She got out alive; her shuttle didn't. She could turn up in the campaign wanting it back. | Guarded | Both |
+
+**Caretaker-9 dispatches.** Ready answers for common questions. Each one waits for the next post-boss room.
+
+| Card | When | Read aloud | If they push | DM truth | Tier | Source |
+| --- | --- | --- | --- | --- | --- | --- |
+| Re: Thils | Answer to a question about Thils | Patient, lecturing - "Thils. True god, multiplanar. Portfolio: mazes, traps, games and lost items. The Pale Lodge calls him a collector. I call him a hoarder with better marketing." | Archive files on Thils run long; ask a narrower question. | Canon from the Pale Lodge's broadcasts. | Open | Canon |
+| Re: Getting out | Answer to a question about escape or exits | Grim, unusually brief - "Lodge field notes on Thils's mazes agree on one thing. The only reliable way out is the exact passage you came in by. Don't lose your way back. I'd have to file paperwork." | Most who can't find their way back don't die. They settle in, and their grandchildren never leave. | Canon: the god's labyrinth holds generational cities of the never-escaped. (proposed) The locals descend from them. | Guarded | Canon |
+| Re: Lethality | Answer to a question about danger or the Lodge | Dry, faintly smug - "The Pale Lodge rates every contract by lethality. I'm told their raters occasionally sandbag. I'm told this by the families of junior hunters." | The Lodge's contract board lists hunts in Thils's domain, priced for a god who is asleep. | Canon: a junior hunter was sent into the god's maze at 6.2 when it should have been 12. | Guarded | Canon |
+| Re: Devotions | Answer to a question about Devotions or the locals | Curious, earnest - "The locals call your progress Devotions. Archive researchers agree something is being given. They disagree, loudly, about who is giving it to whom." | Devotions are named for the locals' reverence for the Basalts and their god. | Both are true. The party grows, and Thils learns them as they do. | Open | Loremaster |
+| Thils is awake | Party chooses two or more Pressures for the first time | Concerned, clipped - "Lodge chatter says Thils sleeps in cycles, and when he wakes, every trap gets meaner. The hymns are louder today. Draw your own conclusions. I already have." | Lodge contracts in the god's domain are rated assuming he's dormant. | Canon: awake, his traps are twice as deadly and his beasts thrice as mean. Pressures are the in-world sign of a waking god. | Guarded | Both |
+
+**Lost things.** Loot, oddity and Quantum Basalt moments. Relic lore already ships with each relic, so these cover the rest.
+
+| Card | When | Read aloud | If they push | DM truth | Tier | Source |
+| --- | --- | --- | --- | --- | --- | --- |
+| The contract slip | Any loot reveal on floor 2 or deeper | A torn Pale Lodge contract for the sword of Apo, legendary hero of the Aranphere. Its lethality rating of 6.2 is scratched out, and "12" is scrawled beside it in shaky handwriting. | The Lodge still lists the sword, and its clients want it for a war. The hunter who carried this slip never came back. | The Sword of Apotheos is real and waits in Thils's Vault. | Guarded | Canon |
+| Something of yours | Oddity 1: an item a player lost long ago | On top of a column sits {item}, exactly as you left it, years ago and somewhere else entirely. | Thils collects lost things. All of them. | Ask the player what they once lost before the run, and fill {item} in. | Open | Loremaster |
+| The first Basalt | First Quantum Basalt ever awarded | The shard is warm. Under the light it isn't black at all: every color is folded up inside it, small. | A Quantum Basalt sells for 1,000 credits anywhere in the Archive's economy. | Crystallized stride energy from the gate's core, the same energy the Stride Core sheds. | Open | Loremaster |
+
+**Thils.** Shrines, hidden gifts and the god's own gift.
+
+| Card | When | Read aloud | If they push | DM truth | Tier | Source |
+| --- | --- | --- | --- | --- | --- | --- |
+| A shrine to Thils | First shrine to Thils in a room | A knee-high cairn of hex stones heaped with wax, flowers and small lost things: a key, a child's shoe, one earring. A prayer is carved fresh into the floor in front of it. | The locals leave lost things as offerings, giving Thils the thing he loves most. | Hidden condition 12 rewards an offering made mid-fight, if the shrine survives. | Open | Loremaster |
+| Thils approves | First hidden gift earned | Somewhere in the stone, something chuckles. Not cruelly. The way a game master laughs when the players finally try the thing. | A room's hidden condition is revealed when met, so the party learns what Thils rewards. | Thils is playing with them. He wants to be beaten in interesting ways. | Open | Loremaster |
+| Thils's Favor | First Vault opening, Thils shrine, room condition met, room trick sprung, or hidden boon with no card of its own | The hymns humming through the stone stop. For one breath the floor holds still, the way a crowd goes quiet when someone important walks in. Then they start again, louder. | The locals say Thils almost never gives anything of his own. | The only boon that's the god's own gift rather than an echo. | Open | Loremaster |
+
+**Death and echoes of the party.** The fall, the lockout, and the dungeon learning the party.
+
+| Card | When | Read aloud | If they push | DM truth | Tier | Source |
+| --- | --- | --- | --- | --- | --- | --- |
+| Expelled | First character death ever | You don't fall. You're set down outside on the pilgrims' stair, like a misplaced item returned to the front desk. Your pockets are lighter, and the stair won't let you go back down. | The dungeon's magic locks the fallen out for a time it decides. | (proposed tie-in) The lockout could double as Archive quarantine for striders who die inside. | Open | Loremaster |
+| Your echo | Oddity 2: an echo of a party member walks past | You see yourself, or someone wearing your stance, mid-fight with something you can't see. They're using a trick you haven't learned yet. | The Basalts remember everyone who comes in. | Thils is learning the party. One day their technique may be someone else's boon. | Guarded | Loremaster |
+
+**Bosses.** Fire as a boss room opens for the first time, before initiative.
+
+| Card | When | Read aloud | If they push | DM truth | Tier | Source |
+| --- | --- | --- | --- | --- | --- | --- |
+| The Tessellated Warden | Boss room opens, first time | A hive of hexagonal columns heaves upright, bound in gold-veined runes. In its chest, a cracked lens holds a still image of a sunlit golden meadow, perfectly calm. | The runes match Archive transit script. | Built from the original stride gate's outer frame. The meadow is the paradise universe. | Deep | Loremaster |
+| Kaelen and Vyr | Boss room opens, first time | Two voices, one flickering silhouette, talking over each other: "Log entry four-one-one, gate stable, crossing at..." "...crossing at dawn, gate stable, log entry four-one-one..." | Caretaker-9 can match the log format to the lost early expedition from floor 2. | Absorbed by Thils. Their final log predates the inversion. | Guarded | Loremaster |
+| Halvard Quill | Boss room opens, first time | A tall figure in a Pale Lodge tracker's coat flickers into place and ticks something off a contract slip. He looks at your weakest member and smiles like he's found his mark. | Lodge records list Senior Tracker Halvard Quill as dead on a high-lethality contract here. | An absorbed echo. (proposed) Bringing his tags back to the Lodge could earn a commendation. | Guarded | Loremaster |
+| The Blind Architect | Boss room opens, first time | A shape made of nothing, edged in floating shards of basalt, kneels at a seam in the wall and smooths it closed, like someone mending a tear. | Caretaker-9 has no record of it. None at all. | The dungeon's closest brush with the campaign's big bad. | Deep | Loremaster |
+| The Gatewright | Boss room opens, first time | It turns, and its face is a thousand faces, with an engineer's tools welded to its hands. "It was meant to go both ways," it says, in all their voices. "It was meant to go both ways." | None. The Archive goes quiet. | The engineer who built the gate, fused with its core and the first thousand minds Thils absorbed. | Deep | Loremaster |
+
+The other ten bosses get cards the same way as their art is made.
+
 ## App requirements
 
 The app replaces the character sheet: characters are saved in it, and the DM loads whichever players are present at the start of a run.
@@ -1440,7 +1705,7 @@ The app replaces the character sheet: characters are saved in it, and the DM loa
 - **Main stage:** the current room fills most of the screen. It's generated from this Bible and the Campaign Lorebook: room type, layout and terrain, encounter, room tricks and hidden condition, plus the boss and its Shift Action on boss rooms.
 - **Run tracker:** a smaller panel for floor and room progress, active Pressures, and the descend-or-extract choice at post-boss rooms.
 - **Descend or extract vote:** after each boss on floors 1 to 4, every living player votes Descend or Extract on their device, by tapping the Descend or Extract card, and can change their vote. The DM's screen shows the tally and who hasn't voted; the DM still makes the final call.
-- **Player sidebar:** one card per player that opens into their boon slots, levels, evolutions, fusions, hidden boon and suppressed boons; stat track ranks and Devotions; and their upgrade path, where they can buy upgrades with Quantum Basalts.
+- **Player sidebar:** one card per player that opens into their boon slots, levels, evolutions, combinations, hidden boon and suppressed boons; stat track ranks and Devotions; and their upgrade path, where they can buy upgrades with Quantum Basalts.
 - **Group rewards:** run loot, Quantum Basalts earned and passed Basalts, tracked for the whole party.
 
 ### DM view and player view
@@ -1455,7 +1720,7 @@ The DM hosts the run; players join on their own devices with a lighter view.
 - **Lean profile, not a full sheet:** characters level up through story between runs, so a saved full sheet would go stale. The app keeps only what it needs to run the dungeon, and each player confirms it at run setup: name, class and subclass (plus a second class and subclass for a multiclass), level (total level sets PB), caster type (none, half, full or Pact Magic), whether they have a summon or companion, their main attack style (melee, ranged or spells), and their weapon and armor training and Weapon Mastery picks (see Character setup).
 - **Why those fields:** they set boon offer eligibility, class hidden boon triggers, and every PB-based boon number.
 - **Modifiers, not totals:** the app shows what the dungeon adds, like +10 max HP or +20 ft speed, and players apply it to their own sheets. It never tries to track their full stats.
-- **The dungeon layer:** boon slots, boon levels, evolutions and fusions; the hidden boon and any suppressed boons; stat track ranks and banked Devotions; upgrades and ranks; Quantum Basalts (banked, earned this run and passed); loot assigned to them; lockout timer; deepest floor reached; and run history.
+- **The dungeon layer:** boon slots, boon levels, evolutions and combinations; the hidden boon and any suppressed boons; stat track ranks and banked Devotions; upgrades and ranks; Quantum Basalts (banked, earned this run and passed); loot assigned to them; lockout timer; deepest floor reached; and run history.
 - **Several characters per player:** a player can create and own several characters, but brings only one into a run. Each character keeps its own dungeon layer (Devotions, upgrades, Quantum Basalts, loot, lockout). Basalt Echoes are the exception: they belong to the player and count across all their characters (see Full collection). A locked-out character stays sealed, but its player can bring a different character. Players create their own characters with an empty dungeon layer; only the DM deletes characters.
 
 ### Character setup *(proposed)*
@@ -1512,7 +1777,7 @@ What a second class adds. Simple weapons always come from the primary class.
 - Load the party, enter its level and size, and choose Pressures. Party level, party size and floor set encounter levels, boss stats, room trick DCs and the loot tier.
 - **Pressure votes:** before a run, each player marks the Pressures they'd like on their device, from the ones the party can pick. The DM's lobby shows how many players want each one; the DM still chooses.
 - Track floor, room, loot collected, and loot kept if the party extracted now.
-- Track each player's boon slots (3 base, up to 5 with upgrades, plus a hidden boon slot), boon levels, and Evolutions or Fusions.
+- Track each player's boon slots (3 base, up to 5 with upgrades, plus a hidden boon slot), boon levels, and Evolutions or Combinations.
 - Track boon counters such as banked echoes and Reaper chain jumps, plus each player's recovery points for each recovery track (Spell slot recovery and Martial resource recovery). The app tracks only the points, never spell slots or class resources; players keep those on their own sheets.
 - Award each player a Devotion on every room clear, record deaths and start lockout timers automatically. Track each player's passed Basalts separately, since they survive death. Also track boons temporarily suppressed by bosses and room tricks, like the Inverted Reliquary and Memory Drain.
 
@@ -1520,12 +1785,12 @@ What a second class adds. Simple weapons always come from the primary class.
 
 - Show each player their own offer of 4, plus the hidden boon when its condition was met.
 - Let each player pick, replace or pass, and level boons at the Forge.
-- Flag players eligible to evolve or fuse at a Forge.
+- Flag players eligible to evolve or combine at a Forge.
 - Apply rerolls and Banish from each player's upgrades.
 
 ### Data
 
-- The boon catalogue, Fusions, Pressures and upgrades from this doc become the app's editable data, so new boons can be added without code changes *(proposed)*.
+- The boon catalogue, Combinations, Pressures and upgrades from this doc become the app's editable data, so new boons can be added without code changes *(proposed)*.
 
 ## Build clarifications
 
@@ -1534,10 +1799,10 @@ Rules the app follows where the rest of the Bible implies an answer without spel
 1. **Leveling:** drafting a boon you already hold raises it 1 level, up to Level 3, and so does the Forge. The held-boon offer draws from boons below Level 3 and, while the player has empty slots, from those empty slots too (see Offer weighting); once every slot is full and every boon is maxed, that slot becomes the wildcard.
 2. **Upgrade scope:** party-wide, with each extra owner adding more: Forge (+1 use per owner), Healing Font (+temp HP per extra owner), Extra Pressures (+5% rewards per owner) and Reprieve (every owner rolls). Party-wide at the highest rank only: Deep Pockets. Personal: Extra Boon Slot, Reroll, Banish, Starting Boon, Attunement, Hidden Sight, Quick Return and Extra Loot (its owner's Basalts only).
 3. **Party level:** the average of the party's levels, rounded down. It sets boss CR, room trick DCs, the entry multiplier (one per party) and loot rarity. Encounter XP budgets add up from each player's own level, and PB-based boon numbers use each player's own PB.
-4. **Payoff and Core boons:** they level through drafts and the Forge like other boons, but never evolve or fuse.
-5. **Tags:** an Evolution keeps its source boon's tag, and a Fusion carries both source tags, for Resonance and offer weighting.
-6. **Reprieve:** it replaces one of a floor's 4 rooms, so that floor has 3 combat rooms, the Reprieve and the boss. It grants no Devotion and no draft. Every living player chooses Rest or Reflect before the party moves on. Rest is applied at the table; the app only records it. Reflect levels up one plain boon below Level 3. **Catch-up Basalts:** a player with no boon that can level up (none held, or all at Level 3, Evolutions or Fusions) instead takes 1 Quantum Basalt times the entry-level multiplier, the same as a Pass, counted as passed so it extracts even on death.
-7. **The boon pool:** 70 boons across the main table and Batches 1 to 4. Kept separately: 49 Evolutions, 21 Fusions, 12 class hidden boons and 8 of Thils's hidden gifts.
+4. **Payoff and Core boons:** they level through drafts and the Forge like other boons, but never evolve or combine.
+5. **Tags:** an Evolution keeps its source boon's tag, and a Combination carries both source tags, for Resonance and offer weighting.
+6. **Reprieve:** it replaces one of a floor's 4 rooms, so that floor has 3 combat rooms, the Reprieve and the boss. It grants no Devotion and no draft. Every living player chooses Rest or Reflect before the party moves on. Rest is applied at the table; the app only records it. Reflect levels up one plain boon below Level 3. **Catch-up Basalts:** a player with no boon that can level up (none held, or all at Level 3, Evolutions or Combinations) instead takes 1 Quantum Basalt times the entry-level multiplier, the same as a Pass, counted as passed so it extracts even on death.
+7. **The boon pool:** 70 boons across the main table and Batches 1 to 4. Kept separately: 49 Evolutions, 21 Combinations, 12 class hidden boons and 8 of Thils's hidden gifts.
 8. **Death:** if even one player survives to extract, the party's loot pool stays whole and is shared as usual. Only a wipe loses it. A fallen character still forfeits the Quantum Basalts they earned that run, except passed ones.
 
 ### Offer weighting
@@ -1548,7 +1813,7 @@ Every draft is built in three steps.
 2. **Build the 4 offers.**
    - **Slot 1, held boon:** one draw among your boons below Level 3 and your empty boon slots. A held boon offers that boon (to level it); an empty slot offers a new weighted roll. Example: 1 boon at Level 1 with 2 empty slots levels it 1 time in 3 and offers a new boon 2 times in 3. With every slot full, it always offers a held boon below Level 3. If you hold no plain boons, it's a weighted roll; if every slot is full and every boon is maxed, it becomes a wildcard.
    - **Slots 2 and 3, weighted rolls:** drawn using the weights below.
-   - **Slot 4, wildcard:** an Evolution or Fusion you qualify for, or else one eligible boon at even odds. Evolutions and Fusions only appear once every boon slot is filled.
+   - **Slot 4, wildcard:** an Evolution or Combination you qualify for, or else one eligible boon at even odds. Evolutions and Combinations only appear once every boon slot is filled.
    - **Variety cap:** no more than 2 boons from the same tag in one draft.
    - **Narrow Seam:** drops a weighted slot first; Narrow Seam II drops the wildcard next.
 3. **Weight the rolls.** Every eligible boon starts at 1, and these multiply: a primary tag for the character's class ×3, a secondary tag ×2, and a tag the player already holds ×2. Core boons stay at 1.
@@ -1585,7 +1850,7 @@ Every draft is built in three steps.
 ### Banish
 
 - **Permanent list:** each owner keeps a standing list of up to 1, 2 or 3 boons (by rank) that never appear in their offers, run after run.
-- **Banish from the draft:** a boon gets on the list only by banishing it from a draft offer. Any new boon card can be banished (not a held boon's level-up card, an Evolution or a Fusion). The banished card is replaced by a fresh roll for the same offer slot, with the list applied. If the list is full, the player picks a listed boon to drop, which can appear again right away.
+- **Banish from the draft:** a boon gets on the list only by banishing it from a draft offer. Any new boon card can be banished (not a held boon's level-up card, an Evolution or a Combination). The banished card is replaced by a fresh roll for the same offer slot, with the list applied. If the list is full, the player picks a listed boon to drop, which can appear again right away.
 - **Banish history:** every boon a character has ever banished from a draft is remembered. Between runs, players can swap their list among boons in that history, never mid-run, and never to a boon they haven't banished from a draft.
 - **Everywhere a boon is rolled:** the list applies to weighted rolls, the wildcard's random pick and the Starting Boon roll.
 
@@ -1598,7 +1863,7 @@ Every draft is built in three steps.
 
 ### Draft defaults *(proposed)*
 
-- **Wildcard:** always the player's own Evolution or Fusion, picked at random if several qualify.
+- **Wildcard:** always the player's own Evolution or Combination, picked at random if several qualify.
 - **Elite rooms:** never drop the wildcard, even under Narrow Seam II.
 - **Pacing:** the next room can't be cleared until every living player has made their draft choice, and the DM can choose for any player.
 
@@ -1697,6 +1962,7 @@ Everything rolled for a room is DM-only until revealed, and the DM gets a reveal
 - **Healing Font:** owners are counted at run start, like the Forge. Each living player heals to full Hit Points. The post-boss room shows the Font's effect and the temp HP each player gains: +5 per owner beyond the first. Clicking the Font's card flips it to show how much to heal.
 - **Forge card:** clicking the Forge's card in the post-boss room flips it to show the Forge options: a player sees their own characters', the DM sees every living player's and can use the Forge for them.
 - **Run history:** players see the runs their own characters were in; the DM sees every run.
+
 ### Hidden Sight hints
 
 | d20 | Condition | Hint |
