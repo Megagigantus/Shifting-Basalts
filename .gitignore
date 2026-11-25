@@ -173,3 +173,6 @@ ui-debug.log
 .idea
 .DS_Store
 .claude/settings.local.json
+
+# Private lore: never commit (seed deck, banned terms)
+/private/
