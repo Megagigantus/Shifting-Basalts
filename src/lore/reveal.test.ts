@@ -212,6 +212,7 @@ describe('buildNote', () => {
       title: card.title,
       imageUrl: card.imageUrl,
       revealId: 'rev-1',
+      counted: true,
     })
     expect('readAloud' in imageOnly).toBe(false)
     expect('push' in imageOnly).toBe(false)
@@ -234,6 +235,14 @@ describe('buildNote', () => {
       expect(key in withMore).toBe(false)
     }
     expect(JSON.stringify(withMore)).not.toContain(card.dmTruth)
+  })
+
+  it('sets counted to false on notes built from adHoc cards', () => {
+    const adHocNote = buildNote(makeCard({ adHoc: true }), 'rev-2', null, fills, {
+      text: true,
+      more: false,
+    })
+    expect(adHocNote.counted).toBe(false)
   })
 })
 

@@ -43,6 +43,7 @@ export interface LoreNote {
   readAloud?: string
   push?: string
   revealId: string
+  counted: boolean
 }
 
 export interface ShownFlags {
@@ -121,6 +122,7 @@ export function buildNote(
     title: card.title,
     imageUrl,
     revealId,
+    counted: card.adHoc !== true,
   }
   if (shown.text) {
     note.readAloud = fillPlaceholders(card.readAloud, fills)

@@ -1,6 +1,15 @@
 // Firestore actions for queuing, revealing, advancing, finishing, skipping, and dismissing lore cards.
 // Never logs cards, fills, or reveal/note documents.
-import { addDoc, collection, doc, serverTimestamp, updateDoc, writeBatch } from 'firebase/firestore'
+import {
+  addDoc,
+  collection,
+  doc,
+  getDocs,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+  writeBatch,
+} from 'firebase/firestore'
 import { db } from '../firebase'
 import { buildNote, buildRevealDoc, type LoreQueueItem, type RevealTarget } from './reveal'
 import type { LoreCard } from './types'
@@ -161,6 +170,9 @@ export async function finishReveal({
     revealedAt: serverTimestamp(),
   }
 
+  const targetEmails = uniqueStrings(
+    (item.targetEmails ?? []).map((entry) => entry.trim().toLowerCase()),
+  )
   const batch = writeBatch(firestore)
   for (const characterId of item.audience ?? []) {
     batch.set(doc(firestore, 'runs', runId, 'loreReveal', characterId), revealData)
@@ -168,13 +180,29 @@ export async function finishReveal({
   if (item.everyone) {
     batch.set(doc(firestore, 'runs', runId, 'loreReveal', '_table'), revealData)
   }
-  for (const email of uniqueStrings(
-    (item.targetEmails ?? []).map((entry) => entry.trim().toLowerCase()),
-  )) {
+  for (const email of targetEmails) {
     batch.set(doc(firestore, 'loreNotes', email, 'notes', card.id), noteData, { merge: true })
   }
   batch.update(doc(firestore, 'runs', runId, 'loreQueue', item.id), { status: 'done' })
   await batch.commit()
+
+  await Promise.all(
+    targetEmails.map(async (email) => {
+      try {
+        const notesSnap = await getDocs(collection(firestore, 'loreNotes', email, 'notes'))
+        let count = 0
+        for (const noteDoc of notesSnap.docs) {
+          if (noteDoc.data().counted !== false) count += 1
+        }
+        await setDoc(doc(firestore, 'loreProgress', email), {
+          count,
+          updatedAt: serverTimestamp(),
+        })
+      } catch {
+        console.warn('Could not update lore progress count.')
+      }
+    }),
+  )
 }
 
 /** Skip a queued lore card without marking it seen. */
