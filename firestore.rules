@@ -515,5 +515,12 @@ service cloud.firestore {
       allow read: if isDM() || (isInvited() && email == myEmail());
       allow write: if isDM();
     }
+
+    // How many deck cards each account has been shown (a number only, never
+    // which cards), so every screen can show the full-lore laurel. DM writes.
+    match /loreProgress/{email} {
+      allow read: if isInvited();
+      allow write: if isDM();
+    }
   }
 }

@@ -1023,6 +1023,14 @@ describe('lore moments', () => {
     await assertFails(setDoc(doc(db, 'loreDispatches', 'd1'), { cardId: 'arr-welcome' }))
   })
 
+  it('any invited player can read loreProgress counts, but only the DM writes them', async () => {
+    await env.withSecurityRulesDisabled((ctx) => setDoc(doc(ctx.firestore(), 'loreProgress', OTHER_PLAYER), { count: 3 }))
+    await assertSucceeds(getDoc(doc(as(PLAYER), 'loreProgress', OTHER_PLAYER)))
+    await assertFails(setDoc(doc(as(PLAYER), 'loreProgress', PLAYER), { count: 99 }))
+    await assertSucceeds(setDoc(doc(as(DM), 'loreProgress', PLAYER), { count: 1 }))
+    await assertFails(getDoc(doc(as(STRANGER), 'loreProgress', OTHER_PLAYER)))
+  })
+
   it('a signed-in user who is not invited cannot read loreSummary or loreNotes', async () => {
     const db = as(STRANGER)
     await assertFails(getDoc(doc(db, 'loreSummary', 'main')))
