@@ -37,56 +37,59 @@ export function BoonIcon({ art, name, size = 'md', dimmed = false, className }: 
   const [first, second] = urls
 
   return (
+    // Outer box carries the glow (unclipped); the inner box clips the art to the rounded corners.
     <div
       role="img"
       aria-label={name}
       title={name}
       className={cx(
-        'relative box-border shrink-0 overflow-hidden rounded-xl border border-stone-800 bg-stone-950',
+        'relative shrink-0 rounded-xl',
         SIZES[size].box,
         GLOW_CLASSES[art.kind],
         dimmed && 'grayscale opacity-50',
         className,
       )}
     >
-      {hasFailed || !first ? (
-        <div
-          aria-hidden="true"
-          className="flex h-full w-full items-center justify-center bg-gradient-to-br from-stone-800 via-stone-900 to-stone-950"
-        >
-          <span className={cx('font-mono font-bold text-stone-600', SIZES[size].text)}>{initials(name)}</span>
-        </div>
-      ) : second ? (
-        <>
+      <div className="relative box-border h-full w-full overflow-hidden rounded-xl border border-stone-800 bg-stone-950">
+        {hasFailed || !first ? (
+          <div
+            aria-hidden="true"
+            className="flex h-full w-full items-center justify-center bg-gradient-to-br from-stone-800 via-stone-900 to-stone-950"
+          >
+            <span className={cx('font-mono font-bold text-stone-600', SIZES[size].text)}>{initials(name)}</span>
+          </div>
+        ) : second ? (
+          <>
+            <img
+              src={first}
+              alt=""
+              loading="lazy"
+              onError={() => markFailed(first)}
+              style={{ clipPath: 'polygon(0 0, 100% 0, 0 100%)' }}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <img
+              src={second}
+              alt=""
+              loading="lazy"
+              onError={() => markFailed(second)}
+              style={{ clipPath: 'polygon(100% 0, 100% 100%, 0 100%)' }}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <svg viewBox="0 0 100 100" aria-hidden="true" className="pointer-events-none absolute inset-0 h-full w-full">
+              <line x1="0" y1="100" x2="100" y2="0" stroke="rgb(255 255 255 / 0.25)" strokeWidth="1.5" />
+            </svg>
+          </>
+        ) : (
           <img
             src={first}
             alt=""
             loading="lazy"
             onError={() => markFailed(first)}
-            style={{ clipPath: 'polygon(0 0, 100% 0, 0 100%)' }}
-            className="absolute inset-0 h-full w-full object-cover"
+            className="h-full w-full object-cover"
           />
-          <img
-            src={second}
-            alt=""
-            loading="lazy"
-            onError={() => markFailed(second)}
-            style={{ clipPath: 'polygon(100% 0, 100% 100%, 0 100%)' }}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-          <svg viewBox="0 0 100 100" aria-hidden="true" className="pointer-events-none absolute inset-0 h-full w-full">
-            <line x1="0" y1="100" x2="100" y2="0" stroke="rgb(255 255 255 / 0.25)" strokeWidth="1.5" />
-          </svg>
-        </>
-      ) : (
-        <img
-          src={first}
-          alt=""
-          loading="lazy"
-          onError={() => markFailed(first)}
-          className="h-full w-full object-cover"
-        />
-      )}
+        )}
+      </div>
     </div>
   )
 }

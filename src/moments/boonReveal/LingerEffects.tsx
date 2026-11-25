@@ -40,7 +40,7 @@ const ARC_TIMINGS: readonly { duration: string; delay: string }[] = [
   { duration: '1.75s', delay: '0.6s' },
 ]
 
-/** Three tilted atomic orbits with glowing electrons and a pulsing core for Evolution boons. */
+/** Three tilted atomic orbits with glowing electrons and a pulsing core (Fusion boons; set per tier in moment-theme.json). */
 export function AtomOrbit({
   color,
   className = 'pointer-events-none absolute -inset-14',
@@ -122,7 +122,7 @@ export function AtomOrbit({
   )
 }
 
-/** Crackling electric arcs hugging a card's edges for Fusion boons. */
+/** Crackling electric arcs hugging a card's edges (Evolution boons; set per tier in moment-theme.json). */
 export function ElectricArcs({
   color,
   className = 'pointer-events-none absolute -inset-2',

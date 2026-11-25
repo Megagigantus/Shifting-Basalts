@@ -9,7 +9,7 @@ import { accentById, THEME, tierById, type RevealTier } from '../theme'
 import { CardBackPattern, HoodedSilhouette, MazeSigil } from './BoonRevealPlayer'
 import { EyeLids, type EyeRefs } from './EyeLids'
 import { addEyeOpen, resetEye } from './eyeOpen'
-import { EvolveFx, type EvolveRefs } from './EvolveFx'
+import { EvolveFx, LightningStrike, type EvolveRefs } from './EvolveFx'
 import { addEvolveBurst, addEvolveCharge, resetEvolveFx } from './evolveTimeline'
 import { FuseFx, type FuseRefs } from './FuseFx'
 import { addFuseBurst, addFuseMerge, resetFuseFx } from './fuseTimeline'
@@ -158,7 +158,7 @@ export function TableSpotlight({
         newLevel: null,
         condition: null,
         eye: { lidTop: null, lidBottom: null, slit: null, iris: null },
-        evolve: { cracks: null, flash: null, shock: null },
+        evolve: { cracks: null, flash: null, shock: null, bolt: null },
         fuse: { left: null, right: null, flash: null, shock: null },
       }
     }
@@ -954,6 +954,16 @@ export function TableSpotlight({
                         className="pointer-events-none absolute -inset-3"
                         svgRef={(el) => {
                           ensureSpotlightRef(index).arcs = el
+                        }}
+                      />
+                    )}
+
+                    {/* Lightning bolt striking down from top of screen on Evolution flip */}
+                    {isEvolved && !reducedMotion && (
+                      <LightningStrike
+                        color={tier.color}
+                        setRef={(el) => {
+                          ensureSpotlightRef(index).evolve.bolt = el
                         }}
                       />
                     )}

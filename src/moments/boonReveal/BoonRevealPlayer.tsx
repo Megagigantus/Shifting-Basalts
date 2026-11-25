@@ -9,7 +9,7 @@ import { revealOrder, type RevealCard } from '../revealTier'
 import { accentById, THEME, tierById } from '../theme'
 import { EyeLids, type EyeRefs } from './EyeLids'
 import { addEyeOpen, resetEye } from './eyeOpen'
-import { EvolveFx, type EvolveRefs } from './EvolveFx'
+import { EvolveFx, LightningStrike, type EvolveRefs } from './EvolveFx'
 import { addEvolveBurst, addEvolveCharge, resetEvolveFx } from './evolveTimeline'
 import { FuseFx, type FuseRefs } from './FuseFx'
 import { addFuseBurst, addFuseMerge, resetFuseFx } from './fuseTimeline'
@@ -259,7 +259,7 @@ function PhoneBoonReveal({
         newLevel: null,
         condition: null,
         eye: { lidTop: null, lidBottom: null, slit: null, iris: null },
-        evolve: { cracks: null, flash: null, shock: null },
+        evolve: { cracks: null, flash: null, shock: null, bolt: null },
         fuse: { left: null, right: null, flash: null, shock: null },
       }
     }
@@ -906,6 +906,16 @@ function PhoneBoonReveal({
                     still={reducedMotion}
                     svgRef={(el) => {
                       ensureCardRef(index).arcs = el
+                    }}
+                  />
+                )}
+
+                {/* Lightning bolt striking down from top of screen on Evolution flip */}
+                {isEvolved && !reducedMotion && (
+                  <LightningStrike
+                    color={tier.color}
+                    setRef={(el) => {
+                      ensureCardRef(index).evolve.bolt = el
                     }}
                   />
                 )}

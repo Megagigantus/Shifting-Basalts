@@ -2,11 +2,11 @@
 import gsap from 'gsap'
 import type { EyeRefs } from './EyeLids'
 
-/** Reset the eye overlay to its closed starting state before the timeline plays. */
+/** Reset the eye overlay before the timeline plays: hidden, so a face-down card gives nothing away. */
 export function resetEye(refs: EyeRefs | undefined, reducedMotion: boolean): void {
   if (!refs) return
-  if (refs.lidTop) gsap.set(refs.lidTop, { yPercent: 0, opacity: 1 })
-  if (refs.lidBottom) gsap.set(refs.lidBottom, { yPercent: 0, opacity: 1 })
+  if (refs.lidTop) gsap.set(refs.lidTop, { yPercent: 0, opacity: 0 })
+  if (refs.lidBottom) gsap.set(refs.lidBottom, { yPercent: 0, opacity: 0 })
   if (refs.slit) gsap.set(refs.slit, { opacity: 0, scaleY: reducedMotion ? 1 : 0.15 })
   if (refs.iris) gsap.set(refs.iris, { opacity: 0, scale: 0.3 })
 }
@@ -25,6 +25,13 @@ export function addEyeOpen(
   if (!refs) return
   const { hesitationStart, openStart, openSec, reducedMotion } = opts
   const hesSec = openStart - hesitationStart
+
+  // The closed eye appears only when this card's turn starts.
+  const lids = [refs.lidTop, refs.lidBottom].filter((el): el is SVGSVGElement => el !== null)
+  if (lids.length > 0) {
+    if (reducedMotion || hesSec < 0.1) tl.set(lids, { opacity: 1 }, hesitationStart)
+    else tl.to(lids, { opacity: 1, duration: Math.min(0.25, hesSec * 0.35), ease: 'power1.out' }, hesitationStart)
+  }
 
   if (reducedMotion) {
     if (refs.slit) {
