@@ -1,7 +1,7 @@
 // The sticky bar at the top of every signed-in screen: title, the DM's tabs
 // and tools, who is signed in, and Sign out.
 import { useEffect, useState, type ReactNode } from 'react'
-import { BookOpen, Download, Eye, FlaskConical, ClockArrowLeft, Link2, LogOut, Monitor, Shield, Swords, User, Users } from 'lucide-react'
+import { BookOpen, Download, ScrollText, Eye, FlaskConical, ClockArrowLeft, Link2, LogOut, Monitor, Shield, Swords, User, Users } from 'lucide-react'
 import { db } from '../firebase'
 import { downloadBackup } from '../backup'
 import { cx } from '../ui/tone'
@@ -14,6 +14,7 @@ const TAB_ICONS: Record<DmTab, ReactNode> = {
   characters: <Users size={14} />,
   history: <ClockArrowLeft size={14} />,
   tables: <BookOpen size={14} />,
+  lore: <ScrollText size={14} />,
 }
 
 const LOGO_ICON = artUrl('logo', 'logo-icon')
