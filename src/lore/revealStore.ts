@@ -11,7 +11,7 @@ import {
   writeBatch,
 } from 'firebase/firestore'
 import { db } from '../firebase'
-import { buildNote, buildRevealDoc, type LoreQueueItem, type RevealTarget } from './reveal'
+import { buildNote, buildRevealDoc, type LoreQueueItem, type RevealTarget, type ShownFlags } from './reveal'
 import type { LoreCard } from './types'
 
 export interface StartRevealInput {
@@ -37,6 +37,15 @@ export interface FinishRevealInput {
   item: LoreQueueItem
   card: LoreCard
   imageUrl: string | null
+}
+
+export interface FileNotesInput {
+  card: LoreCard
+  imageUrl: string | null
+  emails: string[]
+  revealId: string
+  fills: Record<string, string>
+  shown: ShownFlags
 }
 
 function uniqueStrings(values: string[]): string[] {
@@ -186,6 +195,14 @@ export async function finishReveal({
   batch.update(doc(firestore, 'runs', runId, 'loreQueue', item.id), { status: 'done' })
   await batch.commit()
 
+  await recountProgress(targetEmails)
+}
+
+/** Recount counted lore notes for each player email and write `loreProgress/{email}`. */
+export async function recountProgress(emails: string[]): Promise<void> {
+  if (!db) throw new Error('Firebase is not set up.')
+  const firestore = db
+  const targetEmails = uniqueStrings(emails.map((entry) => entry.trim().toLowerCase()))
   await Promise.all(
     targetEmails.map(async (email) => {
       try {
@@ -203,6 +220,32 @@ export async function finishReveal({
       }
     }),
   )
+}
+
+/** Write archive notes for each email (with merge) and recount their lore progress. */
+export async function fileNotes({
+  card,
+  imageUrl,
+  emails,
+  revealId,
+  fills,
+  shown,
+}: FileNotesInput): Promise<void> {
+  if (!db) throw new Error('Firebase is not set up.')
+  const firestore = db
+  const targetEmails = uniqueStrings(emails.map((entry) => entry.trim().toLowerCase()))
+  if (targetEmails.length === 0) return
+
+  const noteData = {
+    ...buildNote(card, revealId, imageUrl, fills, shown),
+    revealedAt: serverTimestamp(),
+  }
+  const batch = writeBatch(firestore)
+  for (const email of targetEmails) {
+    batch.set(doc(firestore, 'loreNotes', email, 'notes', card.id), noteData, { merge: true })
+  }
+  await batch.commit()
+  await recountProgress(targetEmails)
 }
 
 /** Skip a queued lore card without marking it seen. */
