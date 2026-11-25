@@ -181,7 +181,7 @@ function LoreDrawerCard({ runId, players, item, waiting, cards, groups, deckErro
         type="button"
         aria-expanded={expanded}
         onClick={() => setExpanded((prev) => !prev)}
-        className="flex w-full shrink-0 cursor-pointer items-center gap-2 border-0 bg-transparent px-3.5 py-2.5 text-left transition-colors hover:bg-stone-800/60"
+        className="box-border flex w-full shrink-0 cursor-pointer items-center gap-2 border-0 bg-transparent px-3.5 py-2.5 text-left transition-colors hover:bg-stone-800/60"
       >
         <ScrollText size={15} className="shrink-0 text-amber-300" aria-hidden="true" />
         <span className="shrink-0 text-xs font-bold uppercase tracking-wider text-amber-300">Lore</span>
@@ -195,7 +195,7 @@ function LoreDrawerCard({ runId, players, item, waiting, cards, groups, deckErro
       </button>
 
       {expanded && (
-        <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto border-t border-stone-800 p-3.5">
+        <div className="box-border flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto border-t border-stone-800 p-3.5">
           {cards === null && !deckError && <p className="m-0 text-sm text-stone-400">Loading…</p>}
 
           {deckError && (
@@ -323,7 +323,7 @@ function LoreDrawerBody({
 
   return (
     <>
-      <div className="aspect-video w-full overflow-hidden rounded-lg border border-stone-800 bg-stone-950">
+      <div className="box-border aspect-video w-full overflow-hidden rounded-lg border border-stone-800 bg-stone-950">
         {imageUrl && <img src={imageUrl} alt="" className="block h-full w-full object-cover" />}
       </div>
 

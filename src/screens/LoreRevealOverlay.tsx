@@ -111,7 +111,7 @@ export function LoreRevealOverlay({ reveal, readOnly = false, onClose }: Overlay
         <button
           type="button"
           onClick={() => setMinimized(false)}
-          className="fixed bottom-4 left-1/2 z-[80] flex max-w-[calc(100vw-2rem)] -translate-x-1/2 cursor-pointer items-center gap-2 rounded-full border border-amber-500/40 bg-stone-950/90 px-4 py-2 text-sm font-medium text-amber-200 shadow-xl backdrop-blur-md transition-colors hover:border-amber-400/60 hover:bg-stone-900"
+          className="box-border fixed bottom-4 left-1/2 z-[80] flex max-w-[calc(100vw-2rem)] -translate-x-1/2 cursor-pointer items-center gap-2 rounded-full border border-amber-500/40 bg-stone-950/90 px-4 py-2 text-sm font-medium text-amber-200 shadow-xl backdrop-blur-md transition-colors hover:border-amber-400/60 hover:bg-stone-900"
           style={
             isClosing
               ? { animation: `lore-fade-out ${closeFadeMs}ms ease-out forwards` }
@@ -185,7 +185,7 @@ export function LoreRevealOverlay({ reveal, readOnly = false, onClose }: Overlay
             type="button"
             aria-label="Close"
             onClick={handleReadOnlyClose}
-            className="pointer-events-auto flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-stone-600/80 bg-stone-950/80 p-2 text-stone-200 backdrop-blur-sm transition-colors hover:bg-stone-800 hover:text-white"
+            className="box-border pointer-events-auto flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-stone-600/80 bg-stone-950/80 p-2 text-stone-200 backdrop-blur-sm transition-colors hover:bg-stone-800 hover:text-white"
           >
             <X size={18} aria-hidden="true" />
           </button>
@@ -194,7 +194,7 @@ export function LoreRevealOverlay({ reveal, readOnly = false, onClose }: Overlay
             type="button"
             aria-label="Minimize"
             onClick={() => setMinimized(true)}
-            className="pointer-events-auto flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-stone-600/80 bg-stone-950/80 p-2 text-stone-200 backdrop-blur-sm transition-colors hover:bg-stone-800 hover:text-white"
+            className="box-border pointer-events-auto flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-stone-600/80 bg-stone-950/80 p-2 text-stone-200 backdrop-blur-sm transition-colors hover:bg-stone-800 hover:text-white"
           >
             <Minimize2 size={18} aria-hidden="true" />
           </button>
@@ -202,7 +202,7 @@ export function LoreRevealOverlay({ reveal, readOnly = false, onClose }: Overlay
       </div>
 
       {/* Bottom-anchored title and revealed lore text */}
-      <div className="relative z-10 mt-auto w-full px-4 pt-8 pb-6 sm:px-8 sm:pb-10">
+      <div className="box-border relative z-10 mt-auto w-full px-4 pt-8 pb-6 sm:px-8 sm:pb-10">
         <div className="mx-auto flex w-full max-w-[42rem] flex-col gap-3">
           <h2
             className="m-0 select-text font-serif text-2xl font-semibold tracking-wide text-amber-300 drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)] sm:text-3xl"
@@ -215,7 +215,7 @@ export function LoreRevealOverlay({ reveal, readOnly = false, onClose }: Overlay
 
           {(showReadAloud || showPush) && (
             <div
-              className="max-h-[48dvh] overflow-y-auto rounded-xl border border-stone-800/70 bg-stone-950/75 px-4 py-3.5 shadow-xl backdrop-blur-sm sm:max-h-[50dvh] sm:px-6 sm:py-4"
+              className="box-border max-h-[48dvh] overflow-y-auto rounded-xl border border-stone-800/70 bg-stone-950/75 px-4 py-3.5 shadow-xl backdrop-blur-sm sm:max-h-[50dvh] sm:px-6 sm:py-4"
               style={{
                 animation: `lore-fade-in ${fadeMs}ms ease-out both`,
               }}
