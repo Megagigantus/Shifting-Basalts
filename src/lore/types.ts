@@ -23,6 +23,10 @@ export interface LoreCard {
   placeholders: string[]
   imagePrompt: string
   imageUrl: string | null
+  /** Position in the deck (set on import; lower fires first). Not in exported files. */
+  order?: number
+  /** True for a dispatch answer the DM wrote during play; left out of the full-collection count. */
+  adHoc?: boolean
 }
 
 export interface LoreGroup {
@@ -45,4 +49,20 @@ export interface LoreDeckFile {
   settings: LoreSettings
   groups: LoreGroup[]
   cards: LoreCard[]
+}
+
+/** loreState/main: the DM's deck settings and what has been seen. DM only. */
+export interface LoreState {
+  settings: LoreSettings
+  /** Card id -> when it was revealed or dismissed (ms since epoch). */
+  seen: Record<string, number>
+  /** Words no card may contain outside its read-aloud text (lowercase). */
+  bannedTerms: string[]
+}
+
+/** loreSummary/main: what players may know about the deck, for the Library's "???" placeholders. */
+export interface LoreSummary {
+  groups: { id: string; name: string; count: number }[]
+  /** Cards that count toward the full lore collection (ad hoc dispatch answers left out). */
+  total: number
 }

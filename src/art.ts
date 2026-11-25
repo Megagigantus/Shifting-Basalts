@@ -28,6 +28,8 @@ export type ArtKind =
   | 'loot'
   | 'loot-kinds'
   | 'logo'
+  | 'lore'
+  | 'lore-groups'
 
 const files = import.meta.glob<string>('./art/*/*.{webp,png,jpg,jpeg,svg}', {
   eager: true,
