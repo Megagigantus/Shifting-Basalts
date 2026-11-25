@@ -19,6 +19,7 @@ describe('portraitHonors', () => {
       glowTier,
       diamonds,
       fullCollection: false,
+      loreLaurel: false,
     })
   })
 
@@ -59,13 +60,21 @@ describe('portraitHonors', () => {
     expect(portraitHonors(fighter).fullCollection).toBe(true)
     expect(portraitHonors(wizard).fullCollection).toBe(true)
   })
+  it('sets loreLaurel only when loreLaurel is true', () => {
+    expect(portraitHonors({ loreLaurel: true })).toEqual({ ...NO_HONORS, loreLaurel: true })
+    expect(portraitHonors({ loreLaurel: false })).toEqual(NO_HONORS)
+  })
 })
 
 describe('honorClasses', () => {
-  it('returns empty string for no honors, and combines gold and green classes', () => {
+  it('returns empty string for no honors, and combines gold, green, and blue classes', () => {
     expect(honorClasses(NO_HONORS)).toBe('')
-    expect(honorClasses({ fullClears: 3, glowTier: 3, diamonds: 0, fullCollection: false })).toBe('honor-ring honor-gold-3')
-    expect(honorClasses({ fullClears: 0, glowTier: 0, diamonds: 0, fullCollection: true })).toBe('honor-ring honor-green')
-    expect(honorClasses({ fullClears: 8, glowTier: 5, diamonds: 3, fullCollection: true })).toBe('honor-ring honor-gold-5 honor-green')
+    expect(honorClasses({ fullClears: 3, glowTier: 3, diamonds: 0, fullCollection: false, loreLaurel: false })).toBe('honor-ring honor-gold-3')
+    expect(honorClasses({ fullClears: 0, glowTier: 0, diamonds: 0, fullCollection: true, loreLaurel: false })).toBe('honor-ring honor-green')
+    expect(honorClasses({ fullClears: 8, glowTier: 5, diamonds: 3, fullCollection: true, loreLaurel: false })).toBe('honor-ring honor-gold-5 honor-green')
+    expect(honorClasses({ fullClears: 0, glowTier: 0, diamonds: 0, fullCollection: false, loreLaurel: true })).toBe('honor-ring honor-blue')
+    expect(honorClasses({ fullClears: 3, glowTier: 3, diamonds: 0, fullCollection: false, loreLaurel: true })).toBe('honor-ring honor-gold-3 honor-blue')
+    expect(honorClasses({ fullClears: 0, glowTier: 0, diamonds: 0, fullCollection: true, loreLaurel: true })).toBe('honor-ring honor-green honor-blue')
+    expect(honorClasses({ fullClears: 8, glowTier: 5, diamonds: 3, fullCollection: true, loreLaurel: true })).toBe('honor-ring honor-gold-5 honor-green honor-blue')
   })
 })

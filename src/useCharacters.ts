@@ -1,9 +1,10 @@
 // Live list of saved characters, sorted by name. Shared by the roster and run setup.
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { collection, onSnapshot } from 'firebase/firestore'
 import { db } from './firebase'
 import { emptyDungeonLayer, emptyProfile, type Character } from './model/character'
 import { withPlayerCollections } from './rules/echoes'
+import { hasLoreLaurel, useLoreProgress, useLoreSummary } from './lore/useLoreLibrary'
 
 export function useCharacters(): { characters: Character[] | null; error: string | null } {
   const [characters, setCharacters] = useState<Character[] | null>(null)
@@ -26,5 +27,13 @@ export function useCharacters(): { characters: Character[] | null; error: string
     )
   }, [])
 
-  return { characters, error }
+  // The full-lore laurel is per player too: shown every lore card in the deck.
+  const progress = useLoreProgress()
+  const summary = useLoreSummary()
+  const withLaurels = useMemo(
+    () => characters?.map((c) => ({ ...c, loreLaurel: hasLoreLaurel(progress[(c.playerEmail ?? '').toLowerCase()], summary) })) ?? null,
+    [characters, progress, summary],
+  )
+
+  return { characters: withLaurels, error }
 }

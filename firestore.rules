@@ -463,9 +463,62 @@ service cloud.firestore {
       match /dmOnly/{docId} {
         allow read, write: if isDM();
       }
+
+      // Queued Lore Moments for this run. DM only, always.
+      match /loreQueue/{queueId} {
+        allow read, write: if isDM();
+      }
+
+      // A character's revealed Lore Moment in this run. Only the owning player
+      // in this active run and the DM can read it; only the DM writes it.
+      match /loreReveal/{characterId} {
+        allow read: if isDM() || ownsRunCharacter(runId, characterId);
+        allow write: if isDM();
+      }
     }
 
     match /runHistory/{runId} {
+      allow read: if isInvited();
+      allow write: if isDM();
+    }
+
+    // Lore Moment cards hold campaign secrets ("DM truth"). DM only, always.
+    match /loreCards/{cardId} {
+      allow read, write: if isDM();
+    }
+
+    // Lore card groups and order settings. DM only, always.
+    match /loreGroups/{groupId} {
+      allow read, write: if isDM();
+    }
+
+    // Lore deck state and pacing settings. DM only, always.
+    match /loreState/{docId} {
+      allow read, write: if isDM();
+    }
+
+    // The party's questions to their Stride Anchor and the DM's answers. DM only, always.
+    match /loreDispatches/{dispatchId} {
+      allow read, write: if isDM();
+    }
+
+    // Lore summary with only group names and card counts, for the players'
+    // Library "???" placeholders. Everyone invited can read; only the DM writes.
+    match /loreSummary/{docId} {
+      allow read: if isInvited();
+      allow write: if isDM();
+    }
+
+    // A player's Lore archive notes, keyed by lowercase email. Only that
+    // invited player and the DM can read them; only the DM writes them.
+    match /loreNotes/{email}/notes/{revealId} {
+      allow read: if isDM() || (isInvited() && email == myEmail());
+      allow write: if isDM();
+    }
+
+    // How many deck cards each account has been shown (a number only, never
+    // which cards), so every screen can show the full-lore laurel. DM writes.
+    match /loreProgress/{email} {
       allow read: if isInvited();
       allow write: if isDM();
     }

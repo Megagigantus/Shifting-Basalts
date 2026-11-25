@@ -948,3 +948,93 @@ describe('moment listener', () => {
     stop()
   })
 })
+
+describe('lore moments', () => {
+  beforeEach(async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      const db = ctx.firestore()
+      await setDoc(doc(db, 'characters', 'c1'), { name: 'Test Character', playerEmail: PLAYER })
+      await setDoc(doc(db, 'characters', 'c2'), { name: 'Other Character', playerEmail: OTHER_PLAYER })
+      await setDoc(doc(db, 'runs', 'r1'), { floor: 1, status: 'active', characterIds: ['c1', 'c2'] })
+      await setDoc(doc(db, 'loreCards', 'arr-welcome'), { title: 'Welcome', dmTruth: 'Campaign secret' })
+      await setDoc(doc(db, 'loreGroups', 'g1'), { name: 'Arrival' })
+      await setDoc(doc(db, 'loreSummary', 'main'), { groups: [{ id: 'g1', name: 'Arrival', count: 1 }] })
+      await setDoc(doc(db, 'loreState', 'main'), { activeGroupId: 'g1' })
+      await setDoc(doc(db, 'loreDispatches', 'd1'), { cardId: 'arr-welcome' })
+      await setDoc(doc(db, 'runs', 'r1', 'loreQueue', 'q1'), { cardId: 'arr-welcome' })
+      await setDoc(doc(db, 'runs', 'r1', 'loreReveal', 'c1'), { cardId: 'arr-welcome', title: 'Welcome' })
+      await setDoc(doc(db, 'runs', 'r1', 'loreReveal', 'c2'), { cardId: 'arr-welcome', title: 'Welcome' })
+      await setDoc(doc(db, 'loreNotes', PLAYER, 'notes', 'n1'), { cardId: 'arr-welcome', title: 'Welcome' })
+      await setDoc(doc(db, 'loreNotes', OTHER_PLAYER, 'notes', 'n2'), { cardId: 'arr-welcome', title: 'Welcome' })
+    })
+  })
+
+  it('a player cannot read loreCards, loreGroups, loreState, loreDispatches or the run\'s loreQueue', async () => {
+    const db = as(PLAYER)
+    await assertFails(getDoc(doc(db, 'loreCards', 'arr-welcome')))
+    await assertFails(getDoc(doc(db, 'loreGroups', 'g1')))
+    await assertFails(getDoc(doc(db, 'loreState', 'main')))
+    await assertFails(getDoc(doc(db, 'loreDispatches', 'd1')))
+    await assertFails(getDoc(doc(db, 'runs', 'r1', 'loreQueue', 'q1')))
+  })
+
+  it('the DM can read and write loreCards, loreState and loreQueue', async () => {
+    const db = as(DM)
+    await assertSucceeds(getDoc(doc(db, 'loreCards', 'arr-welcome')))
+    await assertSucceeds(setDoc(doc(db, 'loreCards', 'arr-welcome'), { title: 'Updated', dmTruth: 'Secret' }))
+    await assertSucceeds(getDoc(doc(db, 'loreState', 'main')))
+    await assertSucceeds(setDoc(doc(db, 'loreState', 'main'), { activeGroupId: 'g2' }))
+    await assertSucceeds(getDoc(doc(db, 'runs', 'r1', 'loreQueue', 'q1')))
+    await assertSucceeds(setDoc(doc(db, 'runs', 'r1', 'loreQueue', 'q1'), { cardId: 'arr-welcome', order: 1 }))
+  })
+
+  it('a player can read their own character\'s reveal', async () => {
+    await assertSucceeds(getDoc(doc(as(PLAYER), 'runs', 'r1', 'loreReveal', 'c1')))
+  })
+
+  it('a player cannot read another player\'s reveal', async () => {
+    await assertFails(getDoc(doc(as(PLAYER), 'runs', 'r1', 'loreReveal', 'c2')))
+  })
+
+  it('a player cannot read a reveal when the run is not active', async () => {
+    await env.withSecurityRulesDisabled((ctx) => updateDoc(doc(ctx.firestore(), 'runs', 'r1'), { status: 'done' }))
+    await assertFails(getDoc(doc(as(PLAYER), 'runs', 'r1', 'loreReveal', 'c1')))
+  })
+
+  it('a player can read loreSummary; a player cannot write it', async () => {
+    const db = as(PLAYER)
+    await assertSucceeds(getDoc(doc(db, 'loreSummary', 'main')))
+    await assertFails(setDoc(doc(db, 'loreSummary', 'main'), { groups: [] }))
+  })
+
+  it('a player can read their own loreNotes and not another player\'s', async () => {
+    const db = as(PLAYER)
+    await assertSucceeds(getDoc(doc(db, 'loreNotes', PLAYER, 'notes', 'n1')))
+    await assertFails(getDoc(doc(db, 'loreNotes', OTHER_PLAYER, 'notes', 'n2')))
+  })
+
+  it('a player cannot write anything under lore paths', async () => {
+    const db = as(PLAYER)
+    await assertFails(setDoc(doc(db, 'loreCards', 'arr-welcome'), { title: 'Edited' }))
+    await assertFails(setDoc(doc(db, 'loreSummary', 'main'), { groups: [] }))
+    await assertFails(setDoc(doc(db, 'loreNotes', PLAYER, 'notes', 'n1'), { title: 'Edited' }))
+    await assertFails(setDoc(doc(db, 'runs', 'r1', 'loreReveal', 'c1'), { title: 'Edited' }))
+    await assertFails(setDoc(doc(db, 'runs', 'r1', 'loreQueue', 'q1'), { cardId: 'arr-welcome' }))
+    await assertFails(setDoc(doc(db, 'loreDispatches', 'd1'), { cardId: 'arr-welcome' }))
+  })
+
+  it('any invited player can read loreProgress counts, but only the DM writes them', async () => {
+    await env.withSecurityRulesDisabled((ctx) => setDoc(doc(ctx.firestore(), 'loreProgress', OTHER_PLAYER), { count: 3 }))
+    await assertSucceeds(getDoc(doc(as(PLAYER), 'loreProgress', OTHER_PLAYER)))
+    await assertFails(setDoc(doc(as(PLAYER), 'loreProgress', PLAYER), { count: 99 }))
+    await assertSucceeds(setDoc(doc(as(DM), 'loreProgress', PLAYER), { count: 1 }))
+    await assertFails(getDoc(doc(as(STRANGER), 'loreProgress', OTHER_PLAYER)))
+  })
+
+  it('a signed-in user who is not invited cannot read loreSummary or loreNotes', async () => {
+    const db = as(STRANGER)
+    await assertFails(getDoc(doc(db, 'loreSummary', 'main')))
+    await assertFails(getDoc(doc(db, 'loreNotes', PLAYER, 'notes', 'n1')))
+    await assertFails(getDoc(doc(db, 'loreNotes', STRANGER, 'notes', 'n1')))
+  })
+})

@@ -99,7 +99,7 @@ export function roomPieces(
 }
 
 /** The bits of a character the map and party cards need: portrait, summon and honors. */
-export type CharacterLook = Pick<Character, 'portrait' | 'summonArt' | 'hasSummon' | 'fullClears' | 'classId' | 'secondClassId' | 'echoes' | 'collection'>
+export type CharacterLook = Pick<Character, 'portrait' | 'summonArt' | 'hasSummon' | 'fullClears' | 'classId' | 'secondClassId' | 'echoes' | 'collection' | 'loreLaurel'>
 
 /** Live portraits and summons by character id (every invited user can read characters). */
 export function useLooks(): Record<string, CharacterLook | undefined> {
@@ -114,6 +114,7 @@ export function useLooks(): Record<string, CharacterLook | undefined> {
           secondClassId: c.secondClassId,
           echoes: c.echoes,
           collection: c.collection,
+          loreLaurel: c.loreLaurel,
         }])),
     [characters],
   )

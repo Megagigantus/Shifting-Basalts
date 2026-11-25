@@ -35,6 +35,7 @@ import { boonSummary, hiddenBoon } from '../rules/boons'
 import { PlayerBoons } from './PlayerBoons'
 import { DraftOffers } from './DraftOffers'
 import { DmRoom } from './DmRoom'
+import { DispatchPanel } from './DispatchPanel'
 import { startFloor } from '../rules/roomFlow'
 import { proficiencyBonus } from '../rules/proficiency'
 import { ConfirmButton } from '../ui/ConfirmButton'
@@ -282,6 +283,8 @@ export function RunTracker({ state, characters, onEnded }: Props) {
         </p>
         {error && <p className="m-0 text-xs text-rose-300">{error}</p>}
       </Panel>
+
+      {run.awaitingChoice && <DispatchPanel state={state} characters={characters} runEnded={false} />}
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
         {/* Main column: the open player panel, then the room and the party's shared things. */}

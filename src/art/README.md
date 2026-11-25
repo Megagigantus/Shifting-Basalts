@@ -19,7 +19,7 @@ Any id without a file just shows text, so you can add art a bit at a time.
 | `boss-parts/` | boss id + part name in lower case with dashes (e.g. `choir-hollow-column-pipe-cluster.webp`) | 256px square |
 | `areas/` | `battle-map.json` → `areaArt` (e.g. `void-chasm.webp`), painted onto boss arenas by Shift Actions | 256px square, some tileable |
 | `families/` | `enemies.json` → `families` (e.g. `wardstones.webp`) | 512px square |
-| `rooms/` | scene ids (`forge`, `reprieve`, `thils-vault`…) plus hub art: `basalt-entrance` and `basalts-int` (page backdrops outside and during a run), `basalt-shrine` and `basalt-markets` (Characters tab banners) | 1600×900 landscape |
+| `rooms/` | scene ids (`forge`, `reprieve`, `thils-vault`…) plus hub art: `basalt-entrance` and `basalts-int` (page backdrops outside and during a run), `basalt-shrine`, `basalt-markets`, `basalt-lib` (the Library) and `hall-of-echoes` (Characters tab banners) | 1600×900 landscape |
 | `boons/` | `boons.json` ids (e.g. `traverts-echoes.webp`) | 256px square |
 | `evolutions/` | `evolutions.json` ids; falls back to the original boon's art | 256px square |
 | `combinations/` | `combinations.json` ids; falls back to both boons' art | 256px square |
@@ -28,6 +28,8 @@ Any id without a file just shows text, so you can add art a bit at a time.
 | `loot/` | consumable, gear, wondrous and trophy ids in `loot-items.json` | 256px square |
 | `logo/` | `logo-banner` (sign-in screen) and `logo-icon` (header). The browser tab icons are copies in `public/` (`favicon.png` 64px, `apple-touch-icon.png` 180px) | banner about 1200×400, icon 256px square |
 | `loot-kinds/` | `trinket`, `consumable`, `healing-potion`, `gear-weapon`, `gear-armor`, `gear-shield`, `wondrous`, `trophy`, `credits`, `quantum-basalts`; the fallback for loot | 256px square |
+| `lore/` | lore card ids from the DM's deck (e.g. `boss-warden.webp`); falls back to the group picture, then a dark background | 1920×1080 landscape (16:9) |
+| `lore-groups/` | lore group ids (`arrival`, `echoes`, `dispatch`, `lost`, `thils`, `death`, `bosses`) | 1920×1080 landscape (16:9) |
 
 The full list with descriptions is in `docs/art-list.md`.
 

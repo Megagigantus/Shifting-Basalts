@@ -1760,9 +1760,10 @@
    portrait (FULL_CLEAR_GLOW in src/ui/styles.ts) and battle map token. */
 @layer components {
   /* Portrait honors (src/ui/Portrait.tsx, src/rules/portraitHonors.ts): tiered
-     golden full-clear glow and emerald full Basalt Echoes collection glow. */
-  /* Each honor sets a ring and a halo. Rings stack above halos, and the gold
-     ring sits on top of the wider green ring, so both always show. */
+     golden full-clear glow, emerald full Hall of Echoes collection glow, and
+     sky-blue full lore collection laurel glow. */
+  /* Each honor sets a ring and a halo. Rings stack above halos in inside-out
+     order (gold, then green, then blue) so every earned honor's ring shows. */
   .honor-gold-1 {
     --honor-gold-ring: 0 0 0 2px rgb(250 204 21 / 0.75);
     --honor-gold-halo: 0 0 10px 2px rgb(245 158 11 / 0.4);
@@ -1798,10 +1799,28 @@
     --honor-green-ring: 0 0 0 3px rgb(52 211 153 / 0.95);
   }
 
+  .honor-blue {
+    --honor-blue-ring: 0 0 0 9px rgb(125 211 252 / 0.95);
+    --honor-blue-halo: 0 0 20px 10px rgb(56 189 248 / 0.55);
+  }
+
+  /* Blue with only gold or only green inside it: step out from that inner ring. */
+  .honor-blue:not(.honor-green),
+  .honor-blue:not([class*='honor-gold-']) {
+    --honor-blue-ring: 0 0 0 6px rgb(125 211 252 / 0.95);
+  }
+
+  /* Blue alone: its ring starts at the edge, with no inner rings. */
+  .honor-blue:not(.honor-green):not([class*='honor-gold-']) {
+    --honor-blue-ring: 0 0 0 3px rgb(125 211 252 / 0.95);
+  }
+
   .honor-ring {
     box-shadow:
       var(--honor-gold-ring, 0 0 #0000),
       var(--honor-green-ring, 0 0 #0000),
+      var(--honor-blue-ring, 0 0 #0000),
+      var(--honor-blue-halo, 0 0 #0000),
       var(--honor-green-halo, 0 0 #0000),
       var(--honor-gold-halo, 0 0 #0000);
   }
@@ -1815,6 +1834,8 @@
     box-shadow:
       var(--honor-gold-ring, 0 0 #0000),
       var(--honor-green-ring, 0 0 #0000),
+      var(--honor-blue-ring, 0 0 #0000),
+      var(--honor-blue-halo, 0 0 #0000),
       var(--honor-green-halo, 0 0 #0000),
       var(--honor-gold-halo, 0 0 #0000),
       0 2px 4px rgb(0 0 0 / 0.6);
