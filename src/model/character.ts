@@ -85,6 +85,8 @@ export interface Character extends CharacterProfile, DungeonLayer {
   id: string
   /** Derived when characters load (the player's Basalt Echoes across all their characters); never saved to Firestore. */
   collection?: EchoCollection
+  /** Derived when characters load: this player has been shown every lore card (the blue laurel); never saved to Firestore. */
+  loreLaurel?: boolean
 }
 
 export const CASTER_TYPES: { id: CasterType; label: string }[] = [
