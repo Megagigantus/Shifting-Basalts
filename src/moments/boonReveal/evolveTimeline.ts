@@ -18,6 +18,9 @@ export function resetEvolveFx(refs: EvolveRefs | undefined): void {
   if (refs.shock) {
     gsap.set(refs.shock, { opacity: 0, scale: 0.3 })
   }
+  if (refs.bolt) {
+    gsap.set(refs.bolt, { opacity: 0, clipPath: 'inset(0% 0% 100% 0%)' })
+  }
 }
 
 /** Draw energy cracks across the card back during the Evolution hesitation charge-up. */
@@ -85,5 +88,20 @@ export function addEvolveBurst(
       { scale: 2.6, opacity: 0, duration: 0.7, ease: 'power2.out', immediateRender: false },
       at,
     )
+  }
+  if (refs.bolt) {
+    // Draw from top of screen down onto the card via clip-path (avoids non-scaling-stroke dash bug), landing at `at`.
+    const strikeStart = Math.max(0, at - 0.12)
+    const landAt = strikeStart + 0.12
+    tl.set(refs.bolt, { opacity: 1 }, strikeStart)
+    tl.fromTo(
+      refs.bolt,
+      { clipPath: 'inset(0% 0% 100% 0%)' },
+      { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.12, ease: 'power2.in', immediateRender: false },
+      strikeStart,
+    )
+    tl.to(refs.bolt, { opacity: 0.35, duration: 0.06, ease: 'none' }, landAt)
+    tl.to(refs.bolt, { opacity: 1, duration: 0.06, ease: 'none' }, landAt + 0.06)
+    tl.to(refs.bolt, { opacity: 0, duration: 0.3, ease: 'power2.out' }, landAt + 0.12)
   }
 }
