@@ -1,9 +1,10 @@
 // One character's hub, shared by the DM's Characters tab and the player's
 // home: profile, what the dungeon adds to their sheet, draft preferences,
-// loot, and the Basalt Shrine (stat tracks), Basalt Markets (upgrades) and
-// Basalt Echoes (collection) as art banners that open when visited.
+// loot, and the Basalt Shrine (stat tracks), Basalt Markets (upgrades),
+// The Library (lore collection) and Hall of Echoes (boon collection) as art
+// banners that open when visited.
 import { useState, type ReactNode } from 'react'
-import { Landmark, Library, LogOut, Minus, Plus, Store } from 'lucide-react'
+import { Landmark, Library, LogOut, Minus, Plus, Sparkles, Store } from 'lucide-react'
 import { changeFullClears } from '../characterStore'
 import { buildOf, CASTER_TYPES, type Character } from '../model/character'
 import { buildSummary } from '../rules/build'
@@ -12,10 +13,12 @@ import { proficiencyBonus } from '../rules/proficiency'
 import { effectAtRank, rankProgress, STAT_TRACKS } from '../rules/statTracks'
 import { hasFullClear, UPGRADES } from '../rules/upgrades'
 import { artUrl } from '../art'
+import { useLoreNotes, useLoreSummary } from '../lore/useLoreLibrary'
 import { BasaltEchoes } from './BasaltEchoes'
 import { BuildPanel } from './BuildPanel'
 import { DraftPreferences } from './DraftPreferences'
 import { LookPicker } from './LookPicker'
+import { LoreLibrary } from './LoreLibrary'
 import { Portrait } from '../ui/Portrait'
 import { portraitHonors } from '../rules/portraitHonors'
 import { CharacterLoot } from './LootScreens'
@@ -54,7 +57,7 @@ interface Props {
 }
 
 export function CharacterHub({ character: c, mode, actions }: Props) {
-  const [visiting, setVisiting] = useState<'shrine' | 'markets' | 'echoes' | null>(null)
+  const [visiting, setVisiting] = useState<'shrine' | 'markets' | 'library' | 'echoes' | null>(null)
   const [savingClears, setSavingClears] = useState(false)
   const [clearsError, setClearsError] = useState<string | null>(null)
   async function adjustFullClears(delta: 1 | -1) {
@@ -74,6 +77,11 @@ export function CharacterHub({ character: c, mode, actions }: Props) {
   const owned = upgradesOwned(c)
   const honors = portraitHonors(c)
   const { overall } = mode === 'dm' ? echoCounts(c) : visibleEchoCounts(c)
+  const loreSummary = useLoreSummary()
+  const loreNotes = useLoreNotes(c.playerEmail ?? '')
+  const loreSeenRaw = loreNotes ? loreNotes.filter((n) => n.counted).length : 0
+  const loreSeen = loreSummary && loreSummary.total > 0 ? Math.min(loreSeenRaw, loreSummary.total) : loreSeenRaw
+  const loreBadge = loreSummary === null || loreNotes === null ? 'Lore' : `${loreSeen} of ${loreSummary.total} cards`
   const canEdit = mode !== 'preview'
   const canCorrect = mode === 'dm'
   // The Shrine and Markets are closed while the character is in a run.
@@ -208,12 +216,22 @@ export function CharacterHub({ character: c, mode, actions }: Props) {
           {closedNote}
           <UpgradeShop character={c} canCorrect={canCorrect} canSpend={canSpend} />
         </Location>
-      ) : visiting === 'echoes' ? (
+      ) : visiting === 'library' ? (
         <Location
           artId="basalt-lib"
-          tone="emerald"
+          tone="sky"
           icon={<Library size={16} />}
-          title="Basalt Echoes: every boon you've held"
+          title="The Library: lore you've been shown"
+          onLeave={() => setVisiting(null)}
+        >
+          <LoreLibrary email={c.playerEmail ?? ''} />
+        </Location>
+      ) : visiting === 'echoes' ? (
+        <Location
+          artId="hall-of-echoes"
+          tone="emerald"
+          icon={<Sparkles size={16} />}
+          title="Hall of Echoes: every boon you've held"
           onLeave={() => setVisiting(null)}
         >
           <BasaltEchoes character={c} canMark={canCorrect} />
@@ -240,12 +258,20 @@ export function CharacterHub({ character: c, mode, actions }: Props) {
           />
           <LocationBanner
             artId="basalt-lib"
-            tone="emerald"
+            tone="sky"
             icon={<Library size={16} />}
-            title="Basalt Echoes"
-            text="Every boon, Evolution and Fusion you've held, and the echoes still waiting."
+            title="The Library"
+            text="Every lore card you've been shown, and the ones still waiting."
+            badge={loreBadge}
+            onVisit={() => setVisiting('library')}
+          />
+          <LocationBanner
+            artId="hall-of-echoes"
+            tone="emerald"
+            icon={<Sparkles size={16} />}
+            title="Hall of Echoes"
+            text="Every boon, Evolution and Combination you've held, and the echoes still waiting."
             badge={`${overall.seen} of ${overall.total} seen`}
-            className="md:col-span-2"
             onVisit={() => setVisiting('echoes')}
           />
         </div>
