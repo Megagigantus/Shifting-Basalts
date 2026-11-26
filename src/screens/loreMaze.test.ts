@@ -1,5 +1,6 @@
 // Unit tests for deterministic orthogonal maze path generation in loreMaze.ts.
 import { describe, expect, it } from 'vitest'
+import { loreMazeStyle } from '../moments/theme'
 import { buildMazePaths, type MazePath } from './loreMaze'
 
 function gridKey(x: number, y: number, sqLeft: number, sqTop: number, cell: number): string {
@@ -106,5 +107,41 @@ describe('buildMazePaths', () => {
 
     expect(paths.some((p) => p.depth > 0)).toBe(true)
     expect(paths.every((p) => p.depth <= 2)).toBe(true)
+  })
+
+  it('scales total path count and depth ceiling by floor options across seeds', () => {
+    const seeds = [
+      '/art/bosses/tessellated-warden.webp',
+      '/art/bosses/ophaniel.webp',
+      '/art/families/wardstones.webp',
+      '/art/families/gate-born.webp',
+      '/art/lore/default-card.webp',
+    ]
+    const floor1 = loreMazeStyle(1)
+    const floor3 = loreMazeStyle(3)
+    const floor5 = loreMazeStyle(5)
+
+    for (const seed of seeds) {
+      const paths1 = buildMazePaths(1600, 900, seed, floor1)
+      const paths3 = buildMazePaths(1600, 900, seed, floor3)
+      const paths5 = buildMazePaths(1600, 900, seed, floor5)
+
+      expect(paths5.length).toBeGreaterThan(paths3.length)
+      expect(paths3.length).toBeGreaterThan(paths1.length)
+
+      expect(paths1.every((p) => p.depth <= floor1.maxDepth)).toBe(true)
+      expect(paths3.every((p) => p.depth <= floor3.maxDepth)).toBe(true)
+      expect(paths5.every((p) => p.depth <= floor5.maxDepth)).toBe(true)
+    }
+  })
+
+  it('produces identical paths when called with no options vs floor 3 options', () => {
+    const floor3 = loreMazeStyle(3)
+    expect(buildMazePaths(1600, 900, '/art/boss-thils.png')).toEqual(
+      buildMazePaths(1600, 900, '/art/boss-thils.png', floor3),
+    )
+    expect(buildMazePaths(400, 800, '/art/portrait-enemy.png')).toEqual(
+      buildMazePaths(400, 800, '/art/portrait-enemy.png', floor3),
+    )
   })
 })

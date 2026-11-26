@@ -82,6 +82,25 @@ export interface ThemePlayback {
   smallScreenParticleScale: number
 }
 
+/** Floor-scaled visual and density settings for lore art maze overlays. */
+export interface LoreMazeStyle {
+  rootsMin: number
+  rootsMax: number
+  maxRootSegments: number
+  maxDepth: number
+  branchProbability: number
+  restOpacity: number
+  glowScale: number
+  strokeScale: number
+}
+
+/** Data-driven lore maze scaling config keyed by floor number. */
+export interface LoreMazeConfig {
+  status: string
+  defaultFloor: number
+  floors: Record<string, LoreMazeStyle>
+}
+
 /** Complete data-driven theme config for cinematic moments. */
 export interface MomentTheme {
   id: string
@@ -97,6 +116,7 @@ export interface MomentTheme {
   sounds: Record<string, string>
   timings: ThemeTimings
   playback: ThemePlayback
+  loreMaze?: LoreMazeConfig
 }
 
 /** Active moment theme loaded from JSON config. */
@@ -123,6 +143,18 @@ export function tierRank(id: string, theme: MomentTheme = THEME): number {
   const index = theme.tiers.findIndex((t) => t.id === id)
   if (index < 0) throw new Error(`Unknown reveal tier ${id}`)
   return index
+}
+
+/** Look up floor-scaled lore maze settings, falling back to the theme default floor. */
+export function loreMazeStyle(
+  floor: number | null | undefined,
+  theme: MomentTheme = THEME,
+): LoreMazeStyle {
+  const config: LoreMazeConfig = theme.loreMaze ?? themeData.loreMaze
+  const key = floor !== null && floor !== undefined ? String(floor) : ''
+  return Object.hasOwn(config.floors, key)
+    ? config.floors[key]
+    : config.floors[String(config.defaultFloor)]
 }
 
 /** Validate internal consistency of a moment theme, returning human-readable problems. */

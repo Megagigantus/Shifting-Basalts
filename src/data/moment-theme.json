@@ -223,5 +223,61 @@
     "preloadTimeoutMs": 1500,
     "smallScreenMaxWidth": 640,
     "smallScreenParticleScale": 0.5
+  },
+  "loreMaze": {
+    "status": "proposed",
+    "defaultFloor": 3,
+    "floors": {
+      "1": {
+        "rootsMin": 3,
+        "rootsMax": 4,
+        "maxRootSegments": 5,
+        "maxDepth": 1,
+        "branchProbability": 0.15,
+        "restOpacity": 0.55,
+        "glowScale": 0.7,
+        "strokeScale": 0.85
+      },
+      "2": {
+        "rootsMin": 5,
+        "rootsMax": 6,
+        "maxRootSegments": 7,
+        "maxDepth": 1,
+        "branchProbability": 0.3,
+        "restOpacity": 0.7,
+        "glowScale": 0.85,
+        "strokeScale": 0.95
+      },
+      "3": {
+        "rootsMin": 7,
+        "rootsMax": 9,
+        "maxRootSegments": 10,
+        "maxDepth": 2,
+        "branchProbability": 0.5,
+        "restOpacity": 0.85,
+        "glowScale": 1,
+        "strokeScale": 1
+      },
+      "4": {
+        "rootsMin": 9,
+        "rootsMax": 11,
+        "maxRootSegments": 12,
+        "maxDepth": 2,
+        "branchProbability": 0.65,
+        "restOpacity": 0.95,
+        "glowScale": 1.3,
+        "strokeScale": 1.1
+      },
+      "5": {
+        "rootsMin": 11,
+        "rootsMax": 13,
+        "maxRootSegments": 14,
+        "maxDepth": 3,
+        "branchProbability": 0.8,
+        "restOpacity": 1,
+        "glowScale": 1.6,
+        "strokeScale": 1.2
+      }
+    }
   }
 }

@@ -1,12 +1,11 @@
 // Draws animated glowing orthogonal maze paths over the blurred backdrop of square lore art.
 import { useEffect, useId, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { usePrefersReducedMotion } from '../moments/device'
-import { accentById } from '../moments/theme'
+import { accentById, loreMazeStyle } from '../moments/theme'
 import { buildMazePaths } from './loreMaze'
+import { loreMazeFloorForArt } from './loreMazeFloor'
 
 const THILS_ACCENT = accentById('thils')
-// Lore art sits on a dark blur, so the maze rests brighter than on boon cards.
-const REST_OPACITY = Math.max(0.85, THILS_ACCENT.glowPatternOpacity ?? 0.5)
 // Fade only toward the outer frame edges, along the axis the gaps sit on.
 const maskFor = (wide: boolean) =>
   `linear-gradient(${wide ? 'to right' : 'to bottom'}, transparent 0%, black 14%, black 86%, transparent 100%)`
@@ -61,21 +60,23 @@ export function LoreMazePaths({ seed }: { seed: string }) {
     return () => observer.disconnect()
   }, [])
 
+  const style = useMemo(() => loreMazeStyle(loreMazeFloorForArt(seed)), [seed])
+
   const paths = useMemo(
-    () => (size ? buildMazePaths(size.width, size.height, seed) : []),
-    [size, seed],
+    () => (size ? buildMazePaths(size.width, size.height, seed, style) : []),
+    [size, seed, style],
   )
 
   const minDim = size ? Math.min(size.width, size.height) : 0
-  const strokeWidth = Math.min(3, Math.max(1.5, 1 + minDim / 400))
+  const strokeWidth = Math.min(3, Math.max(1.5, 1 + minDim / 400)) * style.strokeScale
   const dotRadius = Math.min(3, Math.max(2, strokeWidth * 1.35))
-  const blurStdDev = Math.max(2.5, strokeWidth * 2.2)
+  const blurStdDev = Math.max(2.5, strokeWidth * 2.2) * style.glowScale
 
   const svgStyle: CSSProperties & { '--lore-maze-rest': number } = {
-    '--lore-maze-rest': REST_OPACITY,
+    '--lore-maze-rest': style.restOpacity,
     maskImage: maskFor(size ? size.width >= size.height : true),
     WebkitMaskImage: maskFor(size ? size.width >= size.height : true),
-    opacity: reducedMotion ? REST_OPACITY : 1,
+    opacity: reducedMotion ? style.restOpacity : 1,
     animation: reducedMotion
       ? undefined
       : 'lore-maze-settle 0.6s ease-out 2.1s forwards, lore-maze-pulse 4s ease-in-out 2.7s infinite',
@@ -100,6 +101,7 @@ export function LoreMazePaths({ seed }: { seed: string }) {
                 <feMerge>
                   <feMergeNode in="blur" />
                   <feMergeNode in="blur" />
+                  {style.glowScale >= 1.3 && <feMergeNode in="blur" />}
                   <feMergeNode in="SourceGraphic" />
                 </feMerge>
               </filter>

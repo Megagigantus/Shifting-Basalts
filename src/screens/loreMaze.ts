@@ -1,4 +1,5 @@
 // Generates deterministic orthogonal maze paths branching outward from a centered square into frame gaps.
+import { loreMazeStyle } from '../moments/theme'
 
 export type MazePoint = [number, number]
 
@@ -7,6 +8,14 @@ export interface MazePath {
   depth: number
   points: MazePoint[]
   end: MazePoint
+}
+
+export interface MazeOptions {
+  rootsMin: number
+  rootsMax: number
+  maxRootSegments: number
+  maxDepth: number
+  branchProbability: number
 }
 
 interface GridCoord {
@@ -25,9 +34,6 @@ interface BranchTask {
 
 const GRID_CELLS = 18
 const MIN_GAP_PX = 16
-const MAX_ROOT_SEGMENTS = 10
-const MAX_DEPTH = 2
-const BRANCH_PROBABILITY = 0.5
 
 function hashSeed(seed: string): number {
   let h = 2166136261
@@ -48,8 +54,9 @@ function createRng(seed: string): () => number {
   }
 }
 
-function pickStartIndices(rng: () => number): number[] {
-  const count = 7 + Math.floor(rng() * 3)
+function pickStartIndices(rng: () => number, rootsMin: number, rootsMax: number): number[] {
+  const spanCount = Math.max(1, rootsMax - rootsMin + 1)
+  const count = rootsMin + Math.floor(rng() * spanCount)
   const span = GRID_CELLS - 1
   const indices: number[] = []
   for (let i = 0; i < count; i++) {
@@ -85,7 +92,12 @@ function coordKey(gx: number, gy: number): string {
 }
 
 /** Build deterministic orthogonal maze paths in pixel coordinates for a width x height frame. */
-export function buildMazePaths(width: number, height: number, seed: string): MazePath[] {
+export function buildMazePaths(
+  width: number,
+  height: number,
+  seed: string,
+  options?: Partial<MazeOptions>,
+): MazePath[] {
   if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) {
     return []
   }
@@ -94,6 +106,15 @@ export function buildMazePaths(width: number, height: number, seed: string): Maz
   const gap = (Math.max(width, height) - s) / 2
   if (gap < MIN_GAP_PX) {
     return []
+  }
+
+  const defaults = loreMazeStyle(null)
+  const opts: MazeOptions = {
+    rootsMin: options?.rootsMin ?? defaults.rootsMin,
+    rootsMax: options?.rootsMax ?? defaults.rootsMax,
+    maxRootSegments: options?.maxRootSegments ?? defaults.maxRootSegments,
+    maxDepth: options?.maxDepth ?? defaults.maxDepth,
+    branchProbability: options?.branchProbability ?? defaults.branchProbability,
   }
 
   const cell = s / GRID_CELLS
@@ -117,7 +138,7 @@ export function buildMazePaths(width: number, height: number, seed: string): Maz
 
   const walkTask = (task: BranchTask): void => {
     const { gx: startGx, gy: startGy, depth, outward, isInGap } = task
-    const maxSegments = depth === 0 ? MAX_ROOT_SEGMENTS : 1 + Math.floor(rng() * 3)
+    const maxSegments = depth === 0 ? opts.maxRootSegments : 1 + Math.floor(rng() * 3)
     const gridPoints: GridCoord[] = [{ gx: startGx, gy: startGy }]
 
     let curGx = startGx
@@ -167,7 +188,7 @@ export function buildMazePaths(width: number, height: number, seed: string): Maz
           : perpB
         : outward
 
-      if (depth < MAX_DEPTH && rng() < BRANCH_PROBABILITY) {
+      if (depth < opts.maxDepth && rng() < opts.branchProbability) {
         queue.push({
           gx: curGx,
           gy: curGy,
@@ -199,8 +220,8 @@ export function buildMazePaths(width: number, height: number, seed: string): Maz
     const inLeftGap = (gx: number, gy: number) => gx < 0 && inFrame(gx, gy)
     const inRightGap = (gx: number, gy: number) => gx > GRID_CELLS && inFrame(gx, gy)
 
-    const leftStarts = pickStartIndices(rng)
-    const rightStarts = pickStartIndices(rng)
+    const leftStarts = pickStartIndices(rng, opts.rootsMin, opts.rootsMax)
+    const rightStarts = pickStartIndices(rng, opts.rootsMin, opts.rootsMax)
     const roots: BranchTask[] = [
       ...leftStarts.map((gy) => ({
         gx: 0,
@@ -225,8 +246,8 @@ export function buildMazePaths(width: number, height: number, seed: string): Maz
     const inTopGap = (gx: number, gy: number) => gy < 0 && inFrame(gx, gy)
     const inBottomGap = (gx: number, gy: number) => gy > GRID_CELLS && inFrame(gx, gy)
 
-    const topStarts = pickStartIndices(rng)
-    const bottomStarts = pickStartIndices(rng)
+    const topStarts = pickStartIndices(rng, opts.rootsMin, opts.rootsMax)
+    const bottomStarts = pickStartIndices(rng, opts.rootsMin, opts.rootsMax)
     const roots: BranchTask[] = [
       ...topStarts.map((gx) => ({
         gx,
