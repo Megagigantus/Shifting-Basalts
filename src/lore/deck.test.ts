@@ -51,7 +51,7 @@ describe('embedded lore deck', () => {
     expect(LORE_BANNED_TERMS).toContain('lorebook')
   })
 
-  it('contains no banned terms in raw cards outside readAloud', () => {
+  it('contains no banned terms in any card field, readAloud included', () => {
     const hits = rawDeck.cards.flatMap((card) =>
       findBannedInCard(card as unknown as LoreCard, LORE_BANNED_TERMS).map(
         (hit) => `${card.id} (${hit.path}): ${hit.term}`,

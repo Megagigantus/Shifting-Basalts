@@ -288,15 +288,15 @@ describe('validateDeckFile', () => {
     )
   })
 
-  it('fails when a banned term appears in dmTruth while allowing it only in readAloud', () => {
+  it('fails when a banned term appears in readAloud or dmTruth', () => {
     const raw = makeRawDeck()
-    const cleanReadAloudOnly = {
+    const leakedInReadAloud = {
       ...raw,
       cards: raw.cards.map((c, i) =>
         i === 0 ? { ...c, readAloud: 'Travelers whisper of Zorblax by the stair.' } : c,
       ),
     }
-    expect(validateDeckFile(cleanReadAloudOnly, ['zorblax']).ok).toBe(true)
+    expect(validateDeckFile(leakedInReadAloud, ['zorblax']).ok).toBe(false)
 
     const leakedInTruth = {
       ...raw,
