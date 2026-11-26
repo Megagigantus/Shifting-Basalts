@@ -88,8 +88,8 @@ export function findBannedTerms(
 }
 
 /**
- * Check every field on a lore card except `readAloud` for banned terms.
+ * Check every field on a lore card for banned terms, read-aloud included.
  */
 export function findBannedInCard(card: LoreCard, terms: string[]): BannedTermHit[] {
-  return findBannedTerms(card, terms, ['readAloud'])
+  return findBannedTerms(card, terms)
 }

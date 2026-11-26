@@ -160,7 +160,7 @@ function LoreDrawerCard({ runId, players, item, waiting, cards, groups, deckErro
     void runAction(() => dismissItem(runId, item), 'Could not dismiss this card.')
   }
 
-  function handleAdvance(stage: 'text' | 'more') {
+  function handleAdvance(stage: 'more') {
     if (!card) return
     void runAction(() => advanceReveal({ runId, item, card, imageUrl, stage }), 'Could not advance the reveal.')
   }
@@ -275,7 +275,7 @@ interface BodyProps {
   onRevealSelected: () => void
   onSkip: () => void
   onDismiss: () => void
-  onAdvance: (stage: 'text' | 'more') => void
+  onAdvance: (stage: 'more') => void
   onDone: () => void
 }
 
@@ -458,17 +458,10 @@ function LoreDrawerBody({
             <Pill tone="amber">Stage: {STAGE_LABEL[stage]}</Pill>
           </div>
           <div className="flex flex-wrap items-center gap-2">
+            {/* Read aloud is DM-only, so there is no Show text step: Show more reveals the push line. */}
             <button
               type="button"
-              disabled={busy || stage !== 'image'}
-              onClick={() => onAdvance('text')}
-              className={cx(QUIET_BUTTON, 'disabled:cursor-default disabled:opacity-40')}
-            >
-              Show text
-            </button>
-            <button
-              type="button"
-              disabled={busy || stage !== 'text' || !hasPush}
+              disabled={busy || stage === 'more' || !hasPush}
               onClick={() => onAdvance('more')}
               className={cx(QUIET_BUTTON, 'disabled:cursor-default disabled:opacity-40')}
             >

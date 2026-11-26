@@ -120,7 +120,6 @@ export function LoreLibrary({ email }: { email: string }) {
             stage: 'more',
             title: selected.title,
             imageUrl: selected.imageUrl,
-            readAloud: selected.readAloud,
             push: selected.push,
           }}
           onClose={() => setSelected(null)}

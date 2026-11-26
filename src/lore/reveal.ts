@@ -9,7 +9,6 @@ export interface LoreRevealDoc {
   stage: RevealStage
   title: string
   imageUrl: string | null
-  readAloud?: string
   push?: string
 }
 
@@ -40,14 +39,12 @@ export interface LoreNote {
   group: string
   title: string
   imageUrl: string | null
-  readAloud?: string
   push?: string
   revealId: string
   counted: boolean
 }
 
 export interface ShownFlags {
-  text: boolean
   more: boolean
 }
 
@@ -87,7 +84,7 @@ export function buildRevealDoc(
   stage: RevealStage,
   revealId: string,
   imageUrl: string | null,
-  fills: Record<string, string>,
+  _fills: Record<string, string>,
   shown: ShownFlags,
 ): LoreRevealDoc {
   const doc: LoreRevealDoc = {
@@ -95,9 +92,6 @@ export function buildRevealDoc(
     stage,
     title: card.title,
     imageUrl,
-  }
-  if (stage !== 'image' && shown.text) {
-    doc.readAloud = fillPlaceholders(card.readAloud, fills)
   }
   if ((stage === 'more' || stage === 'closed') && shown.more && card.push.trim().length > 0) {
     doc.push = card.push
@@ -107,13 +101,13 @@ export function buildRevealDoc(
 
 /**
  * Build a player's archive note for a finished reveal.
- * Never includes `dmTruth` or other DM-only card fields; omits unshown or empty text fields.
+ * Never includes `dmTruth` or other DM-only card fields; omits unshown or empty `push`.
  */
 export function buildNote(
   card: LoreCard,
   revealId: string,
   imageUrl: string | null,
-  fills: Record<string, string>,
+  _fills: Record<string, string>,
   shown: ShownFlags,
 ): LoreNote {
   const note: LoreNote = {
@@ -123,9 +117,6 @@ export function buildNote(
     imageUrl,
     revealId,
     counted: card.adHoc !== true,
-  }
-  if (shown.text) {
-    note.readAloud = fillPlaceholders(card.readAloud, fills)
   }
   if (shown.more && card.push.trim().length > 0) {
     note.push = card.push

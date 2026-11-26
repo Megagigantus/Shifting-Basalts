@@ -45,6 +45,7 @@ function makeQueueItem(overrides: Partial<LoreQueueItem> = {}): LoreQueueItem {
 
 const FORBIDDEN_REVEAL_KEYS = [
   'dmTruth',
+  'readAloud',
   'id',
   'cardId',
   'trigger',
@@ -86,11 +87,11 @@ describe('buildRevealDoc', () => {
   const card = makeCard()
 
   it('never includes DM-only or card-identity fields at any stage', () => {
-    const cases: Array<{ stage: RevealStage; shown: { text: boolean; more: boolean } }> = [
-      { stage: 'image', shown: { text: false, more: false } },
-      { stage: 'text', shown: { text: true, more: false } },
-      { stage: 'more', shown: { text: true, more: true } },
-      { stage: 'closed', shown: { text: true, more: true } },
+    const cases: Array<{ stage: RevealStage; shown: { more: boolean } }> = [
+      { stage: 'image', shown: { more: false } },
+      { stage: 'text', shown: { more: false } },
+      { stage: 'more', shown: { more: true } },
+      { stage: 'closed', shown: { more: true } },
     ]
 
     for (const { stage, shown } of cases) {
@@ -100,14 +101,15 @@ describe('buildRevealDoc', () => {
       }
       const serialized = JSON.stringify(doc)
       expect(serialized).not.toContain(card.dmTruth)
+      expect(serialized).not.toContain(card.readAloud)
+      expect(serialized).not.toContain('silver chime')
       expect(serialized).not.toContain(card.id)
       expect(serialized).not.toContain(card.imagePrompt)
     }
   })
 
-  it('reveals title and imageUrl only at image stage, readAloud from text, and push from more', () => {
+  it('reveals title and imageUrl at image and text stages, never includes readAloud, and reveals push from more', () => {
     const atImage = buildRevealDoc(card, 'image', 'rev-1', card.imageUrl, fills, {
-      text: false,
       more: false,
     })
     expect(atImage).toEqual({
@@ -119,16 +121,14 @@ describe('buildRevealDoc', () => {
     expect('readAloud' in atImage).toBe(false)
     expect('push' in atImage).toBe(false)
 
-    // Even if shown flags were set prematurely, image stage never leaks text or push.
+    // Even if shown flags were set prematurely, image stage never leaks push or readAloud.
     const guardedImage = buildRevealDoc(card, 'image', 'rev-1', card.imageUrl, fills, {
-      text: true,
       more: true,
     })
     expect('readAloud' in guardedImage).toBe(false)
     expect('push' in guardedImage).toBe(false)
 
     const atText = buildRevealDoc(card, 'text', 'rev-1', card.imageUrl, fills, {
-      text: true,
       more: false,
     })
     expect(atText).toEqual({
@@ -136,20 +136,18 @@ describe('buildRevealDoc', () => {
       stage: 'text',
       title: card.title,
       imageUrl: card.imageUrl,
-      readAloud:
-        'Beside the cracked basin rests a silver chime, still pointing toward the lower vault. Even a silver chime hums in the dark.',
     })
+    expect('readAloud' in atText).toBe(false)
     expect('push' in atText).toBe(false)
 
-    // Even if shown.more were true, text stage never leaks push.
+    // Even if shown.more were true, text stage never leaks push or readAloud.
     const guardedText = buildRevealDoc(card, 'text', 'rev-1', card.imageUrl, fills, {
-      text: true,
       more: true,
     })
+    expect('readAloud' in guardedText).toBe(false)
     expect('push' in guardedText).toBe(false)
 
     const atMore = buildRevealDoc(card, 'more', 'rev-1', card.imageUrl, fills, {
-      text: true,
       more: true,
     })
     expect(atMore).toEqual({
@@ -157,45 +155,48 @@ describe('buildRevealDoc', () => {
       stage: 'more',
       title: card.title,
       imageUrl: card.imageUrl,
-      readAloud:
-        'Beside the cracked basin rests a silver chime, still pointing toward the lower vault. Even a silver chime hums in the dark.',
       push: card.push,
     })
+    expect('readAloud' in atMore).toBe(false)
   })
 
-  it('keeps only previously shown text when closed and omits empty push', () => {
-    const closedFromImage = buildRevealDoc(card, 'closed', 'rev-1', null, fills, {
-      text: false,
+  it('keeps previously shown push when closed and omits unshown or empty push', () => {
+    const closedWithoutMore = buildRevealDoc(card, 'closed', 'rev-1', null, fills, {
       more: false,
     })
-    expect(closedFromImage).toEqual({
+    expect(closedWithoutMore).toEqual({
       revealId: 'rev-1',
       stage: 'closed',
       title: card.title,
       imageUrl: null,
     })
-    expect('readAloud' in closedFromImage).toBe(false)
-    expect('push' in closedFromImage).toBe(false)
+    expect('readAloud' in closedWithoutMore).toBe(false)
+    expect('push' in closedWithoutMore).toBe(false)
 
-    const closedFromText = buildRevealDoc(card, 'closed', 'rev-1', null, fills, {
-      text: true,
-      more: false,
+    const closedWithMore = buildRevealDoc(card, 'closed', 'rev-1', null, fills, {
+      more: true,
     })
-    expect(closedFromText.readAloud).toContain('a silver chime')
-    expect('push' in closedFromText).toBe(false)
+    expect(closedWithMore).toEqual({
+      revealId: 'rev-1',
+      stage: 'closed',
+      title: card.title,
+      imageUrl: null,
+      push: card.push,
+    })
+    expect('readAloud' in closedWithMore).toBe(false)
 
     const noPushCard = makeCard({ push: '' })
     const moreEmptyPush = buildRevealDoc(noPushCard, 'more', 'rev-1', null, fills, {
-      text: true,
       more: true,
     })
+    expect('readAloud' in moreEmptyPush).toBe(false)
     expect('push' in moreEmptyPush).toBe(false)
 
     const blankPushCard = makeCard({ push: '   ' })
     const moreBlankPush = buildRevealDoc(blankPushCard, 'more', 'rev-1', null, fills, {
-      text: true,
       more: true,
     })
+    expect('readAloud' in moreBlankPush).toBe(false)
     expect('push' in moreBlankPush).toBe(false)
   })
 })
@@ -204,9 +205,9 @@ describe('buildNote', () => {
   const fills = { item: 'an obsidian token', place: 'the eastern pier' }
   const card = makeCard()
 
-  it('includes cardId and group, respects shown flags, omits empty push, and excludes dmTruth', () => {
-    const imageOnly = buildNote(card, 'rev-1', card.imageUrl, fills, { text: false, more: false })
-    expect(imageOnly).toEqual({
+  it('includes cardId and group, respects shown flags, omits empty push, and excludes dmTruth and readAloud', () => {
+    const withoutMore = buildNote(card, 'rev-1', card.imageUrl, fills, { more: false })
+    expect(withoutMore).toEqual({
       cardId: card.id,
       group: card.group,
       title: card.title,
@@ -214,35 +215,41 @@ describe('buildNote', () => {
       revealId: 'rev-1',
       counted: true,
     })
-    expect('readAloud' in imageOnly).toBe(false)
-    expect('push' in imageOnly).toBe(false)
+    expect('readAloud' in withoutMore).toBe(false)
+    expect('push' in withoutMore).toBe(false)
 
-    const withText = buildNote(card, 'rev-1', card.imageUrl, fills, { text: true, more: false })
-    expect(withText.readAloud).toContain('an obsidian token')
-    expect('push' in withText).toBe(false)
-
-    const withMore = buildNote(card, 'rev-1', card.imageUrl, fills, { text: true, more: true })
-    expect(withMore.readAloud).toContain('the eastern pier')
+    const withMore = buildNote(card, 'rev-1', card.imageUrl, fills, { more: true })
+    expect(withMore).toEqual({
+      cardId: card.id,
+      group: card.group,
+      title: card.title,
+      imageUrl: card.imageUrl,
+      push: card.push,
+      revealId: 'rev-1',
+      counted: true,
+    })
+    expect('readAloud' in withMore).toBe(false)
     expect(withMore.push).toBe(card.push)
 
     const noPushNote = buildNote(makeCard({ push: '' }), 'rev-1', null, fills, {
-      text: true,
       more: true,
     })
+    expect('readAloud' in noPushNote).toBe(false)
     expect('push' in noPushNote).toBe(false)
 
-    for (const key of ['dmTruth', 'id', 'trigger', 'tier', 'source', 'imagePrompt']) {
+    for (const key of ['dmTruth', 'readAloud', 'id', 'trigger', 'tier', 'source', 'imagePrompt']) {
       expect(key in withMore).toBe(false)
     }
     expect(JSON.stringify(withMore)).not.toContain(card.dmTruth)
+    expect(JSON.stringify(withMore)).not.toContain('an obsidian token')
   })
 
   it('sets counted to false on notes built from adHoc cards', () => {
     const adHocNote = buildNote(makeCard({ adHoc: true }), 'rev-2', null, fills, {
-      text: true,
       more: false,
     })
     expect(adHocNote.counted).toBe(false)
+    expect('readAloud' in adHocNote).toBe(false)
   })
 })
 

@@ -92,7 +92,6 @@ function toRevealDoc(data: Record<string, unknown>): LoreRevealDoc | null {
     title: data.title,
     imageUrl: typeof data.imageUrl === 'string' ? data.imageUrl : null,
   }
-  if (typeof data.readAloud === 'string') reveal.readAloud = data.readAloud
   if (typeof data.push === 'string') reveal.push = data.push
   return reveal
 }

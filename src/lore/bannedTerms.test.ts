@@ -84,12 +84,12 @@ describe('findBannedInCard', () => {
     ])
   })
 
-  it('ignores terms in readAloud', () => {
+  it('flags terms in readAloud too', () => {
     const card = makeCard({
       readAloud: 'The voice whispers of Zorblax in the dark.',
     })
 
-    expect(findBannedInCard(card, ['zorblax'])).toEqual([])
+    expect(findBannedInCard(card, ['zorblax'])).toEqual([{ path: 'readAloud', term: 'zorblax' }])
   })
 
   it('performs case-insensitive matching', () => {
