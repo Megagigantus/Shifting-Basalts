@@ -103,7 +103,7 @@ export async function answerDispatch({
       emails,
       revealId: crypto.randomUUID(),
       fills: {},
-      shown: { text: true, more: Boolean(card.push.trim()) },
+      shown: { more: Boolean(card.push.trim()) },
     })
     await setDoc(
       doc(firestore, 'loreState', 'main'),

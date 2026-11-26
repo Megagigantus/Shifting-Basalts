@@ -94,7 +94,7 @@ export async function startReveal({
     targets.map((target) => target.playerEmail.trim().toLowerCase()),
   )
   const revealData = {
-    ...buildRevealDoc(card, 'image', revealId, imageUrl, fills, { text: false, more: false }),
+    ...buildRevealDoc(card, 'image', revealId, imageUrl, fills, { more: false }),
     updatedAt: serverTimestamp(),
   }
 
@@ -135,7 +135,7 @@ export async function advanceReveal({
   const firestore = db
   const revealId = item.revealId ?? crypto.randomUUID()
   const fills = item.fills ?? {}
-  const shown = { text: true, more: stage === 'more' }
+  const shown = { more: stage === 'more' }
   const revealData = {
     ...buildRevealDoc(card, stage, revealId, imageUrl, fills, shown),
     updatedAt: serverTimestamp(),
@@ -153,7 +153,7 @@ export async function advanceReveal({
 }
 
 /**
- * Finish a live reveal: close every audience reveal doc (keeping shown text), write archive notes
+ * Finish a live reveal: close every audience reveal doc (keeping shown `push`), write archive notes
  * for each distinct target email with merge, and mark the queue item `'done'`.
  */
 export async function finishReveal({
@@ -166,10 +166,7 @@ export async function finishReveal({
   const firestore = db
   const revealId = item.revealId ?? crypto.randomUUID()
   const fills = item.fills ?? {}
-  const shown = {
-    text: item.stage === 'text' || item.stage === 'more',
-    more: item.stage === 'more',
-  }
+  const shown = { more: item.stage === 'more' }
   const revealData = {
     ...buildRevealDoc(card, 'closed', revealId, imageUrl, fills, shown),
     updatedAt: serverTimestamp(),
