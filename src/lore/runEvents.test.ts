@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { DraftOffer, Run, RunPlayer, RunState } from '../model/run'
+import type { Encounter } from '../rules/encounters'
 import { emptyLoot, SHRINE_TERRAIN, type LootItem } from '../rules/loot'
 import type { Room, RoomView } from '../rules/rooms'
 import { deriveLoreEvents } from './runEvents'
@@ -105,6 +106,19 @@ function makeDraft(overrides: Partial<DraftOffer> = {}): DraftOffer {
   }
 }
 
+function makeEncounter(overrides: Partial<Encounter> = {}): Encounter {
+  return {
+    family: 'wardstones',
+    splashFamily: null,
+    elite: null,
+    budget: 100,
+    xp: 100,
+    maxCr: 3,
+    groups: [{ creatureId: 'hexling', cr: 1, count: 2, revealed: false }],
+    ...overrides,
+  }
+}
+
 function makeItem(uid: string, floor = 1, room = 1): LootItem {
   return {
     uid,
@@ -163,8 +177,57 @@ describe('deriveLoreEvents', () => {
     })
 
     expect(deriveLoreEvents(prev, next).events).toEqual([
+      { type: 'boon_first_level' },
       { type: 'boon_first_draft', arg: 'honed' },
     ])
+  })
+
+  it('emits boon_first_combination and no boon_first_draft for a new combination slot', () => {
+    const prev = makeRunState({
+      players: [
+        makePlayer('p1', {
+          slots: [
+            { kind: 'boon', boonId: 'critical-delight', level: 3 },
+            { kind: 'boon', boonId: 'crits-are-for-suckers', level: 3 },
+            null,
+          ],
+        }),
+        makePlayer('p2'),
+      ],
+    })
+    const next = makeRunState({
+      players: [
+        makePlayer('p1', {
+          slots: [{ kind: 'combination', combinationId: 'super-normal' }, null, null],
+        }),
+        makePlayer('p2'),
+      ],
+    })
+
+    expect(deriveLoreEvents(prev, next).events).toEqual([{ type: 'boon_first_combination' }])
+    expect(deriveLoreEvents(next, next).events).toEqual([])
+  })
+
+  it('emits boon_first_evolution and no boon_first_draft for a new evolution slot', () => {
+    const prev = makeRunState({
+      players: [
+        makePlayer('p1', {
+          slots: [{ kind: 'boon', boonId: 'ulmas-thread', level: 3 }, null, null],
+        }),
+        makePlayer('p2'),
+      ],
+    })
+    const next = makeRunState({
+      players: [
+        makePlayer('p1', {
+          slots: [{ kind: 'evolution', evolutionId: 'ball-of-yarn' }, null, null],
+        }),
+        makePlayer('p2'),
+      ],
+    })
+
+    expect(deriveLoreEvents(prev, next).events).toEqual([{ type: 'boon_first_evolution' }])
+    expect(deriveLoreEvents(next, next).events).toEqual([])
   })
 
   it('distinguishes class hidden boons from Thils gifts and guards unknown ids', () => {
@@ -223,6 +286,122 @@ describe('deriveLoreEvents', () => {
       events: [],
       pauseRoomKey: null,
     })
+  })
+
+  it('emits family_first_meet per distinct family on a new encounter room and does not repeat in the same room', () => {
+    const prev = makeRunState({
+      run: { floor: 1, room: 1, roomView: makeRoomView({ floor: 1, room: 1 }) },
+      dm: {
+        floorPlan: ['combat', 'combat', 'combat', 'combat'],
+        room: makeRoom({ floor: 1, room: 1 }),
+      },
+    })
+    const entered = makeRunState({
+      run: { floor: 1, room: 2, roomView: makeRoomView({ floor: 1, room: 2 }) },
+      dm: {
+        floorPlan: ['combat', 'combat', 'combat', 'combat'],
+        room: makeRoom({
+          floor: 1,
+          room: 2,
+          encounter: makeEncounter({
+            family: 'wardstones',
+            splashFamily: 'mazework',
+            groups: [
+              { creatureId: 'hexling', cr: 1, count: 2, revealed: false },
+              { creatureId: 'column-sentinel', cr: 2, count: 1, revealed: false },
+              { creatureId: 'corner-bull', cr: 3, count: 1, source: 'splash', revealed: false },
+            ],
+          }),
+        }),
+      },
+    })
+
+    expect(deriveLoreEvents(prev, entered).events).toEqual([
+      { type: 'family_first_meet', arg: 'wardstones' },
+      { type: 'family_first_meet', arg: 'mazework' },
+    ])
+
+    const sameRoomSavedAgain = makeRunState({
+      ...entered,
+      dm: {
+        ...entered.dm!,
+        room: makeRoom({
+          ...entered.dm!.room!,
+          encounter: makeEncounter({
+            family: 'wardstones',
+            splashFamily: 'mazework',
+            groups: [
+              { creatureId: 'hexling', cr: 1, count: 2, revealed: true },
+              { creatureId: 'column-sentinel', cr: 2, count: 1, revealed: false },
+              { creatureId: 'corner-bull', cr: 3, count: 1, source: 'splash', revealed: false },
+            ],
+          }),
+        }),
+      },
+    })
+    expect(deriveLoreEvents(entered, sameRoomSavedAgain).events).toEqual([])
+  })
+
+  it('emits family_first_meet at run start, includes group families, and skips unknown creature ids', () => {
+    const atStart = makeRunState({
+      run: { floor: 2, room: 1, roomView: makeRoomView({ floor: 2, room: 1 }) },
+      dm: {
+        floorPlan: ['combat', 'elite', 'combat', 'combat'],
+        room: makeRoom({
+          floor: 2,
+          room: 1,
+          encounter: makeEncounter({
+            family: 'the-lost',
+            splashFamily: null,
+            elite: 'next-floor',
+            groups: [
+              { creatureId: 'the-overlooked', cr: 1, count: 2, revealed: false },
+              { creatureId: 'echo-scout', cr: 0.5, count: 1, source: 'elite', revealed: false },
+              { creatureId: 'unknown-creature', cr: 1, count: 1, revealed: false },
+            ],
+          }),
+        }),
+      },
+    })
+
+    expect(deriveLoreEvents(null, atStart).events).toEqual([
+      { type: 'first_entry' },
+      { type: 'pressures_chosen', values: { count: 0 } },
+      { type: 'floor_first_arrival', arg: '2' },
+      { type: 'family_first_meet', arg: 'the-lost' },
+      { type: 'family_first_meet', arg: 'absorbed-echoes' },
+    ])
+  })
+
+  it('emits no family events for a boss room without an encounter', () => {
+    const prev = makeRunState({
+      run: { floor: 1, room: 4, roomView: makeRoomView({ floor: 1, room: 4 }) },
+      dm: {
+        floorPlan: ['combat', 'combat', 'combat', 'combat'],
+        room: makeRoom({ floor: 1, room: 4 }),
+      },
+    })
+    const bossRoom = makeRunState({
+      run: {
+        floor: 1,
+        room: 5,
+        roomView: makeRoomView({ floor: 1, room: 5, kind: 'boss', bossId: 'gatewright' }),
+      },
+      dm: {
+        floorPlan: ['combat', 'combat', 'combat', 'combat'],
+        room: makeRoom({
+          floor: 1,
+          room: 5,
+          kind: 'boss',
+          encounter: null,
+          boss: { id: 'gatewright', partySize: 2 },
+        }),
+      },
+    })
+
+    expect(deriveLoreEvents(prev, bossRoom).events).toEqual([
+      { type: 'boss_first_meet', arg: 'gatewright', immediate: true },
+    ])
   })
 
   it('emits loot_reveal with current floor when loot items grow', () => {
