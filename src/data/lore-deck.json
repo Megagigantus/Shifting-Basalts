@@ -1,0 +1,667 @@
+{
+  "_source": "docs/design-bible.md: Lore moments. The DM lore deck, embedded in the app and delivered only through the DM view. Edit cards here.",
+  "schemaVersion": 1,
+  "deck": "Shifting Basalts starter deck",
+  "bannedTerms": [
+    "sonder",
+    "thilsavrass",
+    "lorebook"
+  ],
+  "settings": {
+    "tierLimit": "deep",
+    "deepPerRun": 1,
+    "anchor": {
+      "name": "Caretaker-9",
+      "voiceNote": "Leads with statement type and emotion, then the line: 'dry, faintly smug - ...'"
+    }
+  },
+  "groups": [
+    {
+      "id": "arrival",
+      "name": "Arrivals and firsts",
+      "description": "Fire the first time a party reaches a place or milestone.",
+      "defaultImageUrl": null,
+      "defaultImagePrompt": "a descending stair into a vast hall of hexagonal basalt columns, pilgrims' candles, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark"
+    },
+    {
+      "id": "echoes",
+      "name": "Strider echoes",
+      "description": "Fire the first time anyone drafts a named boon. Each named boon is the absorbed technique of a past visitor.",
+      "defaultImageUrl": null,
+      "defaultImagePrompt": "ghostly translucent adventurers frozen mid-technique inside basalt columns, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark"
+    },
+    {
+      "id": "dispatch",
+      "name": "Caretaker-9 dispatches",
+      "description": "Ready answers for common questions. Each one waits for the next post-boss room.",
+      "defaultImageUrl": null,
+      "defaultImagePrompt": "a robotic archivist at a glowing terminal in an infinite library, amber light, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark"
+    },
+    {
+      "id": "lost",
+      "name": "Lost things",
+      "description": "Loot, oddity and Quantum Basalt moments. Relic lore already ships with each relic, so these cover the rest.",
+      "defaultImageUrl": null,
+      "defaultImagePrompt": "a column top heaped with small lost belongings, keys, rings, a shoe, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark"
+    },
+    {
+      "id": "thils",
+      "name": "Thils",
+      "description": "Shrines, hidden gifts and the god's own gift.",
+      "defaultImageUrl": null,
+      "defaultImagePrompt": "a stone shrine with candles and offerings in a basalt cathedral, golden light, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark"
+    },
+    {
+      "id": "death",
+      "name": "Death and echoes of the party",
+      "description": "The fall, the lockout, and the dungeon learning the party.",
+      "defaultImageUrl": null,
+      "defaultImagePrompt": "an empty pilgrims' stair outside a sealed dungeon door at dusk, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark"
+    },
+    {
+      "id": "bosses",
+      "name": "Bosses",
+      "description": "Fire as a boss room opens for the first time, before initiative.",
+      "defaultImageUrl": null,
+      "defaultImagePrompt": "a huge silhouette rising in a basalt arena, golden runes flaring, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark"
+    }
+  ],
+  "cards": [
+    {
+      "id": "arr-welcome",
+      "group": "arrival",
+      "title": "Welcome, pilgrim",
+      "trigger": {
+        "key": "first_entry",
+        "label": "First entry ever"
+      },
+      "repeat": "once_campaign",
+      "tier": "open",
+      "source": "loremaster",
+      "readAloud": "Locals in undyed robes line the stair down, pressing dried flowers into your hands. \"Every visitor teaches him something,\" one says. \"Go on. He is eager to learn you.\"",
+      "push": "The locals revere Thils, true god of mazes, traps and lost things, and welcome tourists because every visitor adds to his knowledge and skills.",
+      "dmTruth": "True, and literal: Thils learns every visitor. It's why named boons are echoes of past striders.",
+      "placeholders": [],
+      "imagePrompt": "robed pilgrims on a descending stair of hexagonal basalt columns, holding out dried flowers, candlelight, faces welcoming, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "arr-shift",
+      "group": "arrival",
+      "title": "Mind the Shift",
+      "trigger": {
+        "key": "first_entry",
+        "label": "First entry ever, after Welcome"
+      },
+      "repeat": "once_campaign",
+      "tier": "open",
+      "source": "loremaster",
+      "readAloud": "A brass placard, half swallowed by fresh stone, reads \"Floor One: Mind the Shift.\" Behind you, the stair you came down is already a different shape.",
+      "push": "The Basalts rebuild every time someone leaves, so no two runs share a floor.",
+      "dmTruth": "It rebuilds only while no one is perceiving it. Never explain why.",
+      "placeholders": [],
+      "imagePrompt": "a brass tourist placard half swallowed by growing basalt columns, a stairway behind it twisting into a new shape, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "arr-floor2",
+      "group": "arrival",
+      "title": "The expedition floor",
+      "trigger": {
+        "key": "floor_first_arrival:2",
+        "label": "First arrival on floor 2"
+      },
+      "repeat": "once_campaign",
+      "tier": "guarded",
+      "source": "loremaster",
+      "readAloud": "The offerings stop here. In their place, a dented Archive survey beacon blinks a code no one has answered in a very long time.",
+      "push": "Caretaker-9 can match the beacon to an early Archive expedition into the Basalts, logged as lost with all hands.",
+      "dmTruth": "Kaelen and Vyr's expedition. Their last log predates the gate inverting.",
+      "placeholders": [],
+      "imagePrompt": "a dented survey beacon blinking among basalt columns, abandoned expedition gear, cold blue light, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "arr-floor3",
+      "group": "arrival",
+      "title": "The gate floor",
+      "trigger": {
+        "key": "floor_first_arrival:3",
+        "label": "First arrival on floor 3"
+      },
+      "repeat": "once_campaign",
+      "tier": "deep",
+      "source": "loremaster",
+      "readAloud": "Some of these columns aren't stone. They're riveted struts, and under the dust one is engraved with a schematic every strider knows on sight: a stride gate.",
+      "push": "Caretaker-9, uncertain, faintly uneasy - \"The Archive has no record of a gate there. That is not the same as there not being one.\"",
+      "dmTruth": "The Basalts is a fractured stride gate, built two-way to a paradise universe, then exploded and inverted.",
+      "placeholders": [],
+      "imagePrompt": "riveted metal struts among basalt columns, an engraved stride gate schematic glowing faintly gold under dust, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "arr-floor4",
+      "group": "arrival",
+      "title": "The inverted floor",
+      "trigger": {
+        "key": "floor_first_arrival:4",
+        "label": "First arrival on floor 4"
+      },
+      "repeat": "once_campaign",
+      "tier": "deep",
+      "source": "loremaster",
+      "readAloud": "Golden light falls upward from below. The air smells of rain and honey, and somewhere far off, birdsong plays backward until it ends in silence.",
+      "push": "Nothing the Archive can name. Anyone who has been somewhere truly peaceful feels homesick for a place they've never seen.",
+      "dmTruth": "The paradise universe beyond the gate is bleeding through, inside out.",
+      "placeholders": [],
+      "imagePrompt": "golden light shining upward from cracks in the floor, grass growing on a basalt ceiling, dew falling upward, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "arr-floor5",
+      "group": "arrival",
+      "title": "Quarantine",
+      "trigger": {
+        "key": "floor_first_arrival:5",
+        "label": "First arrival on floor 5"
+      },
+      "repeat": "once_campaign",
+      "tier": "deep",
+      "source": "loremaster",
+      "readAloud": "An automated Archive alert cuts across your comms, no delay for once: \"Hazard class revised. Quarantine.\" Then silence, and Caretaker-9's voice, late as ever: \"Alarmed, uncharacteristically sincere - I have never seen that rating on a place people go on purpose.\"",
+      "push": "The Archive rates the floors Yellow, Red, Red, Black, and this one Quarantine.",
+      "dmTruth": "Floor 5 sits on the gate's ruptured core.",
+      "placeholders": [],
+      "imagePrompt": "a vast dark chamber split by a seam of blinding golden light, red holographic quarantine warning glyphs in the air, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "ech-ulma",
+      "group": "echoes",
+      "title": "Ulma's Thread",
+      "trigger": {
+        "key": "boon_first_draft:ulmas-thread",
+        "label": "First draft of Ulma's Thread"
+      },
+      "repeat": "once_campaign",
+      "tier": "guarded",
+      "source": "both",
+      "readAloud": "As you take it, a red thread pulls taut from your wrist, running back the way you came. A hoarse, furious voice mutters, \"Three times, you smug stone. Three times.\" Then it's gone.",
+      "push": "Ulma Unar, \"Ball of Yarn,\" is the only Pale Lodge member ever to escape the god's maze with her target relic, and she did it three times. She now recruits anyone willing to help kill its god.",
+      "dmTruth": "Thils absorbed her technique anyway. A hook for turning the party against Thils later.",
+      "placeholders": [],
+      "imagePrompt": "a single red thread stretched taut through a dark maze of basalt columns, vanishing into the distance, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "ech-travert",
+      "group": "echoes",
+      "title": "Travert's Echoes",
+      "trigger": {
+        "key": "boon_first_draft:traverts-echoes",
+        "label": "First draft of Travert's Echoes"
+      },
+      "repeat": "once_campaign",
+      "tier": "guarded",
+      "source": "loremaster",
+      "readAloud": "Your strike lands, and half a second later a note rings out of the stone and strikes again. Somewhere, a man laughs like he just won a bet.",
+      "push": "Travert struck every blow twice, once with the fist and once with the note that rang after it. Last logged going into the Basalts.",
+      "dmTruth": "Thils kept his technique. His tuning gauntlet waits in Thils's Vault.",
+      "placeholders": [],
+      "imagePrompt": "a gauntleted fist striking basalt, golden sound rings rippling outward from the impact, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "ech-elemain",
+      "group": "echoes",
+      "title": "Elemain's shots",
+      "trigger": {
+        "key": "boon_first_draft:elemains-*",
+        "label": "First draft of any Elemain boon"
+      },
+      "repeat": "once_campaign",
+      "tier": "guarded",
+      "source": "loremaster",
+      "readAloud": "Your shot misses, and keeps going. It turns a corner on its own and finds something. A woman's voice, bored: \"Told you. Never twice.\"",
+      "push": "Elemain claimed she never missed twice because her shots never stopped looking for a target.",
+      "dmTruth": "Her ricochet ring is in Thils's Vault, still warm.",
+      "placeholders": [],
+      "imagePrompt": "a glowing projectile curving around a basalt corner, trails of light ricocheting through a dark corridor, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "ech-lenn",
+      "group": "echoes",
+      "title": "Lenn's Descent",
+      "trigger": {
+        "key": "boon_first_draft:lenns-descent",
+        "label": "First draft of Lenn's Descent"
+      },
+      "repeat": "once_campaign",
+      "tier": "guarded",
+      "source": "loremaster",
+      "readAloud": "A plumb line unspools from nowhere and drops past your feet into a crack in the floor. It keeps falling far longer than the floor is thick.",
+      "push": "Lenn dropped a plumb line into every pit and shaft of the place to learn how far down things go.",
+      "dmTruth": "One day the cord came back up without her. The Basalts go deeper than five floors.",
+      "placeholders": [],
+      "imagePrompt": "a plumb line and brass weight dropping into an impossibly deep crack between basalt columns, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "ech-corrow",
+      "group": "echoes",
+      "title": "Corrow's Lure",
+      "trigger": {
+        "key": "boon_first_draft:corrows-lure",
+        "label": "First draft of Corrow's Lure"
+      },
+      "repeat": "once_campaign",
+      "tier": "guarded",
+      "source": "loremaster",
+      "readAloud": "Something tugs at the edge of your mind, gentle as a hook through cloth. Someone did this here before, patiently, many times, to pull lost people out of dead ends.",
+      "push": "Corrow spent years fishing lost striders out of the maze's dead ends.",
+      "dmTruth": "Thils collects lost things. Eventually he reeled in the fisher.",
+      "placeholders": [],
+      "imagePrompt": "a fishhook on a glowing line pulling a faint ghostly figure out of a dead end in a basalt maze, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "ech-ostra",
+      "group": "echoes",
+      "title": "Ostra's Coin",
+      "trigger": {
+        "key": "boon_first_draft:ostras-coin",
+        "label": "First draft of Ostra's Coin"
+      },
+      "repeat": "once_campaign",
+      "tier": "guarded",
+      "source": "both",
+      "readAloud": "A coin spins on the floor in front of you, though no one dropped it. A face on one side, a skull on the other, and it never quite lands.",
+      "push": "It echoes the Token of Whim, a two-sided coin that can raise the dead or slay the living. The Pale Lodge once paid it out to whoever freed Whim from their suffering.",
+      "dmTruth": "(proposed) Ostra was the hunter who claimed that contract and carried the Token into the Basalts.",
+      "placeholders": [],
+      "imagePrompt": "a spinning gold coin on basalt tiles, one face a serene face and the other a skull, motion blur, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "ech-pog",
+      "group": "echoes",
+      "title": "Pog's Path",
+      "trigger": {
+        "key": "hidden_boon_first:pogs-path",
+        "label": "First time Pog's Path is earned"
+      },
+      "repeat": "once_campaign",
+      "tier": "guarded",
+      "source": "both",
+      "readAloud": "For a moment the room is lines on paper, drawn fast and still wet. Then the ink runs and the room is just a room again.",
+      "push": "Pog, Wanderer of the Underways, is a senior Pale Lodge Tracker who recovers lost items across hostile terrain. He swore this place could be mapped if you drew fast enough.",
+      "dmTruth": "His unfinished map is in Thils's Vault. Awoken, it can find the way out of a god's own labyrinth.",
+      "placeholders": [],
+      "imagePrompt": "a room of basalt columns rendered as wet ink lines on parchment, ink running and dripping, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "ech-zolic",
+      "group": "echoes",
+      "title": "Zolic's Nine Eyes",
+      "trigger": {
+        "key": "boon_first_draft:zolics-nine-eyes",
+        "label": "First draft of Zolic's Nine Eyes"
+      },
+      "repeat": "once_campaign",
+      "tier": "guarded",
+      "source": "both",
+      "readAloud": "Something behind your eyes grinds into focus, like a lens being turned. You count without meaning to: one eye open. Eight to go.",
+      "push": "Zolic is a senior Pale Lodge Hunter who takes god-killing and titan-killing contracts. Each of his lenses was ground from the eye of something larger than a world.",
+      "dmTruth": "The ninth eye was meant for one more hunt. (proposed) That hunt was Thils, which ties Zolic to Ulma.",
+      "placeholders": [],
+      "imagePrompt": "nine glass lenses floating in a circle, one glowing, the rest dark, a towering silhouette behind them, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "ech-thalisane",
+      "group": "echoes",
+      "title": "Thalisane's Weave",
+      "trigger": {
+        "key": "boon_first_draft:thalisanes-weave|weavers-mending",
+        "label": "First draft of Thalisane's Weave or Weaver's Mending"
+      },
+      "repeat": "once_campaign",
+      "tier": "guarded",
+      "source": "both",
+      "readAloud": "A thread of shimmering light ties you to an ally, and for a moment you feel their heartbeat beside your own. Someone wove lifelines here so no one would fall alone.",
+      "push": "Thalisane, wielder of the Shimmer Staff, leads the Pale Lodge's Weavers: search and rescue, life weaving, hex removal and emergency extraction.",
+      "dmTruth": "She got out alive; her shuttle didn't. She could turn up in the campaign wanting it back.",
+      "placeholders": [],
+      "imagePrompt": "two adventurers linked by a shimmering thread of light in a dark basalt hall, a ghostly weaver's shuttle above, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "dis-thils",
+      "group": "dispatch",
+      "title": "Re: Thils",
+      "trigger": {
+        "key": "dispatch",
+        "label": "Answer to a question about Thils"
+      },
+      "repeat": "repeatable",
+      "tier": "open",
+      "source": "canon",
+      "readAloud": "Patient, lecturing - \"Thils. True god, multiplanar. Portfolio: mazes, traps, games and lost items. The Pale Lodge calls him a collector. I call him a hoarder with better marketing.\"",
+      "push": "Archive files on Thils run long; ask a narrower question.",
+      "dmTruth": "Canon from the Pale Lodge's broadcasts.",
+      "placeholders": [],
+      "imagePrompt": "a robotic archivist at a vast terminal surrounded by floating archive files, warm amber screen light, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "dis-exit",
+      "group": "dispatch",
+      "title": "Re: Getting out",
+      "trigger": {
+        "key": "dispatch",
+        "label": "Answer to a question about escape or exits"
+      },
+      "repeat": "repeatable",
+      "tier": "guarded",
+      "source": "canon",
+      "readAloud": "Grim, unusually brief - \"Lodge field notes on Thils's mazes agree on one thing. The only reliable way out is the exact passage you came in by. Don't lose your way back. I'd have to file paperwork.\"",
+      "push": "Most who can't find their way back don't die. They settle in, and their grandchildren never leave.",
+      "dmTruth": "Canon: the god's labyrinth holds generational cities of the never-escaped. (proposed) The locals descend from them.",
+      "placeholders": [],
+      "imagePrompt": "a robotic archivist reading a field report, a hand-drawn maze map on the screen with one passage circled, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "dis-lethality",
+      "group": "dispatch",
+      "title": "Re: Lethality",
+      "trigger": {
+        "key": "dispatch",
+        "label": "Answer to a question about danger or the Lodge"
+      },
+      "repeat": "repeatable",
+      "tier": "guarded",
+      "source": "canon",
+      "readAloud": "Dry, faintly smug - \"The Pale Lodge rates every contract by lethality. I'm told their raters occasionally sandbag. I'm told this by the families of junior hunters.\"",
+      "push": "The Lodge's contract board lists hunts in Thils's domain, priced for a god who is asleep.",
+      "dmTruth": "Canon: a junior hunter was sent into the god's maze at 6.2 when it should have been 12.",
+      "placeholders": [],
+      "imagePrompt": "a Pale Lodge contract board covered in pinned bounty slips with lethality numbers, one slip crossed out, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "dis-devotions",
+      "group": "dispatch",
+      "title": "Re: Devotions",
+      "trigger": {
+        "key": "dispatch",
+        "label": "Answer to a question about Devotions or the locals"
+      },
+      "repeat": "repeatable",
+      "tier": "open",
+      "source": "loremaster",
+      "readAloud": "Curious, earnest - \"The locals call your progress Devotions. Archive researchers agree something is being given. They disagree, loudly, about who is giving it to whom.\"",
+      "push": "Devotions are named for the locals' reverence for the Basalts and their god.",
+      "dmTruth": "Both are true. The party grows, and Thils learns them as they do.",
+      "placeholders": [],
+      "imagePrompt": "researchers arguing over glowing diagrams, a stone shrine with offerings in the background, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "dis-awake",
+      "group": "dispatch",
+      "title": "Thils is awake",
+      "trigger": {
+        "key": "pressures_chosen:2",
+        "label": "Party chooses two or more Pressures for the first time"
+      },
+      "repeat": "once_campaign",
+      "tier": "guarded",
+      "source": "both",
+      "readAloud": "Concerned, clipped - \"Lodge chatter says Thils sleeps in cycles, and when he wakes, every trap gets meaner. The hymns are louder today. Draw your own conclusions. I already have.\"",
+      "push": "Lodge contracts in the god's domain are rated assuming he's dormant.",
+      "dmTruth": "Canon: awake, his traps are twice as deadly and his beasts thrice as mean. Pressures are the in-world sign of a waking god.",
+      "placeholders": [],
+      "imagePrompt": "an enormous dark shape stirring behind walls of basalt columns, a single golden eye opening in shadow, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "lost-contract",
+      "group": "lost",
+      "title": "The contract slip",
+      "trigger": {
+        "key": "loot_reveal:floor>=2",
+        "label": "Any loot reveal on floor 2 or deeper"
+      },
+      "repeat": "once_campaign",
+      "tier": "guarded",
+      "source": "canon",
+      "readAloud": "A torn Pale Lodge contract for the sword of Apo, legendary hero of the Aranphere. Its lethality rating of 6.2 is scratched out, and \"12\" is scrawled beside it in shaky handwriting.",
+      "push": "The Lodge still lists the sword, and its clients want it for a war. The hunter who carried this slip never came back.",
+      "dmTruth": "The Sword of Apotheos is real and waits in Thils's Vault.",
+      "placeholders": [],
+      "imagePrompt": "a torn bounty contract on basalt, a number scratched out and rewritten in shaky ink, a dropped lantern nearby, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "lost-yours",
+      "group": "lost",
+      "title": "Something of yours",
+      "trigger": {
+        "key": "oddity:1",
+        "label": "Oddity 1: an item a player lost long ago"
+      },
+      "repeat": "once_run",
+      "tier": "open",
+      "source": "loremaster",
+      "readAloud": "On top of a column sits {item}, exactly as you left it, years ago and somewhere else entirely.",
+      "push": "Thils collects lost things. All of them.",
+      "dmTruth": "Ask the player what they once lost before the run, and fill {item} in.",
+      "placeholders": [
+        "item"
+      ],
+      "imagePrompt": "a small personal keepsake resting alone on top of a tall basalt column, spotlit from above, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "lost-qb",
+      "group": "lost",
+      "title": "The first Basalt",
+      "trigger": {
+        "key": "first_qb",
+        "label": "First Quantum Basalt ever awarded"
+      },
+      "repeat": "once_campaign",
+      "tier": "open",
+      "source": "loremaster",
+      "readAloud": "The shard is warm. Under the light it isn't black at all: every color is folded up inside it, small.",
+      "push": "A Quantum Basalt sells for 1,000 credits anywhere in the Archive's economy.",
+      "dmTruth": "Crystallized stride energy from the gate's core, the same energy the Stride Core sheds.",
+      "placeholders": [],
+      "imagePrompt": "a close-up of a black crystal shard held in a gloved palm, iridescent colors folded inside it, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "thils-shrine",
+      "group": "thils",
+      "title": "A shrine to Thils",
+      "trigger": {
+        "key": "shrine_first",
+        "label": "First shrine to Thils in a room"
+      },
+      "repeat": "once_campaign",
+      "tier": "open",
+      "source": "loremaster",
+      "readAloud": "A knee-high cairn of hex stones heaped with wax, flowers and small lost things: a key, a child's shoe, one earring. A prayer is carved fresh into the floor in front of it.",
+      "push": "The locals leave lost things as offerings, giving Thils the thing he loves most.",
+      "dmTruth": "Hidden condition 12 rewards an offering made mid-fight, if the shrine survives.",
+      "placeholders": [],
+      "imagePrompt": "a small stone cairn heaped with candles, flowers, keys and a child's shoe, prayer carved in the floor, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "thils-approves",
+      "group": "thils",
+      "title": "Thils approves",
+      "trigger": {
+        "key": "hidden_gift_first",
+        "label": "First hidden gift earned"
+      },
+      "repeat": "once_campaign",
+      "tier": "open",
+      "source": "loremaster",
+      "readAloud": "Somewhere in the stone, something chuckles. Not cruelly. The way a game master laughs when the players finally try the thing.",
+      "push": "A room's hidden condition is revealed when met, so the party learns what Thils rewards.",
+      "dmTruth": "Thils is playing with them. He wants to be beaten in interesting ways.",
+      "placeholders": [],
+      "imagePrompt": "a giant faint smile formed by shadows across basalt columns, golden sparks drifting down to a party, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "thils-favor",
+      "group": "thils",
+      "title": "Thils's Favor",
+      "trigger": {
+        "key": "thils_touch",
+        "label": "First Vault opening, Thils shrine, room condition met, room trick sprung, or hidden boon with no card of its own"
+      },
+      "repeat": "once_campaign",
+      "tier": "open",
+      "source": "loremaster",
+      "readAloud": "The hymns humming through the stone stop. For one breath the floor holds still, the way a crowd goes quiet when someone important walks in. Then they start again, louder.",
+      "push": "The locals say Thils almost never gives anything of his own.",
+      "dmTruth": "The only boon that's the god's own gift rather than an echo.",
+      "placeholders": [],
+      "imagePrompt": "a crowd of ghostly pilgrims bowing in a basalt cathedral, a column of golden light descending, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "death-first",
+      "group": "death",
+      "title": "Expelled",
+      "trigger": {
+        "key": "first_death",
+        "label": "First character death ever"
+      },
+      "repeat": "once_campaign",
+      "tier": "open",
+      "source": "loremaster",
+      "readAloud": "You don't fall. You're set down outside on the pilgrims' stair, like a misplaced item returned to the front desk. Your pockets are lighter, and the stair won't let you go back down.",
+      "push": "The dungeon's magic locks the fallen out for a time it decides.",
+      "dmTruth": "(proposed tie-in) The lockout could double as Archive quarantine for striders who die inside.",
+      "placeholders": [],
+      "imagePrompt": "a lone adventurer sitting on stone steps outside a dungeon entrance, the doorway sealed by shifting columns, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "death-echo",
+      "group": "death",
+      "title": "Your echo",
+      "trigger": {
+        "key": "oddity:2",
+        "label": "Oddity 2: an echo of a party member walks past"
+      },
+      "repeat": "once_campaign",
+      "tier": "guarded",
+      "source": "loremaster",
+      "readAloud": "You see yourself, or someone wearing your stance, mid-fight with something you can't see. They're using a trick you haven't learned yet.",
+      "push": "The Basalts remember everyone who comes in.",
+      "dmTruth": "Thils is learning the party. One day their technique may be someone else's boon.",
+      "placeholders": [],
+      "imagePrompt": "a translucent ghostly copy of an adventurer fighting an unseen enemy in a basalt corridor, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "boss-warden",
+      "group": "bosses",
+      "title": "The Tessellated Warden",
+      "trigger": {
+        "key": "boss_first_meet:tessellated-warden",
+        "label": "Boss room opens, first time"
+      },
+      "repeat": "once_campaign",
+      "tier": "deep",
+      "source": "loremaster",
+      "readAloud": "A hive of hexagonal columns heaves upright, bound in gold-veined runes. In its chest, a cracked lens holds a still image of a sunlit golden meadow, perfectly calm.",
+      "push": "The runes match Archive transit script.",
+      "dmTruth": "Built from the original stride gate's outer frame. The meadow is the paradise universe.",
+      "placeholders": [],
+      "imagePrompt": "a towering golem of hexagonal basalt columns with gold runes, a cracked lens in its chest showing a sunlit meadow, front-facing, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "boss-kaelen",
+      "group": "bosses",
+      "title": "Kaelen and Vyr",
+      "trigger": {
+        "key": "boss_first_meet:kaelen-and-vyr",
+        "label": "Boss room opens, first time"
+      },
+      "repeat": "once_campaign",
+      "tier": "guarded",
+      "source": "loremaster",
+      "readAloud": "Two voices, one flickering silhouette, talking over each other: \"Log entry four-one-one, gate stable, crossing at...\" \"...crossing at dawn, gate stable, log entry four-one-one...\"",
+      "push": "Caretaker-9 can match the log format to the lost early expedition from floor 2.",
+      "dmTruth": "Absorbed by Thils. Their final log predates the inversion.",
+      "placeholders": [],
+      "imagePrompt": "a flickering silhouette made of two fused figures, a heavy warrior and an arcane sniper, front-facing, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "boss-quill",
+      "group": "bosses",
+      "title": "Halvard Quill",
+      "trigger": {
+        "key": "boss_first_meet:halvard-quill",
+        "label": "Boss room opens, first time"
+      },
+      "repeat": "once_campaign",
+      "tier": "guarded",
+      "source": "loremaster",
+      "readAloud": "A tall figure in a Pale Lodge tracker's coat flickers into place and ticks something off a contract slip. He looks at your weakest member and smiles like he's found his mark.",
+      "push": "Lodge records list Senior Tracker Halvard Quill as dead on a high-lethality contract here.",
+      "dmTruth": "An absorbed echo. (proposed) Bringing his tags back to the Lodge could earn a commendation.",
+      "placeholders": [],
+      "imagePrompt": "a gaunt tracker in a long pale coat holding a contract slip, flickering like a hologram, front-facing, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "boss-architect",
+      "group": "bosses",
+      "title": "The Blind Architect",
+      "trigger": {
+        "key": "boss_first_meet:blind-architect",
+        "label": "Boss room opens, first time"
+      },
+      "repeat": "once_campaign",
+      "tier": "deep",
+      "source": "loremaster",
+      "readAloud": "A shape made of nothing, edged in floating shards of basalt, kneels at a seam in the wall and smooths it closed, like someone mending a tear.",
+      "push": "Caretaker-9 has no record of it. None at all.",
+      "dmTruth": "The dungeon's closest brush with the campaign's big bad.",
+      "placeholders": [],
+      "imagePrompt": "a faceless figure of pure negative space outlined by floating basalt shards, kneeling at a glowing seam, front-facing, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    },
+    {
+      "id": "boss-gatewright",
+      "group": "bosses",
+      "title": "The Gatewright",
+      "trigger": {
+        "key": "boss_first_meet:gatewright",
+        "label": "Boss room opens, first time"
+      },
+      "repeat": "once_campaign",
+      "tier": "deep",
+      "source": "loremaster",
+      "readAloud": "It turns, and its face is a thousand faces, with an engineer's tools welded to its hands. \"It was meant to go both ways,\" it says, in all their voices. \"It was meant to go both ways.\"",
+      "push": "None. The Archive goes quiet.",
+      "dmTruth": "The engineer who built the gate, fused with its core and the first thousand minds Thils absorbed.",
+      "placeholders": [],
+      "imagePrompt": "a colossal figure fused into a broken stride gate, a face made of many faces, engineer tools for hands, front-facing, cinematic wide shot, 16:9, painterly concept art, dramatic volumetric light, columnar black basalt with gold-veined runes, no text, no watermark",
+      "imageUrl": null
+    }
+  ]
+}
