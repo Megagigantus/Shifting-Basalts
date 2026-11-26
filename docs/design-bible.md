@@ -1610,7 +1610,7 @@ A card holds everything the DM needs at that moment, and players only ever recei
 
 - **Targeted reveals:** the DM can reveal to chosen players only, like the one who drafted the boon or passed a check. Only they see it, and it's theirs to share.
 - **Images:** generated locally in ComfyUI as wide 16:9 scenes, unlike map art, which stays top-down, and boss art, which stays front-facing. Until a card has its own art, it shows its group's default image.
-- **Content safety:** an addition to Content safety under Build clarifications. Cards live in the DM's private database, never in the app bundle or the repo, and players receive only the title, image, read-aloud and any revealed If they push line, at the moment of reveal. DM truths are never sent, and no card names Thilsavrass or Sonder.
+- **Content safety:** an exception to Content safety under Build clarifications. The deck ships embedded in the app as a data file and is delivered only through the DM view; the DM accepts that a curious player could read it in the app's files or the repo. Players are shown only the title, image, read-aloud and any revealed If they push line, at the moment of reveal. DM truths are never shown to players, and no card names Thilsavrass or Sonder.
 
 ### App decisions *(proposed)*
 
@@ -1620,7 +1620,8 @@ A card holds everything the DM needs at that moment, and players only ever recei
 - **Full lore collection:** a player who has been shown every card in the deck (DM-written dispatch answers aside) wears a glowing blue laurel on their portrait. Cards added later count, so the laurel can lapse until they catch up.
 - **Table display:** shows lore reveals in the same stages as players' screens, never the DM truth.
 - **Deck limit:** starts at Deep. The DM confirms every reveal, and the one-Deep-card-per-run limit still applies.
-- **Banned terms:** the check covers every field except Read aloud.
+- **Banned terms:** the check covers every field except Read aloud. It runs as a repo test on the deck file and on dispatch answers the DM writes during play.
+- **Editing the deck:** cards are edited in the deck's data file, not in the app. The app's Lore Deck screen browses cards, reveals them and keeps the deck settings. Dispatch answers the DM writes during play are saved in the app.
 
 ### Starter deck
 
@@ -1920,6 +1921,7 @@ Everything rolled for a room is DM-only until revealed, and the DM gets a reveal
 - **Reprieve:** each Reprieve owner rolls their chance when a floor starts. Any success makes room 2 or 3 the floor's single Reprieve; more successes don't add more. The party can decline it and fight that room instead.
 - **Hidden Sight:** once per floor, the owner chooses a room and sees its hint on their own screen only.
 - **Flavor and oddities ship in the app:** an exception to Content safety. They're player-facing by design, so the DM accepts that a curious player could read them in the app's files. Boss lore, Campaign context truths and Sonder still stay out.
+- **The lore deck ships in the app:** a second exception. Lore cards, DM truths included, live in the app's data so the DM view can deliver them (see Lore moments). Sonder still never appears on a card.
 
 ### Encounter and boss defaults *(proposed)*
 
