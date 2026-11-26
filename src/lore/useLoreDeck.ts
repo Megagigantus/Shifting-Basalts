@@ -1,11 +1,12 @@
-// Live DM view of the lore deck: cards, groups, state, and load error.
+// Live DM view of the lore deck: embedded cards plus Firestore ad hoc cards, groups, state, and load error.
 import { useEffect, useState } from 'react'
 import { collection, doc, onSnapshot } from 'firebase/firestore'
 import { db } from '../firebase'
-import { cardsFromDocs, groupsFromDocs, mergeLoreState } from './loreStore'
+import { EMBEDDED_LORE_DECK, withAdHocCards } from './deck'
+import { cardsFromDocs, mergeLoreState } from './loreStore'
 import type { LoreCard, LoreGroup, LoreState } from './types'
 
-/** Subscribe to loreCards, loreGroups, and loreState/main, returning nulls when Firebase is unconfigured. */
+/** Combine the embedded deck with Firestore ad hoc loreCards and loreState/main, returning nulls when Firebase is unconfigured. */
 export function useLoreDeck(): {
   cards: LoreCard[] | null
   groups: LoreGroup[] | null
@@ -13,21 +14,16 @@ export function useLoreDeck(): {
   error: string | null
 } {
   const [cards, setCards] = useState<LoreCard[] | null>(null)
-  const [groups, setGroups] = useState<LoreGroup[] | null>(null)
   const [state, setState] = useState<LoreState | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const groups = db ? EMBEDDED_LORE_DECK.groups : null
 
   useEffect(() => {
     if (!db) return
     const onError = () => setError('Could not load the lore deck.')
     const unsubCards = onSnapshot(
       collection(db, 'loreCards'),
-      (snapshot) => setCards(cardsFromDocs(snapshot.docs)),
-      onError,
-    )
-    const unsubGroups = onSnapshot(
-      collection(db, 'loreGroups'),
-      (snapshot) => setGroups(groupsFromDocs(snapshot.docs)),
+      (snapshot) => setCards(withAdHocCards(EMBEDDED_LORE_DECK.cards, cardsFromDocs(snapshot.docs))),
       onError,
     )
     const unsubState = onSnapshot(
@@ -37,7 +33,6 @@ export function useLoreDeck(): {
     )
     return () => {
       unsubCards()
-      unsubGroups()
       unsubState()
     }
   }, [])

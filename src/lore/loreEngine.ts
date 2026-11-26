@@ -2,6 +2,7 @@
 import { collection, doc, getDoc, getDocs, serverTimestamp, writeBatch } from 'firebase/firestore'
 import { db } from '../firebase'
 import type { RunState } from '../model/run'
+import { EMBEDDED_LORE_DECK, withAdHocCards } from './deck'
 import { cardsFromDocs, mergeLoreState } from './loreStore'
 import type { LoreQueueItem } from './reveal'
 import { deriveLoreEvents } from './runEvents'
@@ -30,7 +31,7 @@ export async function processRunChange(
     getDoc(doc(firestore, 'runs', runId, 'dmOnly', 'lore')),
   ])
 
-  const cards = cardsFromDocs(cardsSnap.docs)
+  const cards = withAdHocCards(EMBEDDED_LORE_DECK.cards, cardsFromDocs(cardsSnap.docs))
   if (cards.length === 0) return
 
   const state = mergeLoreState(stateSnap.exists() ? stateSnap.data() : undefined)

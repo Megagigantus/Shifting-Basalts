@@ -1,12 +1,11 @@
 // React hooks and helpers for the Lore Library: deck summary, a player's archive notes,
 // everyone's counted progress, and full-collection laurel status. Never logs card text.
 import { useEffect, useState } from 'react'
-import { collection, doc, onSnapshot, type Timestamp } from 'firebase/firestore'
+import { collection, onSnapshot, type Timestamp } from 'firebase/firestore'
 import { db } from '../firebase'
+import { EMBEDDED_LORE_SUMMARY } from './deck'
 import type { LoreNote } from './reveal'
 import type { LoreSummary } from './types'
-
-const EMPTY_SUMMARY: LoreSummary = { groups: [], total: 0 }
 
 function toTimestampMs(value: unknown): number | null {
   if (typeof value === 'number' && Number.isFinite(value)) return value
@@ -18,23 +17,6 @@ function toTimestampMs(value: unknown): number | null {
     return (value as Timestamp).toMillis()
   }
   return null
-}
-
-function toLoreSummary(data: Record<string, unknown> | undefined): LoreSummary {
-  if (!data) return EMPTY_SUMMARY
-  const groups: LoreSummary['groups'] = []
-  if (Array.isArray(data.groups)) {
-    for (const entry of data.groups) {
-      if (typeof entry !== 'object' || entry === null) continue
-      const record = entry as Record<string, unknown>
-      if (typeof record.id !== 'string' || typeof record.name !== 'string') continue
-      const count =
-        typeof record.count === 'number' && Number.isFinite(record.count) ? record.count : 0
-      groups.push({ id: record.id, name: record.name, count })
-    }
-  }
-  const total = typeof data.total === 'number' && Number.isFinite(data.total) ? data.total : 0
-  return { groups, total }
 }
 
 function toLoreNote(id: string, data: Record<string, unknown>): LoreNote & { revealedAtMs: number } {
@@ -53,29 +35,11 @@ function toLoreNote(id: string, data: Record<string, unknown>): LoreNote & { rev
 }
 
 /**
- * Listen to `loreSummary/main` (groups and total counted cards).
- * Returns `null` while loading or when Firebase is not set up, and `{ groups: [], total: 0 }`
- * if the document is missing.
+ * Return the player-safe embedded deck summary (groups and total counted cards),
+ * or `null` when Firebase is not set up.
  */
 export function useLoreSummary(): LoreSummary | null {
-  const [summary, setSummary] = useState<LoreSummary | null>(null)
-
-  useEffect(() => {
-    if (!db) return
-    return onSnapshot(
-      doc(db, 'loreSummary', 'main'),
-      (snap) => {
-        if (!snap.exists()) {
-          setSummary(EMPTY_SUMMARY)
-          return
-        }
-        setSummary(toLoreSummary(snap.data()))
-      },
-      () => setSummary(EMPTY_SUMMARY),
-    )
-  }, [])
-
-  return db ? summary : null
+  return db ? EMBEDDED_LORE_SUMMARY : null
 }
 
 /**

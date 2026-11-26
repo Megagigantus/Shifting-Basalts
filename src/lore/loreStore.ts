@@ -2,14 +2,9 @@
 import { collection, doc, getDoc, getDocs, setDoc, writeBatch } from 'firebase/firestore'
 import { db } from '../firebase'
 import { parseBannedTerms } from './bannedTerms'
+import { EMBEDDED_LORE_DECK } from './deck'
 import { buildDeckExport, buildSummary, validateDeckFile } from './deckFile'
 import type { LoreCard, LoreDeckFile, LoreGroup, LoreSettings, LoreState } from './types'
-
-export const DEFAULT_LORE_SETTINGS: LoreSettings = {
-  tierLimit: 'deep',
-  deepPerRun: 1,
-  anchor: { name: '', voiceNote: '' },
-}
 
 function copySettings(settings: LoreSettings): LoreSettings {
   return {
@@ -21,6 +16,8 @@ function copySettings(settings: LoreSettings): LoreSettings {
     },
   }
 }
+
+export const DEFAULT_LORE_SETTINGS: LoreSettings = copySettings(EMBEDDED_LORE_DECK.settings)
 
 /** Default lore deck state when loreState/main has not been created yet. */
 export function emptyLoreState(): LoreState {
