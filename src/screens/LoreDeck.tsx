@@ -12,6 +12,7 @@ import { FIELD, FIELD_LABEL, WELL } from '../ui/styles'
 import { cx } from '../ui/tone'
 import { LoreArt } from './LoreArt'
 import { LoreCardView, REPEAT_LABEL, SOURCE_LABEL, TIER_LABEL, TIER_TONE } from './LoreCardView'
+import { WholeStoryPanel } from './WholeStoryPanel'
 
 /** DM lore deck browser: filterable card list, read-only card view modal, and Reset seen. */
 export function LoreDeck() {
@@ -115,6 +116,8 @@ export function LoreDeck() {
           </>
         )}
       </Panel>
+
+      {loaded && <WholeStoryPanel cards={cards} seen={state.seen} />}
 
       {loaded && <ResetSeenPanel />}
 
