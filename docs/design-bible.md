@@ -1625,7 +1625,7 @@ A card holds everything the DM needs at that moment, and players only ever recei
 
 ### Starter deck
 
-33 cards in seven groups, written from the Lorebook, the Pale Lodge broadcasts and this Bible. Canon means Archive In Between source lore; Loremaster means an entry from Loremaster Mega Gigantus. Lines marked (proposed) are new connections to confirm. Image prompts for each card live in the seed file for the app.
+33 cards in seven groups, written from the Lorebook, the Pale Lodge broadcasts and this Bible. Canon means Archive In Between source lore; Loremaster means an entry from Loremaster Mega Gigantus. Lines marked (proposed) are new connections to confirm.
 
 **Arrivals and firsts.** Fire the first time a party reaches a place or milestone.
 

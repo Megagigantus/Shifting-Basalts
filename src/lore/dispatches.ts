@@ -111,7 +111,6 @@ export function adHocAnswerCard(
     push,
     dmTruth,
     placeholders: [],
-    imagePrompt: '',
     imageUrl: null,
     adHoc: true,
   }

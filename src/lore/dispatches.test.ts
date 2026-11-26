@@ -164,7 +164,6 @@ describe('adHocAnswerCard', () => {
       push: 'Some build shrines in the deeper alcoves.',
       dmTruth: 'Generational locals descend from early striders.',
       placeholders: [],
-      imagePrompt: '',
       imageUrl: null,
       adHoc: true,
     })

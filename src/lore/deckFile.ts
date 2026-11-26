@@ -143,10 +143,6 @@ function validateGroup(
     errors.push(`${label}: description must be a string`)
     valid = false
   }
-  if (typeof raw.defaultImagePrompt !== 'string') {
-    errors.push(`${label}: defaultImagePrompt must be a string`)
-    valid = false
-  }
   if (!isStringOrNull(raw.defaultImageUrl)) {
     errors.push(`${label}: defaultImageUrl must be a string or null`)
     valid = false
@@ -162,7 +158,6 @@ function validateGroup(
     typeof raw.id !== 'string' ||
     typeof raw.name !== 'string' ||
     typeof raw.description !== 'string' ||
-    typeof raw.defaultImagePrompt !== 'string' ||
     !isStringOrNull(raw.defaultImageUrl)
   ) {
     return null
@@ -173,7 +168,6 @@ function validateGroup(
     name: raw.name,
     description: raw.description,
     defaultImageUrl: raw.defaultImageUrl,
-    defaultImagePrompt: raw.defaultImagePrompt,
   }
 }
 
@@ -311,10 +305,6 @@ function validateCard(
     }
   }
 
-  if (typeof raw.imagePrompt !== 'string') {
-    errors.push(`${label}: imagePrompt must be a string`)
-    valid = false
-  }
   if (!isStringOrNull(raw.imageUrl)) {
     errors.push(`${label}: imageUrl must be a string or null`)
     valid = false
@@ -342,7 +332,6 @@ function validateCard(
     typeof raw.push !== 'string' ||
     typeof raw.dmTruth !== 'string' ||
     cleanPlaceholders === null ||
-    typeof raw.imagePrompt !== 'string' ||
     !isStringOrNull(raw.imageUrl)
   ) {
     return null
@@ -360,7 +349,6 @@ function validateCard(
     push: raw.push,
     dmTruth: raw.dmTruth,
     placeholders: cleanPlaceholders,
-    imagePrompt: raw.imagePrompt,
     imageUrl: raw.imageUrl,
     order: index,
   }
@@ -480,7 +468,6 @@ export function buildDeckExport(
       push: card.push,
       dmTruth: card.dmTruth,
       placeholders: [...card.placeholders],
-      imagePrompt: card.imagePrompt,
       imageUrl: card.imageUrl,
     }
     if (card.adHoc === true) {
@@ -505,7 +492,6 @@ export function buildDeckExport(
       name: group.name,
       description: group.description,
       defaultImageUrl: group.defaultImageUrl,
-      defaultImagePrompt: group.defaultImagePrompt,
     })),
     cards: exportedCards,
   }

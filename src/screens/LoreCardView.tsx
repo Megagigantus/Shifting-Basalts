@@ -52,7 +52,6 @@ export function LoreCardView({ card, group, seen, onClose }: Props) {
   const hasPush = card.push.trim().length > 0
   const hasDmTruth = card.dmTruth.trim().length > 0
   const placeholders = card.placeholders.map((entry) => entry.trim()).filter(Boolean)
-  const hasImagePrompt = card.imagePrompt.trim().length > 0
 
   async function handleRevealNow() {
     if (!activeRun || revealing) return
@@ -140,12 +139,6 @@ export function LoreCardView({ card, group, seen, onClose }: Props) {
           </div>
         )}
 
-        {hasImagePrompt && (
-          <div className="flex flex-col gap-1">
-            <SectionLabel>Image prompt</SectionLabel>
-            <p className="m-0 whitespace-pre-line text-xs text-stone-400">{card.imagePrompt}</p>
-          </div>
-        )}
 
         {error && (
           <div role="alert" className="rounded-lg border border-rose-500/40 bg-rose-950/30 p-3 text-xs text-rose-200">

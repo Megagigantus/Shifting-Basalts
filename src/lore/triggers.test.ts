@@ -16,7 +16,6 @@ function makeCard(overrides: Partial<LoreCard> = {}): LoreCard {
     push: '',
     dmTruth: 'DM truth.',
     placeholders: [],
-    imagePrompt: 'Basalt gate.',
     imageUrl: null,
     order: 0,
     ...overrides,

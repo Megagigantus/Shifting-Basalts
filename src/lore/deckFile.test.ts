@@ -21,14 +21,12 @@ function makeGroups(): LoreGroup[] {
       name: 'Arrivals and firsts',
       description: 'First steps onto the basalt stair.',
       defaultImageUrl: null,
-      defaultImagePrompt: 'Stone steps descending into dark hexagonal basalt.',
     },
     {
       id: 'relics',
       name: 'Lost relics',
       description: 'Items left behind by earlier visitors.',
       defaultImageUrl: 'art/lore/relics-default.webp',
-      defaultImagePrompt: 'Weathered brass trinket resting on a dark column.',
     },
   ]
 }
@@ -47,7 +45,6 @@ function makeCards(): LoreCard[] {
       push: 'The stone remembers footsteps.',
       dmTruth: 'An old survey marker left by an earlier crew.',
       placeholders: [],
-      imagePrompt: 'Glowing archway carved into dark basalt.',
       imageUrl: null,
     },
     {
@@ -62,7 +59,6 @@ function makeCards(): LoreCard[] {
       push: 'Anything misplaced eventually turns up here.',
       dmTruth: 'Drawn into the vault by the maze keeper.',
       placeholders: ['item'],
-      imagePrompt: 'Small personal trinket atop a polished basalt pillar.',
       imageUrl: null,
     },
     {
@@ -77,7 +73,6 @@ function makeCards(): LoreCard[] {
       push: 'The light does not cast shadows upward.',
       dmTruth: 'The fractured core sits two floors below.',
       placeholders: [],
-      imagePrompt: 'Golden light seeping upward through cracked hexagonal stone.',
       imageUrl: 'art/lore/arr-deep-seam.webp',
     },
     {
@@ -92,7 +87,6 @@ function makeCards(): LoreCard[] {
       push: 'Further clearance required for full manifest.',
       dmTruth: 'Written mid-run for the party question.',
       placeholders: [],
-      imagePrompt: 'Static-laced parchment projection.',
       imageUrl: null,
       adHoc: true,
     },
@@ -146,6 +140,19 @@ describe('validateDeckFile', () => {
     expect('extraAnchor' in result.deck.settings.anchor).toBe(false)
     expect('extraGroupKey' in result.deck.groups[0]).toBe(false)
     expect('extraCardKey' in result.deck.cards[0]).toBe(false)
+  })
+  it('still imports an older deck file that has image prompts, and drops them', () => {
+    const raw = {
+      ...makeRawDeck(),
+      groups: makeGroups().map((g) => ({ ...g, defaultImagePrompt: 'old prompt' })),
+      cards: makeCards().map((c) => ({ ...c, imagePrompt: 'old prompt' })),
+    }
+
+    const result = validateDeckFile(raw, [])
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    expect(result.deck.groups.every((g) => !('defaultImagePrompt' in g))).toBe(true)
+    expect(result.deck.cards.every((c) => !('imagePrompt' in c))).toBe(true)
   })
 
   it('rejects bad schemaVersion', () => {

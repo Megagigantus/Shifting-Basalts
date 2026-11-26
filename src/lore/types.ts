@@ -21,7 +21,6 @@ export interface LoreCard {
   push: string
   dmTruth: string
   placeholders: string[]
-  imagePrompt: string
   imageUrl: string | null
   /** Position in the deck (set on import; lower fires first). Not in exported files. */
   order?: number
@@ -34,7 +33,6 @@ export interface LoreGroup {
   name: string
   description: string
   defaultImageUrl: string | null
-  defaultImagePrompt: string
 }
 
 export interface LoreSettings {

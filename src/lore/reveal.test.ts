@@ -25,7 +25,6 @@ function makeCard(overrides: Partial<LoreCard> = {}): LoreCard {
     push: 'Its needle trembles whenever someone speaks an oath.',
     dmTruth: 'Secretly forged by the Seventh Anchor to track lost scouts.',
     placeholders: ['item', 'place'],
-    imagePrompt: 'Brass compass coated in white salt resting on dark basalt.',
     imageUrl: 'assets/scene-a1b2.webp',
     ...overrides,
   }
@@ -51,7 +50,6 @@ const FORBIDDEN_REVEAL_KEYS = [
   'trigger',
   'tier',
   'source',
-  'imagePrompt',
   'placeholders',
   'repeat',
   'group',
@@ -104,7 +102,6 @@ describe('buildRevealDoc', () => {
       expect(serialized).not.toContain(card.readAloud)
       expect(serialized).not.toContain('silver chime')
       expect(serialized).not.toContain(card.id)
-      expect(serialized).not.toContain(card.imagePrompt)
     }
   })
 
@@ -237,7 +234,7 @@ describe('buildNote', () => {
     expect('readAloud' in noPushNote).toBe(false)
     expect('push' in noPushNote).toBe(false)
 
-    for (const key of ['dmTruth', 'readAloud', 'id', 'trigger', 'tier', 'source', 'imagePrompt']) {
+    for (const key of ['dmTruth', 'readAloud', 'id', 'trigger', 'tier', 'source']) {
       expect(key in withMore).toBe(false)
     }
     expect(JSON.stringify(withMore)).not.toContain(card.dmTruth)
