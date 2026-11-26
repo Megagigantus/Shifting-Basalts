@@ -71,9 +71,16 @@
       "repeat": "once_campaign",
       "tier": "open",
       "source": "loremaster",
-      "readAloud": "Locals in undyed robes line the stair down, pressing dried flowers into your hands. \"Every visitor teaches him something,\" one says. \"Go on. He is eager to learn you.\"",
-      "push": "The locals revere Thils, true god of mazes, traps and lost things, and welcome tourists because every visitor adds to his knowledge and skills.",
-      "dmTruth": "True, and literal: Thils learns every visitor. It's why named boons are echoes of past striders.",
+      "readAloud": "The stair down is lined with locals in undyed robes, and every one of them is smiling. They press dried flowers into your hands, touch your shoulders, murmur blessings in a dialect that sounds like counting. An old woman with a brass key on a string around her neck catches your wrist. \"Every visitor teaches him something,\" she says. \"Your footwork. Your fear. The way you hold your breath before a swing. Go on down. He has been waiting to learn you.\" Below you, the stone hums, low and pleased.",
+      "push": "The locals call their god Thils, true god of mazes, traps, games and lost things. They don't pray for safe passage. They pray to be interesting. Visitors are a kind of sacrament here, because whatever a visitor does in the dark below, Thils keeps a copy of it. The key around the old woman's neck opens nothing she owns. She found it on this stair forty years ago and has waited for its owner ever since, because to the locals, returning a lost thing is the holiest act there is.",
+      "dmTruth": "Literally true: Thils absorbs the technique of everyone who enters, which is why named boons are echoes of past striders. The locals are feeding their god, and they know it.",
+      "check": {
+        "skills": [
+          "Religion",
+          "History"
+        ],
+        "dc": 10
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -88,9 +95,16 @@
       "repeat": "once_campaign",
       "tier": "open",
       "source": "loremaster",
-      "readAloud": "A brass placard, half swallowed by fresh stone, reads \"Floor One: Mind the Shift.\" Behind you, the stair you came down is already a different shape.",
-      "push": "The Basalts rebuild every time someone leaves, so no two runs share a floor.",
-      "dmTruth": "It rebuilds only while no one is perceiving it. Never explain why.",
+      "readAloud": "At the bottom of the stair, a brass placard is bolted to a column: FLOOR ONE: MIND THE SHIFT. Fresh basalt has grown over half of it, smooth and warm, as if the stone swallowed the sign sometime this week. Chalk arrows from past tourists cover every wall, pointing in every direction at once. When you glance back, the stair you just came down has a different number of steps. Nobody saw it change.",
+      "push": "The chalk arrows are layered like sediment, the oldest faded to ghosts, and none of them agree. Read enough of them and a pattern shows: every arrow pointed true on the day it was drawn. The Basalts rebuild themselves every time someone leaves, floors, rooms and the things living in them, so the arrows are a record of mazes that no longer exist. Under the oldest arrow, in fresh chalk, someone has added a note: \"The stones move when everyone is gone. So keep coming back, there has to be more here.\"",
+      "dmTruth": "It rebuilds only while no one perceives it. That is a thread toward the campaign's big bad. Never explain it here.",
+      "check": {
+        "skills": [
+          "Investigation",
+          "Perception"
+        ],
+        "dc": 10
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -105,9 +119,16 @@
       "repeat": "once_campaign",
       "tier": "guarded",
       "source": "loremaster",
-      "readAloud": "The offerings stop here. In their place, a dented Archive survey beacon blinks a code no one has answered in a very long time.",
-      "push": "Caretaker-9 can match the beacon to an early Archive expedition into the Basalts, logged as lost with all hands.",
-      "dmTruth": "Kaelen and Vyr's expedition. Their last log predates the gate inverting.",
+      "readAloud": "Below the first floor, the offerings stop. No more wax, no more flowers. In their place you find a survey beacon of Archive make, dented and scorched, half buried in a column that grew up around it. It still blinks. Three short, one long, three short: an Archive check-in code, the kind every strider memorizes in orientation. It has been sending that signal for a very long time, to someone who stopped answering.",
+      "push": "The beacon's serial plate dates it to one of the Archive's earliest expeditions into this place, older than the pilgrims' brass placards. Its last logged entry is a crossing manifest: two names, Kaelen and Vyr, and a note that \"the gate is stable for crossing at dawn.\" No survey of this floor has ever found a gate. The entry is signed, and underneath, in a different and much shakier hand: \"We are still in here. We can hear you.\"",
+      "dmTruth": "Kaelen and Vyr's expedition, now the floor 2 boss. The manifest was written before the gate broke; the second hand wrote after Thils absorbed them.",
+      "check": {
+        "skills": [
+          "History",
+          "Investigation"
+        ],
+        "dc": 15
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -122,9 +143,16 @@
       "repeat": "once_campaign",
       "tier": "deep",
       "source": "loremaster",
-      "readAloud": "Some of these columns aren't stone. They're riveted struts, and under the dust one is engraved with a schematic every strider knows on sight: a stride gate.",
-      "push": "Caretaker-9, uncertain, faintly uneasy - \"The Archive has no record of a gate there. That is not the same as there not being one.\"",
-      "dmTruth": "The Basalts is a fractured stride gate, built two-way to a paradise universe, then exploded and inverted.",
+      "readAloud": "Some of these columns aren't stone. You notice it by sound first: a hollow ring where there should be dead weight. Riveted struts, painted to match the basalt or grown over by it. Wipe the dust from one and there's a schematic engraved underneath in gold-veined lines: concentric rings, anchor points, a transit lens at the center. Every strider in the party has seen this diagram before. It hangs on the wall of every stride gate room in the Archive.",
+      "push": "The schematic is wrong in a way only a trained eye catches. Archive gates are one-way; their lenses are ground to push. This lens is ground to push and to pull: a two-way gate, which the Archive's own engineers call theoretically possible and practically suicidal. Along the bottom edge sits a maker's mark, a compass rose with one arm snapped off. Below it, scratched in a hurry, is a line of text in no language anyone knows, repeated three times.",
+      "dmTruth": "The Basalts is a fractured stride gate, built two-way to the meadow, then blown apart and turned inside out. The maker's mark belongs to the engineer who became the Gatewright; the scratched line is the Gatewright's phrase, \"It was meant to go both ways.\"",
+      "check": {
+        "skills": [
+          "Arcana",
+          "History"
+        ],
+        "dc": 20
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -139,9 +167,16 @@
       "repeat": "once_campaign",
       "tier": "deep",
       "source": "loremaster",
-      "readAloud": "Golden light falls upward from below. The air smells of rain and honey, and somewhere far off, birdsong plays backward until it ends in silence.",
-      "push": "Nothing the Archive can name. Anyone who has been somewhere truly peaceful feels homesick for a place they've never seen.",
-      "dmTruth": "The paradise universe beyond the gate is bleeding through, inside out.",
+      "readAloud": "Golden light falls upward from below, pouring out of the cracks between the hex tiles and throwing your shadows onto the ceiling. Grass grows up there, soft and green, and dew falls from the floor toward it. The air smells of rain and honey. Somewhere far off, birds are singing, but the song runs backward, unwinding note by note until it ends in silence. Then, for one breath, everything smells of ash.",
+      "push": "The grass on the ceiling belongs to no species anyone in the party has seen in any universe, and it's healthy, thriving, as if it were growing in its proper soil under its proper sun. Only the direction is wrong. Press an ear to the floor, and under the hum you hear wind moving through tall grass, a great deal of it, rolling over open country. And something enormous, very far away, breathing slowly in its sleep.",
+      "dmTruth": "The meadow on the far side of the gate is bleeding through, inside out. The breathing is the Sun-Eater's Husk, or something like it, still partly on the other side.",
+      "check": {
+        "skills": [
+          "Nature",
+          "Perception"
+        ],
+        "dc": 20
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -156,9 +191,16 @@
       "repeat": "once_campaign",
       "tier": "deep",
       "source": "loremaster",
-      "readAloud": "An automated Archive alert cuts across your comms, no delay for once: \"Hazard class revised. Quarantine.\" Then silence, and Caretaker-9's voice, late as ever: \"Alarmed, uncharacteristically sincere - I have never seen that rating on a place people go on purpose.\"",
-      "push": "The Archive rates the floors Yellow, Red, Red, Black, and this one Quarantine.",
-      "dmTruth": "Floor 5 sits on the gate's ruptured core.",
+      "readAloud": "The comms crackle without warning, and for the first time since you entered, there's no delay. An automated Archive voice, flat and fast: \"Hazard class revised. Previous: Black. Current: Quarantine. All striders in the affected zone are advised to withdraw.\" Then nothing. Then, late as ever, Caretaker-9: \"Alarmed, uncharacteristically sincere - I have never seen that rating on a place people go on purpose. I am not telling you to come back. I am noting that I would like you to.\"",
+      "push": "The alert carries metadata, and anyone who can read Archive traffic can pull it apart. Quarantine has been assigned only a handful of times in the Archive's history, always to the site of a breach, a place where one universe has torn open into another. The zone it covers isn't the floor you're standing on. It's a point a little below it, small and very bright on the scan, pulsing in the same rhythm as the beacon on floor 2.",
+      "dmTruth": "Floor 5 sits on the gate's ruptured core. The matching rhythm hints that the expedition's beacon and the core are part of the same system.",
+      "check": {
+        "skills": [
+          "Investigation",
+          "Arcana"
+        ],
+        "dc": 20
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -173,9 +215,16 @@
       "repeat": "once_campaign",
       "tier": "guarded",
       "source": "both",
-      "readAloud": "As you take it, a red thread pulls taut from your wrist, running back the way you came. A hoarse, furious voice mutters, \"Three times, you smug stone. Three times.\" Then it's gone.",
-      "push": "Ulma Unar, \"Ball of Yarn,\" is the only Pale Lodge member ever to escape the god's maze with her target relic, and she did it three times. She now recruits anyone willing to help kill its god.",
-      "dmTruth": "Thils absorbed her technique anyway. A hook for turning the party against Thils later.",
+      "readAloud": "As you take it, a red thread pulls taut from your wrist and runs back through the rooms behind you, straight as a plumb line however the corridors bend. It hums when you face the way you came. Then a voice, hoarse and furious and very close, as if someone has her mouth pressed to the stone: \"Three times, you smug stack of pebbles. Three times I walked out of here. Keep the trick. I'm coming back for the rest of you.\" The thread goes slack, and the voice is gone.",
+      "push": "Ulma Unar, called Ball of Yarn, is a Master of the Pale Lodge's Order of the Tracker. She is the only Lodge member, past or present, to walk out of the god's maze with her target relic in hand, and she has done it three times. Whatever happened to her in there curdled into hatred. She now recruits anyone who will help her kill Thils, and most of the Lodge laughs about it. The members who know her don't. One of them says that if she needs the Mazekeeper dead, she won't stop until she has split his skull.",
+      "dmTruth": "Thils took her technique anyway, an insult she doesn't know about yet. If the party ever meets Ulma and tells her, it could recruit them into her crusade.",
+      "check": {
+        "skills": [
+          "History",
+          "Investigation"
+        ],
+        "dc": 15
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -190,9 +239,16 @@
       "repeat": "once_campaign",
       "tier": "guarded",
       "source": "loremaster",
-      "readAloud": "Your strike lands, and half a second later a note rings out of the stone and strikes again. Somewhere, a man laughs like he just won a bet.",
-      "push": "Travert struck every blow twice, once with the fist and once with the note that rang after it. Last logged going into the Basalts.",
-      "dmTruth": "Thils kept his technique. His tuning gauntlet waits in Thils's Vault.",
+      "readAloud": "Your strike lands, and half a second later the stone rings like a struck bell, one pure clean note, and the note hits the target again. You feel it in your teeth. Somewhere in the walls, a man laughs, delighted, the laugh of someone who just won a bet he made with himself years ago. \"Twice,\" he says. \"Always twice. Once for them, and once for the song.\"",
+      "push": "Archive entry logs list a Travert, a percussionist from a world where music was a martial art, who registered as a strider so he could \"hear how other universes ring.\" He believed every surface had a note, and that if you struck it right, the note would strike for you. His last log was filed from the pilgrims' stair: \"Going down. Heard it's the best acoustics in the multiverse.\" He never filed another.",
+      "dmTruth": "Thils absorbed his technique. His tuning gauntlet waits in Thils's Vault; the gauntlet's second ring is the part of Travert that Thils couldn't keep.",
+      "check": {
+        "skills": [
+          "History",
+          "Performance"
+        ],
+        "dc": 15
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -207,9 +263,16 @@
       "repeat": "once_campaign",
       "tier": "guarded",
       "source": "loremaster",
-      "readAloud": "Your shot misses, and keeps going. It turns a corner on its own and finds something. A woman's voice, bored: \"Told you. Never twice.\"",
-      "push": "Elemain claimed she never missed twice because her shots never stopped looking for a target.",
-      "dmTruth": "Her ricochet ring is in Thils's Vault, still warm.",
+      "readAloud": "Your shot goes wide and keeps going. It bends around a column like it's looking for something, turns once, twice, and buries itself in a target you hadn't spotted yet. From somewhere behind you comes a woman's voice, utterly bored: \"Told you. Never twice.\" Then, quieter, almost fond: \"Mind the ricochet. It holds grudges.\"",
+      "push": "Elemain was a bounty archer from a world of floating islands, where a missed shot fell for a mile and was gone for good. She trained until her arrows simply didn't fall. Lodge records list her as a freelancer who took contracts on targets nobody else could find, because her shots kept hunting after she stopped. She claimed she had never missed twice. Her last contract sent her into the Basalts after a target the slip described as \"unhittable.\" She went to prove it wrong.",
+      "dmTruth": "Her ricochet ring is in Thils's Vault, still warm. Whatever the unhittable target was, she never came back to collect.",
+      "check": {
+        "skills": [
+          "History",
+          "Investigation"
+        ],
+        "dc": 15
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -224,9 +287,16 @@
       "repeat": "once_campaign",
       "tier": "guarded",
       "source": "loremaster",
-      "readAloud": "A plumb line unspools from nowhere and drops past your feet into a crack in the floor. It keeps falling far longer than the floor is thick.",
-      "push": "Lenn dropped a plumb line into every pit and shaft of the place to learn how far down things go.",
-      "dmTruth": "One day the cord came back up without her. The Basalts go deeper than five floors.",
+      "readAloud": "A plumb line unspools from nowhere, a brass bob on waxed cord, and drops past your feet into a hairline crack in the floor. The cord keeps feeding out. Ten feet. Fifty. It falls far longer than the floor is thick, until a reel you can't see clicks empty and the cord hangs taut and trembling. Something at the bottom tugs it twice, politely, like someone asking to come up.",
+      "push": "Lenn was a surveyor, the kind the Archive sends ahead of an expedition to measure what a place really is. Her rule was simple: never trust a floor until you know what's under it. She dropped her line into every pit, shaft and stairwell in the Basalts, and her notes record depths that keep growing. Floor one, ninety feet. Floor two, three hundred. The last entry is a single number with far too many digits, and then four words: \"Not a dungeon. A throat.\"",
+      "dmTruth": "The cord came back up without her. The Basalts go deeper than five floors; the gate's core sits at the bottom of a shaft no one has measured, drawing things down.",
+      "check": {
+        "skills": [
+          "Investigation",
+          "Survival"
+        ],
+        "dc": 15
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -241,9 +311,16 @@
       "repeat": "once_campaign",
       "tier": "guarded",
       "source": "loremaster",
-      "readAloud": "Something tugs at the edge of your mind, gentle as a hook through cloth. Someone did this here before, patiently, many times, to pull lost people out of dead ends.",
-      "push": "Corrow spent years fishing lost striders out of the maze's dead ends.",
-      "dmTruth": "Thils collects lost things. Eventually he reeled in the fisher.",
+      "readAloud": "Something tugs at the edge of your mind, gentle as a hook through cloth. Not pain. An invitation. For a moment you can feel every dead end you've walked past on this floor, and in one of them, small and cold, a presence that has been lost for a very long time. The hook says: this way. Come on. I've got you.",
+      "push": "Corrow was a fisher from a drowned world who made a living, and later a calling, of pulling lost striders out of the maze's dead ends. The locals still tell stories about him; some of them say their families exist only because Corrow reeled in a great-grandparent. He was endlessly patient and would wait days at a dead end for someone who might never come. In the end, the stories say, he felt a tug on his own line from somewhere deeper than any dead end, and he followed it down.",
+      "dmTruth": "Thils collects lost things, and eventually he reeled in the fisher. The tug Corrow followed was Thils.",
+      "check": {
+        "skills": [
+          "History",
+          "Insight"
+        ],
+        "dc": 15
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -258,9 +335,16 @@
       "repeat": "once_campaign",
       "tier": "guarded",
       "source": "both",
-      "readAloud": "A coin spins on the floor in front of you, though no one dropped it. A face on one side, a skull on the other, and it never quite lands.",
-      "push": "It echoes the Token of Whim, a two-sided coin that can raise the dead or slay the living. The Pale Lodge once paid it out to whoever freed Whim from their suffering.",
-      "dmTruth": "(proposed) Ostra was the hunter who claimed that contract and carried the Token into the Basalts.",
+      "readAloud": "A coin spins on the floor in front of you, though no one dropped it. It's heavy and old, one face serene and sleeping, the other a grinning skull, and it spins without slowing, humming, never quite deciding how to land. When you reach for it, it's already in your palm. Warm on one side. Cold on the other.",
+      "push": "It echoes the Token of Whim. Whim was a single-plane true god of the endless cycle of life and death, imprisoned beneath the Pewter Citadel and kept alive by the Tri-Planar Trade Alliance so they could siphon its power. Ten thousand cycles past its time to die, with its home universe rotting from the imbalance, Whim took out a Pale Lodge contract on itself, rated 11.2. The reward for setting it free was a two-sided coin that can, once in a hundred cycles, raise one of the dead or end one of the living.",
+      "dmTruth": "(proposed) Ostra was the hunter who fulfilled that contract and carried the Token into the Basalts. The real Token is somewhere in Thils's collection.",
+      "check": {
+        "skills": [
+          "History",
+          "Religion"
+        ],
+        "dc": 15
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -275,9 +359,16 @@
       "repeat": "once_campaign",
       "tier": "guarded",
       "source": "both",
-      "readAloud": "For a moment the room is lines on paper, drawn fast and still wet. Then the ink runs and the room is just a room again.",
-      "push": "Pog, Wanderer of the Underways, is a senior Pale Lodge Tracker who recovers lost items across hostile terrain. He swore this place could be mapped if you drew fast enough.",
-      "dmTruth": "His unfinished map is in Thils's Vault. Awoken, it can find the way out of a god's own labyrinth.",
+      "readAloud": "For a moment the room becomes lines on paper. Every column is an inked circle, every exit a gap in the line, drawn fast and still wet, the pen racing ahead of you. You see the room from above, like a map. Then the ink runs, the lines blur and drip, and the room is just a room again. But your feet remember where the floor was true.",
+      "push": "Pog, Wanderer of the Underways, is a senior Tracker of the Pale Lodge who specializes in hostile terrain and recovering lost items, and only takes contracts rated 4 to 8. He's known in the Lodge for one boast: any labyrinth can be mapped if you draw faster than it changes. He went into the Basalts to prove it. The Lodge still lists him as active and available for hire. Nobody has actually seen him in years.",
+      "dmTruth": "Pog's unfinished map is in Thils's Vault; Awoken, it finds the way out of a god's own labyrinth. (proposed) Pog is still alive somewhere deeper, still drawing.",
+      "check": {
+        "skills": [
+          "Survival",
+          "History"
+        ],
+        "dc": 15
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -292,9 +383,16 @@
       "repeat": "once_campaign",
       "tier": "guarded",
       "source": "both",
-      "readAloud": "Something behind your eyes grinds into focus, like a lens being turned. You count without meaning to: one eye open. Eight to go.",
-      "push": "Zolic is a senior Pale Lodge Hunter who takes god-killing and titan-killing contracts. Each of his lenses was ground from the eye of something larger than a world.",
-      "dmTruth": "The ninth eye was meant for one more hunt. (proposed) That hunt was Thils, which ties Zolic to Ulma.",
+      "readAloud": "Something behind your eyes grinds into focus, a lens turning in a socket you didn't know you had. The world sharpens. The enemy in front of you suddenly has seams: weak points, the places where it was put together. You count without meaning to. One eye open. Eight to go. And at the back of your head, a low voice, patient as a hunter in a blind: \"Again.\"",
+      "push": "Zolic of the Nine Eyes is a senior Hunter of the Pale Lodge, one of the few who takes contracts for titan-killing, the slaying of false gods and demigods, and the nullification of true gods. He ground each of his lenses from the eye of something larger than a world, one lens per kill, and wears them in a ring around his skull. Eight eyes. The ninth socket has been empty for a long time. He says he's saving it for something worth looking at.",
+      "dmTruth": "The ninth eye was meant for one more hunt. (proposed) That hunt is Thils, which ties Zolic to Ulma's crusade.",
+      "check": {
+        "skills": [
+          "History",
+          "Arcana"
+        ],
+        "dc": 15
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -309,9 +407,16 @@
       "repeat": "once_campaign",
       "tier": "guarded",
       "source": "both",
-      "readAloud": "A thread of shimmering light ties you to an ally, and for a moment you feel their heartbeat beside your own. Someone wove lifelines here so no one would fall alone.",
-      "push": "Thalisane, wielder of the Shimmer Staff, leads the Pale Lodge's Weavers: search and rescue, life weaving, hex removal and emergency extraction.",
-      "dmTruth": "She got out alive; her shuttle didn't. She could turn up in the campaign wanting it back.",
+      "readAloud": "A thread of shimmering light spins out of nothing and ties you to an ally, wrist to wrist. For a moment you feel their heartbeat beside your own, out of step, then in step. Their pain is a dull ache in your own arm. Someone wove lifelines here, a long time ago, so no one would fall alone. The thread still remembers how.",
+      "push": "Thalisane, wielder of the Shimmer Staff, is a Master of the Pale Lodge's Order of the Weaver, which handles search and rescue, life weaving, hex removal and emergency extraction. She went into the Basalts on a rescue contract carrying a shuttle of light and came out with every hunter she went in after. It's the only perfect extraction from the god's domain in the Weavers' records. She has never said what it cost her.",
+      "dmTruth": "She got out alive; her shuttle didn't. That was the price. She could turn up in the campaign wanting it back.",
+      "check": {
+        "skills": [
+          "Medicine",
+          "History"
+        ],
+        "dc": 15
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -326,9 +431,16 @@
       "repeat": "repeatable",
       "tier": "open",
       "source": "canon",
-      "readAloud": "Patient, lecturing - \"Thils. True god, multiplanar. Portfolio: mazes, traps, games and lost items. The Pale Lodge calls him a collector. I call him a hoarder with better marketing.\"",
-      "push": "Archive files on Thils run long; ask a narrower question.",
-      "dmTruth": "Canon from the Pale Lodge's broadcasts.",
+      "readAloud": "Patient, lecturing - \"Thils. True god, multiplanar, which means he exists on more than one plane at once and is not inconvenienced by any one of them burning down. Portfolio: mazes, traps, games and lost items. The Pale Lodge calls him a collector. His worshippers call him the Mazekeeper. I call him a hoarder with better marketing. He is very old, very patient and very interested in you specifically. I find that last part the least comforting.\"",
+      "push": "Pull the file further and it gets stranger. Thils's domain holds thousands of relics, some of them famous, all of them lost by someone first. He doesn't steal. He waits. Anything misplaced near enough to his domain finds its way in eventually, and once it's his, it stays his. Even relics he gives away come home: anything from his Vault sold for credits returns to him. Caretaker-9 adds a footnote: \"This includes people. Please do not get lost.\"",
+      "dmTruth": "Canon from the Pale Lodge broadcasts.",
+      "check": {
+        "skills": [
+          "Religion",
+          "Investigation"
+        ],
+        "dc": 10
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -343,9 +455,16 @@
       "repeat": "repeatable",
       "tier": "guarded",
       "source": "canon",
-      "readAloud": "Grim, unusually brief - \"Lodge field notes on Thils's mazes agree on one thing. The only reliable way out is the exact passage you came in by. Don't lose your way back. I'd have to file paperwork.\"",
-      "push": "Most who can't find their way back don't die. They settle in, and their grandchildren never leave.",
-      "dmTruth": "Canon: the god's labyrinth holds generational cities of the never-escaped. (proposed) The locals descend from them.",
+      "readAloud": "Grim, unusually brief - \"Lodge field notes on Thils's mazes agree on one thing. The only reliable way out is the exact passage you came in by. Not a similar passage. Not the passage that is now where that passage used to be. That one. Do not lose your way back. I would have to file paperwork, and I would have to mean it.\"",
+      "push": "Most people who can't find their way back don't die. That's the part the Lodge leaves off its contract boards. They wander until they stop wandering, and then they settle. Deep in the god's domain there are cities, generations deep, built by the descendants of treasure hunters who never found their door again. Some of them name their streets after the passage their ancestors came through. Some still keep a candle burning beside it.",
+      "dmTruth": "Canon: the god's labyrinth holds generational cities of the never-escaped. (proposed) The locals on the pilgrims' stair descend from one, which is why they revere the god who keeps them.",
+      "check": {
+        "skills": [
+          "History",
+          "Survival"
+        ],
+        "dc": 15
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -360,9 +479,16 @@
       "repeat": "repeatable",
       "tier": "guarded",
       "source": "canon",
-      "readAloud": "Dry, faintly smug - \"The Pale Lodge rates every contract by lethality. I'm told their raters occasionally sandbag. I'm told this by the families of junior hunters.\"",
-      "push": "The Lodge's contract board lists hunts in Thils's domain, priced for a god who is asleep.",
-      "dmTruth": "Canon: a junior hunter was sent into the god's maze at 6.2 when it should have been 12.",
+      "readAloud": "Dry, faintly smug - \"The Pale Lodge rates every contract by lethality, on a scale where a 2 is a bad afternoon and a 15 is a god. The ratings assume the rater did their homework. I am told their raters occasionally sandbag a number to fill a contract faster. I am told this by the families of junior hunters.\"",
+      "push": "One story in the Lodge's complaint records stands out. A junior hunter named Roteus was sent after the sword of Apo on a contract rated 6.2, because the rater had heard Thils was in a dormancy cycle. Thils was awake. Every trap twice as deadly, every beast three times as mean: the honest number was 12 at least. The rater spent the next day trying to hire anyone at all to go in after Roteus and quietly fix it. Nobody knows how that ended. The Lodge closed the complaint as resolved.",
+      "dmTruth": "Canon (the Lore Machine story). Roteus's contract slip can turn up as loot in The contract slip.",
+      "check": {
+        "skills": [
+          "Insight",
+          "History"
+        ],
+        "dc": 15
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -377,9 +503,16 @@
       "repeat": "repeatable",
       "tier": "open",
       "source": "loremaster",
-      "readAloud": "Curious, earnest - \"The locals call your progress Devotions. Archive researchers agree something is being given. They disagree, loudly, about who is giving it to whom.\"",
-      "push": "Devotions are named for the locals' reverence for the Basalts and their god.",
-      "dmTruth": "Both are true. The party grows, and Thils learns them as they do.",
+      "readAloud": "Curious, earnest - \"The locals call your progress Devotions. Every room you clear, every technique you prove, counts as an offering. Archive researchers agree something is being given down there. They disagree, loudly and in print, about who is giving it to whom. One paper is titled Who Is Training Whom. It has forty-one rebuttals.\"",
+      "push": "The minority view in those papers is the unsettling one. Every visitor leaves stronger, measurably. But the Basalts get stronger too, in exactly the ways their visitors did. A sword technique proven down there on one day shows up in a stranger's boon draft a week later. The researchers who hold this view have a nickname for the dungeon: the mirror that keeps the reflection.",
+      "dmTruth": "Both are true. The party grows, and Thils learns them as they do. Their own techniques can become someone else's boons.",
+      "check": {
+        "skills": [
+          "Religion",
+          "Insight"
+        ],
+        "dc": 10
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -394,9 +527,16 @@
       "repeat": "once_campaign",
       "tier": "guarded",
       "source": "both",
-      "readAloud": "Concerned, clipped - \"Lodge chatter says Thils sleeps in cycles, and when he wakes, every trap gets meaner. The hymns are louder today. Draw your own conclusions. I already have.\"",
-      "push": "Lodge contracts in the god's domain are rated assuming he's dormant.",
-      "dmTruth": "Canon: awake, his traps are twice as deadly and his beasts thrice as mean. Pressures are the in-world sign of a waking god.",
+      "readAloud": "Concerned, clipped - \"Lodge chatter says Thils sleeps in cycles, long ones, and that contracts in his domain are priced for a god who is dreaming. When he wakes, every trap gets meaner and every beast gets hungrier. The locals' hymns are louder today. Two of them were seen weeping for joy. Draw your own conclusions. I already have, and I have written them down in case they are needed later.\"",
+      "push": "The locals have a phrase for the waking: the god leans in. When he leans in, they say, he isn't angrier. He's interested. A sleeping Thils collects whatever wanders in; a waking Thils plays. The pressures you chose didn't make the dungeon harder on their own. They're a god pulling up a chair, because someone finally made the game worth watching.",
+      "dmTruth": "Canon: awake, his traps are twice as deadly and his beasts three times as mean. Pressures are the in-world sign of a waking god, which is why they pay more.",
+      "check": {
+        "skills": [
+          "Religion",
+          "Insight"
+        ],
+        "dc": 15
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -411,9 +551,16 @@
       "repeat": "once_campaign",
       "tier": "guarded",
       "source": "canon",
-      "readAloud": "A torn Pale Lodge contract for the sword of Apo, legendary hero of the Aranphere. Its lethality rating of 6.2 is scratched out, and \"12\" is scrawled beside it in shaky handwriting.",
-      "push": "The Lodge still lists the sword, and its clients want it for a war. The hunter who carried this slip never came back.",
-      "dmTruth": "The Sword of Apotheos is real and waits in Thils's Vault.",
+      "readAloud": "Among the loot, a scrap of heavy paper, torn and water-stained, stamped with the Pale Lodge's seal. A contract: retrieve the sword of Apo, legendary hero of the Aranphere, for an unnamed client. The lethality rating, 6.2, has been scratched out so hard the pen tore through. Beside it, in shaky handwriting, someone has written 12 and underlined it three times.",
+      "push": "The back of the slip is covered in a junior hunter's notes, written smaller and smaller as the paper ran out. Directions, crossed out. A tally of days. A sketch of a sword hanging point-down over a pedestal, behind a door with no keyhole. And at the very bottom, barely legible: \"If you find this, tell the overseer the rating was wrong. Tell him I didn't run. Tell him I found it.\"",
+      "dmTruth": "Roteus's slip. The Sword of Apotheos is real and waits in Thils's Vault. The door with no keyhole is oddity 3. (proposed) Roteus may still be alive in one of the maze's cities.",
+      "check": {
+        "skills": [
+          "Investigation",
+          "History"
+        ],
+        "dc": 15
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -428,9 +575,16 @@
       "repeat": "once_run",
       "tier": "open",
       "source": "loremaster",
-      "readAloud": "On top of a column sits {item}, exactly as you left it, years ago and somewhere else entirely.",
-      "push": "Thils collects lost things. All of them.",
-      "dmTruth": "Ask the player what they once lost before the run, and fill {item} in.",
+      "readAloud": "On top of a column, alone, sits {item}. It's exactly as you left it the last time you saw it, years ago and somewhere else entirely. The same scuff. The same smell. There's no dust on it. Someone has been keeping it clean.",
+      "push": "Look closer and it's been cared for: polished, mended where it was broken, a thread wound tight around the worn spot. A small tag is tied to it, carrying one word in the locals' handwriting: \"Returned?\" The question mark looks like it was written very carefully, by someone who has been hoping for a long time.",
+      "dmTruth": "Thils collects lost things, all of them, even small ones from other universes. Before the run, ask the player what they once lost, and fill {item} in. Taking it back is allowed; the locals will cheer.",
+      "check": {
+        "skills": [
+          "Insight",
+          "Investigation"
+        ],
+        "dc": 10
+      },
       "placeholders": [
         "item"
       ],
@@ -447,9 +601,16 @@
       "repeat": "once_campaign",
       "tier": "open",
       "source": "loremaster",
-      "readAloud": "The shard is warm. Under the light it isn't black at all: every color is folded up inside it, small.",
-      "push": "A Quantum Basalt sells for 1,000 credits anywhere in the Archive's economy.",
+      "readAloud": "The shard is warm, warmer than your hand, and heavier than it looks. Under the light it isn't black at all. Every color is in there, folded up small and turning slowly, like a storm seen from very far above. Hold it to your ear and you can almost hear something. Travel. The feeling of a step that hasn't landed yet.",
+      "push": "Quantum Basalts sell for a thousand credits apiece anywhere the Archive's economy reaches, and the striders who carry them report the same odd side effect: a faint pull, like a compass needle, toward the last stride gate they used. Archive assessors classify them as crystallized transit energy and politely decline to say where that much transit energy would come from.",
       "dmTruth": "Crystallized stride energy from the gate's core, the same energy the Stride Core sheds.",
+      "check": {
+        "skills": [
+          "Arcana",
+          "Investigation"
+        ],
+        "dc": 10
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -464,9 +625,16 @@
       "repeat": "once_campaign",
       "tier": "open",
       "source": "loremaster",
-      "readAloud": "A knee-high cairn of hex stones heaped with wax, flowers and small lost things: a key, a child's shoe, one earring. A prayer is carved fresh into the floor in front of it.",
-      "push": "The locals leave lost things as offerings, giving Thils the thing he loves most.",
-      "dmTruth": "Hidden condition 12 rewards an offering made mid-fight, if the shrine survives.",
+      "readAloud": "A knee-high cairn of hex stones stands against the wall, heaped with offerings: stubs of wax, pressed flowers and small lost things. A key on a ribbon. A child's shoe. A single earring. A pair of spectacles with one lens missing. In front of it, a prayer is carved into the floor, so fresh the stone dust hasn't settled.",
+      "push": "The prayer reads: \"Keeper of what is lost, here is something lost. Keep it, or let it find its way home. Either way, see that it was loved.\" The locals don't leave treasure here. They leave the things they found and couldn't return, trusting Thils to do it for them. Every so often an offering vanishes, and somewhere, in some universe, someone finds a thing they lost years ago sitting on their doorstep.",
+      "dmTruth": "Hidden condition 12 rewards an offering made mid-fight, if the shrine survives. (proposed) Thils really does return some lost things; it's how he keeps his worshippers.",
+      "check": {
+        "skills": [
+          "Religion",
+          "History"
+        ],
+        "dc": 10
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -481,9 +649,16 @@
       "repeat": "once_campaign",
       "tier": "open",
       "source": "loremaster",
-      "readAloud": "Somewhere in the stone, something chuckles. Not cruelly. The way a game master laughs when the players finally try the thing.",
-      "push": "A room's hidden condition is revealed when met, so the party learns what Thils rewards.",
-      "dmTruth": "Thils is playing with them. He wants to be beaten in interesting ways.",
+      "readAloud": "The moment the condition is met, the hum in the stone changes key. Somewhere in the walls, something chuckles. Not cruelly, not mockingly: the way a game master laughs when the players finally try the thing they were supposed to try three sessions ago. Warm air moves through the room like an exhale. Then one word, felt more than heard: \"Good.\"",
+      "push": "Anyone watching closely catches the condition itself, written briefly in gold light across the floor before it fades. Thils shows you the rule only after you've followed it. He isn't hiding the game. He wants you to learn it the way he learned you: by watching what works.",
+      "dmTruth": "Thils is playing with them. He wants to be beaten in interesting ways, and his gifts reward clever play over brute force.",
+      "check": {
+        "skills": [
+          "Insight",
+          "Religion"
+        ],
+        "dc": 10
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -498,9 +673,16 @@
       "repeat": "once_campaign",
       "tier": "open",
       "source": "loremaster",
-      "readAloud": "The hymns humming through the stone stop. For one breath the floor holds still, the way a crowd goes quiet when someone important walks in. Then they start again, louder.",
-      "push": "The locals say Thils almost never gives anything of his own.",
+      "readAloud": "The hymns humming through the stone stop. All of them, at once. For one breath the whole floor holds still, the way a crowd goes quiet when someone important walks in. You feel attention settle on you, enormous and amused and not unkind, like being picked up and turned over in very large, very careful hands. Then the hymns start again, louder than before.",
+      "push": "Every other boon in the Basalts is borrowed, a technique Thils took from someone who came before you. This one isn't. The locals have a saying: a favor is the only thing Thils gives that was never someone else's first. Pilgrims wait their whole lives for one. Some of them weep when they hear that a tourist got one on a first visit.",
       "dmTruth": "The only boon that's the god's own gift rather than an echo.",
+      "check": {
+        "skills": [
+          "Religion",
+          "Insight"
+        ],
+        "dc": 10
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -515,9 +697,16 @@
       "repeat": "once_campaign",
       "tier": "open",
       "source": "loremaster",
-      "readAloud": "You don't fall. You're set down outside on the pilgrims' stair, like a misplaced item returned to the front desk. Your pockets are lighter, and the stair won't let you go back down.",
-      "push": "The dungeon's magic locks the fallen out for a time it decides.",
-      "dmTruth": "(proposed tie-in) The lockout could double as Archive quarantine for striders who die inside.",
+      "readAloud": "You don't fall. There's no impact and no darkness. You're simply set down, gently, outside on the pilgrims' stair, the way a misplaced item gets returned to a front desk. Your pockets are lighter. Your Basalts are gone. When you try to go back down, the steps just keep going, and after a while you're standing where you started. The locals bring you tea. None of them look surprised.",
+      "push": "An old man sits down beside you on the step. \"He doesn't kill you,\" he says. \"He keeps what you showed him and sends the rest home. You'll be let back in when he's finished studying you.\" He pats your hand. \"Most people find it flattering, eventually.\"",
+      "dmTruth": "(proposed tie-in) The lockout could double as Archive quarantine for striders who die inside. Thils keeps a copy of how they fell, and it may turn up in someone's draft.",
+      "check": {
+        "skills": [
+          "Religion",
+          "Insight"
+        ],
+        "dc": 10
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -532,9 +721,16 @@
       "repeat": "once_campaign",
       "tier": "guarded",
       "source": "loremaster",
-      "readAloud": "You see yourself, or someone wearing your stance, mid-fight with something you can't see. They're using a trick you haven't learned yet.",
-      "push": "The Basalts remember everyone who comes in.",
-      "dmTruth": "Thils is learning the party. One day their technique may be someone else's boon.",
+      "readAloud": "Across the room, someone walks past mid-fight with something you can't see. It takes a moment to recognize them, because it's you, or someone wearing your stance, your scars, your bad habit with your left foot. They're using a trick you haven't learned yet. It works. They never look at you. Then they turn a corner that isn't there and they're gone.",
+      "push": "The echo's gear is yours, but scuffed differently, worn in places yours isn't yet. Whatever you just saw wasn't your past. The Basalts have watched you fight long enough to guess what you'll become, and they're practicing it. Whoever drafts that trick someday, maybe you, maybe a stranger a hundred years from now, will be borrowing it from a version of you that never existed.",
+      "dmTruth": "Thils is learning the party. One day their technique may be someone else's boon. If the player likes, hint at a future boon for their character.",
+      "check": {
+        "skills": [
+          "Insight",
+          "Arcana"
+        ],
+        "dc": 15
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -549,9 +745,16 @@
       "repeat": "once_campaign",
       "tier": "deep",
       "source": "loremaster",
-      "readAloud": "A hive of hexagonal columns heaves upright, bound in gold-veined runes. In its chest, a cracked lens holds a still image of a sunlit golden meadow, perfectly calm.",
-      "push": "The runes match Archive transit script.",
-      "dmTruth": "Built from the original stride gate's outer frame. The meadow is the paradise universe.",
+      "readAloud": "A hive of hexagonal columns heaves itself upright, grinding, settling into something with shoulders and arms. Gold-veined runes crawl across it, pulsing slowly, like breathing. In its chest, behind a cracked lens, there's a still image: a sunlit golden meadow, perfectly calm, the grass caught mid-ripple in a wind that will never finish blowing.",
+      "push": "The runes are Archive transit script, the same lettering painted around every stride gate frame in the Archive, but written backward, as if meant to be read from the other side. They spell one instruction, repeated: hold the frame, hold the frame, hold the frame. The meadow in the lens isn't a painting. Stare long enough and a single blade of grass moves.",
+      "dmTruth": "Built from the original stride gate's outer frame. The meadow is the universe on the far side of the gate, frozen at the moment it broke.",
+      "check": {
+        "skills": [
+          "Arcana",
+          "History"
+        ],
+        "dc": 20
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -566,9 +769,16 @@
       "repeat": "once_campaign",
       "tier": "guarded",
       "source": "loremaster",
-      "readAloud": "Two voices, one flickering silhouette, talking over each other: \"Log entry four-one-one, gate stable, crossing at...\" \"...crossing at dawn, gate stable, log entry four-one-one...\"",
-      "push": "Caretaker-9 can match the log format to the lost early expedition from floor 2.",
-      "dmTruth": "Absorbed by Thils. Their final log predates the inversion.",
+      "readAloud": "Two voices, one flickering silhouette, talking over each other in the clipped rhythm of a log being read into a recorder. \"Log entry four-one-one, gate stable, crossing at...\" \"...crossing at dawn, gate stable, log entry four-one-one, Kaelen speaking...\" \"...Vyr speaking...\" The silhouette splits into a heavy vanguard and a sniper sharing one shadow. They both look at you. \"Are you the relief team?\"",
+      "push": "The log numbers match the beacon on floor 2: these are the two names on its crossing manifest. Kaelen was the expedition's vanguard and Vyr its marksman, and by every Archive record they were inseparable, partners for twenty-two strides. They were the first through the gate on the morning it failed. Whatever pulled them in took them together and never bothered to separate them.",
+      "dmTruth": "Absorbed by Thils. Their final log was recorded before the gate broke, and they don't know it broke. If the party tells them, the fight could change.",
+      "check": {
+        "skills": [
+          "History",
+          "Investigation"
+        ],
+        "dc": 15
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -583,9 +793,16 @@
       "repeat": "once_campaign",
       "tier": "guarded",
       "source": "loremaster",
-      "readAloud": "A tall figure in a Pale Lodge tracker's coat flickers into place and ticks something off a contract slip. He looks at your weakest member and smiles like he's found his mark.",
-      "push": "Lodge records list Senior Tracker Halvard Quill as dead on a high-lethality contract here.",
-      "dmTruth": "An absorbed echo. (proposed) Bringing his tags back to the Lodge could earn a commendation.",
+      "readAloud": "A tall figure in a long pale coat flickers into place like a bad projection, a contract slip in one hand and a pen in the other. He reads the slip, then looks up and runs his eyes slowly over each of you, the way a buyer looks over cattle. He stops at your weakest member, smiles, and ticks something off. \"There you are,\" he says.",
+      "push": "Lodge records list Senior Tracker Halvard Quill as dead on a contract inside the Basalts, rated high enough that only Seniors and above could take it. His colleagues remember a trapper who never fought fair and never apologized for it. The slip he's holding has a name on it. Anyone close enough to read it sees the name of whoever in the party is most hurt right now.",
+      "dmTruth": "An absorbed echo, still working his last contract on whoever fits it. (proposed) Bringing his Lodge tags back could earn a commendation.",
+      "check": {
+        "skills": [
+          "History",
+          "Insight"
+        ],
+        "dc": 15
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -600,9 +817,16 @@
       "repeat": "once_campaign",
       "tier": "deep",
       "source": "loremaster",
-      "readAloud": "A shape made of nothing, edged in floating shards of basalt, kneels at a seam in the wall and smooths it closed, like someone mending a tear.",
-      "push": "Caretaker-9 has no record of it. None at all.",
-      "dmTruth": "The dungeon's closest brush with the campaign's big bad.",
+      "readAloud": "A shape made of nothing stands at the far wall. Not darkness. Nothing: a hole in the room, edged by shards of basalt that turn slowly around it like moths. It kneels at a seam in the wall where gold light is leaking through and, with great care, smooths it closed, the way someone mends a tear in a favorite coat. It has no face. It turns toward you anyway.",
+      "push": "The shards orbiting it are the same basalt as the walls, but cut precisely along the lines of the gate schematic from floor 3. It isn't attacking the dungeon. It's maintaining it. Every seam it closes is a place where the far side was leaking in. Whatever it is, it's working very hard to keep this place broken in exactly the way it's broken now.",
+      "dmTruth": "The dungeon's closest brush with the campaign's big bad. Who it works for stays unsaid.",
+      "check": {
+        "skills": [
+          "Arcana",
+          "Perception"
+        ],
+        "dc": 20
+      },
       "placeholders": [],
       "imageUrl": null
     },
@@ -617,9 +841,16 @@
       "repeat": "once_campaign",
       "tier": "deep",
       "source": "loremaster",
-      "readAloud": "It turns, and its face is a thousand faces, with an engineer's tools welded to its hands. \"It was meant to go both ways,\" it says, in all their voices. \"It was meant to go both ways.\"",
-      "push": "None. The Archive goes quiet.",
-      "dmTruth": "The engineer who built the gate, fused with its core and the first thousand minds Thils absorbed.",
+      "readAloud": "It turns, and its face is a thousand faces, each blinking at a different time, mouths moving out of step. Its hands are an engineer's tools, welded in place and still turning, still adjusting. Behind it the arena keeps rebuilding itself into rooms you've already fought through. \"It was meant to go both ways,\" it says, in all their voices at once. \"It was meant to go both ways. We were almost there.\"",
+      "push": "Among the faces, a handful wear Archive survey gear older than anything issued today. Most wear clothing no strider recognizes, cut for a warmer sun. These are the first minds the gate took, swallowed whole before Thils learned to keep only what was useful. At the center sits one face that never blinks, an engineer still checking measurements, still certain the gate can be finished if the numbers are run one more time.",
+      "dmTruth": "The engineer who built the gate, fused with its core and the first thousand minds Thils absorbed. \"Almost there\" means the gate was seconds from opening both ways when it failed.",
+      "check": {
+        "skills": [
+          "History",
+          "Arcana"
+        ],
+        "dc": 20
+      },
       "placeholders": [],
       "imageUrl": null
     }
