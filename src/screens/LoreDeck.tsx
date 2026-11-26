@@ -1,67 +1,28 @@
-// DM screen for managing the lore deck: import/export, card list & editor, settings, banned terms, and seen reset.
-import { useRef, useState, type ChangeEvent } from 'react'
-import { Download, Plus, ScrollText, Settings, Upload } from 'lucide-react'
-import { validateDeckFile } from '../lore/deckFile'
+// DM screen for browsing the lore deck, viewing cards, editing deck settings, and resetting seen cards.
+import { useState } from 'react'
+import { ScrollText, Settings } from 'lucide-react'
 import { loreImageUrl } from '../lore/loreArt'
-import {
-  exportDeckJson,
-  importDeck,
-  resetSeen,
-  saveBannedTerms,
-  saveSettings,
-} from '../lore/loreStore'
-import type { LoreCard, LoreDeckFile, LoreGroup, LoreRepeat, LoreSource, LoreState, LoreTier } from '../lore/types'
+import { resetSeen, saveSettings } from '../lore/loreStore'
+import type { LoreCard, LoreGroup, LoreState, LoreTier } from '../lore/types'
 import { useLoreDeck } from '../lore/useLoreDeck'
 import { ConfirmButton } from '../ui/ConfirmButton'
-import { Panel, SectionLabel } from '../ui/Panel'
+import { Panel } from '../ui/Panel'
 import { Pill } from '../ui/Pill'
-import { FIELD, FIELD_LABEL, PRIMARY_BUTTON, QUIET_BUTTON, WELL } from '../ui/styles'
-import { cx, type Tone } from '../ui/tone'
-import { LoreCardEditor } from './LoreCardEditor'
+import { FIELD, FIELD_LABEL, PRIMARY_BUTTON, WELL } from '../ui/styles'
+import { cx } from '../ui/tone'
+import { LoreCardView, REPEAT_LABEL, SOURCE_LABEL, TIER_LABEL, TIER_TONE } from './LoreCardView'
 
-const TIER_TONE: Record<LoreTier, Tone> = {
-  open: 'stone',
-  guarded: 'amber',
-  deep: 'violet',
-}
-
-const TIER_LABEL: Record<LoreTier, string> = {
-  open: 'Open',
-  guarded: 'Guarded',
-  deep: 'Deep',
-}
-
-const SOURCE_LABEL: Record<LoreSource, string> = {
-  canon: 'Canon',
-  loremaster: 'Loremaster',
-  both: 'Both',
-}
-
-const REPEAT_LABEL: Record<LoreRepeat, string> = {
-  once_campaign: 'Once/campaign',
-  once_run: 'Once/run',
-  repeatable: 'Repeatable',
-}
-
-/** DM lore deck manager: import/export, filterable card list, card modal, and settings. */
+/** DM lore deck browser: filterable card list, read-only card view modal, and settings. */
 export function LoreDeck() {
   const { cards, groups, state, error } = useLoreDeck()
-  const importInputRef = useRef<HTMLInputElement>(null)
 
   const [groupFilter, setGroupFilter] = useState('')
   const [tierFilter, setTierFilter] = useState<'' | LoreTier>('')
   const [seenFilter, setSeenFilter] = useState<'' | 'seen' | 'unseen'>('')
 
-  const [pendingDeck, setPendingDeck] = useState<LoreDeckFile | null>(null)
-  const [importErrors, setImportErrors] = useState<string[]>([])
-  const [importNotice, setImportNotice] = useState<string | null>(null)
-  const [importing, setImporting] = useState(false)
-  const [exporting, setExporting] = useState(false)
-  const [exportError, setExportError] = useState<string | null>(null)
-
-  const [editing, setEditing] = useState<'new' | LoreCard | null>(null)
+  const [viewing, setViewing] = useState<LoreCard | null>(null)
   // Saved messages live here: the settings panel rebuilds itself after each save.
-  const [notices, setNotices] = useState<Notices>({ settings: null, banned: null })
+  const [notices, setNotices] = useState<Notices>({ settings: null })
 
   const loaded = cards !== null && groups !== null && state !== null
   const groupById = new Map((groups ?? []).map((g) => [g.id, g]))
@@ -75,147 +36,20 @@ export function LoreDeck() {
     return true
   })
 
-  function openImportPicker() {
-    importInputRef.current?.click()
-  }
-
-  async function handleImportFile(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0]
-    event.target.value = ''
-    if (!file || !state) return
-
-    setImportErrors([])
-    setImportNotice(null)
-    setPendingDeck(null)
-
-    let raw: unknown
-    try {
-      raw = JSON.parse(await file.text())
-    } catch {
-      setImportErrors(["That file isn't valid JSON."])
-      return
-    }
-
-    const result = validateDeckFile(raw, state.bannedTerms)
-    if (!result.ok) {
-      setImportErrors(result.errors)
-      return
-    }
-
-    setPendingDeck(result.deck)
-  }
-
-  async function confirmImport() {
-    if (!pendingDeck || importing) return
-    setImporting(true)
-    setImportErrors([])
-    try {
-      const result = await importDeck(pendingDeck)
-      setPendingDeck(null)
-      setImportNotice(`Imported ${result.cards} cards.`)
-    } catch (err) {
-      setImportErrors([err instanceof Error && err.message ? err.message : 'Could not import the deck.'])
-    } finally {
-      setImporting(false)
-    }
-  }
-
-  async function handleExport() {
-    if (exporting) return
-    setExporting(true)
-    setExportError(null)
-    try {
-      const json = await exportDeckJson()
-      const blob = new Blob([json], { type: 'application/json' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = 'lore-deck.json'
-      document.body.appendChild(a)
-      a.click()
-      a.remove()
-      URL.revokeObjectURL(url)
-    } catch (err) {
-      setExportError(err instanceof Error && err.message ? err.message : 'Could not export the deck.')
-    } finally {
-      setExporting(false)
-    }
-  }
-
   return (
     <div className="mt-6 flex flex-col gap-6">
       <Panel
         hero
         icon={<ScrollText size={16} />}
         title="Lore deck"
-        subtitle="Import, edit, and tune the DM's lore deck."
-        actions={
-          loaded && (
-            <>
-              <button type="button" onClick={openImportPicker} className={QUIET_BUTTON}>
-                <Upload size={14} /> Import
-              </button>
-              <button type="button" onClick={handleExport} disabled={exporting} className={QUIET_BUTTON}>
-                <Download size={14} /> {exporting ? 'Exporting…' : 'Export'}
-              </button>
-              <button type="button" onClick={() => setEditing('new')} className={PRIMARY_BUTTON}>
-                <Plus size={15} /> New card
-              </button>
-            </>
-          )
-        }
+        subtitle="Browse the lore deck. Cards are edited in src/data/lore-deck.json."
       >
-        <input
-          ref={importInputRef}
-          type="file"
-          accept=".json,application/json"
-          onChange={handleImportFile}
-          className="hidden"
-          aria-label="Import lore deck file"
-        />
-
         {error && <p className="m-0 text-sm text-rose-300">{error}</p>}
         {!loaded && !error && <p className="m-0 text-sm text-stone-400">Loading…</p>}
-        {exportError && <p className="m-0 text-sm text-rose-300">{exportError}</p>}
-
-        {importNotice && (
-          <p role="status" className="m-0 rounded-lg border border-emerald-500/40 bg-emerald-950/30 px-3 py-2 text-xs text-emerald-200">
-            {importNotice}
-          </p>
-        )}
-
-        {importErrors.length > 0 && (
-          <div role="alert" className="rounded-lg border border-rose-500/40 bg-rose-950/30 p-3 text-xs text-rose-200">
-            <ul className="m-0 flex max-h-60 list-disc flex-col gap-1 overflow-y-auto pl-4">
-              {importErrors.map((err, i) => (
-                <li key={`${i}-${err}`}>{err}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {pendingDeck && (
-          <div className={cx(WELL, 'flex flex-wrap items-center justify-between gap-2 border-amber-500/40')}>
-            <p className="m-0 text-xs text-stone-200">
-              Import {pendingDeck.cards.length} cards in {pendingDeck.groups.length} groups? Cards with the same id are replaced; other cards stay.
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <button type="button" onClick={() => setPendingDeck(null)} disabled={importing} className={QUIET_BUTTON}>
-                Cancel
-              </button>
-              <button type="button" onClick={confirmImport} disabled={importing} className={PRIMARY_BUTTON}>
-                {importing ? 'Importing…' : 'Import'}
-              </button>
-            </div>
-          </div>
-        )}
 
         {loaded && cards.length === 0 && (
-          <div className={cx(WELL, 'flex flex-wrap items-center justify-between gap-3')}>
-            <p className="m-0 text-xs text-stone-300">No lore cards yet. Import a deck file to start.</p>
-            <button type="button" onClick={openImportPicker} className={PRIMARY_BUTTON}>
-              <Upload size={14} /> Import
-            </button>
+          <div className={WELL}>
+            <p className="m-0 text-xs text-stone-300">No lore cards in the deck.</p>
           </div>
         )}
 
@@ -274,7 +108,7 @@ export function LoreDeck() {
                     card={card}
                     group={groupById.get(card.group)}
                     seen={Object.hasOwn(state.seen, card.id)}
-                    onEdit={() => setEditing(card)}
+                    onOpen={() => setViewing(card)}
                   />
                 ))}
               </ul>
@@ -284,14 +118,14 @@ export function LoreDeck() {
       </Panel>
 
       {/* Keyed by the saved values, so the form refills when they change elsewhere. */}
-      {loaded && <DeckSettingsPanel key={JSON.stringify([state.settings, state.bannedTerms])} state={state} notices={notices} onNotices={setNotices} />}
+      {loaded && <DeckSettingsPanel key={JSON.stringify(state.settings)} state={state} notices={notices} onNotices={setNotices} />}
 
-      {editing !== null && groups !== null && state !== null && (
-        <LoreCardEditor
-          card={editing === 'new' ? null : editing}
-          groups={groups}
-          seen={editing !== 'new' && Object.hasOwn(state.seen, editing.id)}
-          onClose={() => setEditing(null)}
+      {viewing !== null && (
+        <LoreCardView
+          card={viewing}
+          group={groupById.get(viewing.group)}
+          seen={state !== null && Object.hasOwn(state.seen, viewing.id)}
+          onClose={() => setViewing(null)}
         />
       )}
     </div>
@@ -302,19 +136,19 @@ function LoreCardRow({
   card,
   group,
   seen,
-  onEdit,
+  onOpen,
 }: {
   card: LoreCard
   group: LoreGroup | undefined
   seen: boolean
-  onEdit: () => void
+  onOpen: () => void
 }) {
   const thumbUrl = loreImageUrl(card, group)
   return (
     <li>
       <button
         type="button"
-        onClick={onEdit}
+        onClick={onOpen}
         className="flex w-full cursor-pointer items-start gap-3 rounded-lg border border-stone-800 bg-stone-950/60 p-2.5 text-left transition-colors hover:border-stone-700 hover:bg-stone-900/80"
       >
         <div className="aspect-video w-20 shrink-0 overflow-hidden rounded-md border border-stone-800 bg-stone-950 sm:w-24">
@@ -325,6 +159,7 @@ function LoreCardRow({
             <strong className="text-sm text-stone-100">{card.title}</strong>
             <Pill tone={TIER_TONE[card.tier]}>{TIER_LABEL[card.tier]}</Pill>
             {seen && <Pill tone="emerald">Seen</Pill>}
+            {card.adHoc === true && <Pill tone="sky">Written in play</Pill>}
           </div>
           <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-stone-400">
             <span>{group?.name || card.group}</span>
@@ -341,11 +176,9 @@ function LoreCardRow({
   )
 }
 
-type Notices = { settings: string | null; banned: string | null }
+type Notices = { settings: string | null }
 
 function DeckSettingsPanel({ state, notices, onNotices }: { state: LoreState; notices: Notices; onNotices: (update: (prev: Notices) => Notices) => void }) {
-  const termsInputRef = useRef<HTMLInputElement>(null)
-
   const [tierLimit, setTierLimit] = useState<LoreTier>(state.settings.tierLimit)
   const [deepPerRunText, setDeepPerRunText] = useState(String(state.settings.deepPerRun))
   const [anchorName, setAnchorName] = useState(state.settings.anchor.name)
@@ -354,12 +187,6 @@ function DeckSettingsPanel({ state, notices, onNotices }: { state: LoreState; no
   const settingsStatus = notices.settings
   const setSettingsStatus = (value: string | null) => onNotices((prev) => ({ ...prev, settings: value }))
   const [settingsError, setSettingsError] = useState<string | null>(null)
-
-  const [bannedText, setBannedText] = useState(state.bannedTerms.join('\n'))
-  const [savingBanned, setSavingBanned] = useState(false)
-  const bannedStatus = notices.banned
-  const setBannedStatus = (value: string | null) => onNotices((prev) => ({ ...prev, banned: value }))
-  const [bannedError, setBannedError] = useState<string | null>(null)
 
   const [resettingSeen, setResettingSeen] = useState(false)
   const [resetError, setResetError] = useState<string | null>(null)
@@ -386,30 +213,6 @@ function DeckSettingsPanel({ state, notices, onNotices }: { state: LoreState; no
       setSettingsError(err instanceof Error && err.message ? err.message : 'Could not save settings.')
     } finally {
       setSavingSettings(false)
-    }
-  }
-
-  async function handleTermsFile(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0]
-    event.target.value = ''
-    if (!file) return
-    setBannedText(await file.text())
-    setBannedStatus(null)
-    setBannedError(null)
-  }
-
-  async function handleSaveBanned() {
-    if (savingBanned) return
-    setSavingBanned(true)
-    setBannedError(null)
-    setBannedStatus(null)
-    try {
-      const count = await saveBannedTerms(bannedText)
-      setBannedStatus(`${count} banned terms saved.`)
-    } catch (err) {
-      setBannedError(err instanceof Error && err.message ? err.message : 'Could not save banned terms.')
-    } finally {
-      setSavingBanned(false)
     }
   }
 
@@ -492,41 +295,6 @@ function DeckSettingsPanel({ state, notices, onNotices }: { state: LoreState; no
         </button>
         {settingsStatus && <span className="text-xs text-emerald-300">{settingsStatus}</span>}
         {settingsError && <span className="text-xs text-rose-300">{settingsError}</span>}
-      </div>
-
-      <div className="flex flex-col gap-2 border-t border-stone-800 pt-4">
-        <SectionLabel>Banned terms</SectionLabel>
-        <p className="m-0 text-xs text-stone-400">
-          Cards can't use these words anywhere except Read aloud. Kept only in the DM's private data.
-        </p>
-        <textarea
-          rows={4}
-          aria-label="Banned terms"
-          value={bannedText}
-          onChange={(e) => {
-            setBannedText(e.target.value)
-            setBannedStatus(null)
-          }}
-          className={cx(FIELD, 'w-full font-mono')}
-        />
-        <input
-          ref={termsInputRef}
-          type="file"
-          accept=".txt,text/plain"
-          onChange={handleTermsFile}
-          className="hidden"
-          aria-label="Load banned terms from file"
-        />
-        <div className="flex flex-wrap items-center gap-2">
-          <button type="button" onClick={() => termsInputRef.current?.click()} className={QUIET_BUTTON}>
-            Load from file
-          </button>
-          <button type="button" onClick={handleSaveBanned} disabled={savingBanned} className={PRIMARY_BUTTON}>
-            {savingBanned ? 'Saving…' : 'Save'}
-          </button>
-          {bannedStatus && <span className="text-xs text-emerald-300">{bannedStatus}</span>}
-          {bannedError && <span className="text-xs text-rose-300">{bannedError}</span>}
-        </div>
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-2 border-t border-stone-800 pt-4">
