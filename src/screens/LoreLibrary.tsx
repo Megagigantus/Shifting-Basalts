@@ -70,8 +70,8 @@ export function LoreLibrary({ email }: { email: string }) {
     <div className="flex flex-col gap-4">
       <p className="m-0 text-xs text-stone-300">
         {summary.total === 0 && notes.length === 0
-          ? 'No lore cards yet.'
-          : `${displayCount} of ${summary.total} lore cards`}
+          ? 'No Archival Indexes yet.'
+          : `${displayCount} of ${summary.total} Archival Indexes`}
       </p>
 
       {summary.groups.map((group) => {
