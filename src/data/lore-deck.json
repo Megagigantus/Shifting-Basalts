@@ -57,6 +57,18 @@
       "name": "The Strongest Echoes",
       "description": "Fire as a boss room opens for the first time, before initiative.",
       "defaultImageUrl": null
+    },
+    {
+      "id": "milestones",
+      "name": "Honed Echoes",
+      "description": "Fire the first time anyone in the campaign levels, combines or evolves a boon.",
+      "defaultImageUrl": null
+    },
+    {
+      "id": "families",
+      "name": "Kin of Stone",
+      "description": "Fire the first time the party meets a creature from each family.",
+      "defaultImageUrl": null
     }
   ],
   "cards": [
@@ -759,6 +771,54 @@
       "imageUrl": null
     },
     {
+      "id": "boss-choir",
+      "group": "bosses",
+      "title": "Choir of the Hollow Column",
+      "trigger": {
+        "key": "boss_first_meet:choir-hollow-column",
+        "label": "Boss room opens, first time"
+      },
+      "repeat": "once_campaign",
+      "tier": "open",
+      "source": "loremaster",
+      "readAloud": "The room is a forest of fluted basalt pipes, some taller than a house, some no thicker than a wrist, and all of them are humming. As you step in, the hum gathers into a chord, and the chord into words, sung by a hundred voices that aren't there: the pilgrims' hymn from the stair, every verse at once. The pipes turn toward you like heads in a choir loft. The last note swells until your ribs ache.",
+      "push": "Every pilgrim who ever sang on the stair is in here somewhere. The basalt keeps sound the way other stone keeps heat, and for generations the locals have sung their god's hymns down into the dark. The pipes grew around the echoes. Listen past the chord and single voices come through: a child getting the words wrong, an old man singing flat and not caring, a woman who stops mid-verse to laugh. The Choir isn't angry. It's performing, and it has never had an audience that sang back.",
+      "dmTruth": "The locals' devotion given a body. (proposed) If the party sings the pilgrims' hymn back, the Choir falters, and the fight could end in harmony instead.",
+      "check": {
+        "skills": [
+          "Religion",
+          "Performance"
+        ],
+        "dc": 10
+      },
+      "placeholders": [],
+      "imageUrl": null
+    },
+    {
+      "id": "boss-herd",
+      "group": "bosses",
+      "title": "Gilded Excavation Herd",
+      "trigger": {
+        "key": "boss_first_meet:gilded-excavation-herd",
+        "label": "Boss room opens, first time"
+      },
+      "repeat": "once_campaign",
+      "tier": "guarded",
+      "source": "loremaster",
+      "readAloud": "Something enormous and patient plods into the room: an Archive survey golem, the old boxy kind, so overgrown with golden crystal it glitters like a reliquary. Two basalt hounds trot at its heels on tethers of light, sniffing the floor, then lifting their heads toward you in perfect unison. A stenciled work order is still legible on its chest plate: EXCAVATE TO FOUNDATION. It lowers its digging arm and starts toward you, as if you're standing on the foundation.",
+      "push": "The golem's serial number belongs to the same early expedition as the beacon on floor 2. It was sent down to dig, it never received an order to stop, and so it never has. The golden crystal choking its joints is warm and smells faintly of honey, and it grows thickest on the side of the golem that faces down. Whatever it was digging toward, it got close enough for something to grow on it.",
+      "dmTruth": "An excavation golem from the gate's original construction, still digging toward the core. The gold crystal is the meadow's light, set hard. The hounds are Wardstones Thils gave it for company.",
+      "check": {
+        "skills": [
+          "History",
+          "Nature"
+        ],
+        "dc": 15
+      },
+      "placeholders": [],
+      "imageUrl": null
+    },
+    {
       "id": "boss-kaelen",
       "group": "bosses",
       "title": "Kaelen and Vyr",
@@ -807,6 +867,102 @@
       "imageUrl": null
     },
     {
+      "id": "boss-spinner",
+      "group": "bosses",
+      "title": "The Lattice Spinner",
+      "trigger": {
+        "key": "boss_first_meet:lattice-spinner",
+        "label": "Boss room opens, first time"
+      },
+      "repeat": "once_campaign",
+      "tier": "guarded",
+      "source": "loremaster",
+      "readAloud": "Cables crisscross the room from column to column, thick as your arm and humming with blue-white current, strung so densely the air looks woven. In the middle of the web, something unfolds: a great many-limbed spider built from cable and cracked crystal lenses, each lens a different eye, each eye fixed on a different one of you. It plucks a single cable. The note travels the whole web and lands in your teeth.",
+      "push": "The cables are transit lines, the kind the Archive strings between anchor points to hold a stride gate open while it's in use, and they're still carrying load. The Spinner isn't spinning a web. It's maintaining tension, restringing every line that snaps, tying the room together the way these lines once held something far bigger together. When a cable breaks, it doesn't flee or strike. It repairs first. It was built to hold, and no one has told it to let go.",
+      "dmTruth": "Built from the gate's tension cables and shattered transit lenses. Like the Blind Architect it keeps things in place, but the Spinner is only following its last instruction.",
+      "check": {
+        "skills": [
+          "Arcana",
+          "Investigation"
+        ],
+        "dc": 15
+      },
+      "placeholders": [],
+      "imageUrl": null
+    },
+    {
+      "id": "boss-core",
+      "group": "bosses",
+      "title": "The Stride Core",
+      "trigger": {
+        "key": "boss_first_meet:stride-core",
+        "label": "Boss room opens, first time"
+      },
+      "repeat": "once_campaign",
+      "tier": "deep",
+      "source": "loremaster",
+      "readAloud": "A sphere of light hangs over a grated floor, the size of a house and far too bright to look at straight on. It breathes. Every few seconds it surges, a pulse of pressure that squeezes the air from your lungs, and then it settles. When it settles, crystals form on its shell: black, glittering, every color folded up inside. Quantum Basalts, growing like frost and falling through the grate like hail.",
+      "push": "This is where Quantum Basalts come from: raw stride energy, the force that carries a strider between universes, leaking out of something and cooling into stone. But stride energy doesn't pool. It flows from a gate to its destination and is gone. For this much to collect, something would have to be open and going nowhere, a door held ajar for a very long time, pushing and pulling at once, with nowhere to send what passes through.",
+      "dmTruth": "A fragment of the gate's core, still trying to finish a crossing that broke mid-transit. Every Quantum Basalt the party has spent is a crystallized piece of a journey that never arrived.",
+      "check": {
+        "skills": [
+          "Arcana",
+          "Investigation"
+        ],
+        "dc": 20
+      },
+      "placeholders": [],
+      "imageUrl": null
+    },
+    {
+      "id": "boss-vane",
+      "group": "bosses",
+      "title": "General Vane of the Tenth Stride",
+      "trigger": {
+        "key": "boss_first_meet:general-vane",
+        "label": "Boss room opens, first time"
+      },
+      "repeat": "once_campaign",
+      "tier": "guarded",
+      "source": "loremaster",
+      "readAloud": "A suit of basalt armor stands at the end of the hall, three times the height of a person, and as you enter it turns its helm toward you with a sound like a landslide. From inside comes not one voice but hundreds, perfectly in step, a whole platoon calling cadence: \"TENTH STRIDE. HOLD THE LINE. TENTH STRIDE. HOLD THE LINE.\" The General raises a stone sword, and a hundred voices raise it with him.",
+      "push": "Vane was a multiplanar conqueror whose armies marched between universes by force. He heard a rumor, old even then, of a door somewhere that led to a world with no winter, no hunger and no war, and he brought the Tenth Stride, his finest platoon, to take it. They found the Basalts instead. On the third floor, the dungeon folded the whole platoon into one suit of armor to save space. They've held the line ever since, against an enemy that never comes, guarding a door they never found.",
+      "dmTruth": "Vane came after the gate broke, chasing rumors of the meadow. He's an absorbed echo of an entire army; the cadence is every soldier at once. (proposed) A soldier's name called out by the party might break step.",
+      "check": {
+        "skills": [
+          "History",
+          "Insight"
+        ],
+        "dc": 15
+      },
+      "placeholders": [],
+      "imageUrl": null
+    },
+    {
+      "id": "boss-hydra",
+      "group": "bosses",
+      "title": "The Glass Hydra",
+      "trigger": {
+        "key": "boss_first_meet:glass-hydra",
+        "label": "Boss room opens, first time"
+      },
+      "repeat": "once_campaign",
+      "tier": "deep",
+      "source": "loremaster",
+      "readAloud": "The floor here is fused glass, swirled and bubbled like the inside of a furnace, and from a crater at its center something rises on many necks. Crystal heads, each a different color: one smoking red, one crackling white, one frosted blue. Light passes through the creature and comes out bent, so its shadow falls in several directions at once. When it opens its mouths, the sound is glass under strain.",
+      "push": "Gate-glass forms in only one place: where stride energy hits a surface at the wrong angle and fuses it on the spot. Archive engineers find a few beads of it after a bad crossing. This crater is gate-glass all the way down. Something here broke in a single enormous flash, and the shockwave froze into a beast. Count the heads and count the colors. They match the light that spills from the gate schematic on floor 3 when you hold a lantern to it.",
+      "dmTruth": "Grown from gate-glass where the core first ruptured. The crater is ground zero of the explosion.",
+      "check": {
+        "skills": [
+          "Arcana",
+          "Nature"
+        ],
+        "dc": 20
+      },
+      "placeholders": [],
+      "imageUrl": null
+    },
+    {
       "id": "boss-architect",
       "group": "bosses",
       "title": "The Blind Architect",
@@ -831,6 +987,102 @@
       "imageUrl": null
     },
     {
+      "id": "boss-chorus",
+      "group": "bosses",
+      "title": "The Chorus of Unseen Angles",
+      "trigger": {
+        "key": "boss_first_meet:chorus-unseen-angles",
+        "label": "Boss room opens, first time"
+      },
+      "repeat": "once_campaign",
+      "tier": "deep",
+      "source": "loremaster",
+      "readAloud": "At first the room looks empty. Then you catch it at the corner of your eye: a shape like a cut gem made of nothing at all, hanging in the air. Turn to look and it's gone, and now there are two more, at the edges of your sight, always just where you aren't looking. The hymns that hum through the rest of the Basalts are missing here. Not quiet. Missing, like a word you know you know.",
+      "push": "The locals' hymns name every room of the dungeon, every floor, every boss. Every room but this one. Ask a local and they'll start to answer, stop, frown and change the subject. The silence isn't avoidance. Something here was removed, a piece of the dungeon or of the god who keeps it, cut out so cleanly that even Thils doesn't seem to know it's gone. The shapes aren't creatures. They're the outline of the hole.",
+      "dmTruth": "Where the campaign's big bad ate away part of Thils's memory. Never explain it; this is as close as the deck gets.",
+      "check": {
+        "skills": [
+          "Insight",
+          "Perception"
+        ],
+        "dc": 20
+      },
+      "placeholders": [],
+      "imageUrl": null
+    },
+    {
+      "id": "boss-reliquary",
+      "group": "bosses",
+      "title": "The Inverted Reliquary",
+      "trigger": {
+        "key": "boss_first_meet:inverted-reliquary",
+        "label": "Boss room opens, first time"
+      },
+      "repeat": "once_campaign",
+      "tier": "deep",
+      "source": "loremaster",
+      "readAloud": "The vault doors stand open, but they open inward, onto the room you're standing in, as if you're already inside the vault and the treasure is out there somewhere. Shelves line the walls, crowded with reliquaries, every one of them empty and scrubbed clean. Warding runes run across every surface, glowing a soft temple gold. As you step forward, they turn toward you all at once, the way a lock turns toward a key.",
+      "push": "This was the heart of the locals' temple, the vault where they kept Thils's holiest lost things until their owners came for them. Its wards were written to protect what was inside. Then, on some Shift long ago, the vault came back facing the wrong way, and the wards never noticed. They still guard the vault against what's inside it, and now everything is inside it. They've erased every relic it held, one by one, and now they're turning their attention to you. The locals still bring offerings to its door.",
+      "dmTruth": "The temple vault, landed inside out on a Shift too near the core; its wards now erase whatever they hold. (proposed) The erased relics weren't destroyed. They're the lost things Thils can no longer remember, which ties the Reliquary to the Chorus.",
+      "check": {
+        "skills": [
+          "Religion",
+          "Arcana"
+        ],
+        "dc": 20
+      },
+      "placeholders": [],
+      "imageUrl": null
+    },
+    {
+      "id": "boss-ophaniel",
+      "group": "bosses",
+      "title": "Ophaniel of the Inverted Bloom",
+      "trigger": {
+        "key": "boss_first_meet:ophaniel",
+        "label": "Boss room opens, first time"
+      },
+      "repeat": "once_campaign",
+      "tier": "deep",
+      "source": "loremaster",
+      "readAloud": "It fills the arena: a being of wings and rings and golden glass, half a vast and beautiful beast, half a living cathedral, its ribs arched like a nave and its eyes set in wheels that turn and turn. It should be the most beautiful thing you have ever seen, and it almost is. But every part of it faces the wrong way: petals folded inward, light pouring into it instead of out, wings spread to shelter something behind it that isn't there. When it speaks, its voice is a choir singing welcome, backward.",
+      "push": "There's a shape to its welcome, if you listen long enough: the cadence of a greeting rehearsed for one very special day. It isn't guarding the gate. It was sent to the far end of the crossing to meet the first travelers from this side, to fold its wings around them and bring them in out of the light. It was halfway through that embrace when the world turned inside out, and it's still holding the shape of it. Its arms are still waiting for someone to fill them.",
+      "dmTruth": "The Long Meadow's herald, sent to greet the first crossers and caught in the gate the instant it broke. The someone it was meant to embrace was Kaelen and Vyr.",
+      "check": {
+        "skills": [
+          "Religion",
+          "Arcana"
+        ],
+        "dc": 20
+      },
+      "placeholders": [],
+      "imageUrl": null
+    },
+    {
+      "id": "boss-suneater",
+      "group": "bosses",
+      "title": "The Sun-Eater's Husk",
+      "trigger": {
+        "key": "boss_first_meet:sun-eaters-husk",
+        "label": "Boss room opens, first time"
+      },
+      "repeat": "once_campaign",
+      "tier": "deep",
+      "source": "loremaster",
+      "readAloud": "The arena is half skeleton, half mountain. A colossal leviathan lies fused into the bedrock, its golden antlers branching across the ceiling like the roots of an upside-down tree, its hide cracked open in places over a light so bright it burns. It's only half here. Its back half disappears into the stone, and through the stone you can feel it breathing on the other side. It lifts its great head and looks at you with the slow curiosity of something that has never once been afraid.",
+      "push": "In the Long Meadow, the Sun-Eaters grazed on light the way cattle graze on grass, drifting across the sky in herds and leaving gentle dusk behind them. This one wandered too near the crossing on the morning the gate broke and was dragged halfway through. It has been starving ever since: half its body lies in a world full of sunlight it can't reach, and the other half is buried in the dark, eating every light that comes near. It isn't cruel. It's hungry, and you brought lanterns.",
+      "dmTruth": "Dragged halfway through the gate as it broke and fused into the bedrock. Its back half is still in the Long Meadow, which is the breathing heard on floor 4.",
+      "check": {
+        "skills": [
+          "Nature",
+          "Arcana"
+        ],
+        "dc": 20
+      },
+      "placeholders": [],
+      "imageUrl": null
+    },
+    {
       "id": "boss-gatewright",
       "group": "bosses",
       "title": "The Gatewright",
@@ -843,11 +1095,227 @@
       "source": "loremaster",
       "readAloud": "It turns, and its face is a thousand faces, each blinking at a different time, mouths moving out of step. Its hands are an engineer's tools, welded in place and still turning, still adjusting. Behind it the arena keeps rebuilding itself into rooms you've already fought through. \"It was meant to go both ways,\" it says, in all their voices at once. \"It was meant to go both ways. We were almost there.\"",
       "push": "Among the faces, a handful wear Archive survey gear older than anything issued today. Most wear clothing no strider recognizes, cut for a warmer sun. These are the first minds the gate took, swallowed whole before Thils learned to keep only what was useful. At the center sits one face that never blinks, an engineer still checking measurements, still certain the gate can be finished if the numbers are run one more time.",
-      "dmTruth": "The engineer who built the gate, fused with its core and the first thousand minds Thils absorbed. \"Almost there\" means the gate was seconds from opening both ways when it failed.",
+      "dmTruth": "Aurelin Vey, the engineer who designed the gate, fused with its core and the thousand minds it swallowed before Thils ever found it (see The whole story). \"Almost there\" means the gate was seconds from opening both ways when it failed.",
       "check": {
         "skills": [
           "History",
           "Arcana"
+        ],
+        "dc": 20
+      },
+      "placeholders": [],
+      "imageUrl": null
+    },
+    {
+      "id": "boon-level",
+      "group": "milestones",
+      "title": "A boon deepens",
+      "trigger": {
+        "key": "boon_first_level",
+        "label": "First time anyone levels a boon"
+      },
+      "repeat": "once_campaign",
+      "tier": "open",
+      "source": "loremaster",
+      "readAloud": "As the boon deepens, the echo inside it comes into focus. For a moment you aren't borrowing a trick. You remember learning it: a training yard you've never seen, a teacher's voice you've never heard, saying \"Again. Again. Better.\" Your hands know the weight of a weapon that isn't yours. Then the memory folds itself away, and the technique is a little more yours than it was.",
+      "push": "Every boon is a copy of someone's technique, and the copy gets better the more it's used, because Thils's copies aren't perfect. Each strider he learns from teaches him more of the same skill, the way a dozen witnesses describe one face. When your boon levels, you aren't just practicing. You're filling the gaps in the copy with yourself. Somewhere in the stone, the record of the original strider has quietly been updated to include you.",
+      "dmTruth": "Leveling writes the player's own technique into the echo. This is how the party ends up in other people's drafts.",
+      "check": {
+        "skills": [
+          "Insight",
+          "History"
+        ],
+        "dc": 10
+      },
+      "placeholders": [],
+      "imageUrl": null
+    },
+    {
+      "id": "boon-combine",
+      "group": "milestones",
+      "title": "Two echoes meet",
+      "trigger": {
+        "key": "boon_first_combination",
+        "label": "First time anyone makes a Combination"
+      },
+      "repeat": "once_campaign",
+      "tier": "open",
+      "source": "loremaster",
+      "readAloud": "Two techniques meet in your hands and don't fit, and for a moment you feel them argue: two strangers' habits, two ways of standing, two people who were never in the same universe, let alone the same fight. Then one of them laughs, the other gives way, and they find a rhythm together. Somewhere in your head, two voices that have never met say at the same time: \"Oh. Like that.\"",
+      "push": "The striders behind your boons never knew each other. Some died centuries apart, in universes that will never touch. In the Basalts they're kept side by side, and when you combine their techniques, you make them meet for the first time. The locals consider a combination a small miracle and a kind of matchmaking. Some pilgrims come down just to combine two boons and hear the echoes introduce themselves.",
+      "dmTruth": "Combinations are Thils's favorite thing to watch: something new made from two lost things. (proposed) A Combination could become an echo of the party in its own right.",
+      "check": {
+        "skills": [
+          "Insight",
+          "Arcana"
+        ],
+        "dc": 10
+      },
+      "placeholders": [],
+      "imageUrl": null
+    },
+    {
+      "id": "boon-evolve",
+      "group": "milestones",
+      "title": "A technique finished",
+      "trigger": {
+        "key": "boon_first_evolution",
+        "label": "First time anyone evolves a boon"
+      },
+      "repeat": "once_campaign",
+      "tier": "open",
+      "source": "loremaster",
+      "readAloud": "The boon breaks open into something its owner never managed. You feel the echo behind it reach the edge of everything they knew, and then you feel yourself go past it. There's a long pause in the stone. Then a voice, the original strider's, very quiet: \"That's what I was trying to do.\" It isn't jealous. It sounds like someone setting down something heavy after carrying it a very long way.",
+      "push": "An evolution is a technique finished. Every strider Thils absorbed was cut off mid-practice, mid-idea, mid-fight, and their boons hold the shape of what they were reaching for and never caught. When you evolve one, you catch it for them. The locals say the echo can rest after that, though no one knows what rest means for a copy. Pilgrims who witness an evolution light a candle at the nearest shrine, the way you would at a funeral that's also a graduation.",
+      "dmTruth": "Evolving a boon completes an absorbed strider's unfinished technique. It's the closest thing to peace the echoes get.",
+      "check": {
+        "skills": [
+          "Insight",
+          "History"
+        ],
+        "dc": 10
+      },
+      "placeholders": [],
+      "imageUrl": null
+    },
+    {
+      "id": "fam-wardstones",
+      "group": "families",
+      "title": "Wardstones",
+      "trigger": {
+        "key": "family_first_meet:wardstones",
+        "label": "First Wardstone encounter"
+      },
+      "repeat": "once_campaign",
+      "tier": "open",
+      "source": "loremaster",
+      "readAloud": "Hexagonal columns pull themselves out of the walls and floor, shaking off stone dust like dogs shaking off water, and settle into shapes: a squat hexling, a hound with an ember-slot for a mouth, a sentinel taller than the doorway. Gold runes wake on their faces, all reading the same word in the locals' script. They don't charge. They step between you and the room's far exit and wait, the way doormen wait.",
+      "push": "The word on the runes is Keep. Wardstones are Thils's own servants, carved from the dungeon's basalt, the oldest guardians of his labyrinth. They don't hate intruders. They keep things: rooms, exits, the order of the maze. When they step into one column and out of another, they're using paths only the keepers know. The locals carve little wardstones from fallen chips and set them on their windowsills, the way other people keep a picture of the family dog by the door.",
+      "dmTruth": "Thils's guardians, set on the broken gate's doors when he took it in. They're the only thing in the Basalts that was made for it on purpose.",
+      "check": {
+        "skills": [
+          "Religion",
+          "History"
+        ],
+        "dc": 10
+      },
+      "placeholders": [],
+      "imageUrl": null
+    },
+    {
+      "id": "fam-mazework",
+      "group": "families",
+      "title": "Mazework",
+      "trigger": {
+        "key": "family_first_meet:mazework",
+        "label": "First Mazework encounter"
+      },
+      "repeat": "once_campaign",
+      "tier": "open",
+      "source": "loremaster",
+      "readAloud": "The room is full of things that shouldn't move. A chest with too many hinges. A coat hanging on a hook with no wall behind it. A doorway that wasn't there a minute ago and is now considerably closer. Something big and horned waits at a corner, perfectly still, until you look straight at it. Then everything in the room moves at once, and none of it was ever furniture.",
+      "push": "Mazework is what happens to traps and lost things that sit in Thils's labyrinth long enough. A trap set and never sprung starts to resent the waiting. A lost thing no one comes back for learns to go looking on its own. The god of games and traps takes a quiet pride in them: his collection, learning to play. That's why they arm a trick when they fall. Even their last move is a setup.",
+      "dmTruth": "Thils's collection come alive. Everything Mazework becomes was lost or set by someone once; a sharp party might recognize a piece of gear from a relic's story.",
+      "check": {
+        "skills": [
+          "Investigation",
+          "Survival"
+        ],
+        "dc": 10
+      },
+      "placeholders": [],
+      "imageUrl": null
+    },
+    {
+      "id": "fam-lost",
+      "group": "families",
+      "title": "The Lost",
+      "trigger": {
+        "key": "family_first_meet:the-lost",
+        "label": "First encounter with the Lost"
+      },
+      "repeat": "once_campaign",
+      "tier": "guarded",
+      "source": "loremaster",
+      "readAloud": "It takes a long time to notice them, and that's the worst part. A figure at the edge of the room in a pilgrim's robe gone grey. Another sitting against a column, so still you'd walked past it twice. Their faces are hard to hold onto: look away and you can't remember them, look back and they're closer. One of them opens its mouth to say a name, and stops, because it can't remember whose.",
+      "push": "The Lost are people who came into the god's labyrinth, never found their door again, and stayed lost so long the world forgot them. Their families stopped looking. Their names fell out of every record. The locals say Thils keeps everyone who's lost, but these are the ones even he stopped thinking about, the things at the very back of the collection. They aren't hunting you. They're following you, because you're the first thing in a long time that looked at them.",
+      "dmTruth": "The forgotten. Being overlooked is what made them this way, a quiet thread toward the campaign's big bad. (proposed) Remembering one by name, from a relic or a note, could give it peace.",
+      "check": {
+        "skills": [
+          "Insight",
+          "Religion"
+        ],
+        "dc": 15
+      },
+      "placeholders": [],
+      "imageUrl": null
+    },
+    {
+      "id": "fam-echoes",
+      "group": "families",
+      "title": "Absorbed Echoes",
+      "trigger": {
+        "key": "family_first_meet:absorbed-echoes",
+        "label": "First Absorbed Echo encounter"
+      },
+      "repeat": "once_campaign",
+      "tier": "guarded",
+      "source": "loremaster",
+      "readAloud": "Silhouettes flicker into the room like a projector warming up: striders in gear from a dozen universes and a dozen centuries, translucent at the edges. They move with a confidence you recognize. One of them steps exactly the way your fighter does. One casts with the same flick of the wrist as a boon you drafted two rooms ago. They don't speak. They nod to you, politely, like colleagues. Then they attack.",
+      "push": "Every strider Thils learns from leaves a copy in the Basalts. Most copies are only a technique, kept for drafting. Some are more: whole habits, whole fighting styles, a ghost of a person built around the trick. Those are the Echoes. They aren't the striders themselves, any more than a recording is the singer. They fight with one borrowed boon because one boon is all they are. The locals treat them kindly. Some of their ancestors are among them.",
+      "dmTruth": "Copies of past visitors built around a single absorbed technique. A fallen party member could appear as one in a future run.",
+      "check": {
+        "skills": [
+          "History",
+          "Insight"
+        ],
+        "dc": 15
+      },
+      "placeholders": [],
+      "imageUrl": null
+    },
+    {
+      "id": "fam-gateborn",
+      "group": "families",
+      "title": "Gate-Born",
+      "trigger": {
+        "key": "family_first_meet:gate-born",
+        "label": "First Gate-Born encounter"
+      },
+      "repeat": "once_campaign",
+      "tier": "deep",
+      "source": "loremaster",
+      "readAloud": "The air tears with a sound like ripping silk, and things step out of it: a wisp of white fire humming a single note, a cat-shaped thing standing in two places at once, a golem of swirled glass with something bright trapped in its chest. They leave scorched pools of light wherever they walk, and the light doesn't fade. Looking at them feels exactly like the moment in a stride when you've stepped through and haven't landed yet.",
+      "push": "The Gate-Born were never alive and were never anywhere else. They formed here out of raw stride energy and gate-glass, the way crystals form in a cooling cave. Their force is transit force, the push that throws a strider across universes, with nothing to throw. Archive engineers would know the signature at once. They'd also tell you it's impossible: stride energy only collects this densely where a gate has been open, and stuck, for a very long time.",
+      "dmTruth": "Born of the gate's leaking core. They're the most direct physical evidence of what the Basalts really is.",
+      "check": {
+        "skills": [
+          "Arcana",
+          "Investigation"
+        ],
+        "dc": 20
+      },
+      "placeholders": [],
+      "imageUrl": null
+    },
+    {
+      "id": "fam-meadow",
+      "group": "families",
+      "title": "Inverted Paradise",
+      "trigger": {
+        "key": "family_first_meet:inverted-paradise",
+        "label": "First Inverted Paradise encounter"
+      },
+      "repeat": "once_campaign",
+      "tier": "deep",
+      "source": "loremaster",
+      "readAloud": "Golden things come out of the light. A dryad whose leaves curl inward, toward the trunk. A unicorn with its horn turned in, pointing at its own heart. A tall figure with wings folded the wrong way, like a robe worn inside out, and a face so serene it hurts to look at. Everything about them is beautiful, and everything about them faces the wrong way. When one of them reaches out to heal a companion, the companion screams.",
+      "push": "Nothing here was born in the dark. Every one of these creatures comes from somewhere bright and gentle, a world of open country and long gold afternoons where healing was the most natural thing there was. They came through the gate in its last moment and were turned inside out, so that what mended now harms and what harmed now mends. They aren't evil. They're homesick, and they're still doing exactly what they always did, in a world that runs backward.",
+      "dmTruth": "Ordinary life from the Long Meadow, caught in the gate's last moment and turned inside out. Not monsters: neighbors.",
+      "check": {
+        "skills": [
+          "Nature",
+          "Religion"
         ],
         "dc": 20
       },
