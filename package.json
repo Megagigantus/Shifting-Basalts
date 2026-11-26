@@ -6,11 +6,10 @@
   "scripts": {
     "dev": "vite",
     "dev:local": "firebase emulators:exec --only auth,firestore --project demo-shifting-basalts \"node scripts/seed-emulator.ts && vite --mode emulators --port 5174 --strictPort\"",
-    "build": "tsc -b && vite build && node scripts/check-lore-bundle.ts",
+    "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
     "check-data": "node scripts/check-data.ts",
-    "check-lore-bundle": "node scripts/check-lore-bundle.ts",
     "sync-rules": "node scripts/sync-rules.ts",
     "test": "vitest run src",
     "test:rules": "firebase emulators:exec --only firestore --project demo-shifting-basalts \"vitest run tests\"",

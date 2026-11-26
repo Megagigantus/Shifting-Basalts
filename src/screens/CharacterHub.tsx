@@ -1,7 +1,7 @@
 // One character's hub, shared by the DM's Characters tab and the player's
 // home: profile, what the dungeon adds to their sheet, draft preferences,
 // loot, and the Basalt Shrine (stat tracks), Basalt Markets (upgrades),
-// The Library (lore collection) and Hall of Echoes (boon collection) as art
+// The Library (lore collection) and Field of Echoes (boon collection) as art
 // banners that open when visited.
 import { useState, type ReactNode } from 'react'
 import { Landmark, Library, LogOut, Minus, Plus, Sparkles, Store } from 'lucide-react'
@@ -228,10 +228,10 @@ export function CharacterHub({ character: c, mode, actions }: Props) {
         </Location>
       ) : visiting === 'echoes' ? (
         <Location
-          artId="hall-of-echoes"
+          artId="field-of-echoes"
           tone="emerald"
           icon={<Sparkles size={16} />}
-          title="Hall of Echoes: every boon you've held"
+          title="Field of Echoes: every boon you've held"
           onLeave={() => setVisiting(null)}
         >
           <BasaltEchoes character={c} canMark={canCorrect} />
@@ -266,10 +266,10 @@ export function CharacterHub({ character: c, mode, actions }: Props) {
             onVisit={() => setVisiting('library')}
           />
           <LocationBanner
-            artId="hall-of-echoes"
+            artId="field-of-echoes"
             tone="emerald"
             icon={<Sparkles size={16} />}
-            title="Hall of Echoes"
+            title="Field of Echoes"
             text="Every boon, Evolution and Combination you've held, and the echoes still waiting."
             badge={`${overall.seen} of ${overall.total} seen`}
             onVisit={() => setVisiting('echoes')}

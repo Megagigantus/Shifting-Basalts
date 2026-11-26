@@ -578,7 +578,9 @@ const lore = JSON.parse(readFileSync(new URL('./lore-allowlist.json', import.met
   approvedIds: string[]
 }
 const approved = [...lore.approvedNames, ...lore.approvedIds].sort((a, b) => b.length - a.length)
-for (const file of readdirSync(new URL('../src/data/', import.meta.url)).filter((f) => f.endsWith('.json'))) {
+// lore-deck.json is skipped: the DM's lore deck ships in the app on purpose
+// (bible: Lore moments), and src/lore/deck.test.ts checks its banned terms.
+for (const file of readdirSync(new URL('../src/data/', import.meta.url)).filter((f) => f.endsWith('.json') && f !== 'lore-deck.json')) {
   const text = readFileSync(new URL(`../src/data/${file}`, import.meta.url), 'utf8')
   for (const word of lore.bannedEverywhere) {
     if (text.toLowerCase().includes(word)) fail(`${file}: mentions "${word}", which must never ship in the app (Content safety)`)

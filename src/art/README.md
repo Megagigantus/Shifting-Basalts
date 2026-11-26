@@ -19,7 +19,7 @@ Any id without a file just shows text, so you can add art a bit at a time.
 | `boss-parts/` | boss id + part name in lower case with dashes (e.g. `choir-hollow-column-pipe-cluster.webp`) | 256px square |
 | `areas/` | `battle-map.json` → `areaArt` (e.g. `void-chasm.webp`), painted onto boss arenas by Shift Actions | 256px square, some tileable |
 | `families/` | `enemies.json` → `families` (e.g. `wardstones.webp`) | 512px square |
-| `rooms/` | scene ids (`forge`, `reprieve`, `thils-vault`…) plus hub art: `basalt-entrance` and `basalts-int` (page backdrops outside and during a run), `basalt-shrine`, `basalt-markets`, `basalt-lib` (the Library) and `hall-of-echoes` (Characters tab banners) | 1600×900 landscape |
+| `rooms/` | scene ids (`forge`, `reprieve`, `thils-vault`…) plus hub art: `basalt-entrance` and `basalts-int` (page backdrops outside and during a run), `basalt-shrine`, `basalt-markets`, `basalt-lib` (the Library) and `field-of-echoes` (Characters tab banners) | 1600×900 landscape |
 | `boons/` | `boons.json` ids (e.g. `traverts-echoes.webp`) | 256px square |
 | `evolutions/` | `evolutions.json` ids; falls back to the original boon's art | 256px square |
 | `combinations/` | `combinations.json` ids; falls back to both boons' art | 256px square |

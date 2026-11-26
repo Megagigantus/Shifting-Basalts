@@ -1,5 +1,5 @@
 // Round character portrait (or initials fallback) with full-clear glow,
-// diamond pips, full Hall of Echoes collection badge, and full lore collection laurel.
+// diamond pips, full Field of Echoes collection badge, and full lore collection laurel.
 import { BookOpen, Diamond } from 'lucide-react'
 import { artUrl } from '../art'
 import { honorClasses, NO_HONORS, type PortraitHonors } from '../rules/portraitHonors'
@@ -50,7 +50,7 @@ function honorTitle(honors: PortraitHonors): string | undefined {
     parts.push(honors.fullClears === 1 ? '1 full clear' : `${honors.fullClears} full clears`)
   }
   if (honors.fullCollection) {
-    parts.push('Full Hall of Echoes collection')
+    parts.push('Full Field of Echoes collection')
   }
   if (honors.loreLaurel) {
     parts.push('Full lore collection')

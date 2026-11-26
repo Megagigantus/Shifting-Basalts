@@ -1,4 +1,4 @@
-// Portrait honors: golden glow tiers, full-clear diamonds, Hall of Echoes
+// Portrait honors: golden glow tiers, full-clear diamonds, Field of Echoes
 // full-collection badge, and full lore collection laurel. Thresholds come from src/data/portrait-honors.json.
 import data from '../data/portrait-honors.json'
 import { hasFullCollection, type EchoCollection, type Echoes } from './echoes'

@@ -1,15 +1,10 @@
-// Firestore store for the DM's lore deck, settings, banned terms, and player-safe summary.
-import { collection, doc, getDoc, getDocs, setDoc, writeBatch } from 'firebase/firestore'
+// Firestore store for the DM's lore settings, seen cards, and ad hoc dispatch answer cards.
+// The deck itself is embedded (src/data/lore-deck.json, loaded by ./deck).
+import { collection, doc, getDoc, getDocs, setDoc } from 'firebase/firestore'
 import { db } from '../firebase'
-import { parseBannedTerms } from './bannedTerms'
-import { buildDeckExport, buildSummary, validateDeckFile } from './deckFile'
-import type { LoreCard, LoreDeckFile, LoreGroup, LoreSettings, LoreState } from './types'
-
-export const DEFAULT_LORE_SETTINGS: LoreSettings = {
-  tierLimit: 'deep',
-  deepPerRun: 1,
-  anchor: { name: '', voiceNote: '' },
-}
+import { EMBEDDED_LORE_DECK, LORE_BANNED_TERMS } from './deck'
+import { validateDeckFile } from './deckFile'
+import type { LoreCard, LoreSettings, LoreState } from './types'
 
 function copySettings(settings: LoreSettings): LoreSettings {
   return {
@@ -22,12 +17,13 @@ function copySettings(settings: LoreSettings): LoreSettings {
   }
 }
 
+export const DEFAULT_LORE_SETTINGS: LoreSettings = copySettings(EMBEDDED_LORE_DECK.settings)
+
 /** Default lore deck state when loreState/main has not been created yet. */
 export function emptyLoreState(): LoreState {
   return {
     settings: copySettings(DEFAULT_LORE_SETTINGS),
     seen: {},
-    bannedTerms: [],
   }
 }
 
@@ -65,10 +61,6 @@ export function mergeLoreState(raw?: Record<string, unknown>): LoreState {
     }
   }
 
-  const bannedTerms = Array.isArray(raw.bannedTerms)
-    ? raw.bannedTerms.filter((t): t is string => typeof t === 'string')
-    : base.bannedTerms
-
   return {
     settings: {
       tierLimit:
@@ -90,25 +82,7 @@ export function mergeLoreState(raw?: Record<string, unknown>): LoreState {
       },
     },
     seen,
-    bannedTerms,
   }
-}
-
-/** Convert loreGroups snapshots into LoreGroup objects sorted by order, without the order field. */
-export function groupsFromDocs(
-  docs: readonly { id: string; data: () => Record<string, unknown> }[],
-): LoreGroup[] {
-  return docs
-    .map((d) => ({ id: d.id, data: d.data() }))
-    .sort((a, b) => compareOrder(a.data.order, b.data.order, a.id, b.id))
-    .map(({ id, data }) => ({
-      id: typeof data.id === 'string' ? data.id : id,
-      name: typeof data.name === 'string' ? data.name : '',
-      description: typeof data.description === 'string' ? data.description : '',
-      defaultImageUrl: typeof data.defaultImageUrl === 'string' ? data.defaultImageUrl : null,
-      defaultImagePrompt:
-        typeof data.defaultImagePrompt === 'string' ? data.defaultImagePrompt : '',
-    }))
 }
 
 /** Convert loreCards snapshots into LoreCard objects sorted by order then id. */
@@ -143,53 +117,17 @@ function toCardDoc(card: LoreCard, order: number): Record<string, unknown> {
   return docData
 }
 
-/** Import a validated lore deck, upserting groups and cards while keeping seen and bannedTerms. */
-export async function importDeck(deck: LoreDeckFile): Promise<{ cards: number; groups: number }> {
-  if (!db) throw new Error('Firebase is not set up.')
-  const firestore = db
-  const batch = writeBatch(firestore)
-
-  deck.groups.forEach((group, index) => {
-    batch.set(doc(firestore, 'loreGroups', group.id), {
-      id: group.id,
-      name: group.name,
-      description: group.description,
-      defaultImageUrl: group.defaultImageUrl,
-      defaultImagePrompt: group.defaultImagePrompt,
-      order: index,
-    })
-  })
-
-  deck.cards.forEach((card, index) => {
-    const order = finiteOrder(card.order) ?? index
-    batch.set(doc(firestore, 'loreCards', card.id), toCardDoc(card, order))
-  })
-
-  batch.set(
-    doc(firestore, 'loreState', 'main'),
-    { settings: copySettings(deck.settings) },
-    { merge: true },
-  )
-
-  await batch.commit()
-  await refreshSummary()
-  return { cards: deck.cards.length, groups: deck.groups.length }
-}
-
 /** Validate and save a single lore card, returning validation errors without writing if invalid. */
 export async function saveCard(card: LoreCard): Promise<string[]> {
   if (!db) throw new Error('Firebase is not set up.')
   const firestore = db
-  const [stateSnap, groupsSnap] = await Promise.all([
-    getDoc(doc(firestore, 'loreState', 'main')),
-    getDocs(collection(firestore, 'loreGroups')),
-  ])
-  const { settings, bannedTerms } = mergeLoreState(stateSnap.exists() ? stateSnap.data() : undefined)
-  const groups = groupsFromDocs(groupsSnap.docs)
+  const stateSnap = await getDoc(doc(firestore, 'loreState', 'main'))
+  const { settings } = mergeLoreState(stateSnap.exists() ? stateSnap.data() : undefined)
 
+  // Checked against the embedded deck's groups and banned terms.
   const validation = validateDeckFile(
-    { schemaVersion: 1, deck: 'card', settings, groups, cards: [card] },
-    bannedTerms,
+    { schemaVersion: 1, deck: 'card', settings, groups: EMBEDDED_LORE_DECK.groups, cards: [card] },
+    LORE_BANNED_TERMS,
   )
   if (!validation.ok) return validation.errors
 
@@ -205,7 +143,6 @@ export async function saveCard(card: LoreCard): Promise<string[]> {
 
   const cleanCard = validation.deck.cards[0]
   await setDoc(doc(firestore, 'loreCards', cleanCard.id), toCardDoc(cleanCard, order))
-  await refreshSummary()
   return []
 }
 
@@ -219,44 +156,8 @@ export async function saveSettings(settings: LoreSettings): Promise<void> {
   )
 }
 
-/** Parse banned terms text, merge into loreState/main, and return the term count. */
-export async function saveBannedTerms(text: string): Promise<number> {
-  if (!db) throw new Error('Firebase is not set up.')
-  const bannedTerms = parseBannedTerms(text)
-  await setDoc(doc(db, 'loreState', 'main'), { bannedTerms }, { merge: true })
-  return bannedTerms.length
-}
-
 /** Clear the seen map on loreState/main, replacing it rather than merging. */
 export async function resetSeen(): Promise<void> {
   if (!db) throw new Error('Firebase is not set up.')
   await setDoc(doc(db, 'loreState', 'main'), { seen: {} }, { mergeFields: ['seen'] })
-}
-
-/** Rebuild the player-safe loreSummary/main document from saved groups and cards. */
-export async function refreshSummary(): Promise<void> {
-  if (!db) throw new Error('Firebase is not set up.')
-  const firestore = db
-  const [groupsSnap, cardsSnap] = await Promise.all([
-    getDocs(collection(firestore, 'loreGroups')),
-    getDocs(collection(firestore, 'loreCards')),
-  ])
-  const groups = groupsFromDocs(groupsSnap.docs)
-  const cards = cardsFromDocs(cardsSnap.docs)
-  await setDoc(doc(firestore, 'loreSummary', 'main'), buildSummary(groups, cards))
-}
-
-/** Export the current lore deck and settings as formatted JSON. */
-export async function exportDeckJson(): Promise<string> {
-  if (!db) throw new Error('Firebase is not set up.')
-  const firestore = db
-  const [stateSnap, groupsSnap, cardsSnap] = await Promise.all([
-    getDoc(doc(firestore, 'loreState', 'main')),
-    getDocs(collection(firestore, 'loreGroups')),
-    getDocs(collection(firestore, 'loreCards')),
-  ])
-  const { settings } = mergeLoreState(stateSnap.exists() ? stateSnap.data() : undefined)
-  const groups = groupsFromDocs(groupsSnap.docs)
-  const cards = cardsFromDocs(cardsSnap.docs)
-  return JSON.stringify(buildDeckExport(settings, groups, cards), null, 2) + '\n'
 }
