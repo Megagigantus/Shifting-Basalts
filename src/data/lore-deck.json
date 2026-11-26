@@ -96,7 +96,7 @@
       "tier": "open",
       "source": "loremaster",
       "readAloud": "At the bottom of the stair, a brass placard is bolted to a column: FLOOR ONE: MIND THE SHIFT. Fresh basalt has grown over half of it, smooth and warm, as if the stone swallowed the sign sometime this week. Chalk arrows from past tourists cover every wall, pointing in every direction at once. When you glance back, the stair you just came down has a different number of steps. Nobody saw it change.",
-      "push": "The chalk arrows are layered like sediment, the oldest faded to ghosts, and none of them agree. Read enough of them and a pattern shows: every arrow pointed true on the day it was drawn. The Basalts rebuild themselves every time someone leaves, floors, rooms and the things living in them, so the arrows are a record of mazes that no longer exist. Under the oldest arrow, in fresh chalk, someone has added a note: \"It only moves when nobody's looking. So keep looking.\"",
+      "push": "The chalk arrows are layered like sediment, the oldest faded to ghosts, and none of them agree. Read enough of them and a pattern shows: every arrow pointed true on the day it was drawn. The Basalts rebuild themselves every time someone leaves, floors, rooms and the things living in them, so the arrows are a record of mazes that no longer exist. Under the oldest arrow, in fresh chalk, someone has added a note: \"The stones move when everyone is gone. So keep coming back, there has to be more here.\"",
       "dmTruth": "It rebuilds only while no one perceives it. That is a thread toward the campaign's big bad. Never explain it here.",
       "check": {
         "skills": [
