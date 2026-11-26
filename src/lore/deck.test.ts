@@ -22,7 +22,6 @@ function makeCard(id: string, overrides: Partial<LoreCard> = {}): LoreCard {
     push: `Push for ${id}.`,
     dmTruth: `DM truth for ${id}.`,
     placeholders: [],
-    imagePrompt: 'Basalt columns in dramatic light.',
     imageUrl: null,
     ...overrides,
   }

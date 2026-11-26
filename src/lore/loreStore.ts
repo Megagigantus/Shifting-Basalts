@@ -107,7 +107,6 @@ function toCardDoc(card: LoreCard, order: number): Record<string, unknown> {
     push: card.push,
     dmTruth: card.dmTruth,
     placeholders: [...card.placeholders],
-    imagePrompt: card.imagePrompt,
     imageUrl: card.imageUrl,
     order,
   }

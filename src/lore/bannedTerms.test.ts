@@ -15,7 +15,6 @@ function makeCard(overrides: Partial<LoreCard> = {}): LoreCard {
     push: 'If pressed, the carving warms to the touch.',
     dmTruth: 'An ancient survey beacon left by prior explorers.',
     placeholders: ['item', 'floor'],
-    imagePrompt: 'Glowing basalt pillar in dark cavern',
     imageUrl: null,
     ...overrides,
   }
@@ -71,7 +70,6 @@ describe('findBannedInCard', () => {
       push: 'Mentions zOrBlAx if pressed',
       dmTruth: 'Secretly powered by Zorblax.',
       placeholders: ['item', 'zorblax-token'],
-      imagePrompt: 'A dramatic zorblax silhouette',
     })
 
     expect(findBannedInCard(card, ['zorblax'])).toEqual([
@@ -80,7 +78,6 @@ describe('findBannedInCard', () => {
       { path: 'push', term: 'zorblax' },
       { path: 'dmTruth', term: 'zorblax' },
       { path: 'placeholders.1', term: 'zorblax' },
-      { path: 'imagePrompt', term: 'zorblax' },
     ])
   })
 
