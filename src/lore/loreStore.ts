@@ -1,4 +1,4 @@
-// Firestore store for the DM's lore settings, seen cards, and ad hoc dispatch answer cards.
+// Firestore store for the DM's seen lore cards and ad hoc dispatch answer cards.
 // The deck itself is embedded (src/data/lore-deck.json, loaded by ./deck).
 import { collection, doc, getDoc, getDocs, setDoc } from 'firebase/firestore'
 import { db } from '../firebase'
@@ -43,46 +43,20 @@ function compareOrder(aOrder: unknown, bOrder: unknown, aId: string, bId: string
   return aId < bId ? -1 : aId > bId ? 1 : 0
 }
 
-/** Merge a partial loreState/main document over emptyLoreState(), including nested settings and anchor. */
+/** Read loreState/main's seen map. Settings always come from the deck file (src/data/lore-deck.json); any settings saved in the database by older versions are ignored. */
 export function mergeLoreState(raw?: Record<string, unknown>): LoreState {
   const base = emptyLoreState()
   if (!raw) return base
 
-  const rawSettings = isRecord(raw.settings) ? raw.settings : undefined
-  const rawAnchor = rawSettings && isRecord(rawSettings.anchor) ? rawSettings.anchor : undefined
   const rawSeen = isRecord(raw.seen) ? raw.seen : undefined
-
-  const seen: Record<string, number> = {}
   if (rawSeen) {
     for (const [cardId, timestamp] of Object.entries(rawSeen)) {
       if (typeof timestamp === 'number') {
-        seen[cardId] = timestamp
+        base.seen[cardId] = timestamp
       }
     }
   }
-
-  return {
-    settings: {
-      tierLimit:
-        rawSettings?.tierLimit === 'open' ||
-        rawSettings?.tierLimit === 'guarded' ||
-        rawSettings?.tierLimit === 'deep'
-          ? rawSettings.tierLimit
-          : base.settings.tierLimit,
-      deepPerRun:
-        typeof rawSettings?.deepPerRun === 'number'
-          ? rawSettings.deepPerRun
-          : base.settings.deepPerRun,
-      anchor: {
-        name: typeof rawAnchor?.name === 'string' ? rawAnchor.name : base.settings.anchor.name,
-        voiceNote:
-          typeof rawAnchor?.voiceNote === 'string'
-            ? rawAnchor.voiceNote
-            : base.settings.anchor.voiceNote,
-      },
-    },
-    seen,
-  }
+  return base
 }
 
 /** Convert loreCards snapshots into LoreCard objects sorted by order then id. */
@@ -143,16 +117,6 @@ export async function saveCard(card: LoreCard): Promise<string[]> {
   const cleanCard = validation.deck.cards[0]
   await setDoc(doc(firestore, 'loreCards', cleanCard.id), toCardDoc(cleanCard, order))
   return []
-}
-
-/** Merge updated lore deck settings into loreState/main. */
-export async function saveSettings(settings: LoreSettings): Promise<void> {
-  if (!db) throw new Error('Firebase is not set up.')
-  await setDoc(
-    doc(db, 'loreState', 'main'),
-    { settings: copySettings(settings) },
-    { merge: true },
-  )
 }
 
 /** Clear the seen map on loreState/main, replacing it rather than merging. */
