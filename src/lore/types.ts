@@ -56,8 +56,6 @@ export interface LoreState {
   settings: LoreSettings
   /** Card id -> when it was revealed or dismissed (ms since epoch). */
   seen: Record<string, number>
-  /** Words no card may contain outside its read-aloud text (lowercase). */
-  bannedTerms: string[]
 }
 
 /** loreSummary/main: what players may know about the deck, for the Library's "???" placeholders. */

@@ -32,7 +32,6 @@ function makeState(overrides: Partial<LoreState> = {}): LoreState {
       ...overrides.settings,
     },
     seen: overrides.seen ?? {},
-    bannedTerms: overrides.bannedTerms ?? [],
   }
 }
 
