@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import type { Character } from '../model/character'
 import { investDevotions } from '../characterStore'
+import { playSound } from '../moments/audio'
 import {
   devotionsForRank,
   effectAtRank,
@@ -36,6 +37,9 @@ export function StatTracks({ character, canCorrect = true, canSpend = true }: Pr
     setBusy(true)
     try {
       await investDevotions(character.id, trackId, amount)
+      if (amount > 0) {
+        playSound('spendDevotions')
+      }
     } catch (err) {
       setError((err as Error).message || 'Could not save. Please try again.')
     } finally {

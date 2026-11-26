@@ -16,6 +16,7 @@ import { RunEntryVideo } from './RunEntryVideo'
 import { PressureWishes } from './PressureWishes'
 import { MomentLayer } from '../moments/MomentLayer'
 import { SoundPrompt } from '../moments/SoundControls'
+import { useSoundCues } from '../moments/useSoundCues'
 import { LoreRevealLayer } from './LoreRevealOverlay'
 import { Panel } from '../ui/Panel'
 import { PRIMARY_BUTTON } from '../ui/styles'
@@ -36,6 +37,8 @@ export function PlayerHome({ email, readOnly = false }: Props) {
   const myIds = mine.map((c) => c.id)
   const myRun = state && state.run.characterIds.some((id) => myIds.includes(id)) ? state : null
   const current = mine.find((c) => c.id === selected) ?? mine[0] ?? null
+
+  useSoundCues(myRun && !readOnly ? myRun : null, { kind: 'player', characterIds: myIds })
 
   async function handleCreate(profile: CharacterProfile) {
     const newId = await createCharacter(profile)

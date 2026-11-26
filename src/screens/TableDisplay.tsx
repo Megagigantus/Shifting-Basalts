@@ -5,6 +5,7 @@ import { ArrowLeft, Maximize2, Minimize2 } from 'lucide-react'
 import type { RunState } from '../model/run'
 import { MomentLayer } from '../moments/MomentLayer'
 import { SoundPrompt, SoundSettingsButton } from '../moments/SoundControls'
+import { useSoundCues } from '../moments/useSoundCues'
 import { LoreRevealLayer } from './LoreRevealOverlay'
 import { SMALL_BUTTON } from '../ui/styles'
 import { cx } from '../ui/tone'
@@ -25,6 +26,8 @@ export function TableDisplay({ state, onExit }: { state: RunState | null; onExit
   const safe: RunState | null = state ? { run: state.run, players: state.players } : null
   const isActive = safe !== null && safe.run.status === 'active'
   const canFullscreen = supportsFullscreen()
+
+  useSoundCues(isActive ? safe : null, { kind: 'table' })
 
   const [isFullscreen, setIsFullscreen] = useState(
     () => typeof document !== 'undefined' && Boolean(document.fullscreenElement),

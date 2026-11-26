@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Minimize2, Scroll, X } from 'lucide-react'
 import type { LoreRevealDoc } from '../lore/reveal'
 import { usePlayerLoreReveal } from '../lore/useLoreReveal'
+import { playSound } from '../moments/audio'
 import { usePrefersReducedMotion } from '../moments/device'
 import { cx } from '../ui/tone'
 import { LoreArt } from './LoreArt'
@@ -43,6 +44,16 @@ export function LoreRevealLayer({
   characterIds: string[]
 }) {
   const reveal = usePlayerLoreReveal(runId, characterIds)
+  const lastRevealIdRef = useRef<string | null>(null)
+  const revealId = reveal?.revealId ?? null
+
+  useEffect(() => {
+    if (revealId !== null && revealId !== lastRevealIdRef.current) {
+      playSound('lore')
+    }
+    lastRevealIdRef.current = revealId
+  }, [revealId])
+
   if (!reveal) return null
   return <LoreRevealOverlay reveal={reveal} key={reveal.revealId} />
 }
