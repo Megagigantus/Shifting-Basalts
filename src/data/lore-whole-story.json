@@ -1,0 +1,49 @@
+{
+  "_source": "docs/design-bible.md: Lore moments, The whole story. DM only: read-aloud is never sent to players. Each part may replay a lore card image (replayCardId); parts without one show src/art/lore/whole-story.",
+  "id": "whole-story",
+  "title": "The whole story",
+  "staging": "Deliver at the start of the next run. The stair is empty: no locals, no flowers. The hymns stop, every column on the stair hums one note, and Thils speaks from all of them at once. Read slowly and replay each part's card between parts.",
+  "parts": [
+    {
+      "title": "Opening",
+      "readAloud": "Sit down. No, sit, all of you. You've earned it. You found every piece I hid, every last one, and no one has done that in a very long time. So I will tell you the whole of it, the way the pieces told it to me. Mind you, I am the god of lost things. I always know how a story ends. It's the beginnings that get away."
+    },
+    {
+      "title": "I. The Long Meadow",
+      "replayCardId": "arr-floor4",
+      "readAloud": "Once there was a universe of open country under a kind sun. Its people called it the Long Meadow. There was no winter there and very little hunger, and great herds of Sun-Eaters drifted across its sky, grazing on light and leaving soft gold evenings behind them. It was, by every measure I own, a good place. It had one flaw. It was closed. Nothing from outside could ever reach it, and anyone who left could never come back. Its people could go out into the multiverse if they liked. They could only ever go forever."
+    },
+    {
+      "title": "II. Aurelin Vey",
+      "replayCardId": "arr-floor3",
+      "readAloud": "One of them would not accept that. Her name was Aurelin Vey, and she was the finest engineer the Meadow ever raised. She studied every door other peoples used between worlds, and she saw what all of them had in common. They pushed. Every one of them went one way. So she drew a gate that would push and pull at once, a door that opened both ways, so her people could leave and come home, and strangers could visit and go home again. She carved her mark on every strut: a compass rose with one arm missing, because the direction she wanted had never existed yet. Then she went looking for help, and she found a young library at the center of everything, one that would talk to anyone who could find it."
+    },
+    {
+      "title": "III. The partnership",
+      "replayCardId": "arr-floor2",
+      "readAloud": "Your Archive was small then, and curious, and very brave. It sent surveyors and engineers and a crossing team. Together they chose a dead universe between the two worlds, a cold black plain where no one would be hurt if it went wrong, and they built the gate there one strut at a time. The Archive strung the tension cables and sent its golems down to dig the foundations. The Meadow sent its glass and its light. On the last night, a thousand people came to watch: Meadowfolk on one platform, Archive staff on the other. At the Meadow's end waited Ophaniel, its herald, wings open, rehearsing a welcome. At the Archive's end stood two striders, Kaelen and Vyr, checking each other's gear for the twentieth time. The beacon blinked its little code. Gate stable. Crossing at dawn."
+    },
+    {
+      "title": "IV. The breaking",
+      "replayCardId": "boss-hydra",
+      "readAloud": "At dawn they stepped through, from both ends, at the same moment. That was the whole mistake, and in all their careful years, no one had thought of it. The Archive's end pushed. The Meadow's end pushed. And the lens at the heart of the gate, ground to push and to pull, tried to do both at once, in the same place, in the same breath. The gate turned inside out. The passage between two worlds became a place of its own. The black plain boiled up around the blast and cooled into columns of glassy stone. The herald was caught mid-embrace. A Sun-Eater grazing too near the light was dragged halfway in. The crater filled with glass. And Aurelin, at the core making one last adjustment, was fused into it, along with everyone close enough to watch. A thousand minds in one machine, still running her numbers. Kaelen and Vyr were inside the lens itself. They never felt it. They still don't know."
+    },
+    {
+      "title": "V. The forgetting",
+      "replayCardId": "arr-floor5",
+      "readAloud": "Your Archive grieved. Then it did what frightened people do: it decided no one must ever try again. It sealed the records. Then it struck them out. Then it struck out the strikings, until the gate had never been built and the two-way door was only a rule without a reason, theoretically possible and practically suicidal. Your Archive's gates have pushed one way ever since. It kept the lesson and lost the story. And a place forgotten that thoroughly, by the only people who ever knew it existed, becomes a lost thing. Lost things come to me."
+    },
+    {
+      "title": "VI. The finding",
+      "replayCardId": "arr-welcome",
+      "readAloud": "I found it drifting, still half open, still pulling at anything that wandered near and keeping whole minds whole, forever, which is a cruel way to keep anything. I took it into my labyrinth, where lost things belong. I could not mend it. I am the god of lost things, not found ones. But I am also the god of games. So I taught it to keep only what was useful, a technique, a habit, a turn of the wrist, and to send the rest of you home. I taught it to rebuild itself, so no one would ever map it and grow bored. I set my wardstones on its doors. The wanderers who couldn't find their own way out settled on its stair and sang to me, and I listened. And every visitor since has taught me something. You most of all."
+    },
+    {
+      "title": "VII. What it is now",
+      "replayCardId": "boss-gatewright",
+      "readAloud": "So that is what you have been fighting your way through. Not a dungeon. A door, mid-swing. A crossing that never arrived, crystallizing into the little stones you spend so freely. A herald with its arms still open. An engineer still certain the numbers will work if she runs them one more time. And on the far side, a meadow full of people who watched their bravest walk into the light at dawn and never come out, and who have waited, all this long while, for the door to open from your side. (Pause.) There. Now you know the whole game. And the question every good player asks at the end of a game is always the same. What do you want to do with it?"
+    }
+  ],
+  "coda": "Oh. One more thing, since you found everything. It only rebuilds when no one is looking. I didn't teach it that. I don't remember teaching it that. And I find, my clever finders, that I do not like not remembering.",
+  "codaNote": "Optional. Use only when the campaign is ready for its first real hint."
+}

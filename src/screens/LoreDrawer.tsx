@@ -12,6 +12,7 @@ import { useCharacters } from '../useCharacters'
 import { ConfirmButton } from '../ui/ConfirmButton'
 import { SectionLabel } from '../ui/Panel'
 import { CheckLine } from './LoreCheckLine'
+import { LoreArt } from './LoreArt'
 import { Pill } from '../ui/Pill'
 import { FIELD, FIELD_LABEL, PRIMARY_BUTTON, QUIET_BUTTON, WELL } from '../ui/styles'
 import { cx, type Tone } from '../ui/tone'
@@ -325,7 +326,7 @@ function LoreDrawerBody({
   return (
     <>
       <div className="box-border aspect-video w-full overflow-hidden rounded-lg border border-stone-800 bg-stone-950">
-        {imageUrl && <img src={imageUrl} alt="" className="block h-full w-full object-cover" />}
+        {imageUrl && <LoreArt src={imageUrl} />}
       </div>
 
       <div className="flex flex-wrap items-center gap-1.5">

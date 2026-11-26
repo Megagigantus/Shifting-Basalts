@@ -1,7 +1,8 @@
 // Pure derivation of lore events and pause points from a run state transition.
 // Browser-safe: no Firebase, React, or Node imports.
 import type { RunPlayer, RunState } from '../model/run'
-import { hiddenBoon, type SlotContent } from '../rules/boons'
+import { hiddenBoon } from '../rules/boons'
+import { creatureOf } from '../rules/encounters'
 import { SHRINE_TERRAIN } from '../rules/loot'
 import type { LoreEvent } from './triggers'
 
@@ -27,14 +28,40 @@ function addPlayerEvents(
     const prev = prevById.get(player.characterId)
     if (!prev) continue
 
-    const prevBoons = new Set(
-      (prev.slots ?? [])
-        .filter((s): s is Extract<SlotContent, { kind: 'boon' }> => s?.kind === 'boon')
-        .map((s) => s.boonId),
-    )
+    const prevBoons = new Map<string, number>()
+    const prevEvolutions = new Set<string>()
+    const prevCombinations = new Set<string>()
+    for (const slot of prev.slots ?? []) {
+      if (!slot) continue
+      if (slot.kind === 'boon') {
+        const current = prevBoons.get(slot.boonId)
+        if (current === undefined || slot.level < current) {
+          prevBoons.set(slot.boonId, slot.level)
+        }
+      } else if (slot.kind === 'evolution') {
+        prevEvolutions.add(slot.evolutionId)
+      } else if (slot.kind === 'combination') {
+        prevCombinations.add(slot.combinationId)
+      }
+    }
+
     for (const slot of player.slots ?? []) {
-      if (slot?.kind === 'boon' && !prevBoons.has(slot.boonId)) {
-        emit({ type: 'boon_first_draft', arg: slot.boonId })
+      if (!slot) continue
+      if (slot.kind === 'boon') {
+        const prevLevel = prevBoons.get(slot.boonId)
+        if (prevLevel === undefined) {
+          emit({ type: 'boon_first_draft', arg: slot.boonId })
+        } else if (slot.level > prevLevel) {
+          emit({ type: 'boon_first_level' })
+        }
+      } else if (slot.kind === 'combination') {
+        if (!prevCombinations.has(slot.combinationId)) {
+          emit({ type: 'boon_first_combination' })
+        }
+      } else if (slot.kind === 'evolution') {
+        if (!prevEvolutions.has(slot.evolutionId)) {
+          emit({ type: 'boon_first_evolution' })
+        }
       }
     }
 
@@ -68,17 +95,29 @@ function addRoomEvents(
   next: RunState,
   emit: (event: LoreEvent) => void,
 ) {
-  const nextBossRoom = next.dm?.room
-  const bossId = nextBossRoom?.boss?.id
+  const prevRoom = previous?.dm?.room
+  const nextRoom = next.dm?.room
+  const sameDmRoom =
+    prevRoom != null &&
+    nextRoom != null &&
+    prevRoom.floor === nextRoom.floor &&
+    prevRoom.room === nextRoom.room
+
+  const bossId = nextRoom?.boss?.id
   if (bossId) {
-    const prevBossRoom = previous?.dm?.room
-    const sameBossRoom =
-      prevBossRoom != null &&
-      prevBossRoom.boss?.id === bossId &&
-      prevBossRoom.floor === nextBossRoom.floor &&
-      prevBossRoom.room === nextBossRoom.room
+    const sameBossRoom = sameDmRoom && prevRoom?.boss?.id === bossId
     if (!sameBossRoom) {
       emit({ type: 'boss_first_meet', arg: bossId, immediate: true })
+    }
+  }
+
+  const encounter = nextRoom?.encounter
+  if (encounter && !sameDmRoom) {
+    if (encounter.family) emit({ type: 'family_first_meet', arg: encounter.family })
+    if (encounter.splashFamily) emit({ type: 'family_first_meet', arg: encounter.splashFamily })
+    for (const group of encounter.groups) {
+      const family = creatureOf(group.creatureId)?.family
+      if (family) emit({ type: 'family_first_meet', arg: family })
     }
   }
 

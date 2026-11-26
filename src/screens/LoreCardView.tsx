@@ -10,6 +10,7 @@ import { CheckLine } from './LoreCheckLine'
 import { Pill } from '../ui/Pill'
 import { PRIMARY_BUTTON, QUIET_BUTTON } from '../ui/styles'
 import type { Tone } from '../ui/tone'
+import { LoreArt } from './LoreArt'
 
 export const TIER_TONE: Record<LoreTier, Tone> = {
   open: 'stone',
@@ -83,7 +84,7 @@ export function LoreCardView({ card, group, seen, onClose }: Props) {
       <div className="flex flex-col gap-4">
         {imageUrl && (
           <div className="aspect-video w-full overflow-hidden rounded-lg border border-stone-800 bg-stone-950">
-            <img src={imageUrl} alt="" className="block h-full w-full object-cover" />
+            <LoreArt src={imageUrl} />
           </div>
         )}
 

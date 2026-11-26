@@ -1557,6 +1557,9 @@ Lore reaches the table as short cards the app surfaces at set moments, so the DM
 | Loot reveals, oddities, the first Quantum Basalt | Lost things and who lost them | Once per card |
 | First character death | Expulsion and lockout | Once per campaign |
 | Party first picks 2 or more Pressures | Thils waking | Once per campaign |
+| Anyone first levels, combines or evolves a boon | What a boon milestone does to the echo | Once each |
+| The party first meets a creature from an enemy family | What that family is | Once per family, at the next pause |
+| Every card in the deck seen | The whole story (below) | Once per campaign |
 
 - **One card per room at most:** the app holds any others for the next pause.
 - **Never mid-combat:** cards wait for the room clear, the draft or the post-boss room. Boss cards are the exception and fire as the room opens.
@@ -1609,14 +1612,14 @@ A card holds everything the DM needs at that moment, and players only ever recei
 4. **Close:** the DM taps Done. The card files itself in each player's Archive Notes, a list of every revealed card they can reopen any time.
 
 - **Targeted reveals:** the DM can reveal to chosen players only, like the one who drafted the boon or passed a check. Only they see it, and it's theirs to share.
-- **Images:** generated locally in ComfyUI as wide 16:9 scenes, unlike map art, which stays top-down, and boss art, which stays front-facing. Until a card has its own art, it shows its group's default image.
+- **Images:** generated locally in ComfyUI as wide 16:9 scenes, unlike map art, which stays top-down, and boss art, which stays front-facing. Until a card has its own art, it shows its group's default image. Boss and enemy-family cards use the boss's or family's card art instead; that art is square, so it shows whole, centered on a blurred copy of itself, never cropped.
 - **Content safety:** an exception to Content safety under Build clarifications. The deck ships embedded in the app as a data file and is delivered only through the DM view; the DM accepts that a curious player could read it in the app's files or the repo. Players are shown only the title, image and any revealed If they push line, at the moment of reveal. Read-aloud text and DM truths are never shown to players, and no card names Thilsavrass or Sonder.
 
 ### App decisions *(proposed)*
 
 - **Card images:** ship with the app like the rest of its art, one file per card and a default per group. A player who digs through the app's files can find them, and the DM accepts that.
 - **Who receives a reveal:** the player, through the character they brought to the run. Revealed cards are collected per account, like Basalt Echoes.
-- **The Library:** the hub's library becomes each account's lore collection, with unrevealed cards shown as "???" and every revealed card reopenable there (Archive Notes). The Library is titled "Knowledge provided to The Archive" and calls cards **Archival Indexes**. Its sections use spoiler-free names: First Echoes (arrivals), Basalt Depths (strider echoes), Archival Dispatches, Lost Things, The Local God (Thils), Party Echoes (death) and The Strongest Echoes (bosses). Boon tracking moves to its own hub location, the **Field of Echoes**.
+- **The Library:** the hub's library becomes each account's lore collection, with unrevealed cards shown as "???" and every revealed card reopenable there (Archive Notes). The Library is titled "Knowledge provided to The Archive" and calls cards **Archival Indexes**. Its sections use spoiler-free names: First Echoes (arrivals), Basalt Depths (strider echoes), Archival Dispatches, Lost Things, The Local God (Thils), Party Echoes (death), The Strongest Echoes (bosses), Honed Echoes (boon milestones) and Kin of Stone (enemy families). Boon tracking moves to its own hub location, the **Field of Echoes**.
 - **Full lore collection:** a player who has been shown every card in the deck (DM-written dispatch answers aside) wears a glowing blue laurel on their portrait. Cards added later count, so the laurel can lapse until they catch up.
 - **Table display:** shows lore reveals in the same stages as players' screens, never the read-aloud or the DM truth.
 - **Deck limit:** starts at Deep. The DM confirms every reveal, and the one-Deep-card-per-run limit still applies.
@@ -1625,7 +1628,7 @@ A card holds everything the DM needs at that moment, and players only ever recei
 
 ### Starter deck
 
-33 cards in seven groups, written from the Lorebook, the Pale Lodge broadcasts and this Bible. Canon means Archive In Between source lore; Loremaster means an entry from Loremaster Mega Gigantus. Lines marked (proposed) are new connections to confirm.
+52 cards in nine groups, written from the Lorebook, the Pale Lodge broadcasts and this Bible. Canon means Archive In Between source lore; Loremaster means an entry from Loremaster Mega Gigantus. Lines marked (proposed) are new connections to confirm. The tables below are summaries; the full card text lives in the deck's data file.
 
 **Arrivals and firsts.** Fire the first time a party reaches a place or milestone.
 
@@ -1695,7 +1698,20 @@ A card holds everything the DM needs at that moment, and players only ever recei
 | The Blind Architect | Boss room opens, first time | A shape made of nothing, edged in floating shards of basalt, kneels at a seam in the wall and smooths it closed, like someone mending a tear. | Caretaker-9 has no record of it. None at all. | The dungeon's closest brush with the campaign's big bad. | Deep | Loremaster |
 | The Gatewright | Boss room opens, first time | It turns, and its face is a thousand faces, with an engineer's tools welded to its hands. "It was meant to go both ways," it says, in all their voices. "It was meant to go both ways." | None. The Archive goes quiet. | The engineer who built the gate, fused with its core and the first thousand minds Thils absorbed. | Deep | Loremaster |
 
-The other ten bosses get cards the same way as their art is made.
+Every boss has a card, in floor order: the five above plus Choir of the Hollow Column, Gilded Excavation Herd, The Lattice Spinner, The Stride Core, General Vane of the Tenth Stride, The Glass Hydra, The Chorus of Unseen Angles, The Inverted Reliquary, Ophaniel of the Inverted Bloom and The Sun-Eater's Husk.
+
+**Boon milestones.** Fire the first time anyone in the campaign levels, combines or evolves a boon: A boon deepens, Two echoes meet and A technique finished. All Open.
+
+**Enemy families.** Fire the first time the party meets a creature from each family, and wait for the room clear like other cards: Wardstones and Mazework (Open), The Lost and Absorbed Echoes (Guarded), Gate-Born and Inverted Paradise (Deep).
+
+### The whole story
+
+The reward for seeing every card in the deck (DM-written dispatch answers aside): Thils tells the party the whole history of the Basalts in an opening and seven parts. The DM delivers it at the start of the next run, reading each part aloud.
+
+- **Unlock:** the DM's Lore Deck shows progress ("N of 52 seen") and unlocks the story when every card has been seen. The DM can read the parts at any time.
+- **Replays:** each part names a card whose image the DM can show on every player's screen and the table display, with the part's title only. The opening and the optional coda show the story's own image.
+- **DM only:** the read-aloud is never sent to players, and showing a part doesn't file notes, mark cards seen or count toward any collection.
+- **Coda:** optional, for when the campaign is ready for its first real hint.
 
 ## App requirements
 
