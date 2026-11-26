@@ -92,11 +92,6 @@ export function LoreRevealOverlay({ reveal, readOnly = false, onClose }: Overlay
   const titleFadeMs = reducedMotion || readOnly ? 200 : 600
   const titleDelayMs = reducedMotion || readOnly ? 0 : 800
 
-  const showReadAloud =
-    typeof reveal.readAloud === 'string' &&
-    reveal.readAloud.trim().length > 0 &&
-    (readOnly || reveal.stage === 'text' || reveal.stage === 'more' || reveal.stage === 'closed')
-
   const showPush =
     typeof reveal.push === 'string' &&
     reveal.push.trim().length > 0 &&
@@ -171,7 +166,7 @@ export function LoreRevealOverlay({ reveal, readOnly = false, onClose }: Overlay
         aria-hidden="true"
         className={cx(
           'pointer-events-none absolute inset-0 bg-gradient-to-t',
-          showReadAloud || showPush
+          showPush
             ? 'from-black/95 via-black/65 to-black/25'
             : 'from-black/90 via-black/25 to-black/15',
         )}
@@ -213,37 +208,21 @@ export function LoreRevealOverlay({ reveal, readOnly = false, onClose }: Overlay
             {reveal.title}
           </h2>
 
-          {(showReadAloud || showPush) && (
+          {showPush && (
             <div
               className="box-border max-h-[48dvh] overflow-y-auto rounded-xl border border-stone-800/70 bg-stone-950/75 px-4 py-3.5 shadow-xl backdrop-blur-sm sm:max-h-[50dvh] sm:px-6 sm:py-4"
               style={{
                 animation: `lore-fade-in ${fadeMs}ms ease-out both`,
               }}
             >
-              {showReadAloud && (
-                <p
-                  className="m-0 select-text whitespace-pre-line font-serif text-base leading-relaxed text-stone-100 sm:text-lg sm:leading-relaxed"
-                  style={{
-                    animation: `lore-fade-in ${fadeMs}ms ease-out both`,
-                  }}
-                >
-                  {reveal.readAloud}
-                </p>
-              )}
-
-              {showPush && (
-                <p
-                  className={cx(
-                    'm-0 select-text whitespace-pre-line text-sm italic leading-relaxed text-stone-400 sm:text-base',
-                    showReadAloud && 'mt-3 border-t border-stone-800/80 pt-3',
-                  )}
-                  style={{
-                    animation: `lore-fade-in ${fadeMs}ms ease-out both`,
-                  }}
-                >
-                  {reveal.push}
-                </p>
-              )}
+              <p
+                className="m-0 select-text whitespace-pre-line text-sm italic leading-relaxed text-stone-400 sm:text-base"
+                style={{
+                  animation: `lore-fade-in ${fadeMs}ms ease-out both`,
+                }}
+              >
+                {reveal.push}
+              </p>
             </div>
           )}
         </div>

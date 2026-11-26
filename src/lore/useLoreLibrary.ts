@@ -29,7 +29,6 @@ function toLoreNote(id: string, data: Record<string, unknown>): LoreNote & { rev
     counted: data.counted !== false,
     revealedAtMs: toTimestampMs(data.revealedAt) ?? 0,
   }
-  if (typeof data.readAloud === 'string') note.readAloud = data.readAloud
   if (typeof data.push === 'string') note.push = data.push
   return note
 }
