@@ -11,6 +11,7 @@ import type { RunPlayer, RunState } from '../model/run'
 import { useCharacters } from '../useCharacters'
 import { ConfirmButton } from '../ui/ConfirmButton'
 import { SectionLabel } from '../ui/Panel'
+import { CheckLine } from './LoreCheckLine'
 import { Pill } from '../ui/Pill'
 import { FIELD, FIELD_LABEL, PRIMARY_BUTTON, QUIET_BUTTON, WELL } from '../ui/styles'
 import { cx, type Tone } from '../ui/tone'
@@ -373,6 +374,7 @@ function LoreDrawerBody({
       {hasPush && (
         <div className="flex flex-col gap-0.5">
           <SectionLabel>If they push</SectionLabel>
+          {card.check && <CheckLine check={card.check} />}
           <p className="m-0 whitespace-pre-wrap text-xs text-stone-400">{card.push}</p>
         </div>
       )}

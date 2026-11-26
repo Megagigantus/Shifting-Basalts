@@ -6,6 +6,7 @@ import type { LoreCard, LoreGroup, LoreRepeat, LoreSource, LoreTier } from '../l
 import { useActiveRun } from '../runStore'
 import { Modal } from '../ui/Modal'
 import { SectionLabel } from '../ui/Panel'
+import { CheckLine } from './LoreCheckLine'
 import { Pill } from '../ui/Pill'
 import { PRIMARY_BUTTON, QUIET_BUTTON } from '../ui/styles'
 import type { Tone } from '../ui/tone'
@@ -94,17 +95,10 @@ export function LoreCardView({ card, group, seen, onClose }: Props) {
           <span>{REPEAT_LABEL[card.repeat]}</span>
           <span aria-hidden="true" className="text-stone-600">·</span>
           <span>{SOURCE_LABEL[card.source]}</span>
-          {(card.trigger.label || card.trigger.key) && (
+          {card.trigger.label && (
             <>
               <span aria-hidden="true" className="text-stone-600">·</span>
-              <span>
-                {card.trigger.label}
-                {card.trigger.key && (
-                  <span className="ml-1.5 font-mono text-[0.6875rem] text-stone-500">
-                    {card.trigger.key}
-                  </span>
-                )}
-              </span>
+              <span>{card.trigger.label}</span>
             </>
           )}
         </div>
@@ -119,6 +113,7 @@ export function LoreCardView({ card, group, seen, onClose }: Props) {
         {hasPush && (
           <div className="flex flex-col gap-1">
             <SectionLabel>If they push</SectionLabel>
+            {card.check && <CheckLine check={card.check} />}
             <p className="m-0 whitespace-pre-line text-sm leading-relaxed text-stone-200">{card.push}</p>
           </div>
         )}

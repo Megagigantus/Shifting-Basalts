@@ -9,6 +9,12 @@ export type LoreRepeat = 'once_campaign' | 'once_run' | 'repeatable'
 /** Origin of a lore card's material. */
 export type LoreSource = 'canon' | 'loremaster' | 'both'
 
+/** Skills the card suggests for the push, and the DC. The DM can accept another skill. */
+export interface LoreCheck {
+  skills: string[]
+  dc: number
+}
+
 export interface LoreCard {
   id: string
   group: string
@@ -20,6 +26,8 @@ export interface LoreCard {
   readAloud: string
   push: string
   dmTruth: string
+  /** The roll at the table that earns the push. Shown to the DM only; left off ad hoc answers. */
+  check?: LoreCheck
   placeholders: string[]
   imageUrl: string | null
   /** Position in the deck (set on import; lower fires first). Not in exported files. */

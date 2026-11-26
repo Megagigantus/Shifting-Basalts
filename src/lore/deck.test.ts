@@ -74,6 +74,16 @@ describe('embedded lore deck', () => {
     expect(settingHits, `Banned terms found in settings:\n${settingHits.join('\n')}`).toEqual([])
   })
 
+  it('gives every card with a push a check whose DC matches its tier', () => {
+    const tierDc = { open: 10, guarded: 15, deep: 20 }
+    const wrong = EMBEDDED_LORE_DECK.cards
+      .filter((card) => card.push.trim() !== '')
+      .filter((card) => !card.check || card.check.skills.length === 0 || card.check.dc !== tierDc[card.tier])
+      .map((card) => `${card.id}: ${JSON.stringify(card.check)}`)
+
+    expect(wrong).toEqual([])
+  })
+
   it('computes EMBEDDED_LORE_SUMMARY.total as the count of non-adHoc embedded cards', () => {
     const expectedTotal = EMBEDDED_LORE_DECK.cards.filter((card) => card.adHoc !== true).length
     expect(EMBEDDED_LORE_SUMMARY.total).toBe(expectedTotal)

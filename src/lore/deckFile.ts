@@ -309,6 +309,18 @@ function validateCard(
     errors.push(`${label}: imageUrl must be a string or null`)
     valid = false
   }
+  const rawCheck = raw.check
+  const checkOk =
+    rawCheck === undefined ||
+    (isPlainObject(rawCheck) &&
+      Array.isArray(rawCheck.skills) &&
+      rawCheck.skills.every((s: unknown) => isNonEmptyString(s)) &&
+      Number.isInteger(rawCheck.dc) &&
+      (rawCheck.dc as number) > 0)
+  if (!checkOk) {
+    errors.push(`${label}: check must be { skills: string[], dc: positive integer }`)
+    valid = false
+  }
   if (raw.adHoc !== undefined && typeof raw.adHoc !== 'boolean') {
     errors.push(`${label}: adHoc must be a boolean`)
     valid = false
@@ -353,6 +365,9 @@ function validateCard(
     order: index,
   }
 
+  if (isPlainObject(raw.check)) {
+    card.check = { skills: [...(raw.check.skills as string[])], dc: raw.check.dc as number }
+  }
   if (typeof raw.adHoc === 'boolean') {
     card.adHoc = raw.adHoc
   }
