@@ -113,11 +113,11 @@ function addRoomEvents(
 
   const encounter = nextRoom?.encounter
   if (encounter && !sameDmRoom) {
-    if (encounter.family) emit({ type: 'family_first_meet', arg: encounter.family })
-    if (encounter.splashFamily) emit({ type: 'family_first_meet', arg: encounter.splashFamily })
+    if (encounter.family) emit({ type: 'family_first_meet', arg: encounter.family, immediate: true })
+    if (encounter.splashFamily) emit({ type: 'family_first_meet', arg: encounter.splashFamily, immediate: true })
     for (const group of encounter.groups) {
       const family = creatureOf(group.creatureId)?.family
-      if (family) emit({ type: 'family_first_meet', arg: family })
+      if (family) emit({ type: 'family_first_meet', arg: family, immediate: true })
     }
   }
 
