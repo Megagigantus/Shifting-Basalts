@@ -1594,7 +1594,7 @@ A card holds everything the DM needs at that moment, and players only ever recei
 | Title | A short name | DM; players once revealed |
 | Trigger | What fires it and how often | DM |
 | Tier | Open, Guarded or Deep | DM |
-| Read aloud | Two or three sentences, with optional fill-ins like {item} | DM; players after Show text |
+| Read aloud | Two or three sentences, with optional fill-ins like {item} | DM only; the DM reads it out, and it is never sent to players |
 | If they push | One follow-up line or dispatch | DM; players only if the DM reveals it |
 | DM truth | One line that is never read aloud | DM only, never sent |
 | Image | The scene shown on players' screens | Players once revealed |
@@ -1605,12 +1605,12 @@ A card holds everything the DM needs at that moment, and players only ever recei
 
 1. **Card ready:** when a trigger fires, a lore prompt slides into the DM view with the whole card. Nothing reaches players yet.
 2. **Reveal:** the DM taps Reveal. Every player's screen dims and the card's image fills it, with a slow zoom and the title. No text yet, so the table looks up and listens.
-3. **Read:** the DM reads aloud. Show text fades the read-aloud in under the image for anyone who wants to reread it, and Show more adds the If they push line.
+3. **Read:** the DM reads aloud while players look at the image. Show more adds the If they push line to their screens.
 4. **Close:** the DM taps Done. The card files itself in each player's Archive Notes, a list of every revealed card they can reopen any time.
 
 - **Targeted reveals:** the DM can reveal to chosen players only, like the one who drafted the boon or passed a check. Only they see it, and it's theirs to share.
 - **Images:** generated locally in ComfyUI as wide 16:9 scenes, unlike map art, which stays top-down, and boss art, which stays front-facing. Until a card has its own art, it shows its group's default image.
-- **Content safety:** an exception to Content safety under Build clarifications. The deck ships embedded in the app as a data file and is delivered only through the DM view; the DM accepts that a curious player could read it in the app's files or the repo. Players are shown only the title, image, read-aloud and any revealed If they push line, at the moment of reveal. DM truths are never shown to players, and no card names Thilsavrass or Sonder.
+- **Content safety:** an exception to Content safety under Build clarifications. The deck ships embedded in the app as a data file and is delivered only through the DM view; the DM accepts that a curious player could read it in the app's files or the repo. Players are shown only the title, image and any revealed If they push line, at the moment of reveal. Read-aloud text and DM truths are never shown to players, and no card names Thilsavrass or Sonder.
 
 ### App decisions *(proposed)*
 
@@ -1618,9 +1618,9 @@ A card holds everything the DM needs at that moment, and players only ever recei
 - **Who receives a reveal:** the player, through the character they brought to the run. Revealed cards are collected per account, like Basalt Echoes.
 - **The Library:** the hub's library becomes each account's lore collection, with unrevealed cards shown as "???" and every revealed card reopenable there (Archive Notes). Boon tracking moves to its own hub location, the **Field of Echoes**.
 - **Full lore collection:** a player who has been shown every card in the deck (DM-written dispatch answers aside) wears a glowing blue laurel on their portrait. Cards added later count, so the laurel can lapse until they catch up.
-- **Table display:** shows lore reveals in the same stages as players' screens, never the DM truth.
+- **Table display:** shows lore reveals in the same stages as players' screens, never the read-aloud or the DM truth.
 - **Deck limit:** starts at Deep. The DM confirms every reveal, and the one-Deep-card-per-run limit still applies.
-- **Banned terms:** the check covers every field except Read aloud. It runs as a repo test on the deck file and on dispatch answers the DM writes during play.
+- **Banned terms:** the check covers every field, Read aloud included. It runs as a repo test on the deck file and on dispatch answers the DM writes during play.
 - **Editing the deck:** cards are edited in the deck's data file, not in the app. The app's Lore Deck screen browses cards, reveals them and keeps the deck settings. Dispatch answers the DM writes during play are saved in the app.
 
 ### Starter deck
