@@ -81,7 +81,7 @@ export function CharacterHub({ character: c, mode, actions }: Props) {
   const loreNotes = useLoreNotes(c.playerEmail ?? '')
   const loreSeenRaw = loreNotes ? loreNotes.filter((n) => n.counted).length : 0
   const loreSeen = loreSummary && loreSummary.total > 0 ? Math.min(loreSeenRaw, loreSummary.total) : loreSeenRaw
-  const loreBadge = loreSummary === null || loreNotes === null ? 'Lore' : `${loreSeen} of ${loreSummary.total} cards`
+  const loreBadge = loreSummary === null || loreNotes === null ? 'Lore' : `${loreSeen} of ${loreSummary.total} Archival Indexes`
   const canEdit = mode !== 'preview'
   const canCorrect = mode === 'dm'
   // The Shrine and Markets are closed while the character is in a run.
@@ -221,7 +221,7 @@ export function CharacterHub({ character: c, mode, actions }: Props) {
           artId="basalt-lib"
           tone="sky"
           icon={<Library size={16} />}
-          title="The Library: lore you've been shown"
+          title="The Library: Knowledge provided to The Archive"
           onLeave={() => setVisiting(null)}
         >
           <LoreLibrary email={c.playerEmail ?? ''} />
@@ -261,7 +261,7 @@ export function CharacterHub({ character: c, mode, actions }: Props) {
             tone="sky"
             icon={<Library size={16} />}
             title="The Library"
-            text="Every lore card you've been shown, and the ones still waiting."
+            text="Every Archival Index you've been shown, and the ones still waiting."
             badge={loreBadge}
             onVisit={() => setVisiting('library')}
           />

@@ -18,43 +18,43 @@
   "groups": [
     {
       "id": "arrival",
-      "name": "Arrivals and firsts",
+      "name": "First Echoes",
       "description": "Fire the first time a party reaches a place or milestone.",
       "defaultImageUrl": null
     },
     {
       "id": "echoes",
-      "name": "Strider echoes",
+      "name": "Basalt Depths",
       "description": "Fire the first time anyone drafts a named boon. Each named boon is the absorbed technique of a past visitor.",
       "defaultImageUrl": null
     },
     {
       "id": "dispatch",
-      "name": "Caretaker-9 dispatches",
+      "name": "Archival Dispatches",
       "description": "Ready answers for common questions. Each one waits for the next post-boss room.",
       "defaultImageUrl": null
     },
     {
       "id": "lost",
-      "name": "Lost things",
+      "name": "Lost Things",
       "description": "Loot, oddity and Quantum Basalt moments. Relic lore already ships with each relic, so these cover the rest.",
       "defaultImageUrl": null
     },
     {
       "id": "thils",
-      "name": "Thils",
+      "name": "The Local God",
       "description": "Shrines, hidden gifts and the god's own gift.",
       "defaultImageUrl": null
     },
     {
       "id": "death",
-      "name": "Death and echoes of the party",
+      "name": "Party Echoes",
       "description": "The fall, the lockout, and the dungeon learning the party.",
       "defaultImageUrl": null
     },
     {
       "id": "bosses",
-      "name": "Bosses",
+      "name": "The Strongest Echoes",
       "description": "Fire as a boss room opens for the first time, before initiative.",
       "defaultImageUrl": null
     }
