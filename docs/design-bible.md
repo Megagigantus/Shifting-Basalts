@@ -1616,7 +1616,7 @@ A card holds everything the DM needs at that moment, and players only ever recei
 
 - **Card images:** ship with the app like the rest of its art, one file per card and a default per group. A player who digs through the app's files can find them, and the DM accepts that.
 - **Who receives a reveal:** the player, through the character they brought to the run. Revealed cards are collected per account, like Basalt Echoes.
-- **The Library:** the hub's library becomes each account's lore collection, with unrevealed cards shown as "???" and every revealed card reopenable there (Archive Notes). Boon tracking moves to its own hub location, the **Hall of Echoes**.
+- **The Library:** the hub's library becomes each account's lore collection, with unrevealed cards shown as "???" and every revealed card reopenable there (Archive Notes). Boon tracking moves to its own hub location, the **Field of Echoes**.
 - **Full lore collection:** a player who has been shown every card in the deck (DM-written dispatch answers aside) wears a glowing blue laurel on their portrait. Cards added later count, so the laurel can lapse until they catch up.
 - **Table display:** shows lore reveals in the same stages as players' screens, never the DM truth.
 - **Deck limit:** starts at Deep. The DM confirms every reveal, and the one-Deep-card-per-run limit still applies.
