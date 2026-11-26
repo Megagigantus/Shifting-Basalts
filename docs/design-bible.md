@@ -1558,11 +1558,11 @@ Lore reaches the table as short cards the app surfaces at set moments, so the DM
 | First character death | Expulsion and lockout | Once per campaign |
 | Party first picks 2 or more Pressures | Thils waking | Once per campaign |
 | Anyone first levels, combines or evolves a boon | What a boon milestone does to the echo | Once each |
-| The party first meets a creature from an enemy family | What that family is | Once per family, at the next pause |
+| The party first meets a creature from an enemy family | What that family is | Once per family, as the room opens |
 | Every card in the deck seen | The whole story (below) | Once per campaign |
 
 - **One card per room at most:** the app holds any others for the next pause.
-- **Never mid-combat:** cards wait for the room clear, the draft or the post-boss room. Boss cards are the exception and fire as the room opens.
+- **Never mid-combat:** cards wait for the room clear, the draft or the post-boss room. Boss and enemy-family cards are the exception and fire as the room opens.
 - **Skip freely:** a skipped card stays unseen and comes back the next time its trigger fires.
 - **Already covered:** relic lore, room flavor and oddity text already ship as written and don't need cards. A card only adds to them.
 
@@ -1612,7 +1612,7 @@ A card holds everything the DM needs at that moment, and players only ever recei
 4. **Close:** the DM taps Done. The card files itself in each player's Archive Notes, a list of every revealed card they can reopen any time.
 
 - **Targeted reveals:** the DM can reveal to chosen players only, like the one who drafted the boon or passed a check. Only they see it, and it's theirs to share.
-- **Images:** generated locally in ComfyUI as wide 16:9 scenes, unlike map art, which stays top-down, and boss art, which stays front-facing. Until a card has its own art, it shows its group's default image. Boss and enemy-family cards use the boss's or family's card art instead; that art is square, so it shows whole, centered on a blurred copy of itself, never cropped.
+- **Images:** generated locally in ComfyUI as wide 16:9 scenes, unlike map art, which stays top-down, and boss art, which stays front-facing. Until a card has its own art, it shows its group's default image. Boss and enemy-family cards use the boss's or family's card art instead; that art is square, so it shows whole, centered on a blurred copy of itself, never cropped, with glowing Thils-colored maze paths tracing out from its edges across the blur.
 - **Content safety:** an exception to Content safety under Build clarifications. The deck ships embedded in the app as a data file and is delivered only through the DM view; the DM accepts that a curious player could read it in the app's files or the repo. Players are shown only the title, image and any revealed If they push line, at the moment of reveal. Read-aloud text and DM truths are never shown to players, and no card names Thilsavrass or Sonder.
 
 ### App decisions *(proposed)*
@@ -1702,7 +1702,7 @@ Every boss has a card, in floor order: the five above plus Choir of the Hollow C
 
 **Boon milestones.** Fire the first time anyone in the campaign levels, combines or evolves a boon: A boon deepens, Two echoes meet and A technique finished. All Open.
 
-**Enemy families.** Fire the first time the party meets a creature from each family, and wait for the room clear like other cards: Wardstones and Mazework (Open), The Lost and Absorbed Echoes (Guarded), Gate-Born and Inverted Paradise (Deep).
+**Enemy families.** Fire the first time the party meets a creature from each family, and fire as the room opens, like boss cards: Wardstones and Mazework (Open), The Lost and Absorbed Echoes (Guarded), Gate-Born and Inverted Paradise (Deep).
 
 ### The whole story
 
