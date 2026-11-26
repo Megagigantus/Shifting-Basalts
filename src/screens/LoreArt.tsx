@@ -2,6 +2,7 @@
 // square/tall art whole over a blurred, darkened backdrop copy.
 import { useState, type CSSProperties, type SyntheticEvent } from 'react'
 import { cx } from '../ui/tone'
+import { LoreMazePaths } from './LoreMazePaths'
 
 export interface LoreArtProps {
   src: string
@@ -41,12 +42,15 @@ export function LoreArt({
       style={style}
     >
       {mode === 'contain' && (
-        <img
-          src={src}
-          alt=""
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 h-full w-full scale-110 select-none object-cover blur-2xl brightness-[0.45]"
-        />
+        <>
+          <img
+            src={src}
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 h-full w-full scale-110 select-none object-cover blur-2xl brightness-[0.45]"
+          />
+          <LoreMazePaths seed={src} />
+        </>
       )}
       <img
         src={src}

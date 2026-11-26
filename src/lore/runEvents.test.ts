@@ -317,8 +317,8 @@ describe('deriveLoreEvents', () => {
     })
 
     expect(deriveLoreEvents(prev, entered).events).toEqual([
-      { type: 'family_first_meet', arg: 'wardstones' },
-      { type: 'family_first_meet', arg: 'mazework' },
+      { type: 'family_first_meet', arg: 'wardstones', immediate: true },
+      { type: 'family_first_meet', arg: 'mazework', immediate: true },
     ])
 
     const sameRoomSavedAgain = makeRunState({
@@ -368,8 +368,8 @@ describe('deriveLoreEvents', () => {
       { type: 'first_entry' },
       { type: 'pressures_chosen', values: { count: 0 } },
       { type: 'floor_first_arrival', arg: '2' },
-      { type: 'family_first_meet', arg: 'the-lost' },
-      { type: 'family_first_meet', arg: 'absorbed-echoes' },
+      { type: 'family_first_meet', arg: 'the-lost', immediate: true },
+      { type: 'family_first_meet', arg: 'absorbed-echoes', immediate: true },
     ])
   })
 
