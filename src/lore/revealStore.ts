@@ -29,7 +29,7 @@ export interface AdvanceRevealInput {
   item: LoreQueueItem
   card: LoreCard
   imageUrl: string | null
-  stage: 'text' | 'more'
+  stage: 'more'
 }
 
 export interface FinishRevealInput {
@@ -123,7 +123,7 @@ export async function startReveal({
   return revealId
 }
 
-/** Advance a live reveal to `'text'` or `'more'` for its audience (and `_table` if `everyone`). */
+/** Advance a live reveal to `'more'` (show the push line) for its audience (and `_table` if `everyone`). */
 export async function advanceReveal({
   runId,
   item,
