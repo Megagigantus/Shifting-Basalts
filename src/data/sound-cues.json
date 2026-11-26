@@ -1,0 +1,15 @@
+{
+  "_note": "Which screens play each sound cue. The sound file for each key is in moment-theme.json under sounds. table = the DM's Table display only. tableAndOwn = the Table display, plus the phone of the player it belongs to. own = only the device where the action was tapped.",
+  "cues": {
+    "roomOpen": "table",
+    "bossReveal": "table",
+    "shift": "table",
+    "trap": "table",
+    "loot": "tableAndOwn",
+    "fusionDone": "tableAndOwn",
+    "evolutionDone": "tableAndOwn",
+    "lore": "tableAndOwn",
+    "spendBasalts": "own",
+    "spendDevotions": "own"
+  }
+}

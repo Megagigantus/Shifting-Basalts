@@ -196,7 +196,17 @@
     "deal": "/sounds/moments/deal.mp3",
     "dim": "/sounds/moments/dim.mp3",
     "claimed": "/sounds/moments/claimed.mp3",
-    "conditionMet": "/sounds/moments/condition-met.mp3"
+    "conditionMet": "/sounds/moments/condition-met.mp3",
+    "roomOpen": "/sounds/cues/room-open.mp3",
+    "bossReveal": "/sounds/cues/boss-reveal.mp3",
+    "shift": "/sounds/cues/shift.mp3",
+    "trap": "/sounds/cues/trap.mp3",
+    "loot": "/sounds/cues/loot.mp3",
+    "fusionDone": "/sounds/cues/fusion-done.mp3",
+    "evolutionDone": "/sounds/cues/evolution-done.mp3",
+    "lore": "/sounds/cues/lore.mp3",
+    "spendBasalts": "/sounds/cues/spend-basalts.mp3",
+    "spendDevotions": "/sounds/cues/spend-devotions.mp3"
   },
   "timings": {
     "backdropFadeMs": 300,
