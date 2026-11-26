@@ -2,8 +2,10 @@
 // placeholders for unseen cards, and read-only overlay playback when reopening a note.
 import { useState } from 'react'
 import { Lock } from 'lucide-react'
+import { loreImageUrlForCard } from '../lore/loreArt'
 import type { LoreNote } from '../lore/reveal'
 import { useLoreNotes, useLoreSummary } from '../lore/useLoreLibrary'
+import { LoreArt } from './LoreArt'
 import { LoreRevealOverlay } from './LoreRevealOverlay'
 
 type ArchiveNote = LoreNote & { revealedAtMs: number }
@@ -34,7 +36,8 @@ export function LoreLibrary({ email }: { email: string }) {
 
   function renderNoteCard(note: ArchiveNote, index: number) {
     const noteKey = `${note.revealId || 'note'}-${index}`
-    const showImage = Boolean(note.imageUrl) && !failedImages[noteKey]
+    const imageUrl = loreImageUrlForCard(note.cardId, note.imageUrl)
+    const showImage = Boolean(imageUrl) && !failedImages[noteKey]
     return (
       <button
         key={noteKey}
@@ -49,13 +52,11 @@ export function LoreLibrary({ email }: { email: string }) {
               'radial-gradient(ellipse at 50% 35%, #242129 0%, #141218 55%, #09080b 100%)',
           }}
         >
-          {showImage && note.imageUrl && (
-            <img
-              src={note.imageUrl}
-              alt=""
-              aria-hidden="true"
+          {showImage && imageUrl && (
+            <LoreArt
+              src={imageUrl}
               onError={() => markImageFailed(noteKey)}
-              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+              imgClassName="transition-transform duration-300 group-hover:scale-[1.03]"
             />
           )}
         </div>
@@ -119,7 +120,7 @@ export function LoreLibrary({ email }: { email: string }) {
             revealId: selected.revealId,
             stage: 'more',
             title: selected.title,
-            imageUrl: selected.imageUrl,
+            imageUrl: loreImageUrlForCard(selected.cardId, selected.imageUrl),
             push: selected.push,
           }}
           onClose={() => setSelected(null)}

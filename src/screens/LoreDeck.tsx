@@ -10,6 +10,7 @@ import { Panel } from '../ui/Panel'
 import { Pill } from '../ui/Pill'
 import { FIELD, FIELD_LABEL, WELL } from '../ui/styles'
 import { cx } from '../ui/tone'
+import { LoreArt } from './LoreArt'
 import { LoreCardView, REPEAT_LABEL, SOURCE_LABEL, TIER_LABEL, TIER_TONE } from './LoreCardView'
 
 /** DM lore deck browser: filterable card list, read-only card view modal, and Reset seen. */
@@ -149,7 +150,7 @@ function LoreCardRow({
         className="flex w-full cursor-pointer items-start gap-3 rounded-lg border border-stone-800 bg-stone-950/60 p-2.5 text-left transition-colors hover:border-stone-700 hover:bg-stone-900/80"
       >
         <div className="aspect-video w-20 shrink-0 overflow-hidden rounded-md border border-stone-800 bg-stone-950 sm:w-24">
-          {thumbUrl && <img src={thumbUrl} alt="" className="block h-full w-full object-cover" />}
+          {thumbUrl && <LoreArt src={thumbUrl} />}
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <div className="flex flex-wrap items-center gap-1.5">

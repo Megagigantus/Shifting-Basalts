@@ -6,6 +6,7 @@ import type { LoreRevealDoc } from '../lore/reveal'
 import { usePlayerLoreReveal } from '../lore/useLoreReveal'
 import { usePrefersReducedMotion } from '../moments/device'
 import { cx } from '../ui/tone'
+import { LoreArt } from './LoreArt'
 
 const KEYFRAMES = `
 @keyframes lore-fade-in {
@@ -145,11 +146,11 @@ export function LoreRevealOverlay({ reveal, readOnly = false, onClose }: Overlay
       />
 
       {showImage && reveal.imageUrl && (
-        <img
+        <LoreArt
           src={reveal.imageUrl}
           alt={reveal.title}
           onError={() => setFailedImageUrl(reveal.imageUrl)}
-          className="pointer-events-none absolute inset-0 h-full w-full select-none object-cover object-center"
+          className="pointer-events-none absolute inset-0"
           style={
             reducedMotion
               ? undefined
