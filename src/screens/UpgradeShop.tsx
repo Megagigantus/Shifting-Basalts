@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import type { Character } from '../model/character'
 import { changeUpgrade } from '../characterStore'
+import { playSound } from '../moments/audio'
 import { nextRankCost, ownedRankCost, upgradesFor, type UpgradeScope } from '../rules/upgrades'
 import { ConfirmButton } from '../ui/ConfirmButton'
 import { Pill } from '../ui/Pill'
@@ -31,6 +32,9 @@ export function UpgradeShop({ character, canCorrect = true, canSpend = true }: P
     setBusy(true)
     try {
       await changeUpgrade(character.id, upgradeId, mode)
+      if (mode === 'buy') {
+        playSound('spendBasalts')
+      }
     } catch (err) {
       setError((err as Error).message || 'Could not save. Please try again.')
     } finally {
