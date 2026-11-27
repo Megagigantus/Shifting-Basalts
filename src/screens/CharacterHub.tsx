@@ -270,7 +270,7 @@ export function CharacterHub({ character: c, mode, actions }: Props) {
             tone="emerald"
             icon={<Sparkles size={16} />}
             title="Field of Echoes"
-            text="Every boon, Evolution and Combination you've held, and the echoes still waiting."
+            text="Every boon, Evolution and Fusion you've held, and the echoes still waiting."
             badge={`${overall.seen} of ${overall.total} seen`}
             onVisit={() => setVisiting('echoes')}
           />
