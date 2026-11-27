@@ -61,7 +61,7 @@
     {
       "id": "milestones",
       "name": "Honed Echoes",
-      "description": "Fire the first time anyone in the campaign levels, combines or evolves a boon.",
+      "description": "Fire the first time anyone in the campaign levels, fuses or evolves a boon.",
       "defaultImageUrl": null
     },
     {
@@ -1136,14 +1136,14 @@
       "title": "Two echoes meet",
       "trigger": {
         "key": "boon_first_combination",
-        "label": "First time anyone makes a Combination"
+        "label": "First time anyone makes a Fusion"
       },
       "repeat": "once_campaign",
       "tier": "open",
       "source": "loremaster",
       "readAloud": "Two techniques meet in your hands and don't fit, and for a moment you feel them argue: two strangers' habits, two ways of standing, two people who were never in the same universe, let alone the same fight. Then one of them laughs, the other gives way, and they find a rhythm together. Somewhere in your head, two voices that have never met say at the same time: \"Oh. Like that.\"",
-      "push": "The striders behind your boons never knew each other. Some died centuries apart, in universes that will never touch. In the Basalts they're kept side by side, and when you combine their techniques, you make them meet for the first time. The locals consider a combination a small miracle and a kind of matchmaking. Some pilgrims come down just to combine two boons and hear the echoes introduce themselves.",
-      "dmTruth": "Combinations are Thils's favorite thing to watch: something new made from two lost things. (proposed) A Combination could become an echo of the party in its own right.",
+      "push": "The striders behind your boons never knew each other. Some died centuries apart, in universes that will never touch. In the Basalts they're kept side by side, and when you fuse their techniques, you make them meet for the first time. The locals consider a fusion a small miracle and a kind of matchmaking. Some pilgrims come down just to fuse two boons and hear the echoes introduce themselves.",
+      "dmTruth": "Fusions are Thils's favorite thing to watch: something new made from two lost things. (proposed) A Fusion could become an echo of the party in its own right.",
       "check": {
         "skills": [
           "Insight",
